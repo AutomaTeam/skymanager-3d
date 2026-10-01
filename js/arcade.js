@@ -16,6 +16,7 @@
 
 import { sfx } from './sfx.js?v=1789710000';
 import { LAYOUT } from './layout.js?v=1789710000';
+import { drawIcon } from './icons.js?v=1789710000';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -726,33 +727,13 @@ export class Arcade {
       x.font = `${size * k}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
       x.textAlign = 'center'; x.textBaseline = 'middle';
       x.fillStyle = '#000';
-      x.fillText(e, X(wx), Z(wz));
-      if (big) { const r = size * k * 0.6; taken.push([X(wx) - r, Z(wz) - r, X(wx) + r, Z(wz) + r]); }
+      if (!drawIcon(x, e, X(wx), Z(wz), size * k * 1.05)) x.fillText(e, X(wx), Z(wz));
+      if (big) this._iconSrc.push({ wx, wz });
     };
-    /* Etiquettes : posees en fin de dessin, avec anti-collision (essai de
-       plusieurs decalages, clamp dans le cadre, masquees si rien ne passe). */
-    const pills = [], taken = [];
-    const pill = (txt, wx, wz) => { if (big) pills.push({ txt, wx, wz }); };
-    const flushPills = () => {
-      x.font = `800 ${11 * k}px -apple-system,"Segoe UI",sans-serif`;
-      x.textAlign = 'center'; x.textBaseline = 'middle';
-      const th = 17 * k, gap = 3 * k;
-      for (const p of pills) {
-        const tw = x.measureText(p.txt).width + 12 * k;
-        const cx0 = X(p.wx), cz0 = Z(p.wz);
-        const tries = [[0, 0], [0, -th - gap], [0, th + gap], [tw / 2 + gap, 0], [-tw / 2 - gap, 0], [0, -2 * (th + gap)], [0, 2 * (th + gap)], [tw + gap, 0], [-tw - gap, 0], [tw / 2 + gap, th + gap], [-tw / 2 - gap, th + gap]];
-        for (const [dx, dz] of tries) {
-          const cx = clamp(cx0 + dx, tw / 2 + 4 * k, w - tw / 2 - 4 * k), cz = clamp(cz0 + dz, th / 2 + 4 * k, h - 34 * k - th / 2);
-          const r = [cx - tw / 2, cz - th / 2, cx + tw / 2, cz + th / 2];
-          if (taken.some(t => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1])) continue;
-          taken.push(r);
-          x.fillStyle = 'rgba(15,23,42,0.74)';
-          roundRectPath(x, r[0], r[1], tw, th, th / 2); x.fill();
-          x.fillStyle = '#fff'; x.fillText(p.txt, cx, cz + k * 0.5);
-          break;
-        }
-      }
-    };
+    /* Etiquettes et icones : seulement enregistrees ici ; dessinees a chaque image
+       a taille constante (voir _drawMapLabels), pour rester lisibles au zoom. */
+    if (big) { this._pillSrc = []; this._iconSrc = []; }
+    const pill = (txt, wx, wz) => { if (big) this._pillSrc.push({ txt, wx, wz }); };
 
     /* Herbe + taches + arbres (fixes : meme graine a chaque fois). */
     x.fillStyle = T.grass; x.fillRect(0, 0, w, h);
@@ -864,8 +845,6 @@ export class Arcade {
     pill('POMPIERS', (fr.x0 + fr.x1) / 2, fr.z0 - 12);
     pill('HELIPORT', hp.x + 30, hp.z - 24);
 
-    flushPills();
-
     /* Cadre + rose des vents. */
     x.strokeStyle = 'rgba(255,255,255,0.18)'; x.lineWidth = 3 * k; x.strokeRect(0, 0, w, h);
     const cx = 27 * k, cz = 30 * k;
@@ -884,13 +863,18 @@ export class Arcade {
     const w = cv.width, h = cv.height, k = w / 480, x = cv.getContext('2d');
     const T = performance.now() / 1000;
     const big = w > 700;
-    x.drawImage(this._mapBase(w, h), 0, 0);
-    const P = (wx, wz) => this._mapToPx(wx, wz, w, h);
+    const M0 = MAP_WIN;
+    const V = big ? this._viewRect() : M0;
+    const base = this._mapBase(big ? w * 2 : w, big ? h * 2 : h);
+    const fx = (V.x0 - M0.x0) / (M0.x1 - M0.x0), fz = (V.z0 - M0.z0) / (M0.z1 - M0.z0);
+    x.drawImage(base, fx * base.width, fz * base.height,
+      (V.x1 - V.x0) / (M0.x1 - M0.x0) * base.width, (V.z1 - V.z0) / (M0.z1 - M0.z0) * base.height, 0, 0, w, h);
+    const P = (wx, wz) => [(wx - V.x0) / (V.x1 - V.x0) * w, (wz - V.z0) / (V.z1 - V.z0) * h];
+    if (big) this._drawMapLabels(x, P, w, h, k);
     const clampPx = (p, m = 10 * k) => [clamp(p[0], m, w - m), clamp(p[1], m, h - m)];
     const pp = g.player;
     const [px, pz] = clampPx(P(pp.pos.x, pp.pos.z));
-    const M = MAP_WIN;
-    const mPerPx = (M.x1 - M.x0) / w;
+    const mPerPx = (V.x1 - V.x0) / w;
 
     /* Radar des pieces cachees : un anneau qui grandit autour de toi. */
     const R = TREASURE_RADAR;
@@ -935,9 +919,7 @@ export class Arcade {
         const [dx, dz] = P(d.x, d.z);
         if (dx < 0 || dz < 0 || dx > w || dz > h) continue;
         if (big) {
-          x.font = `${(d.k === 'a' ? 20 : 14) * k}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;
-          x.textAlign = 'center'; x.textBaseline = 'middle';
-          x.fillText(d.k === 'a' ? '✈️' : d.k === 'h' ? '🚁' : '🚚', dx, dz);
+          drawIcon(x, d.k === 'a' ? '✈️' : d.k === 'h' ? '🚁' : '🚚', dx, dz, (d.k === 'a' ? 22 : 16) * k);
         } else {
           x.fillStyle = d.k === 'a' ? '#ffffff' : d.k === 'h' ? '#f87171' : '#fde047';
           x.strokeStyle = '#0f172a'; x.lineWidth = 1.2 * k;
@@ -1006,14 +988,104 @@ export class Arcade {
     const place = this.placeAt(pp.pos.x, pp.pos.z);
     x.font = `800 ${(big ? 15 : 14) * k}px -apple-system,"Segoe UI","Apple Color Emoji","Segoe UI Emoji",sans-serif`;
     x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillStyle = '#fff';
-    x.fillText(`${place.ico} ${place.name}`, 10 * k, h - bh / 2);
+    const isz = (big ? 18 : 16) * k;
+    if (drawIcon(x, place.ico, 10 * k + isz / 2, h - bh / 2, isz)) x.fillText(place.name, 10 * k + isz + 6 * k, h - bh / 2);
+    else x.fillText(`${place.ico} ${place.name}`, 10 * k, h - bh / 2);
     const th = this.treasureHeat();
     x.textAlign = 'right'; x.fillStyle = '#fde68a';
-    x.fillText(th ? `${th.ico} ${th.found}/${th.total}` : '', w - 10 * k, h - bh / 2);
-    if (!big) {
-      x.textAlign = 'right'; x.fillStyle = 'rgba(255,255,255,0.9)';
-      x.font = `${15 * k}px "Apple Color Emoji","Segoe UI Emoji",sans-serif`;
-      x.fillText('🔍', w - 8 * k, 20 * k);
+    if (th) {
+      const label = `${th.found}/${th.total}`;
+      x.fillText(label, w - 10 * k, h - bh / 2);
+      const tw = x.measureText(label).width;
+      if (!drawIcon(x, th.ico, w - 10 * k - tw - isz / 2 - 4 * k, h - bh / 2, isz)) x.fillText(th.ico, w - 10 * k - tw - 4 * k, h - bh / 2);
+    }
+    if (!big) drawIcon(x, '🔍', w - 18 * k, 20 * k, 18 * k);
+  }
+
+  /* Etiquettes de la grande carte : taille constante, anti-collision (essais de decalages). */
+  _drawMapLabels(x, P, w, h, k) {
+    const pills = this._pillSrc || [];
+    const taken = [];
+    for (const ic of this._iconSrc || []) {
+      const [px, pz] = P(ic.wx, ic.wz);
+      taken.push([px - 12 * k, pz - 12 * k, px + 12 * k, pz + 12 * k]);
+    }
+    x.save();
+    x.font = `800 ${11 * k}px -apple-system,"Segoe UI",sans-serif`;
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    const th = 17 * k, gap = 3 * k;
+    for (const p of pills) {
+      const [cx0, cz0] = P(p.wx, p.wz);
+      if (cx0 < -40 * k || cx0 > w + 40 * k || cz0 < -20 * k || cz0 > h + 20 * k) continue;
+      const tw = x.measureText(p.txt).width + 12 * k;
+      const tries = [[0, 0], [0, -th - gap], [0, th + gap], [tw / 2 + gap, 0], [-tw / 2 - gap, 0], [0, -2 * (th + gap)], [0, 2 * (th + gap)], [tw + gap, 0], [-tw - gap, 0]];
+      for (const [dx, dz] of tries) {
+        const cx = clamp(cx0 + dx, tw / 2 + 4 * k, w - tw / 2 - 4 * k), cz = clamp(cz0 + dz, th / 2 + 4 * k, h - 34 * k - th / 2);
+        const r = [cx - tw / 2, cz - th / 2, cx + tw / 2, cz + th / 2];
+        if (taken.some(t => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1])) continue;
+        taken.push(r);
+        x.fillStyle = 'rgba(15,23,42,0.74)';
+        roundRectPath(x, r[0], r[1], tw, th, th / 2); x.fill();
+        x.fillStyle = '#fff'; x.fillText(p.txt, cx, cz + k * 0.5);
+        break;
+      }
+    }
+    x.restore();
+  }
+
+  /* ---- Zoom / deplacement de la grande carte ---- */
+  _viewRect() {
+    const M = MAP_WIN;
+    const v = this._view || (this._view = { cx: (M.x0 + M.x1) / 2, cz: (M.z0 + M.z1) / 2, zoom: 1 });
+    const vw = (M.x1 - M.x0) / v.zoom, vh = (M.z1 - M.z0) / v.zoom;
+    v.cx = clamp(v.cx, M.x0 + vw / 2, M.x1 - vw / 2);
+    v.cz = clamp(v.cz, M.z0 + vh / 2, M.z1 - vh / 2);
+    return { x0: v.cx - vw / 2, x1: v.cx + vw / 2, z0: v.cz - vh / 2, z1: v.cz + vh / 2 };
+  }
+
+  /* Zoom par le facteur f, le point (px, py) (fractions du canevas) restant sous le doigt. */
+  zoomMap(f, px = 0.5, py = 0.5) {
+    const V = this._viewRect(), v = this._view, M = MAP_WIN;
+    const wx = V.x0 + (V.x1 - V.x0) * px, wz = V.z0 + (V.z1 - V.z0) * py;
+    v.zoom = clamp(v.zoom * f, 1, 5);
+    const vw = (M.x1 - M.x0) / v.zoom, vh = (M.z1 - M.z0) / v.zoom;
+    v.cx = wx - (px - 0.5) * vw; v.cz = wz - (py - 0.5) * vh;
+  }
+
+  panMap(dx, dy) {
+    const V = this._viewRect(), v = this._view;
+    v.cx -= dx * (V.x1 - V.x0); v.cz -= dy * (V.z1 - V.z0);
+  }
+
+  resetMapView() { this._view = null; }
+
+  _bindMapGestures(cv) {
+    if (this._gesturesBound) return;
+    this._gesturesBound = true;
+    cv.style.touchAction = 'none';
+    const pts = new Map();
+    let pinch = 0;
+    const frac = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+    cv.addEventListener('wheel', (e) => { e.preventDefault(); const [px, py] = frac(e); this.zoomMap(e.deltaY < 0 ? 1.25 : 0.8, px, py); }, { passive: false });
+    cv.addEventListener('dblclick', (e) => { const [px, py] = frac(e); this.zoomMap(2, px, py); });
+    cv.addEventListener('pointerdown', (e) => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); pinch = 0; });
+    cv.addEventListener('pointermove', (e) => {
+      if (!pts.has(e.pointerId)) return;
+      const prev = pts.get(e.pointerId);
+      pts.set(e.pointerId, [e.clientX, e.clientY]);
+      const r = cv.getBoundingClientRect();
+      if (pts.size === 1) this.panMap((e.clientX - prev[0]) / r.width, (e.clientY - prev[1]) / r.height);
+      else if (pts.size === 2) {
+        const [a, b] = [...pts.values()];
+        const d = Math.hypot(a[0] - b[0], a[1] - b[1]);
+        if (pinch) this.zoomMap(d / pinch, ((a[0] + b[0]) / 2 - r.left) / r.width, ((a[1] + b[1]) / 2 - r.top) / r.height);
+        pinch = d;
+      }
+    });
+    const up = (e) => { pts.delete(e.pointerId); pinch = 0; };
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    for (const [id, f] of [['mapZoomIn', () => this.zoomMap(1.5)], ['mapZoomOut', () => this.zoomMap(1 / 1.5)], ['mapZoomReset', () => this.resetMapView()]]) {
+      const btn = $(id); if (btn) btn.addEventListener('click', f);
     }
   }
 
@@ -1041,6 +1113,8 @@ export class Arcade {
     const box = $('mapBig');
     if (!box) return;
     this._bigOpen = true;
+    this.resetMapView();
+    this._bindMapGestures($('mapBigCv'));
     box.classList.remove('hidden');
     $('mapBigName').textContent = this.data.name;
     const loop = () => {

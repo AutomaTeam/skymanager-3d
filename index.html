@@ -730,9 +730,14 @@
     <div class="panel-head">
       <div>
         <h2 class="panel-title">🗺️ <span id="mapBigName">Mon aeroport</span></h2>
-        <p class="panel-sub !mb-0">Tu es la <b class="text-rose-400">fleche rouge</b>. L'<b class="text-amber-300">etoile</b> montre ou aller. Les ✨ sont des pieces cachees !</p>
+        <p class="panel-sub !mb-0">Tu es la <b class="text-rose-400">fleche rouge</b>. L'<b class="text-amber-300">etoile</b> montre ou aller. Les ✨ sont des pieces cachees ! Molette ou pincement pour zoomer, glisse pour deplacer.</p>
       </div>
-      <button id="mapBigClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+      <div class="map-tools">
+        <button id="mapZoomOut" class="panel-btn sm !w-auto px-3" aria-label="Dezoomer">&minus;</button>
+        <button id="mapZoomIn" class="panel-btn sm !w-auto px-3" aria-label="Zoomer">+</button>
+        <button id="mapZoomReset" class="panel-btn sm !w-auto px-3" aria-label="Recentrer">&#9678;</button>
+        <button id="mapBigClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+      </div>
     </div>
     <canvas id="mapBigCv" class="map-big" width="960" height="924"></canvas>
     <div class="map-legend">

@@ -31,6 +31,7 @@ import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINAT
 import { FlightAssist } from './flightAssist.js?v=1789710000';
 import { sfx } from './sfx.js?v=1789710000';
 import { perfHud } from './perfHud.js?v=1789710000';
+import { iconify } from './icons.js?v=1789710000';
 import { drawPFD } from './cockpit.js?v=1789710000';
 
 const $ = (id) => document.getElementById(id);
@@ -2746,6 +2747,7 @@ window.addEventListener('load', () => {
   try {
     const game = new Game();
     window.__game = game;      // debug console
+    iconify(document.body);    // emojis -> icones SVG (js/icons.js)
     if (fill) fill.style.width = '100%';
     if (bar) bar.classList.add('done');
     $('bootMsg').textContent = 'Systemes prets.';
