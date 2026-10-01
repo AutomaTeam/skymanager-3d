@@ -13,6 +13,7 @@
 - ✅ Nuit et météo (`skylife.js`) : lumières de la ville (520) et du village (180) qui s'allument au crépuscule, fenêtres du quartier au sud du parking, balise de la tour qui clignote la nuit ; orage avec éclairs (flash de lumière en double impulsion + trait de foudre lointain, toutes les 6 à 18 s). Vérifié de nuit sous la pluie (halos de lampadaires, éclaboussures, fenêtres) ; l'éclair a été testé en valeurs, pas capturé à l'écran.
 - ✅ Carte : zoom ×1 à ×5 (molette, pincement, double-clic, boutons − + ◎), déplacement au glisser, fond redessiné en double résolution, étiquettes à taille constante avec anti-collision (FRET et CARBURANT réapparaissent), itinéraire réel. Icônes SVG (`js/icons.js`, 67 icônes) : remplacement automatique des emojis connus dans toute l'interface (observateur DOM) et sur les cartes (canvas) ; les emojis sans icône (visages, drapeaux…) restent des emojis.
 - ✅ Finitions : tonnerre synthétisé (retard selon la distance), version `?v=1790900000`, README « Phase 32 », mesures (367 draw calls, ~469 k triangles dans la vue testée).
+- ✅ Vue « aéroport entier » (bouton « Tout l'aéroport » / « Complexe » sur la grande carte) : fenêtre de 3 090 m sur canevas en hauteur (640 × 1232), piste et taxiway à leur vraie longueur, seuils 36/18 avec barres et numéros, aviation légère, PAPI ; zoom et déplacement identiques à la vue du complexe.
 - ⏳ Non fait (volontairement, pour ne pas complexifier) : source unique des coordonnées de la carte, zoom/glisser, icônes SVG, terminal meublé, tour, parking, nuit/météo.
 
 ---

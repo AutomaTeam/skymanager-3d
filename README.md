@@ -2033,6 +2033,7 @@ Suivi detaille : `PLAN_VISUEL_CARTE.md` (etat des lieux, plan, avancement). Cont
 - **Parking et abords** (`decor.js`) : 4 rangees de places, ~100 voitures Kenney (obstacles de navigation), terre-plein arbore, passages pietons, ligne de route, abribus + navette, haies fleuries.
 - **Nuit et meteo** (`skylife.js`, `sfx.js`) : lumieres de la ville et du village, fenetres du quartier, balise de la tour clignotante, orage avec eclairs (flash en double impulsion + trait de foudre) et tonnerre synthetise retarde selon la distance (`sfx.thunder`).
 - **Carte** (`arcade.js`) : zoom x1 a x5 (molette, pincement, double-clic, boutons), deplacement au glisser, fond en double resolution, etiquettes a taille constante avec anti-collision, itineraire reel via la navigation.
+- **Vue « aeroport entier »** : bouton sur la grande carte, fenetre de 3 090 m (`MAP_FULL`) sur canevas en hauteur ; piste, taxiway, seuils 36/18, aviation legere et PAPI a leur vraie place.
 - **Icones** (`icons.js`) : 67 icones SVG ; `iconify()` remplace automatiquement les emojis connus du DOM (observateur) et `drawIcon()` les dessine sur les canvas. Les emojis sans icone restent des emojis.
 - **Mesures** (navigateur integre, rendu logiciel, aeroport charge) : 367 draw calls et ~469 k triangles dans la vue testee ; 30/30 tests de navigation. Le FPS reste a relever sur le PC cible (budget : >= 90 FPS, <= 900 draw calls).
 - Version des scripts : `?v=1790900000`.

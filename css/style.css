@@ -1462,3 +1462,6 @@ body.arcade .hud-env { display: none; }
 .map-tools { display: flex; gap: 0.35rem; align-items: center; }
 .map-big { cursor: grab; touch-action: none; }
 .map-big:active { cursor: grabbing; }
+
+.map-big.tall { width: auto; height: 62vh; max-width: 100%; margin-left: auto; margin-right: auto; }
+.map-tools .panel-btn { white-space: nowrap; }

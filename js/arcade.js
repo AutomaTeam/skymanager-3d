@@ -123,6 +123,9 @@ function seeded(str) {
 /* Mini-carte : fenetre, styles, lieux                         */
 /* ---------------------------------------------------------- */
 const MAP_WIN = { x0: -80, x1: 690, z0: 770, z1: 1510 };
+/* Vue « aeroport entier » : toute la piste (3 000 m) sur un canevas en hauteur. */
+const MAP_FULL = { x0: -502, x1: 1103, z0: -1565, z1: 1525 };
+const BIG_CANVAS = { complex: [960, 924], full: [640, 1232] };
 export const MAP_SIZE = { mini: [480, 462], big: [960, 924] };
 
 /* Styles de carte : le premier est gratuit, les autres s'achetent (en pieces). */
@@ -706,15 +709,15 @@ export class Arcade {
   }
 
   /* Fond fixe (decor), dessine une seule fois par taille et par theme. */
-  _mapBase(w, h) {
-    const key = `${w}x${h}:${this.data.mapTheme}`;
+  _mapBase(w, h, win = MAP_WIN, big = w > 700) {
+    const key = `${w}x${h}:${this.data.mapTheme}:${win === MAP_FULL ? 'f' : 'c'}`;
     this._bases = this._bases || {};
     if (this._bases[key]) return this._bases[key];
     const base = document.createElement('canvas');
     base.width = w; base.height = h;
     const x = base.getContext('2d');
-    const T = this.theme, M = MAP_WIN, L = LAYOUT, k = w / 480;
-    const big = w > 700;
+    const T = this.theme, M = win, L = LAYOUT, k = w / 480;
+    const area = (M.x1 - M.x0) * (M.z1 - M.z0) / ((MAP_WIN.x1 - MAP_WIN.x0) * (MAP_WIN.z1 - MAP_WIN.z0));
     const X = (wx) => (wx - M.x0) / (M.x1 - M.x0) * w;
     const Z = (wz) => (wz - M.z0) / (M.z1 - M.z0) * h;
     const rect = (x0, z0, x1, z1, fill, stroke, lw = 1.6) => {
@@ -739,7 +742,7 @@ export class Arcade {
     x.fillStyle = T.grass; x.fillRect(0, 0, w, h);
     const rnd = seeded('map-decor');
     x.fillStyle = T.grass2;
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < Math.round(70 * Math.min(area, 1.3)); i++) {
       x.beginPath();
       x.ellipse(rnd() * w, rnd() * h, (10 + rnd() * 22) * k, (6 + rnd() * 12) * k, rnd() * 3, 0, Math.PI * 2);
       x.fill();
@@ -747,14 +750,30 @@ export class Arcade {
 
     const rw = L.runway;
     /* Piste. */
-    rect(rw.x - rw.width / 2, M.z0 - 20, rw.x + rw.width / 2, M.z1 + 20, T.runway, T.edge, 1.2);
+    const rz0 = Math.max(rw.zEnd, M.z0 - 20), rz1 = Math.min(rw.zStart, M.z1 + 20);
+    rect(rw.x - rw.width / 2, rz0, rw.x + rw.width / 2, rz1, T.runway, T.edge, 1.2);
     x.strokeStyle = T.mark; x.lineWidth = 2.2 * k; x.setLineDash([9 * k, 8 * k]);
-    x.beginPath(); x.moveTo(X(rw.x), 0); x.lineTo(X(rw.x), h); x.stroke(); x.setLineDash([]);
+    x.beginPath(); x.moveTo(X(rw.x), Z(rz0)); x.lineTo(X(rw.x), Z(rz1)); x.stroke(); x.setLineDash([]);
+    /* Seuils : barres d'attache et numeros de piste (36 au sud, 18 au nord). */
+    for (const [zt, num] of [[rw.zStart, '36'], [rw.zEnd, '18']]) {
+      const dir = zt > 0 ? -1 : 1;
+      x.fillStyle = T.mark;
+      for (let i = -3; i <= 3; i++) x.fillRect(X(rw.x + i * 5) - 1.2 * k, Z(zt + dir * 8), 2.4 * k, Math.abs(Z(zt + dir * 28) - Z(zt + dir * 8)));
+      if (big) {
+        x.save(); x.translate(X(rw.x), Z(zt + dir * 60)); x.rotate(dir < 0 ? Math.PI : 0);
+        x.font = `900 ${14 * k}px sans-serif`; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(num, 0, 0);
+        x.restore();
+      }
+    }
     /* Bretelles + taxiway. */
     for (const lz of L.linkZ) if (lz > M.z0 - 30 && lz < M.z1 + 30) rect(rw.x + rw.width / 2, lz - 12, L.taxiway.x, lz + 12, T.taxi);
-    rect(L.taxiway.x - L.taxiway.width / 2, M.z0 - 20, L.taxiway.x + L.taxiway.width / 2, M.z1 + 20, T.taxi);
+    const tz0 = Math.max(L.taxiway.z0, M.z0 - 20), tz1 = Math.min(L.taxiway.z1, M.z1 + 20);
+    rect(L.taxiway.x - L.taxiway.width / 2, tz0, L.taxiway.x + L.taxiway.width / 2, tz1, T.taxi);
     x.strokeStyle = T.taxiLine; x.lineWidth = 1.6 * k; x.setLineDash([6 * k, 5 * k]);
-    x.beginPath(); x.moveTo(X(L.taxiway.x), 0); x.lineTo(X(L.taxiway.x), h); x.stroke(); x.setLineDash([]);
+    x.beginPath(); x.moveTo(X(L.taxiway.x), Z(tz0)); x.lineTo(X(L.taxiway.x), Z(tz1)); x.stroke(); x.setLineDash([]);
+    /* Aviation legere + PAPI (visibles surtout en vue complete). */
+    rect(L.gaApron.x0, L.gaApron.z0, L.gaApron.x1, L.gaApron.z1, T.apron, T.taxiLine, 1.2);
+    x.fillStyle = '#fde047'; x.beginPath(); x.arc(X(L.papi.x), Z(L.papi.z), 3 * k, 0, Math.PI * 2); x.fill();
     /* Aire de stationnement. */
     rect(L.apron.x0, L.apron.z0, L.apron.x1, L.apron.z1, T.apron, T.taxiLine, 1.2);
     /* Routes. */
@@ -816,7 +835,8 @@ export class Arcade {
     ];
     const trng = seeded('map-trees');
     let placed = 0;
-    for (let i = 0; i < 700 && placed < 46; i++) {
+    const maxTrees = Math.round(46 * Math.min(area, 2.5));
+    for (let i = 0; i < 700 * Math.min(area, 3) && placed < maxTrees; i++) {
       const wx = M.x0 + trng() * (M.x1 - M.x0), wz = M.z0 + trng() * (M.z1 - M.z0);
       if (solid.some(s => wx > s[0] && wx < s[2] && wz > s[1] && wz < s[3])) continue;
       placed++;
@@ -844,6 +864,10 @@ export class Arcade {
     pill('CARBURANT', 612, 780);
     pill('POMPIERS', (fr.x0 + fr.x1) / 2, fr.z0 - 12);
     pill('HELIPORT', hp.x + 30, hp.z - 24);
+    pill('AVIATION LEGERE', L.gaApron.x1 + 34, (L.gaApron.z0 + L.gaApron.z1) / 2);
+    pill('SEUIL 36', rw.x + 56, rw.zStart - 40);
+    pill('SEUIL 18', rw.x + 56, rw.zEnd + 40);
+    pill('PAPI', L.papi.x + 26, L.papi.z);
 
     /* Cadre + rose des vents. */
     x.strokeStyle = 'rgba(255,255,255,0.18)'; x.lineWidth = 3 * k; x.strokeRect(0, 0, w, h);
@@ -862,10 +886,10 @@ export class Arcade {
     const g = this.g;
     const w = cv.width, h = cv.height, k = w / 480, x = cv.getContext('2d');
     const T = performance.now() / 1000;
-    const big = w > 700;
-    const M0 = MAP_WIN;
+    const big = cv.id === 'mapBigCv';
+    const M0 = big ? this._bigWin() : MAP_WIN;
     const V = big ? this._viewRect() : M0;
-    const base = this._mapBase(big ? w * 2 : w, big ? h * 2 : h);
+    const base = this._mapBase(big ? w * 2 : w, big ? h * 2 : h, M0, big);
     const fx = (V.x0 - M0.x0) / (M0.x1 - M0.x0), fz = (V.z0 - M0.z0) / (M0.z1 - M0.z0);
     x.drawImage(base, fx * base.width, fz * base.height,
       (V.x1 - V.x0) / (M0.x1 - M0.x0) * base.width, (V.z1 - V.z0) / (M0.z1 - M0.z0) * base.height, 0, 0, w, h);
@@ -1034,8 +1058,10 @@ export class Arcade {
   }
 
   /* ---- Zoom / deplacement de la grande carte ---- */
+  _bigWin() { return this._bigMode === 'full' ? MAP_FULL : MAP_WIN; }
+
   _viewRect() {
-    const M = MAP_WIN;
+    const M = this._bigWin();
     const v = this._view || (this._view = { cx: (M.x0 + M.x1) / 2, cz: (M.z0 + M.z1) / 2, zoom: 1 });
     const vw = (M.x1 - M.x0) / v.zoom, vh = (M.z1 - M.z0) / v.zoom;
     v.cx = clamp(v.cx, M.x0 + vw / 2, M.x1 - vw / 2);
@@ -1045,7 +1071,7 @@ export class Arcade {
 
   /* Zoom par le facteur f, le point (px, py) (fractions du canevas) restant sous le doigt. */
   zoomMap(f, px = 0.5, py = 0.5) {
-    const V = this._viewRect(), v = this._view, M = MAP_WIN;
+    const V = this._viewRect(), v = this._view, M = this._bigWin();
     const wx = V.x0 + (V.x1 - V.x0) * px, wz = V.z0 + (V.z1 - V.z0) * py;
     v.zoom = clamp(v.zoom * f, 1, 5);
     const vw = (M.x1 - M.x0) / v.zoom, vh = (M.z1 - M.z0) / v.zoom;
@@ -1058,6 +1084,20 @@ export class Arcade {
   }
 
   resetMapView() { this._view = null; }
+
+  /* Bascule « complexe » <-> « aeroport entier » : le canevas change de proportions. */
+  setMapMode(mode) {
+    this._bigMode = mode === 'full' ? 'full' : 'complex';
+    const cv = $('mapBigCv');
+    if (cv) {
+      const [cw, ch] = BIG_CANVAS[this._bigMode];
+      cv.width = cw; cv.height = ch;
+      cv.classList.toggle('tall', this._bigMode === 'full');
+    }
+    const btn = $('mapModeBtn');
+    if (btn) btn.textContent = this._bigMode === 'full' ? 'Complexe' : 'Tout l\'aeroport';
+    this.resetMapView();
+  }
 
   _bindMapGestures(cv) {
     if (this._gesturesBound) return;
@@ -1084,7 +1124,7 @@ export class Arcade {
     });
     const up = (e) => { pts.delete(e.pointerId); pinch = 0; };
     cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
-    for (const [id, f] of [['mapZoomIn', () => this.zoomMap(1.5)], ['mapZoomOut', () => this.zoomMap(1 / 1.5)], ['mapZoomReset', () => this.resetMapView()]]) {
+    for (const [id, f] of [['mapModeBtn', () => this.setMapMode(this._bigMode === 'full' ? 'complex' : 'full')], ['mapZoomIn', () => this.zoomMap(1.5)], ['mapZoomOut', () => this.zoomMap(1 / 1.5)], ['mapZoomReset', () => this.resetMapView()]]) {
       const btn = $(id); if (btn) btn.addEventListener('click', f);
     }
   }
@@ -1113,7 +1153,7 @@ export class Arcade {
     const box = $('mapBig');
     if (!box) return;
     this._bigOpen = true;
-    this.resetMapView();
+    this.setMapMode(this._bigMode || 'complex');
     this._bindMapGestures($('mapBigCv'));
     box.classList.remove('hidden');
     $('mapBigName').textContent = this.data.name;
