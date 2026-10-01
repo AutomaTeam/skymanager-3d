@@ -1166,43 +1166,7 @@ boom.add(dockGrp);
     parkSlab.position.set(360, 0.012, 1345);
     parkSlab.receiveShadow = true;
     g.add(parkSlab);
-    /* Marquage des places : lignes blanches perpendiculaires. */
-    const parkLineMat = new THREE.MeshBasicMaterial({ color: 0xdfe6ec });
-    for (let row = 0; row < 2; row++) {
-      for (let col = 0; col <= 15; col++) {
-        const line = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 5.4), parkLineMat);
-        line.rotation.x = -Math.PI / 2;
-        line.position.set(247.5 + col * 15, 0.02, 1325 + row * 40);
-        g.add(line);
-      }
-    }
-    /* Voitures : carrosserie + habitacle vitre + roues. Des places restent
-       libres (tirage deterministe) pour que le parking paraisse vivant. */
-    const carColors = [0xef4444, 0x3b82f6, 0xf8fafc, 0x22c55e, 0x64748b, 0xfacc15];
-    const carGlassMat = pbr(TEX.glassGrid(), { color: 0xffffff, rough: 0.1, metal: 0.6, repeat: [1, 1] });
-    const carTireMat = pbr(TEX.tire(), { color: 0x1a1d22, rough: 0.95, repeat: [1, 1] });
-    let ci = 0;
-    for (let row = 0; row < 2; row++) {
-      for (let col = 0; col < 15; col++) {
-        if ((col * 7 + row * 5) % 4 === 0) continue;             // place libre
-        const cx = 255 + col * 15, cz = 1325 + row * 40;
-        const car = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.7, 3.6),
-          pbr(TEX.paintedMetal(), { color: carColors[ci++ % carColors.length], rough: 0.35, metal: 0.4, repeat: [2, 1] }));
-        car.position.set(cx, 0.45, cz);
-        car.rotation.y = Math.PI / 2;
-        g.add(car);
-        const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 1.6), carGlassMat);
-        cabin.position.set(cx, 0.95, cz);
-        cabin.rotation.y = Math.PI / 2;
-        g.add(cabin);
-        for (const [wx, wz] of [[-1.2, -0.85], [-1.2, 0.85], [1.2, -0.85], [1.2, 0.85]]) {
-          const w = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.22, 10), carTireMat);
-          w.rotation.x = Math.PI / 2;
-          w.position.set(cx + wx, 0.32, cz + wz);
-          g.add(w);
-        }
-      }
-    }
+    /* Marquage des places et voitures (modeles Kenney) : voir decor.js, section parking. */
     /* Lampadaires de la route et arbres d'alignement : de la vie cote ville. */
     const roadPole = pbr(TEX.metal(), { color: 0x94a3b8, rough: 0.5, metal: 0.6, repeat: [1, 4] });
     const treeTrunk = pbr(TEX.rock(), { color: 0x4a3a2a, rough: 0.95, flatShading: true, repeat: [1, 2] });

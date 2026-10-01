@@ -233,6 +233,105 @@ export function buildDecor() {
   group.add(instanced(F + 'rugRound.glb', rugs, { width: 7 }));
 
   /* --------------------------------------------------------
+     Parking et abords (phase 32) : places marquees, voitures Kenney,
+     terre-plein arbore, passages pietons, ligne de route, abribus, haies
+     -------------------------------------------------------- */
+  {
+    const PK = { x0: 240, x1: 480 };
+    const ROWS = [{ z: 1316, d: 0 }, { z: 1328, d: Math.PI }, { z: 1352, d: 0 }, { z: 1364, d: Math.PI }];
+    const PITCH = 3.1, NSLOT = 71;
+    const lampX = [250, 294, 338, 382, 426, 470];
+    const flat = (w, d, hex, y, rough = 0.9) => new THREE.Mesh(new THREE.PlaneGeometry(w, d),
+      new THREE.MeshStandardMaterial({ color: hex, roughness: rough, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+    const inst = (geo, hex, pts, y = 0.024) => {
+      const im = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: hex, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }), pts.length);
+      const m4 = new THREE.Matrix4();
+      pts.forEach(([x, z], i) => { m4.makeTranslation(x, y, z); im.setMatrixAt(i, m4); });
+      im.instanceMatrix.needsUpdate = true;
+      im.receiveShadow = true;
+      return im;
+    };
+    const flatGeo = (w, d) => { const g = new THREE.PlaneGeometry(w, d); g.rotateX(-Math.PI / 2); return g; };
+
+    /* Marquage des places. */
+    const lines = [];
+    for (const row of ROWS) for (let i = 0; i <= NSLOT; i++) lines.push([250 - PITCH / 2 + i * PITCH, row.z]);
+    group.add(inst(flatGeo(0.12, 5.4), 0xe8edf2, lines));
+
+    /* Voitures : une dizaine de modeles, places libres tirees au hasard. */
+    const CARS = ['sedan', 'suv', 'hatchback-sports', 'van', 'taxi', 'sedan-sports', 'suv-luxury', 'delivery'];
+    const carLists = new Map(CARS.map(c => [c, []]));
+    for (const row of ROWS) {
+      for (let k = 0; k < NSLOT; k++) {
+        const x = 250 + k * PITCH;
+        if (r() > 0.4) continue;
+        if (lampX.some(lx => Math.abs(lx - x) < 1.9) && row.z === 1316) continue;
+        const model = CARS[Math.floor(r() * CARS.length)];
+        const rot = row.d + (r() < 0.2 ? Math.PI : 0) + rr(-0.04, 0.04);
+        carLists.get(model).push({ x: x + rr(-0.2, 0.2), z: row.z + rr(-0.2, 0.2), r: rot });
+        block(x, row.z, 1.0, 2.15, 'voiture');
+      }
+    }
+    for (const [m, list] of carLists) group.add(instanced(C + m + '.glb', list, { length: m === 'van' || m === 'delivery' ? 5 : 4.4 }));
+
+    /* Terre-plein central : pelouse, arbres, buissons, bordures. */
+    const med = flat(PK.x1 - PK.x0 - 8, 15, 0x86b86f, 0);
+    med.rotation.x = -Math.PI / 2; med.position.set(360, 0.03, 1340); med.receiveShadow = true;
+    group.add(med);
+    const curbs = inst(new THREE.BoxGeometry(PK.x1 - PK.x0 - 8, 0.18, 0.35), 0xcfd5dc, [[360, 1332.4], [360, 1347.6]], 0.09);
+    group.add(curbs);
+    const medTrees = [], medBushes = [];
+    for (let x = 252; x <= 468; x += 12) {
+      medTrees.push({ x, z: 1340, r: r() * 6.28, s: rr(0.8, 1.1) });
+      block(x, 1340, 0.55, 0.55, 'arbre');
+      medBushes.push({ x: x + 6, z: 1338.5 + rr(0, 3), r: r() * 6.28, s: rr(0.8, 1.2) });
+    }
+    group.add(instanced(N + 'tree_small.glb', medTrees, { height: 5.5, cast: false }));
+    group.add(instanced(N + 'plant_bush.glb', medBushes, { width: 1.5 }));
+
+    /* Passages pietons du parking vers le terminal (x 300, 360, 420) + ligne axiale. */
+    const bars = [];
+    for (const xc of [300, 360, 420]) for (let k = 0; k < 13; k++) bars.push([xc, 1284.2 + k * 1.0]);
+    group.add(inst(flatGeo(3.2, 0.5), 0xf3f4f6, bars, 0.03));
+    const dash = [];
+    for (let x = 244; x < 720; x += 8) dash.push([x, 1290]);
+    group.add(inst(flatGeo(3, 0.22), 0xf5c518, dash, 0.03));
+    /* Flèches d'allee dans le parking. */
+    const arrows = [];
+    for (const az of [1322, 1358]) for (let x = 270; x < 480; x += 40) arrows.push([x, az]);
+    group.add(inst(flatGeo(2.2, 0.35), 0xe8edf2, arrows, 0.026));
+
+    /* Abribus + navette. */
+    {
+      const sh = new THREE.Group();
+      sh.position.set(455, 0, 1300.5);
+      const frame = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5, metalness: 0.5 });
+      const glass = new THREE.MeshStandardMaterial({ color: 0x9fd0e8, roughness: 0.1, transparent: true, opacity: 0.4 });
+      const add = (geo, m, x, y, z) => { const o = new THREE.Mesh(geo, m); o.position.set(x, y, z); o.castShadow = true; sh.add(o); return o; };
+      add(new THREE.BoxGeometry(5, 0.15, 2.2), new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.6 }), 0, 2.6, 0);
+      for (const x of [-2.4, 2.4]) add(new THREE.BoxGeometry(0.12, 2.6, 0.12), frame, x, 1.3, 1);
+      add(new THREE.BoxGeometry(5, 1.8, 0.06), glass, 0, 1.5, 1.05);
+      add(new THREE.BoxGeometry(1.6, 0.5, 0.3), new THREE.MeshBasicMaterial({ color: 0x15803d }), 0, 3.0, 1.0);
+      group.add(sh);
+      block(455, 1300.5, 2.6, 1.3, 'abribus');
+      group.add(instanced(F + 'benchCushion.glb', [{ x: 455, z: 1300.2, r: Math.PI }], { width: 1.9 }));
+      group.add(instanced(C + 'van.glb', [{ x: 470, z: 1286, r: Math.PI / 2 }], { length: 5.2 }));
+    }
+
+    /* Haies autour du parking : sud, ouest, est. */
+    const hedge = [], hedgeFl = [];
+    for (let x = 232; x <= 490; x += 4.2) { hedge.push({ x, z: 1392, r: r() * 6.28, s: rr(0.9, 1.3) }); }
+    for (let z = 1308; z <= 1388; z += 4.2) { hedge.push({ x: 235, z, r: r() * 6.28, s: rr(0.9, 1.3) }, { x: 485, z, r: r() * 6.28, s: rr(0.9, 1.3) }); }
+    for (let x = 236; x <= 488; x += 9) hedgeFl.push({ x, z: 1394.2, r: r() * 6.28, s: rr(0.9, 1.3) });
+    group.add(instanced(N + 'plant_bushLarge.glb', hedge, { width: 2.6 }));
+    const fcols = ['purple', 'red', 'yellow'];
+    for (const c of fcols) group.add(instanced(N + `flower_${c}A.glb`, hedgeFl.filter((_, i) => i % 3 === fcols.indexOf(c)), { height: 0.7 }));
+    block(361, 1392, 130, 1.4, 'haie');
+    block(235, 1348, 1.4, 41, 'haie');
+    block(485, 1348, 1.4, 41, 'haie');
+  }
+
+  /* --------------------------------------------------------
      Nuit : halos et flaques de lumiere sous les mats (aire + parking)
      -------------------------------------------------------- */
   const masts = [];
