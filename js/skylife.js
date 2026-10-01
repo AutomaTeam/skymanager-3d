@@ -4,6 +4,8 @@
    - volees d'oiseaux qui tournent autour de l'aeroport (le jour, par beau temps) ;
    - avions de ligne lointains avec traînees blanches ;
    - montgolfieres colorees qui derivent avec le vent ;
+   - nuit : lumieres de la ville et du village, fenetres du quartier ;
+   - orage : eclairs (flash de lumiere + trait de foudre lointain) ;
    - sol mouille : un voile brillant sur l'aire et les pistes quand il pleut,
      et des eclaboussures pres de la camera.
 
@@ -113,6 +115,67 @@ export function buildSkyLife() {
   group.add(splashes);
   const spl = Array.from({ length: SPL }, () => ({ x: rr(-25, 25), z: rr(-25, 25), t: rr(0, 1) }));
 
+  /* ---------------- Nuit : lumieres de la ville, du village, du quartier ---------------- */
+  const nightMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, fog: false, depthWrite: false });
+  const lampTints = [0xffd98a, 0xffe9b8, 0xfff2d0, 0xffc870, 0xbfe0ff].map(h => new THREE.Color(h));
+  const lightPts = [];
+  const disc = (cx, cz, rad, n) => {
+    for (let i = 0; i < n; i++) {
+      const a = r() * 6.283, d = Math.sqrt(r()) * rad;
+      lightPts.push([cx + Math.cos(a) * d, rr(3, 28), cz + Math.sin(a) * d, rr(7, 13)]);
+    }
+  };
+  disc(-3300, 300, 1000, 520);       // ville
+  disc(4300, -900, 480, 180);        // village
+  /* Fenetres du quartier au sud du parking (12 maisons) : face nord. */
+  const winPts = [];
+  for (let i = 0; i < 12; i++) {
+    const hx = 232 + i * 25;
+    for (const [dx, y] of [[-3.2, 2.3], [3.2, 2.3], [-3.2, 5.2], [3.2, 5.2]]) if (r() < 0.7) winPts.push([hx + dx, y, 1509.9]);
+  }
+  const cityGeo = new THREE.BoxGeometry(1, 0.8, 1);
+  const city = new THREE.InstancedMesh(cityGeo, nightMat, lightPts.length + winPts.length);
+  city.frustumCulled = false;
+  {
+    const m = new THREE.Matrix4(), c = new THREE.Color();
+    lightPts.forEach(([x, y, z, sz], i) => {
+      m.compose(new THREE.Vector3(x, y, z), new THREE.Quaternion(), new THREE.Vector3(sz, sz * 0.8, sz));
+      city.setMatrixAt(i, m);
+      city.setColorAt(i, c.copy(lampTints[Math.floor(r() * lampTints.length)]));
+    });
+    winPts.forEach(([x, y, z], i) => {
+      m.compose(new THREE.Vector3(x, y, z), new THREE.Quaternion(), new THREE.Vector3(1.2, 1.4, 0.1));
+      city.setMatrixAt(lightPts.length + i, m);
+      city.setColorAt(lightPts.length + i, c.copy(lampTints[i % 4]));
+    });
+    city.instanceMatrix.needsUpdate = true;
+    city.instanceColor.needsUpdate = true;
+  }
+  city.visible = false;
+  group.add(city);
+
+  /* ---------------- Orage : flash + foudre lointaine ---------------- */
+  const flashLight = new THREE.AmbientLight(0xcfe0ff, 0);
+  group.add(flashLight);
+  const boltPos = new Float32Array(14 * 3);
+  const boltGeo = new THREE.BufferGeometry();
+  boltGeo.setAttribute('position', new THREE.BufferAttribute(boltPos, 3));
+  const bolt = new THREE.Line(boltGeo, new THREE.LineBasicMaterial({ color: 0xeef4ff, fog: false, transparent: true, opacity: 1 }));
+  bolt.frustumCulled = false;
+  bolt.visible = false;
+  group.add(bolt);
+  let strikeIn = rr(5, 12), strikeT = -1;
+  const strike = (cam) => {
+    const a = rr(0, 6.283), d = rr(900, 2200);
+    let x = cam.x + Math.cos(a) * d, z = cam.z + Math.sin(a) * d;
+    for (let i = 0; i < 14; i++) {
+      boltPos[i * 3] = x; boltPos[i * 3 + 1] = 1100 * (1 - i / 13); boltPos[i * 3 + 2] = z;
+      x += rr(-45, 45); z += rr(-45, 45);
+    }
+    boltGeo.attributes.position.needsUpdate = true;
+    strikeT = 0;
+  };
+
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), pos = new THREE.Vector3(), sc = new THREE.Vector3(), e = new THREE.Euler();
   let time = 0;
 
@@ -177,6 +240,27 @@ export function buildSkyLife() {
       b.g.visible = fair && p.cloud < 0.85 && env.daylight > 0.25;
     }
 
+    /* Nuit : la ville s'allume progressivement (un peu avant la nuit noire). */
+    const nl = clamp((0.55 - env.daylight) * 3, 0, 1);
+    nightMat.opacity = nl;
+    city.visible = nl > 0.02;
+
+    /* Orage : eclair toutes les 6 a 18 s, double impulsion de 0,4 s. */
+    const storm = p.rain > 0.45 && p.cloud > 0.8;
+    if (storm && cam) {
+      strikeIn -= dt;
+      if (strikeIn <= 0 && strikeT < 0) { strike(cam); strikeIn = rr(6, 18); }
+    }
+    if (strikeT >= 0) {
+      strikeT += dt;
+      const t = strikeT;
+      const pulse = t < 0.08 ? 1 : t < 0.16 ? 0.15 : t < 0.26 ? 0.8 : t < 0.4 ? 0.2 * (1 - (t - 0.26) / 0.14) : 0;
+      flashLight.intensity = pulse * 2.4;
+      bolt.visible = t < 0.3;
+      bolt.material.opacity = pulse;
+      if (t > 0.45) { strikeT = -1; flashLight.intensity = 0; bolt.visible = false; }
+    }
+
     /* Sol mouille : le voile monte avec la pluie et redescend lentement. */
     const target = clamp(p.rain * 1.4, 0, 1) * 0.45;
     wetMat.opacity += (target - wetMat.opacity) * clamp(dt * 0.4, 0, 1);
@@ -202,5 +286,5 @@ export function buildSkyLife() {
     }
   }
 
-  return { group, update };
+  return { group, update, strike, flashLight, bolt };
 }

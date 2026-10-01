@@ -10,6 +10,7 @@
 - ✅ Clôture : tour à bandes rouges + balise, 2 canapés et 4 plantes contre le mur sud du hall (obstacles ajoutés, 30/30 tests de navigation OK), étiquettes de carte avec plus de positions d'essai.
 - ✅ Refonte du terminal (`js/terminalDesign.js`, branché dans `terminalBuilding.js`) : sol par zones (enregistrement, sûreté, boutiques, bagages, allée centrale), plafond à nervures + bandeaux colorés + suspensions, 6 vitrines de boutiques, fresques aux pignons, bandeau de façade bleu compagnie. Positions des comptoirs et navigation inchangées (30/30 tests).
 - ✅ Parking et abords (`decor.js`, section parking) : 4 rangées de places marquées, ~100 voitures Kenney de 8 modèles (obstacles de navigation, 30/30 tests), terre-plein arboré avec bordures, 3 passages piétons + ligne jaune sur la route, flèches d'allée, abribus + navette, haies fleuries sur 3 côtés. Anciennes voitures en boîtes retirées de `renderer3d.js`.
+- ✅ Nuit et météo (`skylife.js`) : lumières de la ville (520) et du village (180) qui s'allument au crépuscule, fenêtres du quartier au sud du parking, balise de la tour qui clignote la nuit ; orage avec éclairs (flash de lumière en double impulsion + trait de foudre lointain, toutes les 6 à 18 s). Vérifié de nuit sous la pluie (halos de lampadaires, éclaboussures, fenêtres) ; l'éclair a été testé en valeurs, pas capturé à l'écran.
 - ⏳ Non fait (volontairement, pour ne pas complexifier) : source unique des coordonnées de la carte, zoom/glisser, icônes SVG, terminal meublé, tour, parking, nuit/météo.
 
 ---

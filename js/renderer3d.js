@@ -715,6 +715,11 @@ export class Renderer3D {
           this.terminalGlassMat.emissive.setHex(0xffd98a);
           this.terminalGlassMat.emissiveIntensity = lightsOn ? 0.8 : 0;
         }
+        /* Balise de la tour : clignote en rouge la nuit, sombre le jour. */
+        if (this.towerBeacon) {
+          const on = lightsOn && Math.sin(performance.now() / 1000 * 3.1) > 0.2;
+          this.towerBeacon.material.color.setHex(on ? 0xff3030 : 0x5a1010);
+        }
         this._lightsOn = lightsOn;
       }
 
@@ -974,6 +979,7 @@ boom.add(dockGrp);
     const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff3030 }));
     beacon.position.set(TOWER.x, 76.4, TOWER.z);
     g.add(beacon);
+    this.towerBeacon = beacon;
     const cab = new THREE.Mesh(new THREE.CylinderGeometry(14, 11, 12, 16), glassMat);
     cab.position.set(TOWER.x, 63, TOWER.z);
     g.add(cab);
