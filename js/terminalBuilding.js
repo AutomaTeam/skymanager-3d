@@ -343,10 +343,10 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
   const bagMats = [0x7c3aed, 0x0f766e, 0xb91c1c].map(c => pbr(TEX.luggage(), { color: c, rough: 0.85, repeat: [1, 1] }));
 
   /* ---- Tapis : salons d'embarquement, allee centrale ---- */
-  const carpetMat = { color: 0x4a6a8a, emissive: 0x141f2b };
+  const carpetMat = { color: 0x3f5f80, emissive: 0x0e1822 };
   const carpet2 = { color: 0x8a7458, emissive: 0x201a13 };
   const carpetAt = (x0, x1, z0, z1, spec) => {
-    const m = pbr(TEX.carpet(), { color: spec.color, rough: 0.95, repeat: [(x1 - x0) / 2.5, (z1 - z0) / 2.5], emissive: spec.emissive, emissiveIntensity: 1 });
+    const m = pbr(TEX.carpet(), { color: spec.color, rough: 0.95, repeat: [(x1 - x0) / 1.1, (z1 - z0) / 1.1], emissive: spec.emissive, emissiveIntensity: 1 });
     const c = mesh(g, new THREE.PlaneGeometry(x1 - x0, z1 - z0), m, (x0 + x1) / 2, 0.045, (z0 + z1) / 2);
     c.rotation.x = -Math.PI / 2;
     return c;

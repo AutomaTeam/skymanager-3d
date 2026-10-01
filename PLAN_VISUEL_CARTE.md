@@ -2,6 +2,13 @@
 
 *Écrit le 2026-10-01 après lecture du code, du README, de `PLAN_GRAPHISME_PHYSIQUE.md` et une session de jeu (mode Arcade) dans le navigateur intégré.*
 
+## Avancement (2026-10-01)
+- ✅ Lot 0 : `git init` + commit initial (retour arrière possible).
+- ✅ Lot 1 : personnage coloré par os (peau, haut orange pour le joueur, pantalon, chaussures), matériau mat : plus de silhouette blanche ni de halo (`paintHuman`, `renderer3d.js`).
+- ✅ Lot 2 (partiel) : tarmac plus clair avec joints et taches adoucis, moquette du salon plus fine et plus sombre, herbe moins saturée.
+- ✅ Carte (partiel) : étiquettes sans chevauchement (anti-collision, TERMINAL/TOUR déplacées hors bâtiment) et **itinéraire réel** vers l'objectif via la navigation. Limite connue : « FRET » et « CARBURANT » sont masquées faute de place.
+- ⏳ Reste : source unique des coordonnées de la carte, zoom/glisser, icônes SVG, terminal meublé, tour, parking, nuit/météo.
+
 ---
 
 ## 1. État des lieux

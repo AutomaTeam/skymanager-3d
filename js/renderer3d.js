@@ -139,6 +139,34 @@ const cloudTexture = () => TEX.cloud().map;
 /* ============================================================ */
 const clamp01s = (v, lim) => Math.max(-lim, Math.min(lim, v));
 
+/* Le personnage glTF n'a aucune texture (un seul materiau gris) : on le
+   colore par sommet selon l'os dominant (tete, bras, jambes, pieds...).
+   Materiau mat (metalness 0) : supprime le halo blanc du bloom. */
+const SKIN_TONES = [0xf1c9a5, 0xe0ac86, 0xc68642, 0x8d5524, 0xffdbb4];
+const HAIR_TONES = [0x2b1d14, 0x5a3825, 0x1a1a1a, 0xb5651d, 0xd9b45b];
+function paintHuman(root, shirtHex) {
+  const pick = (a) => new THREE.Color(a[Math.floor(Math.random() * a.length)]);
+  const skin = pick(SKIN_TONES), hair = pick(HAIR_TONES);
+  const shirt = new THREE.Color(shirtHex), pants = new THREE.Color(0x475569), shoes = new THREE.Color(0x1f2937);
+  root.traverse((o) => {
+    if (!o.isMesh || !o.isSkinnedMesh) return;
+    const names = o.skeleton.bones.map(b => b.name);
+    const part = names.map(n =>
+      /Foot|Toe/.test(n) ? shoes : /UpLeg|Leg|Hips/.test(n) ? pants :
+      /HeadTop/.test(n) ? hair : /Head|Neck|Hand|ForeArm/.test(n) ? skin : shirt);
+    const si = o.geometry.attributes.skinIndex, sw = o.geometry.attributes.skinWeight;
+    const col = new Float32Array(si.count * 3);
+    for (let i = 0; i < si.count; i++) {
+      let best = 0, bw = -1;
+      for (let k = 0; k < 4; k++) { const w = sw.getComponent(i, k); if (w > bw) { bw = w; best = si.getComponent(i, k); } }
+      const c = part[best] || shirt;
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
+    }
+    o.geometry.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    o.material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, metalness: 0, envMapIntensity: 0.5 });
+  });
+}
+
 export class Renderer3D {
   constructor(canvas) {
     this.canvas = canvas;
@@ -695,7 +723,7 @@ export class Renderer3D {
         const grassSet = TEX.grass();
         const ground = new THREE.Mesh(
           new THREE.PlaneGeometry(60000, 60000),
-          pbr(grassSet, { rough: 0.95, metal: 0, repeat: [180, 180] })
+          pbr(grassSet, { color: 0xdfe9c9, rough: 0.95, metal: 0, repeat: [180, 180] })
         );
         ground.rotation.x = -Math.PI / 2;
         ground.position.y = -0.05;
@@ -2203,6 +2231,7 @@ boom.add(dockGrp);
           };
           if (m.actions.idle) m.actions.idle.play();
         }
+        paintHuman(m.scene, uniformColor);
       }
     });
     avatar.scale.setScalar(HUMAN_SCALE);
@@ -2551,7 +2580,7 @@ boom.add(dockGrp);
     this.hubMode = true;
 
     if (!this.player) {
-      this.player = this.buildTechnician(0x1d4ed8, 0xf5f5f5);
+      this.player = this.buildTechnician(0xf97316, 0xf5f5f5);
       this.scene.add(this.player.group);
     }
     this.player.group.visible = true;

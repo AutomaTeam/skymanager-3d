@@ -727,15 +727,31 @@ export class Arcade {
       x.textAlign = 'center'; x.textBaseline = 'middle';
       x.fillStyle = '#000';
       x.fillText(e, X(wx), Z(wz));
+      if (big) { const r = size * k * 0.6; taken.push([X(wx) - r, Z(wz) - r, X(wx) + r, Z(wz) + r]); }
     };
-    const pill = (txt, wx, wz) => {
-      if (!big) return;
+    /* Etiquettes : posees en fin de dessin, avec anti-collision (essai de
+       plusieurs decalages, clamp dans le cadre, masquees si rien ne passe). */
+    const pills = [], taken = [];
+    const pill = (txt, wx, wz) => { if (big) pills.push({ txt, wx, wz }); };
+    const flushPills = () => {
       x.font = `800 ${11 * k}px -apple-system,"Segoe UI",sans-serif`;
       x.textAlign = 'center'; x.textBaseline = 'middle';
-      const tw = x.measureText(txt).width + 12 * k, th = 17 * k;
-      x.fillStyle = 'rgba(15,23,42,0.74)';
-      roundRectPath(x, X(wx) - tw / 2, Z(wz) - th / 2, tw, th, th / 2); x.fill();
-      x.fillStyle = '#fff'; x.fillText(txt, X(wx), Z(wz) + k * 0.5);
+      const th = 17 * k, gap = 3 * k;
+      for (const p of pills) {
+        const tw = x.measureText(p.txt).width + 12 * k;
+        const cx0 = X(p.wx), cz0 = Z(p.wz);
+        const tries = [[0, 0], [0, -th - gap], [0, th + gap], [tw / 2 + gap, 0], [-tw / 2 - gap, 0], [0, -2 * (th + gap)], [0, 2 * (th + gap)]];
+        for (const [dx, dz] of tries) {
+          const cx = clamp(cx0 + dx, tw / 2 + 4 * k, w - tw / 2 - 4 * k), cz = clamp(cz0 + dz, th / 2 + 4 * k, h - 34 * k - th / 2);
+          const r = [cx - tw / 2, cz - th / 2, cx + tw / 2, cz + th / 2];
+          if (taken.some(t => r[0] < t[2] && r[2] > t[0] && r[1] < t[3] && r[3] > t[1])) continue;
+          taken.push(r);
+          x.fillStyle = 'rgba(15,23,42,0.74)';
+          roundRectPath(x, r[0], r[1], tw, th, th / 2); x.fill();
+          x.fillStyle = '#fff'; x.fillText(p.txt, cx, cz + k * 0.5);
+          break;
+        }
+      }
     };
 
     /* Herbe + taches + arbres (fixes : meme graine a chaque fois). */
@@ -837,8 +853,8 @@ export class Arcade {
     emoji('📦', (c.x0 + c.x1) / 2, (c.z0 + c.z1) / 2, 18);
     emoji('🚒', (fr.x0 + fr.x1) / 2, (fr.z0 + fr.z1) / 2, 17);
     emoji('⛽', 612, 800, 15);
-    pill('TERMINAL', (t.x0 + t.x1) / 2 - 30, (t.z0 + t.z1) / 2);
-    pill('TOUR', L.tower.x, L.tower.z - 24);
+    pill('TERMINAL', (t.x0 + t.x1) / 2, t.z1 + 14);
+    pill('TOUR', L.tower.x, L.tower.z - 26);
     pill('HANGARS', 541, 850);
     pill('PARKING', (P.x0 + P.x1) / 2, P.z1 + 12);
     pill('AIRE DES AVIONS', 330, 892);
@@ -847,6 +863,8 @@ export class Arcade {
     pill('CARBURANT', 612, 780);
     pill('POMPIERS', (fr.x0 + fr.x1) / 2, fr.z0 - 12);
     pill('HELIPORT', hp.x + 30, hp.z - 24);
+
+    flushPills();
 
     /* Cadre + rose des vents. */
     x.strokeStyle = 'rgba(255,255,255,0.18)'; x.lineWidth = 3 * k; x.strokeRect(0, 0, w, h);
@@ -897,7 +915,16 @@ export class Arcade {
       x.save();
       x.strokeStyle = '#fde047'; x.lineWidth = 3 * k; x.lineCap = 'round';
       x.setLineDash([2 * k, 8 * k]); x.lineDashOffset = -T * 20 * k;
-      x.beginPath(); x.moveTo(px, pz); x.lineTo(tx, tz); x.stroke();
+      /* Vrai itineraire (graphe de navigation), recalcule 2 fois par seconde. */
+      const now = performance.now();
+      if (!this._routeAt || now - this._routeAt > 500 || this._routeKey !== target.x + ',' + target.z) {
+        this._routeAt = now; this._routeKey = target.x + ',' + target.z;
+        try { this._route = g.nav && g.state === 'HUB' ? g.nav.waypoints(pp.pos, target) : null; } catch (e) { this._route = null; }
+      }
+      x.beginPath(); x.moveTo(px, pz);
+      if (this._route && this._route.length) for (const q of this._route) { const [qx, qz] = P(q.x, q.z); x.lineTo(qx, qz); }
+      else x.lineTo(tx, tz);
+      x.stroke();
       x.restore();
     }
 

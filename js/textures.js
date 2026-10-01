@@ -299,7 +299,7 @@ export const apron = () => once('apron', () => {
 
   const { canvas, ctx } = paint(S, S, (x, y) => {
     const g = grain[y * S + x], s = stain[y * S + x];
-    const base = 104 + g * 24 + s * 16;      // beton clair (etait 52 : trop sombre)
+    const base = 118 + g * 18 + s * 12;      // beton clair et doux
     return [base * 1.0, base * 1.0, base * 1.02];
   });
 
@@ -315,8 +315,8 @@ export const apron = () => once('apron', () => {
   const cell = S / 4;
   for (let i = 0; i <= 4; i++) {
     const p = i * cell;
-    ctx.strokeStyle = 'rgba(14,16,20,0.75)';
-    ctx.lineWidth = 2.4;
+    ctx.strokeStyle = 'rgba(40,44,52,0.38)';
+    ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, S); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(S, p); ctx.stroke();
     ctx.strokeStyle = 'rgba(190,196,204,0.16)';
@@ -326,10 +326,10 @@ export const apron = () => once('apron', () => {
   }
 
   /* Taches d'hydrocarbures : ellipses sombres et floues. */
-  for (let i = 0; i < 26; i++) {
+  for (let i = 0; i < 14; i++) {
     const x = rnd() * S, y = rnd() * S, r = 6 + rnd() * 26;
     const grd = ctx.createRadialGradient(x, y, 0, x, y, r);
-    grd.addColorStop(0, `rgba(8,9,11,${0.18 + rnd() * 0.22})`);
+    grd.addColorStop(0, `rgba(8,9,11,${0.08 + rnd() * 0.12})`);
     grd.addColorStop(1, 'rgba(8,9,11,0)');
     ctx.fillStyle = grd;
     ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.7, rnd() * 3, 0, 6.283); ctx.fill();
