@@ -25,6 +25,7 @@
 import * as THREE from 'three';
 import { LAYOUT } from './layout.js?v=1789710000';
 import { SHIRTS } from './terminalFlow.js?v=1789710000';
+import { buildTerminalDesign } from './terminalDesign.js?v=1789710000';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -130,8 +131,9 @@ export function buildTerminalShell({ TEX, pbr }) {
     side: THREE.DoubleSide, depthWrite: false, envMapIntensity: 1.3,
     emissive: 0xffd98a, emissiveIntensity: 0
   });
-  const floorMat = pbr(TEX.terrazzo(), { color: 0xffffff, rough: 0.35, metal: 0.05, repeat: [400, 105], emissive: 0x33373c, emissiveIntensity: 1 });
+  const floorMat = pbr(TEX.terrazzo(), { color: 0xf4efe6, rough: 0.35, metal: 0.05, repeat: [400, 105], emissive: 0x33373c, emissiveIntensity: 1 });
   const ceilMat = pbr(TEX.paintedMetal(), { color: 0xe4e9ee, rough: 0.7, repeat: [24, 8], side: THREE.DoubleSide, emissive: 0x30343a, emissiveIntensity: 1 });
+  const brandMat = new THREE.MeshStandardMaterial({ color: 0x0b3b66, roughness: 0.5, metalness: 0.2 });
   const casters = [];
 
   /* ---- Sol et plafond ---- */
@@ -196,7 +198,7 @@ export function buildTerminalShell({ TEX, pbr }) {
     im.instanceMatrix.needsUpdate = true;
     g.add(im);
     /* Poutre de rive. */
-    box(g, W, 0.9, 0.9, concreteMat, CX, H - 0.45, zc);
+    box(g, W, 0.9, 0.9, brandMat, CX, H - 0.45, zc);
   };
   facade(T.z0 + 0.3, T.airDoors, +1);
   facade(T.z1 - 0.3, T.landDoors, -1);
@@ -361,6 +363,9 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
     const l = mesh(g, new THREE.PlaneGeometry(0.3, 34), yel, 360, 0.05, T.z1 - 22);
     l.rotation.x = -Math.PI / 2;
   }
+
+  /* Refonte visuelle (phase 32) : zones de sol, plafond, vitrines, fresques. */
+  g.add(buildTerminalDesign({ TEX, pbr }));
 
   /* ---- Lumiere d'interieur : eteinte de loin, voir setLightLevel ---- */
   const ambient = new THREE.AmbientLight(0xffffff, 0);
