@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "skymanager",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "devserver.py",
+        "8123"
+      ],
+      "port": 8123
+    },
+    {
+      "name": "skymanager-26",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "devserver.py",
+        "8131"
+      ],
+      "port": 8131
+    }
+  ]
+}

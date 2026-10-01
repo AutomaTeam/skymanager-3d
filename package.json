@@ -1,0 +1,10 @@
+{
+  "name": "skymanager-3d",
+  "private": true,
+  "type": "module",
+  "description": "SkyManager 3D. Le jeu ne demande aucun build ; ce fichier ne sert qu'aux tests hors navigateur (npm install three@0.169.0).",
+  "scripts": {
+    "test:flight": "node tools/flightAssist.sim.mjs",
+    "test:terminal": "node tools/terminal.test.mjs"
+  }
+}

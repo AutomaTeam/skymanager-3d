@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>SkyManager 3D — Ultimate Aviation Experience</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050912">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body class="bg-[#050912] text-slate-100 overflow-hidden select-none">
+
+<!-- ============ CANVAS 3D ============ -->
+<canvas id="scene"></canvas>
+
+<!-- ============ ECRAN DE CHARGEMENT / MENU ============ -->
+<div id="boot" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050912]">
+  <div class="text-center px-8">
+    <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-sky-400">SKYMANAGER <span class="text-white">3D</span></h1>
+    <p class="mt-2 text-xs sm:text-sm uppercase tracking-[0.3em] text-slate-400">Ultimate Aviation Experience</p>
+    <p id="bootMsg" class="mt-8 text-sm text-slate-400">Chargement des systemes...</p>
+    <div id="bootBar" class="boot-bar"><div id="bootFill" class="boot-fill"></div></div>
+    <div id="modePick" class="hidden mt-6 flex gap-3 justify-center">
+      <button id="modeArcade" class="mode-btn on"><span class="mode-ico">🎮</span><span class="mode-t">Arcade</span><span class="mode-s">facile et fun</span></button>
+      <button id="modePro" class="mode-btn"><span class="mode-ico">🛠️</span><span class="mode-t">Pilote</span><span class="mode-s">simulation complete</span></button>
+    </div>
+    <button id="btnStart" class="hidden mt-6 px-10 py-4 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-lg shadow-lg shadow-sky-500/30">
+      DEMARRER LE VOL
+    </button>
+    <p id="bootTip" class="mt-6 text-[11px] text-slate-500 max-w-xs mx-auto">
+      <span id="bootTipOrientation">Orientation paysage recommandee. </span>Ajoutez la page a l'ecran d'accueil pour le plein ecran.
+    </p>
+  </div>
+</div>
+
+<!-- ============ HUD PILOTE ============ -->
+<div id="hudPilot" class="ui-layer hidden">
+
+  <!-- Bandeau superieur : instruments groupes par fonction -->
+    <div class="hud-top">
+      <div class="flex items-start">
+        <!-- Pilotage : vitesse, altitude, vario -->
+        <div class="gauge-cluster">
+          <div class="gauge"><span class="gauge-lbl">IAS</span><span id="gIas" class="gauge-val">0</span><span class="gauge-unit">kt</span></div>
+          <div class="gauge"><span class="gauge-lbl">ALT</span><span id="gAlt" class="gauge-val">0</span><span class="gauge-unit">ft</span></div>
+          <div class="gauge pro-only"><span class="gauge-lbl">V/S</span><span id="gVs" class="gauge-val">0</span><span class="gauge-unit">fpm</span></div>
+        </div>
+        <!-- Navigation -->
+        <div class="gauge-cluster pro-only">
+          <div class="gauge"><span class="gauge-lbl">HDG</span><span id="gHdg" class="gauge-val">0</span><span class="gauge-unit">deg</span></div>
+        </div>
+        <!-- Moteur et carburant -->
+        <div class="gauge-cluster pro-only">
+          <div class="gauge"><span class="gauge-lbl">N1</span><span id="gN1" class="gauge-val">0</span><span class="gauge-unit">%</span></div>
+          <div class="gauge"><span class="gauge-lbl">FUEL</span><span id="gFuel" class="gauge-val">0</span><span class="gauge-unit">%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne d'information : alerte, phase, contrat, conseil -->
+    <div class="hud-stack">
+      <div id="alertBox" class="hidden alert-box sev-critical alert-flash">STALL</div>
+      <div id="phaseTag" class="px-3 py-1 rounded-full bg-slate-900/70 border border-slate-700 text-[11px] uppercase tracking-widest">Au sol</div>
+      <div id="missionChip" class="mission-chip pro-only">
+        <span class="mc-label">--</span>
+        <span class="mc-bar"><span id="missionFill" class="mc-fill"></span></span>
+        <span id="missionPct" class="mc-pct">0%</span>
+      </div>
+      <div id="hintBox" class="hud-hint"></div>
+    </div>
+
+  <!-- Mini-PFD (vues exterieures, mode Pilote) : meme affichage que l'ecran du cockpit -->
+  <canvas id="pfdHud" class="pfd-hud pro-only" width="256" height="256"></canvas>
+
+  <!-- Reticule d'assiette -->
+  <div id="pitchReticle" class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div class="w-28 h-[2px] bg-amber-300/90 relative">
+      <div class="absolute left-1/2 -translate-x-1/2 -top-1 w-2 h-2 rounded-full bg-amber-300"></div>
+    </div>
+  </div>
+
+  <!-- Joystick gauche -->
+  <div id="stickPad" class="touch-zone absolute left-0 bottom-0 w-[42%] h-[62%]">
+    <div id="stickBase" class="stick-base"><div id="stickKnob" class="stick-knob"></div></div>
+  </div>
+
+  <!-- Rappel clavier (PC uniquement) -->
+  <div class="pc-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
+    <span class="pro-only">&#8592;&#8593;&#8594;&#8595; tangage/roulis &middot; Q/D palonnier &middot; W/S gaz &middot; Espace frein</span>
+    <span class="arcade-only">&#8592;&#8594; tourner &middot; &#8593;&#8595; monter / descendre</span>
+  </div>
+
+  <!-- Mode Arcade : gros boutons d'action -->
+  <button id="launchBtn" class="arcade-only hidden big-btn launch">🛫 DECOLLER !</button>
+  <button id="helpLandBtn" class="arcade-only hidden big-btn help">🛬 ATTERRIR (aide)</button>
+  <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
+
+  <!-- Palonnier + frein -->
+  <div class="pro-only absolute left-1/2 -translate-x-1/2 bottom-[max(0.6rem,env(safe-area-inset-bottom))] flex gap-2">
+    <button class="rud-btn" data-rudder="-1">&#9664; RUD</button>
+    <button id="btnBrake" class="rud-btn brake-btn">BRAKE</button>
+    <button class="rud-btn" data-rudder="1">RUD &#9654;</button>
+  </div>
+
+  <!-- Manette des gaz droite -->
+  <div id="throttlePad" class="pro-only touch-zone absolute right-3 bottom-[max(1rem,env(safe-area-inset-bottom))] w-16 sm:w-20 h-[62%]">
+    <div class="throttle-track">
+      <div id="throttleFill" class="throttle-fill"></div>
+      <div id="throttleKnob" class="throttle-knob"></div>
+      <span class="throttle-lbl">THR</span>
+    </div>
+  </div>
+
+  <!-- Boutons rapides -->
+  <div class="absolute right-[6.5rem] bottom-[max(1rem,env(safe-area-inset-bottom))] grid grid-cols-2 gap-2">
+    <button id="btnFlapsDn" class="act-btn pro-only">FLAPS +</button>
+    <button id="btnFlapsUp" class="act-btn pro-only">FLAPS -</button>
+    <button id="btnGear" class="act-btn pro-only">GEAR</button>
+    <button id="btnSpoiler" class="act-btn pro-only">SPOIL</button>
+    <button id="btnRev" class="act-btn pro-only">REV</button>
+    <button id="btnView" class="act-btn">VUE</button>
+  </div>
+
+  <!-- Etat configuration -->
+  <div class="hud-config pro-only pointer-events-none absolute right-[6.5rem] top-[4.2rem] flex flex-col items-end gap-1 text-[11px]">
+    <div id="sFlaps" class="chip">FLAPS 0</div>
+    <div id="sGear" class="chip">GEAR DOWN</div>
+    <div id="sSpoil" class="chip">SPOILERS OFF</div>
+    <div id="sRev" class="chip">REV OFF</div>
+  </div>
+
+  <!-- Heure et meteo (phase 7) -->
+    <div class="hud-env">
+    <div id="envChipPilot" class="chip">--:-- · --</div>
+  </div>
+
+    <button id="btnMenu" class="hud-menu-btn act-btn menu-btn">&#9776;</button>
+</div>
+
+<!-- ============ HUD HUB (tarmac, monde libre) ============ -->
+<div id="hudHub" class="ui-layer hidden">
+
+  <div class="hud-top">
+    <div class="px-4 py-1.5 rounded-full bg-slate-900/70 border border-slate-700 text-xs uppercase tracking-widest">
+      Aeroport — <span id="hubAreaName">Tarmac</span>
+    </div>
+  </div>
+
+    <div class="hud-band hud-band-1">
+      <!-- Terminal (phase 22) : visible seulement dans le batiment -->
+      <div id="termStats" class="hidden hud-band-inline basis-full">
+        <div class="chip"><span class="text-slate-400">AMBIANCE</span> <span id="termMood" class="text-emerald-300 font-semibold">72</span><span class="text-slate-400">%</span></div>
+        <div class="chip pro-only"><span class="text-slate-400">POSTES</span> <span id="termOpen" class="text-sky-300 font-semibold">0</span><span class="text-slate-400">/</span><span id="termTotal" class="text-slate-400">0</span></div>
+        <div class="chip"><span class="text-slate-400">FILE</span> <span id="termQueue" class="text-slate-100 font-semibold">0</span></div>
+        <div class="chip"><span class="text-slate-400">EMBARQUES</span> <span id="termBoarded" class="text-emerald-300 font-semibold">0</span></div>
+        <div class="chip pro-only"><span class="text-slate-400">RECETTE</span> <span id="termRevenue" class="text-amber-300 font-semibold">0</span> <span class="text-slate-400">EUR</span></div>
+        <div class="chip pro-only"><span class="text-slate-400">PERDUS</span> <span id="termMissed" class="text-rose-300 font-semibold">0</span></div>
+        <div class="chip"><span class="text-slate-400">STOCK</span> <span id="termStock" class="font-semibold">--</span></div>
+        <div id="termCarryChip" class="chip hidden"><span>📦</span> <span id="termCarry" class="text-amber-300 font-semibold">0</span></div>
+      </div>
+      <div id="hubHint" class="hud-hint">
+      Approchez-vous de l'avion ou de la tour pour agir.
+    </div>
+  </div>
+
+  <!-- Heure et meteo (phase 7) -->
+    <div class="hud-env">
+    <div id="envChipHub" class="chip">--:-- · --</div>
+  </div>
+
+  <!-- Joystick de deplacement -->
+  <div id="hubStickPad" class="touch-zone absolute left-0 bottom-0 w-[42%] h-[62%]">
+    <div id="hubStickBase" class="stick-base"><div id="hubStickKnob" class="stick-knob"></div></div>
+  </div>
+
+  <!-- Rappel clavier (PC uniquement) -->
+  <div class="pc-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
+    &#8592;&#8593;&#8594;&#8595; ou ZQSD pour se deplacer &middot; Shift pour courir
+  </div>
+
+  <!-- Rappel tactile (mobile/tablette uniquement) : le joystick reste
+       discret au repos (voir .stick-base), ce texte est ce qui permet
+       a un joueur tactile de decouvrir comment se deplacer. -->
+  <div class="touch-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
+    Glissez en bas a gauche pour vous deplacer
+  </div>
+
+  <!-- Bouton d'interaction contextuel : son libelle change selon le point approche
+       (INSPECTER, PILOTER, ENTRER EN CABINE, GESTION AEROPORT...) -->
+  <button id="btnInspect" class="hidden absolute right-6 bottom-[30%] px-6 py-4 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-sm shadow-lg shadow-sky-500/30">
+    <span id="btnInspectLabel">INSPECTER</span>
+  </button>
+
+  <!-- Bouton de comptoir (dans le terminal) : au-dessus du bouton d'interaction -->
+  <button id="btnCounter" class="hidden absolute right-6 bottom-[46%] px-6 py-4 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-sm shadow-lg shadow-sky-500/30">
+    <span id="btnCounterLabel">OUVRIR LE COMPTOIR</span>
+  </button>
+
+  <!-- Carnet de route (visible pres de l'avion, l'usure est deja affichee via les points colores) -->
+  <button id="btnLogbook" class="pro-only absolute right-3 top-[max(0.6rem,env(safe-area-inset-top))] act-btn !w-auto px-3">CARNET</button>
+    <button id="btnMenu2" class="hud-menu-btn act-btn menu-btn">&#9776;</button>
+</div>
+
+<!-- ============ HUD CABINE ============ -->
+<div id="hudCabin" class="ui-layer hidden">
+
+  <div class="hud-top">
+      <div class="gauge-cluster">
+      <div class="gauge wide"><span class="gauge-lbl">SATISFACTION</span><span id="cabSat" class="gauge-val">78</span><span class="gauge-unit">%</span></div>
+      <div class="gauge wide"><span class="gauge-lbl">DUTY-FREE</span><span id="cabRevenue" class="gauge-val">0</span><span class="gauge-unit">EUR</span></div>
+    </div>
+  </div>
+
+  <!-- Colonne d'information cabine : etat du service puis consigne -->
+  <div class="hud-stack">
+    <div class="hud-band-inline">
+      <div id="cabGoal" class="arcade-only chip cab-goal">🎯 Service : 0/5</div>
+      <div class="chip"><span class="text-slate-400">CHARIOT</span> <span id="cabStock" class="text-sky-300 font-semibold">12</span><span class="text-slate-400">/12</span></div>
+      <div class="chip pro-only"><span class="text-slate-400">RANGEE CRITIQUE</span> <span id="cabWorst" class="text-amber-300 font-semibold">1</span></div>
+      <div class="chip pro-only" id="cabBeltChip"><span class="text-slate-400">CEINTURES</span> <span id="cabBelt" class="text-slate-300 font-semibold">OFF</span></div>
+    </div>
+    <div id="cabHint" class="hud-hint">
+      Deplacez-vous dans l'allee pour servir les passagers.
+    </div>
+  </div>
+
+  <!-- Heure et meteo (phase 7) -->
+    <div class="hud-env">
+    <div id="envChipCabin" class="chip">--:-- · --</div>
+  </div>
+
+  <!-- Consigne ceintures -->
+  <button id="btnSeatbelt" class="pro-only absolute right-3 top-[max(3.35rem,calc(env(safe-area-inset-top)+3.35rem))] px-3 py-2 rounded-xl bg-slate-700/80 border border-slate-500 text-slate-100 text-[11px] font-semibold active:bg-slate-600">
+    CEINTURES
+  </button>
+
+  <!-- Alerte turbulences -->
+    <div id="turbAlert" class="hidden absolute top-[11.5rem] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
+      <div id="turbText" class="alert-box sev-critical alert-flash">
+        TURBULENCES — ANNONCEZ LA CONSIGNE DE SECURITE
+    </div>
+    <div class="w-48 h-2 rounded-full bg-slate-800 border border-slate-600 overflow-hidden">
+      <div id="turbBar" class="h-full bg-red-500" style="width:100%"></div>
+    </div>
+    <button id="btnAnnounce" class="px-6 py-3 rounded-2xl bg-red-500 active:bg-red-600 text-white font-bold text-sm">
+      ANNONCER
+    </button>
+  </div>
+
+  <!-- Deplacement dans l'allee : meme joystick que le tarmac et le terminal.
+       Haut = avancer, bas (un instant) = demi-tour, gauche/droite = se decaler. -->
+  <div id="cabStickPad" class="touch-zone absolute left-0 bottom-0 w-[42%] h-[62%]">
+    <div id="cabStickBase" class="stick-base"><div id="cabStickKnob" class="stick-knob"></div></div>
+  </div>
+  <div class="pc-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
+    &#8593; avancer &middot; &#8595; demi-tour &middot; &#8592;&#8594; se decaler
+  </div>
+  <div class="touch-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
+    Glissez en bas a gauche : haut = avancer, bas = demi-tour
+  </div>
+
+  <!-- Bouton d'interaction contextuel -->
+  <button id="btnServe" class="hidden absolute right-6 bottom-[32%] px-6 py-4 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-sm shadow-lg shadow-sky-500/30">
+    <span id="btnServeLabel">SERVIR</span>
+  </button>
+
+  <button id="btnMenu3" class="hud-menu-btn act-btn menu-btn">&#9776;</button>
+</div>
+
+<!-- ============ MENU PAUSE ============ -->
+<div id="pauseMenu" class="hidden panel-overlay">
+  <div class="panel-card">
+    <div class="panel-head">
+      <h2 class="panel-title"><span class="arcade-only">⏸️ </span>Pause</h2>
+      <span id="pauseState" class="chip">Au sol</span>
+    </div>
+    <p class="panel-sub pro-only">Deplacez-vous librement dans l'aeroport : approchez-vous de l'avion pour piloter, embarquer en cabine ou inspecter la maintenance, et de la tour pour gerer la compagnie.</p>
+    <p class="panel-sub arcade-only">Fais une pause, joue avec le ciel ou regarde tes trophees !</p>
+
+    <div class="space-y-2">
+      <button id="pauseResume" class="panel-btn primary">▶️ Reprendre</button>
+      <button id="pauseExit" class="hidden panel-btn">Sortir vers le tarmac</button>
+      <button id="pauseResetRunway" class="pro-only panel-btn">Aligner sur la piste (reinitialiser le vol)</button>
+    </div>
+
+    <!-- Arcade : grosses tuiles -->
+    <div class="arcade-only">
+      <div class="kp-grid">
+        <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophees</b><small id="pauseAlbumN">0 / 15</small></button>
+        <button id="pauseMap" class="kp-tile"><span class="kp-ico">🗺️</span><b>Grande carte</b><small id="pauseMapN">pieces cachees</small></button>
+        <button id="pauseMode" class="kp-tile"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
+        <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
+        <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
+        <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+      </div>
+
+      <div class="panel-group">
+        <p class="panel-group-lbl">Le ciel</p>
+        <div class="kp-sky">
+          <button data-sky="8">🌅<small>Matin</small></button>
+          <button data-sky="13">☀️<small>Midi</small></button>
+          <button data-sky="18.5">🌇<small>Soir</small></button>
+          <button data-sky="23">🌙<small>Nuit</small></button>
+          <button id="pauseWeatherKid">🌦️<small>Meteo</small></button>
+        </div>
+        <p id="pauseEnvInfoKid" class="panel-note">--:-- · --</p>
+      </div>
+
+      <div class="kp-fact"><b>💡 Le savais-tu ?</b><span id="pauseFact"></span></div>
+    </div>
+
+    <!-- Pilote : reglages habituels -->
+    <div class="panel-group pro-only">
+      <p class="panel-group-lbl">Jeu</p>
+      <div class="panel-row">
+        <button id="pauseModePro" class="panel-btn sm">Mode</button>
+        <button id="pauseSoundPro" class="panel-btn sm">Son</button>
+      </div>
+    </div>
+
+    <div class="panel-group pro-only">
+      <p class="panel-group-lbl">Heure et meteo</p>
+      <div class="panel-row">
+        <button id="pauseHourBack" class="panel-btn sm">-1 h</button>
+        <button id="pauseHourFwd" class="panel-btn sm">+1 h</button>
+        <button id="pauseWeather" class="panel-btn sm">Meteo</button>
+      </div>
+      <p id="pauseEnvInfo" class="panel-note">--:-- · --</p>
+    </div>
+
+    <details class="kp-more">
+      <summary>⚙️ Plus d'options</summary>
+      <div class="panel-group">
+        <p class="panel-group-lbl">Progression</p>
+        <button id="pauseResetProgress" class="panel-btn danger sm">Reinitialiser la progression</button>
+        <p class="panel-note">Efface tresorerie, reputation, flotte, usure, contrats, statistiques et trophees.</p>
+      </div>
+      <div class="panel-group">
+        <p class="panel-group-lbl">Credits</p>
+        <p class="panel-note">Modeles 3D via poly.pizza : Quaternius (personnage, camionnette), Kay Lousberg (fret) — CC0.
+          « Simple Suitcase » par Don Carson et « Generator » par KolosStudios — CC-BY.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ============ PASSAGER INDISCIPLINE ============ -->
+<!-- ============ VERIFICATION AU COMPTOIR (phase 25) ============ -->
+<div id="checkPanel" class="hidden panel-overlay bottom">
+  <div class="panel-card wide kid check-card">
+    <div class="panel-head">
+      <h2 id="chkTitle" class="panel-title">Enregistrement</h2>
+      <span id="chkCount" class="chip">1 en file</span>
+    </div>
+    <p id="chkRule" class="panel-sub">--</p>
+    <div id="chkBody" class="chk-body"></div>
+    <div id="chkVerdict" class="chk-verdict hidden"></div>
+    <div id="chkButtons" class="chk-buttons"></div>
+    <button id="chkClose" class="panel-btn mt-2">Fermer</button>
+  </div>
+</div>
+
+<div id="unrulyPanel" class="hidden panel-overlay">
+  <div class="panel-card center">
+    <h2 class="panel-title text-amber-400">Incident cabine</h2>
+    <p id="unrulyText" class="panel-sub mt-2">Un passager refuse d'eteindre son appareil electronique.</p>
+    <div class="space-y-2">
+      <button id="btnCalm" class="panel-btn primary">Apaiser la situation</button>
+      <button id="btnCaptain" class="panel-btn">Appeler le commandant de bord</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PANNEAU DE STATION (composants a reparer) ============ -->
+<div id="stationPanel" class="hidden panel-overlay bottom">
+  <div class="panel-card wide">
+    <div class="panel-head">
+      <h2 id="stationTitle" class="panel-title">Poste de maintenance</h2>
+      <span id="stationWo" class="chip">0 ordre</span>
+    </div>
+    <p id="stationSub" class="panel-sub">Diagnostic : usure, fluides et couples de serrage.</p>
+    <div id="stationList" class="space-y-2 max-h-[42vh] overflow-y-auto"></div>
+
+    <div id="partsGroup" class="panel-group pro-only">
+      <div class="flex items-center justify-between mb-2">
+        <p class="panel-group-lbl !mb-0">Magasin de pieces</p>
+        <span id="partsCash" class="text-[11px] text-emerald-300">-- EUR</span>
+      </div>
+      <div id="partsList" class="grid grid-cols-2 gap-2"></div>
+    </div>
+
+    <button id="stationClose" class="panel-btn mt-4">Fermer</button>
+  </div>
+</div>
+
+<!-- ============ MINI-JEU : CLE DYNAMOMETRIQUE ============ -->
+<div id="minigame" class="hidden panel-overlay">
+  <div class="panel-card center">
+    <h2 id="mgTitle" class="panel-title text-sky-400">Serrage au couple</h2>
+    <p id="mgSub" class="panel-sub mt-1">Tapez quand le repere passe dans la zone verte</p>
+    <p id="mgStep" class="text-[11px] font-semibold text-amber-300 mb-4">Etape 1/3 — Serrage</p>
+
+    <div id="mgTrack" class="relative w-full h-5 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
+      <div id="mgZone" class="absolute top-0 bottom-0 bg-emerald-500/40 border-x-2 border-emerald-400"></div>
+      <div id="mgNeedle" class="absolute top-0 bottom-0 w-1 bg-white rounded-full shadow-[0_0_8px_2px_rgba(255,255,255,0.7)]"></div>
+    </div>
+
+    <div class="mt-4 flex justify-center gap-2">
+      <div id="mgDot0" class="mg-dot"></div>
+      <div id="mgDot1" class="mg-dot"></div>
+      <div id="mgDot2" class="mg-dot"></div>
+    </div>
+
+    <p id="mgResult" class="mt-4 text-sm text-slate-300 h-5"></p>
+
+    <button id="mgTapBtn" class="panel-btn primary mt-2 !py-4 !text-lg">
+      TAPER
+    </button>
+  </div>
+</div>
+
+<!-- ============ TABLEAU DE BORD AEROPORT (TYCOON) ============ -->
+<div id="tycoonPanel" class="hidden panel-overlay">
+  <div class="panel-card wide">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">Gestion de l'aeroport</h2>
+        <p class="panel-sub !mb-0">Les decisions prises ici modifient la recette du prochain vol.</p>
+      </div>
+      <button id="tycoonClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+
+    <!-- Indicateurs -->
+    <div class="grid grid-cols-3 gap-2 mt-3">
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Tresorerie</span><span id="tyCash" class="tycoon-stat-val">0 EUR</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Reputation</span><span id="tyRep" class="tycoon-stat-val">0%</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Vols effectues</span><span id="tyFlights" class="tycoon-stat-val">0</span></div>
+    </div>
+
+    <!-- Onglets : la carte est longue, on la decoupe pour rester lisible sur telephone -->
+    <div class="tycoon-tabs mt-4">
+      <button class="tycoon-tab on" data-tytab="company">Compagnie</button>
+      <button class="tycoon-tab" data-tytab="ops">Exploitation</button>
+      <button class="tycoon-tab" data-tytab="fleet">Flotte</button>
+    </div>
+
+    <div class="tycoon-pane" data-typane="company">
+      <!-- Niveau de compagnie (phase 12) -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Compagnie</h3>
+        <div class="flex items-center gap-3">
+          <div class="text-3xl font-black text-sky-400" id="tyLevel">1</div>
+          <div class="flex-1">
+            <div id="tyLevelBar" class="h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div id="tyLevelFill" class="h-full bg-sky-500" style="width:0%"></div>
+            </div>
+            <div id="tyLevelText" class="text-xs text-slate-400 mt-1">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contrat en cours (phase 12) -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Contrat en cours</h3>
+        <div id="tyMission" class="text-sm text-slate-300"></div>
+        <div id="tyMissionStats" class="text-xs text-slate-400 mt-2"></div>
+        <button id="tyMissionReroll" class="station-repair-btn w-full py-2 mt-2">Proposer un autre contrat</button>
+      </div>
+
+      <!-- Prix du billet -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Prix du billet</h3>
+        <div class="flex items-center gap-3">
+          <button id="tyPriceDown" class="act-btn !w-12">−</button>
+          <div class="flex-1 text-center">
+            <div id="tyPrice" class="text-2xl font-black">185 EUR</div>
+            <div id="tyPax" class="text-xs text-slate-400">≈ 0 passagers / vol</div>
+            <div id="tyPaxBar" class="h-1.5 rounded-full bg-slate-800 overflow-hidden mt-1.5">
+              <div id="tyPaxFill" class="h-full bg-sky-500" style="width:0%"></div>
+            </div>
+          </div>
+          <button id="tyPriceUp" class="act-btn !w-12">+</button>
+        </div>
+      </div>
+
+      <!-- Apercu du prochain vol : rend visible l'effet des decisions -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Apercu du prochain vol</h3>
+        <div id="tyEstimate" class="estimate-list"></div>
+      </div>
+    </div>
+
+    <div class="tycoon-pane hidden" data-typane="ops">
+      <!-- Carburant (phase 12) -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Carburant</h3>
+        <div id="tyFuelInfo" class="text-sm text-slate-300 mb-2"></div>
+        <div class="flex gap-2">
+          <button id="tyFuelHalf" class="station-repair-btn flex-1 py-2">Appoint 3 000 kg</button>
+          <button id="tyFuelFull" class="station-repair-btn flex-1 py-2">Plein complet</button>
+        </div>
+      </div>
+
+      <!-- Infrastructures -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Infrastructures</h3>
+        <div id="tyUpgrades" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="tycoon-pane hidden" data-typane="fleet">
+      <!-- Flotte -->
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Flotte</h3>
+        <div id="tyFleetInfo" class="text-sm text-slate-300 mb-2"></div>
+        <button id="tyBuyAircraft" class="station-repair-btn w-full py-2.5">Acheter un appareil</button>
+        <div id="tyFleetHint" class="upgrade-missing mt-1.5"></div>
+      </div>
+
+      <!-- Dernier vol -->
+      <div id="tyLastFlight" class="tycoon-section hidden">
+        <h3 class="tycoon-h3">Dernier vol</h3>
+        <div id="tyLastFlightBody" class="text-sm space-y-1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ COUCHE ARCADE : objectif, pieces, effets ============ -->
+<div id="arcadeHud" class="arcade-only ui-layer arcade-layer">
+  <div id="objBar" class="hidden obj-bar">
+    <div class="obj-ico" id="objIcon">🎯</div>
+    <div class="obj-mid">
+      <div class="obj-lbl">OBJECTIF</div>
+      <div id="objText" class="obj-text">--</div>
+    </div>
+    <div class="obj-arrow-wrap">
+      <svg id="objArrow" class="obj-arrow hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5 L21.5 21 L12 16.4 L2.5 21 Z"/></svg>
+      <div id="objDist" class="obj-dist"></div>
+    </div>
+  </div>
+  <div id="coinChip" class="hidden coin-chip">
+    <span class="coin-row"><b>🪙</b> <span id="coinN">0</span></span>
+    <span class="coin-row"><b>⭐</b> <span id="starN">0</span></span>
+    <span class="coin-row lvl">Niv <span id="lvlN">1</span></span>
+    <span class="xp-bar"><span id="xpFill" class="xp-fill"></span></span>
+  </div>
+  <canvas id="miniMap" class="hidden mini-map" width="480" height="462" role="button" aria-label="Agrandir la carte"></canvas>
+  <div id="funDock" class="hidden fun-dock">
+    <button id="funToggle" class="fun-main" aria-label="Petits gestes rigolos">🎈</button>
+    <div id="funRow" class="fun-row hidden">
+      <button data-emote="honk" data-scope="hub" aria-label="Klaxon">📯</button>
+      <button data-emote="announce" data-scope="cabin term" aria-label="Annonce au micro">📢</button>
+      <button data-emote="candy" data-scope="cabin" aria-label="Bonbons">🍬</button>
+      <button data-emote="music" data-scope="cabin term" aria-label="Musique">🎵</button>
+      <button data-emote="hello" aria-label="Saluer">👋</button>
+      <button data-emote="party" aria-label="Fete">🎉</button>
+      <button data-emote="dance" data-scope="hub term" aria-label="Danser">💃</button>
+      <button data-emote="selfie" aria-label="Selfie">📸</button>
+    </div>
+  </div>
+  <button id="btnHub" class="hidden hub-btn" aria-label="Ouvrir le Hub de gestion (H)">🏢<small>HUB</small></button>
+  <div id="planChip" class="hidden plan-chip"></div>
+  <div id="comboChip" class="hidden combo-chip"><span id="comboTxt">COMBO</span><span class="combo-bar"><span id="comboFill"></span></span></div>
+  <div id="questBar" class="hidden quest-bar">
+    <span class="q-time-wrap"><b id="questTime">60</b><small>s</small></span>
+    <div class="q-mid">
+      <div class="q-lbl">MISSION FLASH <span id="questProg" class="q-prog"></span><span id="questReward" class="q-rw">+8 🪙</span></div>
+      <span class="q-track"><span id="questFill" class="q-fill"></span></span>
+    </div>
+  </div>
+  <div id="flightSteps" class="hidden flight-steps">
+    <span data-fs="0">🛫<b>Decolle</b></span><i></i>
+    <span data-fs="1">🟡<b>Anneaux <em id="fsRings">0/5</em></b></span><i></i>
+    <span data-fs="2">🛬<b>Atterris</b></span>
+  </div>
+  <div id="landMeter" class="hidden land-meter">
+    <div class="lm-lbl">DOUCEUR DE LA DESCENTE</div>
+    <div class="lm-track"><span class="lm-zone"></span><span id="lmNeedle" class="lm-needle"></span></div>
+    <div id="lmTxt" class="lm-txt"></div>
+  </div>
+  <div id="popHost" class="pop-host"></div>
+</div>
+
+<!-- ============ TOUR (mode Arcade) : gestion simplifiee ============ -->
+<div id="kidTower" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <div class="panel-head">
+      <div class="min-w-0 flex-1">
+        <label class="kt-name">
+          <span class="kt-ico">🗼</span>
+          <input id="kidName" class="kt-input" maxlength="20" value="Mon aeroport" autocomplete="off" spellcheck="false" aria-label="Nom de ton aeroport">
+          <span class="kt-edit">✏️</span>
+        </label>
+        <p class="panel-sub !mb-0">Touche le nom pour le changer. Achete des ameliorations pour faire grandir ton aeroport !</p>
+      </div>
+      <button id="kidTowerClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 mt-3">
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Pieces</span><span id="kidCoins" class="tycoon-stat-val">0 🪙</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Etoiles</span><span id="kidStars" class="tycoon-stat-val">0 ⭐</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Vols</span><span id="kidFlights" class="tycoon-stat-val">0 ✈️</span></div>
+    </div>
+
+    <div class="tycoon-section">
+      <h3 class="tycoon-h3">Niveau <span id="kidLevel">1</span></h3>
+      <div class="xp-bar big"><span id="kidXp" class="xp-fill"></span></div>
+      <div id="kidNextUnlock" class="text-xs text-slate-400 mt-1.5"></div>
+    </div>
+
+    <div class="kid-tabs">
+      <button class="kid-tab on" data-ktab="home">🏠 Aeroport</button>
+      <button class="kid-tab" data-ktab="shop">🛒 Boutique</button>
+      <button class="kid-tab" data-ktab="album">🏆 Trophees <span id="kidBadgeN" class="kid-tab-n"></span></button>
+    </div>
+
+    <div class="kid-pane" data-kpane="home">
+      <div id="kidGift" class="kid-gift"></div>
+
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Defis du jour</h3>
+        <div id="kidDaily" class="space-y-1.5"></div>
+      </div>
+
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Carnet de voyage</h3>
+        <div id="kidTravel"></div>
+      </div>
+
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Chasse aux pieces cachees</h3>
+        <div id="kidTreasure" class="kid-treasure"></div>
+      </div>
+    </div>
+
+    <div class="kid-pane hidden" data-kpane="shop">
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Prix des billets</h3>
+        <div class="grid grid-cols-3 gap-2" id="kidPrice"></div>
+        <div id="kidPriceNote" class="text-xs text-slate-400 mt-1.5"></div>
+      </div>
+
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Ameliorations</h3>
+        <div id="kidUpgrades" class="space-y-2"></div>
+      </div>
+
+      <div class="tycoon-section">
+        <h3 class="tycoon-h3">Style de la mini-carte</h3>
+        <div id="kidThemes" class="grid grid-cols-4 gap-2"></div>
+      </div>
+    </div>
+
+    <div class="kid-pane hidden" data-kpane="album">
+      <div id="kidAlbumTower" class="album-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ AIDE (Arcade) : comment jouer ============ -->
+<div id="helpPanel" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <div class="panel-head">
+      <div><h2 class="panel-title">❓ Comment jouer ?</h2><p class="panel-sub !mb-0">Touche un titre pour lire l'astuce.</p></div>
+      <button id="helpClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+    <div class="help-list">
+      <details open><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Shift pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
+      <details><summary>🔧 Reparer l'avion</summary><p>Va sur un point colore autour de l'avion et appuie sur le gros bouton. Plus la piece est usee, plus tu gagnes de pieces.</p></details>
+      <details><summary>🏢 Le terminal</summary><p>Place-toi devant un comptoir et lis le dossier du passager : un billet, un bagage, un plateau... Si tout est bon, valide. Sinon refuse ou fais payer. Recharge les machines avec des caisses de la reserve.</p></details>
+      <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DECOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dores</b> et ramasse les pieces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
+      <details><summary>🥤 La cabine</summary><p>Avance dans l'allee et sers les passagers qui ont une bulle. 💬 = une question (reponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
+      <details><summary>⚡ Missions, combos, defis</summary><p>Enchaine les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les defis du jour et la chasse aux pieces cachees sont dans la tour.</p></details>
+      <details><summary>🗼 La tour de controle</summary><p>C'est ton bureau : cadeau du jour, boutique (billets, ameliorations, nouvel avion, style de carte) et album de trophees.</p></details>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PLAN DE VOL (Arcade) : ou vas-tu ? ============ -->
+<div id="flightPlan" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <div class="quiz-ico">🧭</div>
+    <h2 class="panel-title text-center">Choisis ton vol !</h2>
+    <p class="panel-sub text-center">Chaque destination a un defi. Reussis-le pour gagner des pieces en plus.</p>
+    <div id="planCards" class="space-y-2"></div>
+    <button id="planSkip" class="panel-btn mt-3">Vol libre (sans defi)</button>
+  </div>
+</div>
+
+<!-- ============ QUESTION D'UN PASSAGER (cabine, Arcade) ============ -->
+<div id="quizPanel" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <div class="quiz-ico">💬</div>
+    <h2 class="panel-title">Un passager te demande...</h2>
+    <p id="quizQ" class="quiz-q">--</p>
+    <div id="quizA" class="space-y-2"></div>
+    <p id="quizRes" class="quiz-res"></p>
+  </div>
+</div>
+
+<!-- ============ ALBUM DE TROPHEES (depuis le menu pause) ============ -->
+<div id="kidAlbum" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">🏆 Mes trophees</h2>
+        <p id="kidAlbumSub" class="panel-sub !mb-0">--</p>
+      </div>
+      <button id="kidAlbumClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+    <div id="kidAlbumBody" class="album-grid mt-3"></div>
+  </div>
+</div>
+
+<!-- ============ GRANDE CARTE (toucher la mini-carte) ============ -->
+<div id="mapBig" class="hidden panel-overlay">
+  <div class="panel-card wide map-card kid">
+    <div class="panel-head">
+      <div>
+        <h2 class="panel-title">🗺️ <span id="mapBigName">Mon aeroport</span></h2>
+        <p class="panel-sub !mb-0">Tu es la <b class="text-rose-400">fleche rouge</b>. L'<b class="text-amber-300">etoile</b> montre ou aller. Les ✨ sont des pieces cachees !</p>
+      </div>
+      <button id="mapBigClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+    <canvas id="mapBigCv" class="map-big" width="960" height="924"></canvas>
+    <div class="map-legend">
+      <span>🔴 toi</span><span>⭐ objectif</span><span>✨ piece cachee</span><span>✈️ avion</span><span>🚚 vehicule</span><span>👣 tes pas</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RAPPORT DE VOL (mode Arcade) ============ -->
+<div id="kidReport" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <div id="kidStarsRow" class="kid-stars"><span>★</span><span>★</span><span>★</span></div>
+    <h2 id="kidRepTitle" class="panel-title">ATTERRISSAGE</h2>
+    <p id="kidRepTip" class="panel-sub mt-1">--</p>
+    <div class="kid-tiles">
+      <div class="kid-tile"><b id="kidRepPax">0</b><span>passagers</span></div>
+      <div class="kid-tile"><b id="kidRepRings">0</b><span>anneaux</span></div>
+      <div class="kid-tile gold"><b id="kidRepCoins">+0</b><span>pieces</span></div>
+    </div>
+    <div id="kidRepBonus" class="kid-bonus"></div>
+    <button id="kidRepHome" class="panel-btn primary mt-3 !py-4 !text-base">🏠 Retour a l'aeroport</button>
+    <button id="kidRepAgain" class="panel-btn mt-2">✈️ Rejouer un vol</button>
+  </div>
+</div>
+
+<!-- ============ TOAST (messages transitoires, tous modes) ============ -->
+<div id="toast" class="hidden fixed left-1/2 -translate-x-1/2 top-[max(3.6rem,calc(env(safe-area-inset-top)+3.2rem))] z-30 px-4 py-2 rounded-lg bg-slate-900/90 border border-slate-700 text-sm text-center max-w-[90%] pointer-events-none">
+</div>
+<!-- ============ RAPPORT D'ATTERRISSAGE ============ -->
+<div id="report" class="hidden panel-overlay">
+  <div class="panel-card center">
+    <div id="repBadge" class="rep-badge g-sky">--</div>
+    <h2 id="repTitle" class="panel-title text-sky-400">ATTERRISSAGE</h2>
+    <p id="repGrade" class="panel-sub mt-1 !mb-0">--</p>
+    <div id="repStats" class="mt-4 text-left text-sm space-y-1 text-slate-300"></div>
+    <div id="repMission" class="hidden rep-block"></div>
+    <div id="repFaults" class="hidden rep-block"></div>
+    <div class="rep-tiles">
+      <div class="rep-tile">
+        <div class="rep-tile-lbl">Bilan du vol</div>
+        <div id="repProfit" class="rep-tile-val text-emerald-400">+0 EUR</div>
+        <div id="repPaxNote" class="hidden text-[10px] text-amber-400 mt-0.5"></div>
+      </div>
+      <div class="rep-tile">
+        <div class="rep-tile-lbl">Maintenance</div>
+        <div id="repMaint" class="rep-tile-val">Conforme</div>
+      </div>
+    </div>
+    <div class="panel-row mt-4">
+      <button id="repExitHub" class="panel-btn sm">Sortir de l'avion</button>
+      <button id="repGoTycoon" class="panel-btn sm">Voir le bilan aeroport</button>
+    </div>
+    <button id="repClose" class="panel-btn primary mt-2">Continuer de piloter</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

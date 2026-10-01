@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Tests — navigation.js</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+  body { background:#050912; color:#e2e8f0; font:14px/1.5 ui-monospace,monospace; padding:24px; }
+  h1 { font-size:16px; margin:0 0 16px; }
+  .row { padding:4px 8px; border-radius:4px; margin-bottom:2px; }
+  .ok { color:#34d399; }
+  .fail { color:#f87171; background:#7f1d1d22; }
+  .summary { margin-top:16px; font-weight:bold; }
+</style>
+</head>
+<body>
+<h1>navigation.js — tests d'invariants</h1>
+<div id="out">Execution...</div>
+<script type="module">
+  import { run } from './js/navigation.test.js';
+  const { results, passed, total } = run();
+  const out = document.getElementById('out');
+  out.innerHTML = results.map(r =>
+    `<div class="row ${r.ok ? 'ok' : 'fail'}">${r.ok ? 'PASS' : 'FAIL'} — ${r.name}${r.ok ? '' : ' :: ' + r.error}</div>`
+  ).join('') + `<div class="summary ${passed === total ? 'ok' : 'fail'}">${passed}/${total} tests passes</div>`;
+  console.log(`[navigation.test] ${passed}/${total} passes`);
+  if (passed !== total) console.error('[navigation.test] echecs :', results.filter(r => !r.ok));
+</script>
+</body>
+</html>

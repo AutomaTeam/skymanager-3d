@@ -1,0 +1,265 @@
+/* ============================================================
+   decor.js — Decor en modeles 3D (plan graphisme, etape 4)
+
+   Ajoute autour de l'aeroport, avec les packs Kenney (CC0) :
+   arbres, buissons, fleurs, herbes, rochers, bancs et plantes du
+   parvis, conteneurs, chateau d'eau, eoliennes, vehicules des
+   pompiers, un quartier de maisons avec sa cloture.
+
+   Tout est instancie (props.js) : quelques dizaines d'appels de
+   dessin pour plusieurs centaines d'objets. Le decor est
+   deterministe (meme graine = meme aeroport a chaque partie).
+
+   `buildDecor()` renvoie { group, blockers } : `blockers` sont les
+   obstacles (rectangles monde) a ajouter au graphe de navigation,
+   pour qu'on ne traverse ni un arbre ni une maison.
+   ============================================================ */
+
+import * as THREE from 'three';
+import { instanced } from './props.js?v=1789710000';
+
+const N = 'nature/kenney-nature-kit/';
+const F = 'interior/kenney-furniture-kit/';
+const I = 'city/kenney-industrial/';
+const S = 'city/kenney-suburban/';
+const C = 'vehicles/kenney-car-kit/';
+
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+
+/* Zones ou l'on ne plante rien : piste, taxiway, aire, batiments, routes, parking... */
+const EXCL = [
+  [-75, 75, -3000, 3000],            // piste + bande de securite
+  [110, 190, -3000, 3000],           // taxiway
+  [75, 110, 980, 1020], [75, 110, 1360, 1400], [75, 110, 380, 420],   // bretelles
+  [110, 560, 850, 1195],             // aire de stationnement
+  [215, 505, 1180, 1280],            // terminal + parvis
+  [215, 735, 1274, 1306],            // route
+  [228, 492, 1296, 1400],            // parking
+  [630, 690, 1100, 1360],            // entree
+  [495, 585, 840, 1180],             // hangars
+  [235, 305, 1095, 1170],            // tour + bureau
+  [70, 120, 1165, 1215],             // heliport
+  [45, 80, 995, 1410],               // route de service
+  [50, 135, 1380, 1480],             // pompiers
+  [570, 655, 780, 840],              // reservoirs
+  [175, 285, 770, 860],              // fret
+  [55, 145, 625, 735]                // aviation legere
+];
+const free = (x, z, pad = 0) => !EXCL.some(r => x > r[0] - pad && x < r[1] + pad && z > r[2] - pad && z < r[3] + pad);
+
+export function buildDecor() {
+  const group = new THREE.Group();
+  group.name = 'decor';
+  const blockers = [];
+  let bid = 0;
+  const block = (x, z, hx, hz, label = 'decor') => {
+    blockers.push({ id: `decor${bid++}`, label, rect: { x0: x - hx, x1: x + hx, z0: z - hz, z1: z + hz } });
+  };
+
+  const r = rng(20260930);
+  const rr = (a, b) => a + r() * (b - a);
+  const pick = (arr) => arr[Math.floor(r() * arr.length)];
+
+  /* --------------------------------------------------------
+     Vegetation : bosquets + arbres isoles + fleurs + herbes
+     -------------------------------------------------------- */
+  const TREES = [
+    { f: 'tree_default', h: 8, w: 6 }, { f: 'tree_oak', h: 7.5, w: 5 }, { f: 'tree_fat', h: 6, w: 3 },
+    { f: 'tree_pineRoundA', h: 10, w: 4 }, { f: 'tree_small', h: 5, w: 3 }, { f: 'tree_tall', h: 9.5, w: 3 },
+    { f: 'tree_simple', h: 7.5, w: 3 }, { f: 'tree_detailed', h: 8, w: 2 },
+    { f: 'tree_default_fall', h: 8, w: 1 }, { f: 'tree_oak_fall', h: 7.5, w: 1 }
+  ];
+  const totalW = TREES.reduce((a, t) => a + t.w, 0);
+  const pickTree = () => { let p = r() * totalW; for (const t of TREES) { p -= t.w; if (p <= 0) return t; } return TREES[0]; };
+
+  const treeLists = new Map(TREES.map(t => [t.f, []]));
+  const bushLists = { plant_bush: [], plant_bushLarge: [], plant_bushSmall: [] };
+  const flowerNames = ['purple', 'red', 'yellow'].flatMap(c => ['A', 'B', 'C'].map(k => `flower_${c}${k}`));
+  const flowerLists = new Map(flowerNames.map(n => [n, []]));
+  const rockLists = { rock_smallA: [], rock_smallB: [], rock_smallC: [], rock_largeA: [], rock_largeB: [] };
+  const grassLists = { grass_large: [], grass: [] };
+
+  const sample = (pad) => {
+    for (let i = 0; i < 40; i++) {
+      const x = rr(-140, 745), z = rr(640, 1535);
+      if (free(x, z, pad)) return { x, z };
+    }
+    return null;
+  };
+  const addTree = (x, z) => {
+    const t = pickTree();
+    treeLists.get(t.f).push({ x, z, r: r() * 6.28, s: rr(0.8, 1.25) });
+    block(x, z, 0.55, 0.55, 'arbre');
+  };
+
+  /* Bosquets : 2 a 5 arbres, buissons, fleurs autour. */
+  for (let c = 0; c < 34; c++) {
+    const p = sample(14);
+    if (!p) continue;
+    const nT = 2 + Math.floor(r() * 4);
+    for (let i = 0; i < nT; i++) {
+      const a = r() * 6.28, d = rr(1.5, 9);
+      const x = p.x + Math.cos(a) * d, z = p.z + Math.sin(a) * d;
+      if (free(x, z, 6)) addTree(x, z);
+    }
+    const nB = 3 + Math.floor(r() * 4);
+    for (let i = 0; i < nB; i++) {
+      const a = r() * 6.28, d = rr(3, 11);
+      const x = p.x + Math.cos(a) * d, z = p.z + Math.sin(a) * d;
+      if (free(x, z, 3)) bushLists[pick(Object.keys(bushLists))].push({ x, z, r: r() * 6.28, s: rr(0.8, 1.3) });
+    }
+    const nF = 8 + Math.floor(r() * 10);
+    const fc = pick(['purple', 'red', 'yellow']);
+    for (let i = 0; i < nF; i++) {
+      const a = r() * 6.28, d = rr(2, 8);
+      const x = p.x + Math.cos(a) * d, z = p.z + Math.sin(a) * d;
+      if (free(x, z, 2)) flowerLists.get(`flower_${r() < 0.7 ? fc : pick(['purple', 'red', 'yellow'])}${pick(['A', 'B', 'C'])}`).push({ x, z, r: r() * 6.28, s: rr(0.8, 1.4) });
+    }
+    if (r() < 0.4) { const x = p.x + rr(-8, 8), z = p.z + rr(-8, 8); if (free(x, z, 3)) { const k = pick(Object.keys(rockLists)); rockLists[k].push({ x, z, r: r() * 6.28, s: rr(0.8, 1.3) }); } }
+  }
+  /* Arbres isoles et touffes d'herbe repartis. */
+  for (let i = 0; i < 40; i++) { const p = sample(8); if (p) addTree(p.x, p.z); }
+  for (let i = 0; i < 260; i++) { const p = sample(1.5); if (p) grassLists[r() < 0.6 ? 'grass_large' : 'grass'].push({ x: p.x, z: p.z, r: r() * 6.28, s: rr(0.8, 1.5) }); }
+
+  for (const t of TREES) group.add(instanced(N + t.f + '.glb', treeLists.get(t.f), { height: t.h, cast: true }));
+  group.add(instanced(N + 'plant_bush.glb', bushLists.plant_bush, { width: 1.7 }));
+  group.add(instanced(N + 'plant_bushLarge.glb', bushLists.plant_bushLarge, { width: 2.3 }));
+  group.add(instanced(N + 'plant_bushSmall.glb', bushLists.plant_bushSmall, { width: 1.2 }));
+  for (const n of flowerNames) group.add(instanced(N + n + '.glb', flowerLists.get(n), { height: 0.6 }));
+  group.add(instanced(N + 'rock_smallA.glb', rockLists.rock_smallA, { width: 1.1 }));
+  group.add(instanced(N + 'rock_smallB.glb', rockLists.rock_smallB, { width: 1.1 }));
+  group.add(instanced(N + 'rock_smallC.glb', rockLists.rock_smallC, { width: 1.1 }));
+  group.add(instanced(N + 'rock_largeA.glb', rockLists.rock_largeA, { width: 2.6 }));
+  group.add(instanced(N + 'rock_largeB.glb', rockLists.rock_largeB, { width: 2.6 }));
+  group.add(instanced(N + 'grass_large.glb', grassLists.grass_large, { width: 1.1 }));
+  group.add(instanced(N + 'grass.glb', grassLists.grass, { width: 1.0 }));
+  for (const k of ['rock_largeA', 'rock_largeB']) for (const p of rockLists[k]) block(p.x, p.z, 1.2, 1.2, 'rocher');
+
+  /* --------------------------------------------------------
+     Parvis du terminal : bancs et plantes (cote ville)
+     -------------------------------------------------------- */
+  const benches = [], plants = [], bins = [];
+  for (const x of [262, 322, 388, 448, 478]) { benches.push({ x, z: 1279.2, r: Math.PI }); block(x, 1279.2, 0.95, 0.4, 'banc'); }
+  for (const x of [284, 338, 384, 440]) { plants.push({ x, z: 1268.6 }); block(x, 1268.6, 0.4, 0.4, 'plante'); }
+  for (const x of [250, 402]) { bins.push({ x, z: 1268.6 }); block(x, 1268.6, 0.35, 0.35, 'poubelle'); }
+  group.add(instanced(F + 'benchCushion.glb', benches, { width: 1.9 }));
+  group.add(instanced(F + 'pottedPlant.glb', plants, { height: 1.3 }));
+  group.add(instanced(F + 'trashcan.glb', bins, { height: 0.95 }));
+
+  /* --------------------------------------------------------
+     Zone de fret : conteneurs colores, empiles
+     -------------------------------------------------------- */
+  const cont = { a: [], b: [], c: [] };
+  const contKeys = ['a', 'b', 'c'];
+  let ci = 0;
+  for (let row = 0; row < 2; row++) {
+    for (let col = 0; col < 4; col++) {
+      const x = 300 + col * 4.4, z = 792 + row * 22;
+      cont[contKeys[ci++ % 3]].push({ x, z });
+      block(x, z, 1.9, 4.2, 'conteneur');
+      if (col === 1 || col === 2) cont[contKeys[ci++ % 3]].push({ x, z, y: 3.4 });
+    }
+  }
+  for (const k of contKeys) group.add(instanced(`${I}shipping-container-${k}.glb`, cont[k], { length: 8, cast: true }));
+
+  /* --------------------------------------------------------
+     Reperes de paysage : chateau d'eau, eoliennes, pompiers
+     -------------------------------------------------------- */
+  group.add(instanced(I + 'water-tower.glb', [{ x: 700, z: 815 }], { height: 15, cast: true }));
+  block(700, 815, 2.6, 2.6, "chateau d'eau");
+  const mills = [{ x: 650, z: 880 }, { x: 650, z: 1040 }];
+  group.add(instanced(I + 'windmill.glb', mills, { height: 17, cast: true }));
+  mills.forEach(m => block(m.x, m.z, 1.6, 1.6, 'eolienne'));
+
+  /* Vague 2 (poly.pizza, CC BY 3.0, voir CREDITS.md) : avion de ligne gare sur l'aire et helicoptere pose. */
+  const P = 'vehicles/polypizza/';
+  group.add(instanced(P + 'airliner-poly-by-google.glb', [{ x: 190, z: 925, r: Math.PI / 2 }], { length: 36, cast: true }));
+  block(190, 925, 19, 17, 'avion de ligne');
+  block(95, 1226, 3, 6, 'helicoptere');
+  group.add(instanced(P + 'helicopter-jeremy.glb', [{ x: 95, z: 1226, r: 0.6 }], { length: 12, cast: true }));
+
+  /* Chariot elevateur (poly.pizza, CC BY 3.0) dans la zone de fret. */
+  group.add(instanced(P + 'forklift-kolos.glb', [{ x: 262, z: 812, r: 2.2 }], { length: 3.4, cast: true }));
+  block(262, 812, 1.0, 1.6, 'chariot elevateur');
+  group.add(instanced(C + 'firetruck.glb', [{ x: 82, z: 1408, r: Math.PI }], { length: 8.5, cast: true }));
+  group.add(instanced(C + 'ambulance.glb', [{ x: 108, z: 1408, r: Math.PI }], { length: 6.2, cast: true }));
+  block(82, 1408, 1.7, 4.3, 'camion de pompiers');
+  block(108, 1408, 1.5, 3.2, 'ambulance');
+
+  /* --------------------------------------------------------
+     Quartier de maisons au sud (derriere le parking), avec cloture
+     -------------------------------------------------------- */
+  const houseFiles = 'abcdefghijklmnopqrstu'.split('').map(l => `${S}building-type-${l}.glb`);
+  const houses = new Map(houseFiles.map(f => [f, []]));
+  for (let i = 0; i < 12; i++) {
+    const x = 232 + i * 25 + rr(-2, 2), z = 1516 + rr(-2, 3);
+    houses.get(houseFiles[(i * 5 + 3) % houseFiles.length]).push({ x, z, r: Math.PI });
+    block(x, z, 6.2, 5.6, 'maison');
+  }
+  for (const [f, list] of houses) if (list.length) group.add(instanced(f, list, { width: 12.5, cast: true }));
+  const fences = [];
+  for (let x = 226; x < 536; x += 6.4) { fences.push({ x, z: 1494 }); }
+  group.add(instanced(S + 'fence-low.glb', fences, { width: 6.4 }));
+  block(381, 1494, 156, 0.25, 'cloture');
+
+  /* --------------------------------------------------------
+     Interieur du terminal : plantes le long de la baie vitree, tapis sous les sieges
+     (obstacles de la seule zone `termHall`)
+     -------------------------------------------------------- */
+  const hallPlants = [];
+  const AIR_DOORS = [300, 360, 420];
+  for (let x = 246; x <= 474; x += 16) {
+    if (AIR_DOORS.some(d => Math.abs(x - d) < 10)) continue;
+    hallPlants.push({ x, z: 1200.2 });
+    blockers.push({ id: `decor${bid++}`, label: 'plante', zone: 'termHall', rect: { x0: x - 0.35, x1: x + 0.35, z0: 1199.8, z1: 1200.6 } });
+  }
+  group.add(instanced(F + 'pottedPlant.glb', hallPlants, { height: 1.5 }));
+  const rugs = [266, 322, 404, 462].map(x => ({ x, z: 1210.5, y: 0.04 }));
+  group.add(instanced(F + 'rugRound.glb', rugs, { width: 7 }));
+
+  /* --------------------------------------------------------
+     Nuit : halos et flaques de lumiere sous les mats (aire + parking)
+     -------------------------------------------------------- */
+  const masts = [];
+  for (let x = 200; x <= 520; x += 80) { masts.push({ x, z: 880, h: 26.4, r: 26 }, { x, z: 1090, h: 26.4, r: 26 }); }
+  masts.push({ x: 150, z: 780, h: 26.4, r: 26 }, { x: 150, z: 1300, h: 26.4, r: 26 }, { x: 30, z: 1300, h: 26.4, r: 26 });
+  for (let x = 250; x <= 470; x += 44) masts.push({ x, z: 1318, h: 9.1, r: 11 }, { x, z: 1358, h: 9.1, r: 11 });
+
+  const glowTex = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 128;
+    const x = c.getContext('2d');
+    const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, 'rgba(255,236,190,1)'); g.addColorStop(0.35, 'rgba(255,214,140,0.45)'); g.addColorStop(1, 'rgba(255,200,120,0)');
+    x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  })();
+  const poolMat = new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false });
+  const pools = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), poolMat, masts.length);
+  const M4 = new THREE.Matrix4();
+  masts.forEach((m, i) => { M4.compose(new THREE.Vector3(m.x, 0.3, m.z), new THREE.Quaternion(), new THREE.Vector3(m.r * 2, 1, m.r * 2)); pools.setMatrixAt(i, M4); });
+  pools.instanceMatrix.needsUpdate = true;
+  pools.frustumCulled = false;
+  pools.renderOrder = 2;
+  group.add(pools);
+
+  const hp = new Float32Array(masts.length * 3);
+  masts.forEach((m, i) => { hp[i * 3] = m.x; hp[i * 3 + 1] = m.h; hp[i * 3 + 2] = m.z; });
+  const hg = new THREE.BufferGeometry();
+  hg.setAttribute('position', new THREE.BufferAttribute(hp, 3));
+  const haloMat = new THREE.PointsMaterial({ map: glowTex, size: 14, sizeAttenuation: true, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false });
+  const halos = new THREE.Points(hg, haloMat);
+  halos.frustumCulled = false;
+  group.add(halos);
+
+  const setNight = (n) => {
+    const k = Math.max(0, Math.min(1, (n - 0.15) / 0.5));
+    poolMat.opacity = 0.55 * k;
+    haloMat.opacity = 0.9 * k;
+    pools.visible = halos.visible = k > 0.01;
+  };
+
+  return { group, blockers, setNight };
+}
