@@ -740,7 +740,7 @@ export class Arcade {
       for (const p of pills) {
         const tw = x.measureText(p.txt).width + 12 * k;
         const cx0 = X(p.wx), cz0 = Z(p.wz);
-        const tries = [[0, 0], [0, -th - gap], [0, th + gap], [tw / 2 + gap, 0], [-tw / 2 - gap, 0], [0, -2 * (th + gap)], [0, 2 * (th + gap)]];
+        const tries = [[0, 0], [0, -th - gap], [0, th + gap], [tw / 2 + gap, 0], [-tw / 2 - gap, 0], [0, -2 * (th + gap)], [0, 2 * (th + gap)], [tw + gap, 0], [-tw - gap, 0], [tw / 2 + gap, th + gap], [-tw / 2 - gap, th + gap]];
         for (const [dx, dz] of tries) {
           const cx = clamp(cx0 + dx, tw / 2 + 4 * k, w - tw / 2 - 4 * k), cz = clamp(cz0 + dz, th / 2 + 4 * k, h - 34 * k - th / 2);
           const r = [cx - tw / 2, cz - th / 2, cx + tw / 2, cz + th / 2];

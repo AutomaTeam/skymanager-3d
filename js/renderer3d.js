@@ -964,6 +964,16 @@ boom.add(dockGrp);
       pbr(TEX.concrete(), { color: 0xc8ced6, rough: 0.8, repeat: [4, 6] }));
     towerBase.position.set(TOWER.x, 29, TOWER.z);
     g.add(towerBase);
+    /* Bandes rouges et blanches + balise : la tour se lit de loin. */
+    const bandMat = pbr(TEX.paintedMetal(), { color: 0xdc2626, rough: 0.6, repeat: [1, 1] });
+    for (const [by, br] of [[12, 8.9], [26, 8.2], [40, 7.5]]) {
+      const band = new THREE.Mesh(new THREE.CylinderGeometry(br + 0.08, br + 0.08, 5, 16), bandMat);
+      band.position.set(TOWER.x, by, TOWER.z);
+      g.add(band);
+    }
+    const beacon = new THREE.Mesh(new THREE.SphereGeometry(0.5, 10, 8), new THREE.MeshBasicMaterial({ color: 0xff3030 }));
+    beacon.position.set(TOWER.x, 76.4, TOWER.z);
+    g.add(beacon);
     const cab = new THREE.Mesh(new THREE.CylinderGeometry(14, 11, 12, 16), glassMat);
     cab.position.set(TOWER.x, 63, TOWER.z);
     g.add(cab);

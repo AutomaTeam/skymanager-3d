@@ -217,6 +217,18 @@ export function buildDecor() {
     blockers.push({ id: `decor${bid++}`, label: 'plante', zone: 'termHall', rect: { x0: x - 0.35, x1: x + 0.35, z0: 1199.8, z1: 1200.6 } });
   }
   group.add(instanced(F + 'pottedPlant.glb', hallPlants, { height: 1.5 }));
+  /* Coins salon contre le mur sud, entre les portes cote ville. */
+  const sofas = [], wallPlants = [];
+  for (const x of [330, 390]) {
+    sofas.push({ x, z: 1262.2, r: Math.PI });
+    blockers.push({ id: `decor${bid++}`, label: 'canape', zone: 'termHall', rect: { x0: x - 1.4, x1: x + 1.4, z0: 1261.2, z1: 1263.3 } });
+  }
+  for (const x of [318, 342, 378, 402]) {
+    wallPlants.push({ x, z: 1262.4 });
+    blockers.push({ id: `decor${bid++}`, label: 'plante', zone: 'termHall', rect: { x0: x - 0.35, x1: x + 0.35, z0: 1262, z1: 1262.8 } });
+  }
+  group.add(instanced(F + 'loungeSofaLong.glb', sofas, { width: 2.8 }));
+  group.add(instanced(F + 'pottedPlant.glb', wallPlants, { height: 1.5 }));
   const rugs = [266, 322, 404, 462].map(x => ({ x, z: 1210.5, y: 0.04 }));
   group.add(instanced(F + 'rugRound.glb', rugs, { width: 7 }));
 

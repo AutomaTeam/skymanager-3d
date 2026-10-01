@@ -7,7 +7,8 @@
 - ✅ Lot 1 : personnage coloré par os (peau, haut orange pour le joueur, pantalon, chaussures), matériau mat : plus de silhouette blanche ni de halo (`paintHuman`, `renderer3d.js`).
 - ✅ Lot 2 (partiel) : tarmac plus clair avec joints et taches adoucis, moquette du salon plus fine et plus sombre, herbe moins saturée.
 - ✅ Carte (partiel) : étiquettes sans chevauchement (anti-collision, TERMINAL/TOUR déplacées hors bâtiment) et **itinéraire réel** vers l'objectif via la navigation. Limite connue : « FRET » et « CARBURANT » sont masquées faute de place.
-- ⏳ Reste : source unique des coordonnées de la carte, zoom/glisser, icônes SVG, terminal meublé, tour, parking, nuit/météo.
+- ✅ Clôture : tour à bandes rouges + balise, 2 canapés et 4 plantes contre le mur sud du hall (obstacles ajoutés, 30/30 tests de navigation OK), étiquettes de carte avec plus de positions d'essai.
+- ⏳ Non fait (volontairement, pour ne pas complexifier) : source unique des coordonnées de la carte, zoom/glisser, icônes SVG, terminal meublé, tour, parking, nuit/météo.
 
 ---
 
