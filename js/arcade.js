@@ -14,9 +14,9 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1789710000';
-import { LAYOUT } from './layout.js?v=1789710000';
-import { drawIcon } from './icons.js?v=1789710000';
+import { sfx } from './sfx.js?v=1790900000';
+import { LAYOUT } from './layout.js?v=1790900000';
+import { drawIcon } from './icons.js?v=1790900000';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece

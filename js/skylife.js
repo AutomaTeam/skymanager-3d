@@ -14,7 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { PALETTE } from './palette.js?v=1789710000';
+import { PALETTE } from './palette.js?v=1790900000';
+import { sfx } from './sfx.js?v=1790900000';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -174,6 +175,8 @@ export function buildSkyLife() {
     }
     boltGeo.attributes.position.needsUpdate = true;
     strikeT = 0;
+    /* Le son arrive apres la lumiere : ~343 m/s, plafonne a 4 s. */
+    sfx.thunder(Math.min(4, d / 343), Math.max(0.35, 1 - d / 3200));
   };
 
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), pos = new THREE.Vector3(), sc = new THREE.Vector3(), e = new THREE.Euler();

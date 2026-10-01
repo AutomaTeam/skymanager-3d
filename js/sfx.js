@@ -70,6 +70,27 @@ export const sfx = {
   jingle() { [523, 659, 784, 659, 523, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.22, 'triangle', 0.1)); },
   hello() { tone(660, 0, 0.09, 'sine', 0.1); tone(880, 0.1, 0.14, 'sine', 0.1); },
   sparkle() { [1568, 2093, 2637].forEach((f, i) => tone(f, i * 0.05, 0.14, 'sine', 0.07)); },
+  /* Tonnerre : bruit grave filtre, grondement qui s'eteint en ~3 s. `delay` = retard du son (s). */
+  thunder(delay = 1, power = 1) {
+    const a = audio();
+    if (!a) return;
+    const t0 = a.currentTime + delay, dur = 3.2;
+    const buf = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 1.6);
+    const src = a.createBufferSource();
+    src.buffer = buf;
+    const lp = a.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(420, t0);
+    lp.frequency.exponentialRampToValueAtTime(90, t0 + dur);
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.5 * power, t0 + 0.12);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(lp).connect(g).connect(a.destination);
+    src.start(t0);
+  },
   whoosh() {
     const a = audio();
     if (!a) return;
