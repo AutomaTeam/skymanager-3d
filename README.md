@@ -1771,6 +1771,14 @@ un CDN et Tailwind via son CDN.
 ├── js/layout.js            Plan de l'aeroport : une seule source des positions (phases 18 et 20)
 ├── js/airportLife.js       Trafic et batiments annexes : l'aeroport vit (phase 20)
 ├── js/terminalFlow.js      Regles de verification, dossier de passager persistant (phases 25-26)
+├── js/fun.js               Acrobaties, turbo, fumee, mascotte Coco, photo, coffre (phase 33)
+├── js/fleet.js, planeModels.js, livery.js, hangar.js   Avions, peinture, hangar (phase 34)
+├── js/skyMissions.js, skyWorld.js   Missions aeriennes (phase 35)
+├── js/minigames.js, groundFun.js, album.js, deco.js   Mini-jeux, evenements au sol, album, Ma place (phase 36)
+├── js/openWorld.js         Mer, iles, etoiles, surprises, evenements du ciel (phase 37)
+├── js/comfort.js, music.js Reglages, qualite auto, musique (phase 38)
+├── js/heliModel.js         Helicoptere arcade (phase 39)
+├── tools/fleet.sim.mjs, data.test.mjs   Tests des avions et des catalogues (npm test)
 ├── tools/terminal.test.mjs Tests du circuit passager, des stocks et de l'equilibrage (npm run test:terminal)
 ├── tools/flightAssist.sim.mjs  Tests de vol hors navigateur (npm run test:flight)
 ├── package.json            Uniquement pour les tests hors navigateur
@@ -2037,3 +2045,53 @@ Suivi detaille : `PLAN_VISUEL_CARTE.md` (etat des lieux, plan, avancement). Cont
 - **Icones** (`icons.js`) : 67 icones SVG ; `iconify()` remplace automatiquement les emojis connus du DOM (observateur) et `drawIcon()` les dessine sur les canvas. Les emojis sans icone restent des emojis.
 - **Mesures** (navigateur integre, rendu logiciel, aeroport charge) : 367 draw calls et ~469 k triangles dans la vue testee ; 30/30 tests de navigation. Le FPS reste a relever sur le PC cible (budget : >= 90 FPS, <= 900 draw calls).
 - Version des scripts : `?v=1790900000`.
+
+## Phases 33 a 39 — Plan « fun pour un enfant de 12 ans »
+
+Suivi du plan : `PLAN_FUN_ENFANT.md`. Tout est en mode Arcade (rien ne change en mode Pilote). Chaque couche est un module independant, ajoute a la boucle de `main.js` dans un `try/catch` : une erreur dans une couche « fun » est notee une fois dans la console et ne fige jamais le jeu.
+
+| Phase | Contenu | Modules |
+|---|---|---|
+| 33 (vague 1) | **Voler maintenant** (bouton d'accueil, prenom + avatar, compte a rebours, decollage auto), acrobaties (**tonneau**, **looping**, score, combos), **turbo** (jauge qui se recharge aux anneaux et aux acrobaties), **fumee coloree** (7 couleurs), **Coco** la mascotte (bulles, voix en option), ralenti + confettis sur le 3 etoiles, **carte postale** (photo), **coffre surprise**, 3 niveaux de difficulte | `fun.js` |
+| 34 (vague 2) | **Mon hangar** : choix de l'avion, couleur, accent, 10 motifs, 25 autocollants (3 emplacements), nom sur le fuselage, boutique (essayer avant d'acheter), objets rares dans les coffres. **Pioupiou** (helice, facile) et **Zebulon** (voltige, niveau 3) avec leur propre physique | `hangar.js`, `fleet.js`, `livery.js`, `planeModels.js` |
+| 35 (vague 3) | **Tableau de missions** (onglet « Missions » du depart) : ballons, course d'anneaux avec **fantome**, pompier, colis a parachute, secours, transport d'animaux, show aerien, exploration. Viseur de largage, medailles bronze / argent / or. Photos : filtres et album. Camera cinema | `skyMissions.js`, `skyWorld.js` |
+| 36 (vague 4) | **Mini-jeux** (lavage, carburant, valises bizarres), **chien echappe** et **visiteurs celebres** (8 histoires, album des rencontres), **album de collection**, **Ma place** (12 objets : fontaine, manege, grande roue... qui rapportent des pieces), **serie quotidienne** | `minigames.js`, `groundFun.js`, `album.js`, `deco.js` |
+| 37 (vague 5) | **Le grand monde** : mer + 6 iles (volcan, chateau, phare, parc d'attractions, plage, banquise), **40 etoiles dorees**, surprises (OVNI, baleine, dragon de nuages), arc-en-ciel apres la pluie, etoiles filantes, feux d'artifice, **rase-mottes sur l'eau** (reservoir du pompier), **Hydravion** | `openWorld.js` |
+| 38 (vague 6) | **Reglages** : qualite d'image automatique, mode gaucher, gros texte, rappel de pause parent ; **musique dynamique** (3 intensites) ; **defi de la semaine** ; 16 nouveaux trophees ; conseil « prochain vol » dans le rapport | `comfort.js`, `music.js` |
+| 39 (vague 7) | **Colibri**, l'**helicoptere** : stationnaire, atterrissage automatique sur l'helipad, pose partout | `heliModel.js` |
+
+### Les avions (`js/fleet.js`)
+
+Un avion = un **profil** (coefficients du moteur de vol via `Aircraft.applyProfile`, vitesses de l'aide au pilotage, camera, economie). Le jet de ligne reste l'avion de l'aeroport (cabine, atelier) ; le petit avion choisi au hangar ne sert qu'en vol, et le jet reapparait a la porte au retour. Ajouter un avion : un profil dans `fleet.js` + un constructeur dans `planeModels.js` (`MODEL_BUILDERS`) ; `tools/fleet.sim.mjs` le fait decoller, monter, atterrir et s'arreter tout seul avec l'aide au pilotage et verifie la maniabilite.
+
+| Avion | Niveau | Prix | Particularite |
+|---|---|---|---|
+| Jet de ligne | 1 | gratuit | gros, stable, cabine jouable |
+| Pioupiou | 1 | gratuit | helice, tres facile |
+| Hydravion | 2 | 120 | flotteurs, rase l'eau |
+| Colibri (helicoptere) | 4 | 200 | stationnaire, pose partout |
+| Zebulon | 3 | 150 | voltige, roulis 200 deg/s |
+
+### Missions (`js/skyMissions.js`)
+
+Une mission est une classe (`setup`, `update`, `goal`, `result`...). Elle est choisie au tableau, demarre au decollage, guide l'avion par l' « aimant » de l'aide au pilotage (desactive en difficulte Expert) et finit par une medaille et des pieces (`MEDAL_COINS`). Les objets 3D (anneaux, ballons, feux, cibles, colis a parachute, fantome) viennent de `skyWorld.js`. Le viseur de largage (`predictImpact`) utilise exactement le meme integrateur que les projectiles, donc il ne ment jamais.
+
+### Donnees enregistrees
+
+`skymanager.fun` (pilote, fumee, difficulte, photos, serie), `skymanager.hangar` (avion choisi, livrees, objets achetes), `skymanager.sky` (medailles, fantomes), `skymanager.meet` (rencontres), `skymanager.deco` (ma place), `skymanager.world` (iles, etoiles, surprises), `skymanager.mini` (mini-jeux), `skymanager.comfort` (reglages).
+
+### Tests hors navigateur
+
+```
+npm install three@0.169.0 --no-save
+npm test          # aide au pilotage, avions du hangar, coherence des catalogues, terminal
+```
+
+- `tools/fleet.sim.mjs` : chaque avion decolle, monte, supporte les manches extremes, atterrit seul et s'arrete (2 vents) ; l'helicoptere decolle, stationne et se pose sur l'helipad.
+- `tools/data.test.mjs` : identifiants uniques, autocollants offerts qui existent, iles a l'interieur de la mer, badges evaluables, avions complets.
+
+### Notes de mise en place
+
+- Navigateur integre de l'application : la capture d'ecran ne montre que 80 % de la page ; pour tout voir, appliquer `document.body.style.cssText='width:100vw;height:100vh;transform-origin:0 0;transform:scale(.8)'` (test seulement).
+- Rendu logiciel : ~2 images/s. Pour tester la logique, remplacer `__game.r3d.render` par une fonction vide.
+- Non fait (voulu) : pilotage a l'inclinaison de l'iPad (a tester sur l'appareil), planeur et thermiques, vol en formation avec un avion IA, voix enregistrees.

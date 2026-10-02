@@ -334,6 +334,7 @@ export class Fun {
     hold('btnLoop', () => this.startStunt('loop'));
     hold('btnTrail', () => this.cycleTrail());
     hold('btnPhoto', () => this.requestPhoto());
+    hold('btnHover', () => { const h = this.g.ac.heli; if (h) { h.hover = !h.hover; sfx.pop(); this.g.arcade.popup(h.hover ? '⏸ Vol stationnaire' : '▶ En avant !'); } });
 
     /* Clavier. */
     window.addEventListener('keydown', (e) => {
@@ -436,7 +437,7 @@ export class Fun {
   canStunt(say = true) {
     const g = this.g, ac = g.ac;
     if (!this.active || g.state !== 'PILOT' || g.reportShown || this.stunt) return false;
-    if (ac.onGround || g.assist.landing) return false;
+    if (ac.onGround || g.assist.landing || ac.heli) return false;
     const agl = ac.pos.y - ac.groundY;
     if (agl < STUNT_MIN_AGL) { if (say) this.sayKey('tooLow', 2); return false; }
     if (ac.tas * KTS < ac.stuntMinKt) { if (say) this.sayKey('tooSlow', 2); return false; }
@@ -559,12 +560,15 @@ export class Fun {
       while (this._trailAcc >= step) {
         this._trailAcc -= step;
         const q = ac.quat;
+        const half = ac.heli ? 1.0 : Math.max(1.2, ac.b / 2 - 0.3);
+        const back = ac.heli ? 0.4 : ac.profile === 'liner' ? 3.2 : 0.7;
         for (const side of [-1, 1]) {
-          const p = new THREE.Vector3(side * 16.2, 0.4, 3.2).applyQuaternion(q).add(ac.pos);
+          const p = new THREE.Vector3(side * half, ac.heli ? -1.2 : 0.4, back).applyQuaternion(q).add(ac.pos);
           let c;
           if (colors === 'rainbow') { tr.hue = (tr.hue + 0.012) % 1; c = new THREE.Color().setHSL(tr.hue, 0.95, 0.55).getHex(); }
           else c = colors[0];
-          tr.emit(p.x, p.y, p.z, c, this.boosting ? 4.4 : 3.4, this.boosting ? 2.4 : 3.6);
+          const ks = Math.max(0.35, g.r3d.camScale || 1);
+          tr.emit(p.x, p.y, p.z, c, (this.boosting ? 4.4 : 3.4) * ks, this.boosting ? 2.4 : 3.6);
         }
       }
     }
@@ -703,6 +707,24 @@ export class Fun {
     btn.innerHTML = `<span class="chest-ico">${gift.ico}</span><b>${gift.text(n)}</b>`;
   }
 
+  /* Une idee pour le prochain vol : toujours un « encore un ! » a portee de main. */
+  nextTip() {
+    const g = this.g, tips = [];
+    const st = this.data.stats;
+    if (!g.sky.data.done) tips.push('🎯 Essaie une MISSION au tableau de depart : ballons, course, pompier…');
+    else if (!Object.values(g.sky.data.best).some(b => b.medal === 3)) tips.push("🥇 Vise une medaille d'OR sur une mission !");
+    if (st.rolls + st.loops < 3) tips.push('🌀 En vol, essaie TONNEAU et LOOPING pour gagner des points !');
+    if (g.openWorld.starCount < 8) tips.push('⭐ Des etoiles dorees sont cachees dans le ciel : cherche-les !');
+    if (!g.openWorld.data.islands.length) tips.push("🏝️ Au nord-est, une mer et six iles t'attendent !");
+    const h = g.hangar;
+    if (g.arcade.coins >= 25 && !g.arcade.data.stats.hangarVisit) tips.push(`🎨 Tu as ${g.arcade.coins} pieces : passe a Mon hangar pour peindre ton avion !`);
+    if (!h.planeOwned('hydravion') && g.arcade.data.level >= 2 && g.arcade.coins >= 120) tips.push("🛩️ Tu peux acheter l'Hydravion au hangar !");
+    if (!h.planeOwned('zebulon') && g.arcade.data.level >= 3 && g.arcade.coins >= 150) tips.push('🛩️ Tu peux acheter le Zebulon (avion de voltige) au hangar !');
+    if (!g.deco.data.items.length && g.arcade.coins >= 30) tips.push('🏗️ Construis ta place : fontaine, manege, grande roue…');
+    if (!tips.length) tips.push("🔁 Refais un vol : bats ton record d'etoiles et d'acrobaties !");
+    return tips[Math.floor(Math.random() * tips.length)];
+  }
+
   /* ---------------- Rapport de vol ---------------- */
   reportFx(rate, coinsTotal) {
     /* Etoiles : un son par etoile, au rythme de l'animation CSS. */
@@ -731,6 +753,7 @@ export class Fun {
     const line = [];
     if (this.stuntCount) line.push(`✨ ${this.stuntCount} acrobatie${this.stuntCount > 1 ? 's' : ''} : ${this.stuntScore} points (+${this.stuntCoins} 🪙)`);
     if (this.data.stats.bestStunt && this.stuntScore >= this.data.stats.bestStunt && this.stuntScore > 0) line.push('🏆 Nouveau record d\'acrobaties !');
+    line.push('👉 ' + this.nextTip());
     return line;
   }
 
@@ -785,7 +808,9 @@ export class Fun {
     if (!show) return;
     const ac = g.ac;
     const ok = !ac.onGround && !g.assist.landing && (ac.pos.y - ac.groundY) >= STUNT_MIN_AGL && ac.tas * KTS >= ac.stuntMinKt && !this.stunt;
-    ['btnRoll', 'btnLoop'].forEach(id => { const b = $(id); if (b) b.classList.toggle('dim', !ok); });
+    ['btnRoll', 'btnLoop'].forEach(id => { const b = $(id); if (b) { b.classList.toggle('dim', !ok); b.classList.toggle('hidden', !!ac.heli); } });
+    const hb = $('btnHover');
+    if (hb) { hb.classList.toggle('hidden', !ac.heli); hb.classList.toggle('on', !!(ac.heli && ac.heli.hover)); hb.querySelector('small').textContent = ac.heli && ac.heli.hover ? 'AVANCER' : 'STOP'; }
     const tb = $('btnTurbo');
     if (tb) { tb.classList.toggle('dim', ac.onGround || this.boostGauge < BOOST_MIN); tb.classList.toggle('on', this.boosting); }
     const fill = $('turboFill');

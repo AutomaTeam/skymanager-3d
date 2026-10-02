@@ -39,6 +39,7 @@ import { Album } from './album.js?v=1790900000';
 import { OpenWorld } from './openWorld.js?v=1790900000';
 import { Comfort } from './comfort.js?v=1790900000';
 import { planeOf } from './fleet.js?v=1790900000';
+import { HELIPAD } from './heliModel.js';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
 import { iconify } from './icons.js?v=1790900000';
@@ -717,7 +718,7 @@ class Game {
       this.fun.countdownLaunch();
       return;
     }
-    this.toast('🚜 Le tracteur t\'amene au bout de la piste !', 2600);
+    this.toast(this.ac.heli ? '🚁 Ton helicoptere t\'attend sur l\'helipad !' : '🚜 Le tracteur t\'amene au bout de la piste !', 2600);
     /* Choix du plan de vol (destination + defi). */
     this.arcade.offerPlan();
   }
@@ -726,6 +727,14 @@ class Game {
   helpLanding() {
     const ac = this.ac;
     if (this.state !== 'PILOT' || ac.onGround) return;
+    if (ac.heli) {
+      ac.heli.auto = 'land';
+      this.assist.altHold = null;
+      this.arcade.clearRing();
+      sfx.whoosh();
+      this.toast('🚁 Je te ramene sur l\'helipad et je te pose doucement !', 3400, 'ok');
+      return;
+    }
     ac.pos.set((Math.random() - 0.5) * 120, 225, -5500);
     ac.quat.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI);   // cap 180
     ac.vel.set(0, 0, 0).addScaledVector(ac.forward(), 78);
@@ -2278,8 +2287,10 @@ class Game {
   }
 
   resetFlight() {
+    /* l'helicoptere part de l'helipad, les avions du bout de la piste */
+    const start = this.ac.heli ? new THREE.Vector3(HELIPAD.x, this.ac.groundY, HELIPAD.z) : new THREE.Vector3(0, this.ac.groundY, RUNWAY.startZ - 120);
     this.ac.reset({
-      pos: new THREE.Vector3(0, this.ac.groundY, RUNWAY.startZ - 120),
+      pos: start,
       heading: 0, speed: 0, flaps: 1, gear: true, fuel: planeOf(this.ac.profile).fuel
     });
     this._activeFaultComponents.clear();

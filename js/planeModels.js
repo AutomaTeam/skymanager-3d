@@ -377,7 +377,113 @@ function buildZebulon() {
   };
 }
 
+/* ============================================================
+   COLIBRI — helicoptere
+   ============================================================ */
+function buildHeli() {
+  const group = new THREE.Group();
+  const body = mat(0xf4f0e6, { rough: 0.32 });
+  const accent = mat(0xff7a1a, { rough: 0.32 });
+  const dark = mat(0x23272e, { rough: 0.7 });
+  const glass = mat(0x0f2740, { rough: 0.05, metal: 0.8, transparent: true, opacity: 0.6, env: 1.3 });
+  const skin = mat(0xf1c9a5, { rough: 0.7 });
+  const metal = mat(0xb9c0c8, { rough: 0.35, metal: 0.8 });
+
+  /* cabine : ellipsoide */
+  const cabin = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16), body);
+  cabin.scale.set(1.05, 0.95, 2.0);
+  cabin.position.set(0, 0, -0.35);
+  group.add(cabin);
+  /* bande d'accent autour de la cabine */
+  const belt = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, Math.PI * 0.46, Math.PI * 0.1), accent);
+  belt.scale.set(1.06, 0.96, 2.01);
+  belt.position.set(0, 0, -0.35);
+  group.add(belt);
+  /* verriere avant */
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.62), glass);
+  canopy.scale.set(0.96, 0.82, 1.15);
+  canopy.rotation.x = Math.PI / 2.35;
+  canopy.position.set(0, 0.12, -1.35);
+  group.add(canopy);
+  for (const [x, z] of [[-0.28, -1.2], [0.28, -1.2]]) {
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 10, 8), skin);
+    head.position.set(x, 0.42, z); head.userData.noShadow = true;
+    group.add(head);
+  }
+  /* capot moteur */
+  const hump = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 1.0, 6, 12), body);
+  hump.rotation.x = Math.PI / 2; hump.position.set(0, 1.0, 0.25);
+  group.add(hump);
+  /* poutre de queue */
+  const boom = C0(0.34, 0.14, 4.6, body);
+  boom.rotation.x = Math.PI / 2; boom.position.set(0, 0.25, 3.35);
+  group.add(boom);
+  const stripe = C0(0.345, 0.2, 1.2, accent);
+  stripe.rotation.x = Math.PI / 2; stripe.position.set(0, 0.25, 4.7);
+  group.add(stripe);
+  group.add(fin([[5.4, 0.2], [5.55, 1.25], [5.95, 1.25], [5.85, 0.2]], 0.07, accent));
+  const stab = B0(1.4, 0.05, 0.45, body); stab.position.set(0, 0.45, 5.45);
+  group.add(stab);
+  /* rotor de queue */
+  const tail = new THREE.Group(); tail.position.set(0.22, 0.85, 5.75);
+  const tb1 = B0(0.04, 0.9, 0.12, dark); const tb2 = B0(0.04, 0.12, 0.9, dark);
+  tail.add(tb1, tb2);
+  group.add(tail);
+  /* mat et rotor principal */
+  const mast = C0(0.07, 0.09, 0.5, metal); mast.position.set(0, 1.62, 0.25);
+  group.add(mast);
+  const rotor = new THREE.Group(); rotor.position.set(0, 1.9, 0.25);
+  for (let i = 0; i < 4; i++) {
+    const bl = B0(4.5, 0.045, 0.28, dark);
+    bl.position.x = 2.3; const arm = new THREE.Group(); arm.rotation.y = i * Math.PI / 2; arm.add(bl); rotor.add(arm);
+  }
+  const hub = C0(0.2, 0.2, 0.18, metal); rotor.add(hub);
+  group.add(rotor);
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(4.6, 32), new THREE.MeshBasicMaterial({ color: 0xdfe6ee, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }));
+  disc.rotation.x = -Math.PI / 2; disc.position.set(0, 1.93, 0.25); disc.userData.noShadow = true;
+  group.add(disc);
+  /* patins */
+  for (const s of [-1, 1]) {
+    const sk = C0(0.05, 0.05, 3.2, metal); sk.rotation.x = Math.PI / 2; sk.position.set(s * 1.0, -1.3, -0.1);
+    const up = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.05, 6, 10, Math.PI), metal); up.rotation.set(0, Math.PI / 2, 0); up.position.set(s * 1.0, -1.3, -1.7);
+    group.add(sk, up);
+    group.add(strut([s * 0.55, -0.7, -0.8], [s * 1.0, -1.28, -0.9], 0.04, metal));
+    group.add(strut([s * 0.55, -0.7, 0.55], [s * 1.0, -1.28, 0.65], 0.04, metal));
+  }
+  /* feux */
+  const nav = (x, c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.07, 6, 5), new THREE.MeshBasicMaterial({ color: c })); m.position.set(x, 0.2, -0.3); m.userData.noShadow = true; group.add(m); };
+  nav(-1.1, 0xff2d2d); nav(1.1, 0x2dff6a);
+
+  shadows(group);
+  const prof = [[0.0, -2.3], [0.95, -1.7], [1.05, -0.6], [0.9, 0.9], [0.6, 1.6]];
+  const slots = {
+    radius: radiusFrom(prof),
+    band: { z0: -1.2, z1: 1.0, yc: -0.2, h: 0.2 },
+    name: { z0: -1.0, z1: 0.9, yc: 0.2, h: 0.16 },
+    stickers: [
+      { z: -1.5, yc: 0.0, size: 0.5, radius: 0.9 },
+      { z: 0.9, yc: 0.0, size: 0.42, radius: 0.78 },
+      { z: 0.2, yc: -0.45, size: 0.4, radius: 0.95 }
+    ],
+    tailFin: { zc: 5.7, yc: 0.7, size: 0.5, halfThick: 0.045 }
+  };
+  return {
+    id: 'helico', group, body: [body], accent: [accent], slots,
+    update(ac, dt) {
+      const h = ac.heli;
+      if (h) { rotor.rotation.y = -h.rotor; tail.rotation.x = h.rotor * 1.8; }
+      const sp = h ? h.spin : 0;
+      disc.material.opacity = THREE.MathUtils.clamp((sp - 0.45) * 0.35, 0, 0.2);
+      rotor.children.forEach((c, i) => { if (c.isGroup) c.visible = sp < 0.7; });
+    }
+  };
+}
+
+const C0 = (r0, r1, h, m, seg = 12) => new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, seg), m);
+const B0 = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+
 export const MODEL_BUILDERS = {
+  helico: buildHeli,
   pioupiou: () => buildPioupiou(),
   hydravion: () => buildPioupiou({ id: 'hydravion', floats: true, bodyColor: 0xfff1a8, accentColor: 0x1e6fe0 }),
   zebulon: buildZebulon

@@ -61,6 +61,31 @@ const final = (x, hdg = 180, alt = 215, z = -5500) => (ac, as, P) => {
 };
 
 const WINDS = [[0, 0, 0.35], [5, 2, 0.6]];
+
+/* Helicoptere : decollage, vol, stationnaire, atterrissage automatique sur l'helipad. */
+function heliTests(id, P) {
+  const pad = { x: 95, z: 1190 };
+  const start = (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(pad.x, ac.groundY, pad.z), heading: 0, fuel: P.fuel }); as.launch(); };
+  let r = sim(id, start, 30, idle, [0, 0, 0.3]);
+  check(!r.ac.onGround && r.ac.pos.y - r.ac.groundY > 25, `helico : decolle et prend de l'altitude (${(r.ac.pos.y - r.ac.groundY).toFixed(0)} m)`);
+  check(Math.hypot(r.ac.vel.x, r.ac.vel.z) > 15, `helico : avance en croisiere (${(Math.hypot(r.ac.vel.x, r.ac.vel.z) * KTS).toFixed(0)} kt)`);
+  r = sim(id, start, 45, idle, [0, 0, 0.3], (ac, as, t) => { if (t > 20 && !ac.heli.hover) ac.heli.hover = true; });
+  check(Math.hypot(r.ac.vel.x, r.ac.vel.z) < 0.5 && r.ac.pos.y - r.ac.groundY > 25, `helico : le bouton STOP le met en vol stationnaire`);
+  /* manche a cabrer / piquer : montee puis descente douce */
+  r = sim(id, start, 60, (t) => ({ pitch: t > 15 && t < 25 ? 1 : t > 35 ? -1 : 0, roll: 0, yaw: 0 }), [0, 0, 0.3]);
+  check(!r.ac.crashed, 'helico : descente au manche sans crash');
+  /* atterrissage automatique depuis divers points */
+  for (const [x, z, alt] of [[300, 900, 90], [-100, 1500, 150], [95, 1190 - 300, 60]]) {
+    r = sim(id, (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(x, alt, z), heading: 0, fuel: P.fuel }); ac.onGround = false; ac.wasOnGround = false; as.launched = true; ac.heli.auto = 'land'; ac.heli.vf = 15; ac.heli.airT = 5; ac.armedForLanding = true; }, 90, idle, [3, 1, 0.4]);
+    const td = r.ac.touchdown;
+    check(!!td && !r.ac.crashed, `helico : atterrissage automatique depuis (${x},${z})`);
+    if (td) {
+      check(td.fpm < 320, `helico : pose douce (${td.fpm.toFixed(0)} fpm)`);
+      const d = Math.hypot(r.ac.pos.x - pad.x, r.ac.pos.z - pad.z);
+      check(d < 24, `helico : pose sur l'helipad (a ${d.toFixed(0)} m)`);
+    }
+  }
+}
 const ids = Object.keys(PLANES).filter(id => id !== 'liner' && (!only || id === only));
 
 for (const id of ids) {
@@ -68,6 +93,8 @@ for (const id of ids) {
   const { ac: a0 } = make(id);
   console.log(`\n=== ${P.name} (${id}) ===`);
   console.log(`masse ${a0.mass.toFixed(0)} kg, decrochage ${(a0.stallSpeed() * KTS).toFixed(0)} kt, Vr ${(a0.vRotate() * KTS).toFixed(0)} kt, Vref ${(a0.vRef() * KTS).toFixed(0)} kt`);
+
+  if (P.phys && P.phys.isHeli) { heliTests(id, P); continue; }
 
   /* Repos : l'avion doit tenir sur ses roues sans s'enfoncer ni rebondir. */
   {

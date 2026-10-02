@@ -1841,3 +1841,8 @@ body.lefty .mascot { left: auto; right: 0.75rem; flex-direction: row-reverse; }
 body.bigtext .obj-text, body.bigtext .panel-sub, body.bigtext .m-bub, body.bigtext .st-mid p, body.bigtext .hg-sub,
 body.bigtext .kp-tile small, body.bigtext .al-card b, body.bigtext .hg-item small, body.bigtext .sky-chip, body.bigtext .mg-help { font-size: 118%; }
 body.bigtext .fun-btn small, body.bigtext .action-btn small { font-size: 11px; }
+
+/* Vague 7 : helicoptere */
+.fun-btn.hidden { display: none; }
+.fun-btn.hover { background: linear-gradient(135deg, #bae6fd, #38bdf8); color: #082f49; }
+.fun-btn.hover.on { background: linear-gradient(135deg, #bbf7d0, #22c55e); color: #052e16; }

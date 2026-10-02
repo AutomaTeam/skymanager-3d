@@ -570,7 +570,7 @@ export const MISSION_DEFS = [
   { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Eteins les feux de foret avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
   { id: 'parcel',   ico: '🎁', name: 'Livreur de colis',   brief: 'Largue les colis a parachute sur les cibles.', level: 2, limit: 170, cls: ParcelMission },
   { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission },
-  { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission },
+  { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
   { id: 'zoo',      ico: '🐧', name: 'Transport d\'animaux', brief: 'Amene un animal au zoo. Chacun a ses gouts !', level: 4, limit: 200, cls: CarryMission }
 ];
@@ -624,7 +624,8 @@ export class SkyMissions {
   /* ---------------- Tableau des missions ---------------- */
   cards() {
     const lvl = this.g.arcade.data.level;
-    return MISSION_DEFS.map(d => {
+    const heli = this.g.hangar.selected === 'helico';
+    return MISSION_DEFS.filter(d => !(heli && d.noHeli)).map(d => {
       const b = this.data.best[d.id] || {};
       return {
         id: d.id, ico: d.ico, name: d.name, brief: d.brief, level: d.level,

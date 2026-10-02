@@ -6,6 +6,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
+import { heliInit, heliReset, heliStep } from './heliModel.js';
 
 export const KTS = 1.94384;      // m/s -> noeuds
 export const FT = 3.28084;       // m -> pieds
@@ -163,6 +164,8 @@ export class Aircraft {
     this.stuntMinKt = 140;
     this.safeAgl = 0;          // > 0 : altitude de securite reduite (rase-mottes sur l'eau)
     this.profile = 'liner';
+    this.heli = null;           // etat de l'helicoptere (heliModel.js), null pour un avion
+    this.isHeli = false;
     this.gain = { roll: 1, pitch: 1 };     // gains de l'aide au pilotage (flightAssist.js)
     this._base = {};
     for (const k of Aircraft.PROFILE_KEYS) this._base[k] = this[k];
@@ -176,6 +179,7 @@ export class Aircraft {
     this.groundY = 3.14; this.maxFlap = 4; this.fixedGear = false; this.noReverse = false;
     this.rateDamping = 3.2; this.propVmax = 0; this.vne = 350; this.flareAgl = 24; this.stuntMinKt = 140;
     this.speeds = { climb: 215, cruise: 235, boost: 305 };
+    this.isHeli = false; this.heli = null; this.safeAgl = 0;
     if (phys) {
       const { gear, ...rest } = phys;
       Object.assign(this, rest);
@@ -184,6 +188,7 @@ export class Aircraft {
       }
     }
     this.AR = this.b * this.b / this.S;
+    if (this.isHeli) heliInit(this);
     this.profile = id;
     this.gain = (phys && phys.gain) || { roll: 1, pitch: 1 };
     if (this.fixedGear) this.gearDown = true;
@@ -250,6 +255,7 @@ export class Aircraft {
     this.crashed = false;
     this.stress = { hard: 0, overG: 0, overspeed: 0, flapOverspeed: 0 };
         this.clearFaults();
+        if (this.heli) heliReset(this, o.heading);
       }
 
       /* -------------------------------------------------- */
@@ -296,6 +302,7 @@ export class Aircraft {
      Integration : pas fixe, sous-pas pour la stabilite
      ================================================== */
   update(dt, t) {
+    if (this.heli) { heliStep(this, dt, t); return; }
     dt = clamp(dt, 0.0005, 0.05);
     const sub = 2;
     for (let i = 0; i < sub; i++) this.step(dt / sub, t);

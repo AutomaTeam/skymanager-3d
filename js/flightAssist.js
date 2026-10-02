@@ -17,6 +17,8 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
+import { heliCommand } from './heliModel.js';
+
 const KTS = 1.94384;
 const FT = 3.28084;
 
@@ -65,6 +67,7 @@ export class FlightAssist {
     this.thr = 0;               // poussee commandee (lissee)
     this.gearTimer = 0;
     this.boost = false;         // turbo demande (fun.js)
+    this.altHold = null;        // altitude tenue (helicoptere)
   }
 
   /* Appui sur DECOLLER : plein gaz, roulage guide. */
@@ -90,6 +93,7 @@ export class FlightAssist {
      Renvoie les commandes a appliquer. Peut aussi agir directement sur
      l'appareil (train, volets, spoilers) via ses methodes. */
   update(ac, inp, dt) {
+    if (ac.heli) return heliCommand(ac, this, inp, dt);
     const ias = ac.ias * KTS;
     const agl = ac.pos.y - ac.groundY;
     const vs = ac.vel.y;

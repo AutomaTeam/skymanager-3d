@@ -79,6 +79,28 @@ export const PLANES = {
     gain: { roll: 0.7, pitch: 0.8 }
   },
 
+  helico: {
+    id: 'helico', name: 'Colibri', ico: '🚁', level: 4, price: 200,
+    blurb: 'Un helicoptere ! Il reste en l\'air sur place et se pose partout.',
+    stars: { ease: 4, fun: 5, speed: 2 },
+    seats: 4, income: 0.6, fuel: 100,
+    camScale: 0.42, camMode: 'chase',
+    phys: {
+      isHeli: true,
+      S: 20, b: 2.4, c: 1.5,
+      emptyMass: 950, payload: 300, fuelCap: 120,
+      groundY: 1.32, maxFlap: 0, fixedGear: true, noReverse: true,
+      vne: 140, flareAgl: 6, stuntMinKt: 9999,
+      speeds: { climb: 50, cruise: 62, boost: 98 },
+      gear: [
+        { name: 'nose', p: [0, -1.3, -1.2], steer: true },
+        { name: 'left', p: [-1.0, -1.3, 0.8], brake: true },
+        { name: 'right', p: [1.0, -1.3, 0.8], brake: true }
+      ]
+    },
+    gain: { roll: 1, pitch: 1 }
+  },
+
   zebulon: {
     id: 'zebulon', name: 'Zebulon', ico: '🛩️', level: 3, price: 150,
     blurb: 'Avion de voltige : vif, rapide, il adore les tonneaux !',

@@ -114,6 +114,7 @@ export class Hangar {
     const g = this.g;
     if (this.active || g.state !== 'HUB') return false;
     this.active = true;
+    this.g.arcade.data.stats.hangarVisit = (this.g.arcade.data.stats.hangarVisit || 0) + 1;
     this.tab = 'plane';
     this.trial = null;
     this.previewId = this.data.selected;

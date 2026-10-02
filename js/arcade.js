@@ -613,6 +613,7 @@ export class Arcade {
       if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ca roule ! Tire vers le haut pour decoller.', target: null };
       if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer a la maison.', target: null };
       if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau dore ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
+      if (ac.heli) return { icon: '🚁', text: 'Suis la fleche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
       return { icon: '🛬', text: 'Suis la fleche vers la piste et atterris doucement.', target: null };
     }
     const ge = this.g.state === 'HUB' && this.g.ground && this.g.ground.goal();
@@ -1755,7 +1756,7 @@ export class Arcade {
       target = null;
       if (g.sky && g.sky.m) target = g.sky.target();
       else if (this.ring) target = { x: this.ring.x, z: this.ring.z };
-      else if (this.wantRunwayArrow()) target = { x: 0, z: -1500 };
+      else if (this.wantRunwayArrow()) target = g.ac.heli ? { x: 95, z: 1190 } : { x: 0, z: -1500 };
     } else {
       return null;
     }

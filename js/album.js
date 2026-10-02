@@ -41,7 +41,7 @@ export class Album {
     const g = this.g;
     switch (tab) {
       case 'planes':
-        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: id === 'zebulon' ? 'Niveau 3 + 150 pieces' : id === 'hydravion' ? 'Niveau 2 + 120 pieces' : 'Dans ton hangar' }));
+        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: id === 'zebulon' ? 'Niveau 3 + 150 pieces' : id === 'hydravion' ? 'Niveau 2 + 120 pieces' : id === 'helico' ? 'Niveau 4 + 200 pieces' : 'Dans ton hangar' }));
       case 'cities':
         return DESTINATIONS.map(d => ({ ico: d.flag, name: d.city, got: (g.arcade.data.visited || []).includes(d.city), hint: 'Vole vers cette ville (plan de vol)' }));
       case 'animals':
