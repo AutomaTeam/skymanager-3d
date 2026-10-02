@@ -16,7 +16,7 @@
 
 import { sfx } from './sfx.js?v=1790900000';
 import { LAYOUT } from './layout.js?v=1790900000';
-import { drawIcon } from './icons.js?v=1790900000';
+import { drawIcon, iconify } from './icons.js?v=1790900000';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -541,6 +541,8 @@ export class Arcade {
     /* Aux commandes : le but est toujours celui du vol en cours. */
     if (this.g.state === 'PILOT') {
       const ac = this.g.ac;
+      const sg = this.g.sky && this.g.sky.goal();
+      if (sg) return sg;
       if (ac.onGround && !this.g.assist.launched && !ac.touchdown) return { icon: '🛫', text: 'Appuie sur DECOLLER, puis tire vers le haut !', target: null };
       if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ca roule ! Tire vers le haut pour decoller.', target: null };
       if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer a la maison.', target: null };
@@ -1683,7 +1685,8 @@ export class Arcade {
       /* Aux commandes, le point du hub ne veut plus rien dire : la fleche
          montre l'anneau, sinon la piste. */
       target = null;
-      if (this.ring) target = { x: this.ring.x, z: this.ring.z };
+      if (g.sky && g.sky.m) target = g.sky.target();
+      else if (this.ring) target = { x: this.ring.x, z: this.ring.z };
       else if (this.wantRunwayArrow()) target = { x: 0, z: -1500 };
     } else {
       return null;
@@ -1753,6 +1756,8 @@ export class Arcade {
       if (this.ring && ac.onGround) this.clearRing();
       return;
     }
+    /* Pendant une mission, les anneaux dores laissent la place a la mission. */
+    if (g.sky && g.sky.busy) { if (this.ring) this.clearRing(); return; }
     /* Pas d'anneau pendant la finale : on se concentre sur la piste. */
     if (g.assist.landing || g.assist.finalLike(ac)) { if (this.ring) this.clearRing(); return; }
     if (this.ringsThisFlight >= RING_TOTAL) { if (this.ring) this.clearRing(); return; }
@@ -1848,11 +1853,13 @@ export class Arcade {
   }
 
   /* ---------------- Plan de vol ---------------- */
-  /* Propose 3 vols (2 defis + un vol tranquille) au moment de s'asseoir aux commandes. */
+  /* Tableau de depart : deux onglets, les missions (jeux de 1 a 3 minutes) et
+     les destinations (un defi de vol). Affiche quand on s'asseoit aux commandes. */
   offerPlan() {
     if (!this.on) return;
     const box = $('flightPlan');
     if (!box) return;
+    const sky = this.g.sky;
     const dests = DESTINATIONS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
     const chal = ['star', 'rings', 'fast', 'perfect'].sort(() => Math.random() - 0.5).slice(0, 2);
     const kinds = [chal[0], chal[1], 'cool'];
@@ -1863,17 +1870,37 @@ export class Arcade {
       return { dest: d, kind: kinds[i], bonus, t0: null };
     });
     const seen = this.data.visited || [];
-    $('planCards').innerHTML = offers.map((o, i) => {
-      const t = PLAN_TYPES[o.kind];
-      return `<button class="plan-card" data-i="${i}"><span class="pc-flag">${o.dest.flag}</span>` +
-        `<span class="pc-mid"><b>${o.dest.city}</b><small>${o.dest.km.toLocaleString('fr-FR')} km${seen.includes(o.dest.city) ? '' : ' · 🆕 nouvelle ville !'}</small>` +
-        `<em>${t.ico} ${t.name} — ${t.text}</em></span>` +
-        `<span class="pc-rw">${o.bonus ? '+' + o.bonus + ' 🪙' : 'Cool'}</span></button>`;
-    }).join('');
+    const close = () => { box.classList.add('hidden'); sfx.click(); };
+    const medals = ['', '🥉', '🥈', '🥇'];
+    const renderTab = (tab) => {
+      document.querySelectorAll('[data-plantab]').forEach(b => b.classList.toggle('on', b.dataset.plantab === tab));
+      const host = $('planCards');
+      if (tab === 'missions' && sky) {
+        host.innerHTML = sky.cards().map(c =>
+          `<button class="plan-card mission${c.locked ? ' locked' : ''}" data-mission="${c.id}"${c.locked ? ' disabled' : ''}>` +
+          `<span class="pc-flag">${c.ico}</span><span class="pc-mid"><b>${c.name}</b><small>${c.brief}</small></span>` +
+          `<span class="pc-rw">${c.locked ? '🔒 Niv ' + c.level : (medals[c.medal] || 'Nouveau')}</span></button>`).join('');
+        host.querySelectorAll('[data-mission]').forEach(b => b.addEventListener('click', () => { close(); this.plan = null; sky.arm(b.dataset.mission); }));
+      } else {
+        host.innerHTML = offers.map((o, i) => {
+          const t = PLAN_TYPES[o.kind];
+          return `<button class="plan-card" data-i="${i}"><span class="pc-flag">${o.dest.flag}</span>` +
+            `<span class="pc-mid"><b>${o.dest.city}</b><small>${o.dest.km.toLocaleString('fr-FR')} km${seen.includes(o.dest.city) ? '' : ' · 🆕 nouvelle ville !'}</small>` +
+            `<em>${t.ico} ${t.name} — ${t.text}</em></span>` +
+            `<span class="pc-rw">${o.bonus ? '+' + o.bonus + ' 🪙' : 'Cool'}</span></button>`;
+        }).join('');
+        host.querySelectorAll('.plan-card').forEach(b => b.addEventListener('click', () => {
+          const o = offers[+b.dataset.i];
+          close(); this.plan = o;
+          if (o && o.bonus) this.g.toast(`${o.dest.flag} Cap sur ${o.dest.city} ! Defi : ${PLAN_TYPES[o.kind].text}`, 3800, 'ok');
+        }));
+      }
+      iconifyHost(host);
+    };
+    document.querySelectorAll('[data-plantab]').forEach(b => { b.onclick = () => { sfx.click(); renderTab(b.dataset.plantab); }; });
+    renderTab(sky ? 'missions' : 'dest');
     box.classList.remove('hidden');
-    const pick = (o) => { box.classList.add('hidden'); sfx.click(); this.plan = o; if (o && o.bonus) this.g.toast(`${o.dest.flag} Cap sur ${o.dest.city} ! Defi : ${PLAN_TYPES[o.kind].text}`, 3800, 'ok'); };
-    $('planCards').querySelectorAll('.plan-card').forEach(b => b.addEventListener('click', () => pick(offers[+b.dataset.i])));
-    $('planSkip').onclick = () => pick(null);
+    $('planSkip').onclick = () => { close(); this.plan = null; };
   }
 
   /* A la fin du vol : le defi est-il reussi ? Renvoie { bonus, line } ou null. */
@@ -1965,3 +1992,4 @@ export class Arcade {
 
 /* Altitude minimale (m, centre de gravite) avant de placer le 1er anneau. */
 const GROUND_CLEAR = 12;
+const iconifyHost = (el) => { try { iconify(el); } catch (e) { /* icones facultatives */ } };

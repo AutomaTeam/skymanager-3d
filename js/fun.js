@@ -330,6 +330,9 @@ export class Fun {
     /* Coffre surprise dans le rapport de vol. */
     t('kidChest', () => this.openChest());
     t('photoClose', () => $('photoPanel').classList.add('hidden'));
+    document.querySelectorAll('[data-pfilter]').forEach(b => b.addEventListener('click', () => this.applyFilter(b.dataset.pfilter)));
+    t('pausePhotos', () => this.openAlbum());
+    t('photoAlbumClose', () => $('photoAlbum').classList.add('hidden'));
 
     /* Compte a rebours « Voler maintenant ». */
     t('btnFlyNow', () => { sfx.click(); this.g.flyNow(); });
@@ -475,6 +478,7 @@ export class Fun {
     this.stuntCoins += coins;
     arc.giveCoins(coins, { silent: true, xp: 4 });
     arc.event('stunt');
+    if (this.g.sky) this.g.sky.onStunt(kind);
     const st = this.data.stats;
     if (kind === 'roll') st.rolls++; else st.loops++;
     st.combo = Math.max(st.combo, this.combo.n);
@@ -568,6 +572,8 @@ export class Fun {
     x.font = '22px Arial, sans-serif'; x.fillStyle = '#64748b';
     x.textAlign = 'right';
     x.fillText(`SkyManager · ${new Date().toLocaleDateString('fr-FR')}`, cv.width - 30, H + 72);
+    this._shot = cv;
+    this._shotFilter = 'normal';
     const url = cv.toDataURL('image/jpeg', 0.88);
     /* Miniature pour l'album. */
     const th = document.createElement('canvas');
@@ -585,6 +591,56 @@ export class Fun {
     if (dl) { dl.href = url; dl.download = `carte-postale-${Date.now()}.jpg`; }
     $('photoPanel').classList.remove('hidden');
     this.sayKey('photo', 2, 2200);
+  }
+
+  /* Filtres de la carte postale (calcules pixel par pixel : compatibles Safari). */
+  applyFilter(name) {
+    if (!this._shot) return;
+    const src = this._shot;
+    const cv = document.createElement('canvas');
+    cv.width = src.width; cv.height = src.height;
+    const x = cv.getContext('2d');
+    x.drawImage(src, 0, 0);
+    if (name !== 'normal') {
+      const H = 20, y0 = 20, W = src.width - 40, Hh = src.height - 110;   // seulement la photo, pas le cadre
+      const im = x.getImageData(20, 20, W, Hh), d = im.data;
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i], g = d[i + 1], b = d[i + 2];
+        const l = r * 0.3 + g * 0.59 + b * 0.11;
+        if (name === 'bw') { r = g = b = l * 1.05; }
+        else if (name === 'warm') { r = r * 1.12 + 8; g = g * 1.02 + 2; b = b * 0.82; }
+        else if (name === 'pop') { r = l + (r - l) * 1.7; g = l + (g - l) * 1.7; b = l + (b - l) * 1.7; r = (r - 128) * 1.12 + 128; g = (g - 128) * 1.12 + 128; b = (b - 128) * 1.12 + 128; }
+        else if (name === 'vintage') { const s = l * 0.7; r = s + 62 + (r - l) * 0.3; g = s + 38 + (g - l) * 0.3; b = s + 18 + (b - l) * 0.3; }
+        d[i] = r < 0 ? 0 : r > 255 ? 255 : r; d[i + 1] = g < 0 ? 0 : g > 255 ? 255 : g; d[i + 2] = b < 0 ? 0 : b > 255 ? 255 : b;
+      }
+      x.putImageData(im, 20, 20);
+    }
+    const url = cv.toDataURL('image/jpeg', 0.88);
+    $('photoImg').src = url;
+    const dl = $('photoSave');
+    if (dl) dl.href = url;
+    document.querySelectorAll('[data-pfilter]').forEach(b => b.classList.toggle('on', b.dataset.pfilter === name));
+    /* la miniature de l'album suit le filtre choisi */
+    if (this.data.photos[0]) {
+      const th = document.createElement('canvas');
+      th.width = 240; th.height = Math.round(240 * cv.height / cv.width);
+      th.getContext('2d').drawImage(cv, 0, 0, th.width, th.height);
+      this.data.photos[0].img = th.toDataURL('image/jpeg', 0.6);
+      this.save();
+    }
+    sfx.pop();
+  }
+
+  openAlbum() {
+    const box = $('photoAlbum');
+    if (!box) return;
+    this.g.closePause();
+    const list = this.data.photos;
+    $('photoAlbumGrid').innerHTML = list.length
+      ? list.map(p => `<figure class="pa-item"><img src="${p.img}" alt="Photo"><figcaption>${p.dest} · ${new Date(p.t).toLocaleDateString('fr-FR')}</figcaption></figure>`).join('')
+      : '<p class="panel-sub">Pas encore de photo : appuie sur 📸 pendant un vol !</p>';
+    box.classList.remove('hidden');
+    sfx.click();
   }
 
   /* ---------------- Coffre surprise ---------------- */

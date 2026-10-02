@@ -120,6 +120,8 @@
   <button id="helpLandBtn" class="arcade-only hidden big-btn help">🛬 ATTERRIR (aide)</button>
   <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
   <div id="stuntChip" class="arcade-only hidden stunt-chip"></div>
+  <div id="skyChip" class="arcade-only hidden sky-chip"></div>
+  <button id="btnAction" class="arcade-only hidden action-btn"></button>
 
   <!-- Boutons fun (vague 1) : acrobaties, turbo, fumee, photo -->
   <div id="funPad" class="arcade-only hidden fun-pad">
@@ -331,6 +333,7 @@
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+        <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
         <button id="pauseHangar" class="kp-tile"><span class="kp-ico">🎨</span><b>Mon hangar</b><small>avions et peinture</small></button>
         <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
         <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
@@ -725,8 +728,11 @@
   <div class="panel-card wide kid">
     <div class="quiz-ico">🧭</div>
     <h2 class="panel-title text-center">Choisis ton vol !</h2>
-    <p class="panel-sub text-center">Chaque destination a un defi. Reussis-le pour gagner des pieces en plus.</p>
-    <div id="planCards" class="space-y-2"></div>
+    <div class="plan-tabs">
+      <button data-plantab="missions" class="on">🎯 Missions</button>
+      <button data-plantab="dest">🌍 Destinations</button>
+    </div>
+    <div id="planCards" class="space-y-2 plan-scroll"></div>
     <button id="planSkip" class="panel-btn mt-3">Vol libre (sans defi)</button>
   </div>
 </div>
@@ -824,12 +830,39 @@
   <p class="hg-drag">↔ Glisse pour tourner autour de l'avion</p>
 </div>
 
+<!-- ============ ALBUM PHOTOS ============ -->
+<div id="photoAlbum" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <h2 class="panel-title text-amber-300">📸 Mes cartes postales</h2>
+    <div id="photoAlbumGrid" class="pa-grid"></div>
+    <button id="photoAlbumClose" class="panel-btn mt-3">Fermer</button>
+  </div>
+</div>
+
+<!-- ============ RESULTAT DE MISSION ============ -->
+<div id="skyResult" class="hidden sky-result">
+  <div class="sr-card">
+    <div id="skyResMedal" class="sr-medal">🥇</div>
+    <h2 id="skyResTitle" class="sr-title">Or !</h2>
+    <p id="skyResName" class="sr-name"></p>
+    <p id="skyResLines" class="sr-lines"></p>
+    <button id="skyResultOk" class="panel-btn primary mt-2">Super ! On continue</button>
+  </div>
+</div>
+
 <!-- ============ PHOTO / CARTE POSTALE ============ -->
 <div id="photoFlash" class="photo-flash"></div>
 <div id="photoPanel" class="hidden panel-overlay">
   <div class="panel-card center kid">
     <h2 class="panel-title text-amber-300">📸 Carte postale !</h2>
     <img id="photoImg" class="photo-img" alt="Carte postale" />
+    <div class="photo-filters">
+      <button data-pfilter="normal" class="on">Normal</button>
+      <button data-pfilter="warm">Soleil</button>
+      <button data-pfilter="bw">N&amp;B</button>
+      <button data-pfilter="pop">Pop</button>
+      <button data-pfilter="vintage">Vintage</button>
+    </div>
     <a id="photoSave" class="panel-btn primary mt-3 !py-3 block" download="carte-postale.jpg">💾 Enregistrer l'image</a>
     <button id="photoClose" class="panel-btn mt-2">Continuer</button>
   </div>

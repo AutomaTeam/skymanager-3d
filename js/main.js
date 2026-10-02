@@ -31,6 +31,7 @@ import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINAT
 import { FlightAssist } from './flightAssist.js?v=1790900000';
 import { Fun } from './fun.js?v=1790900000';
 import { Hangar } from './hangar.js?v=1790900000';
+import { SkyMissions } from './skyMissions.js?v=1790900000';
 import { planeOf } from './fleet.js?v=1790900000';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
@@ -139,6 +140,7 @@ class Game {
     this.assist = new FlightAssist();
     this.fun = new Fun(this);
     this.hangar = new Hangar(this);
+    this.sky = new SkyMissions(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -389,7 +391,7 @@ class Game {
     });
     $('btnView').addEventListener('click', () => {
       const m = this.r3d.nextCamera();
-      this.flash({ chase: 'Vue poursuite', cockpit: 'Vue cockpit — glisse pour regarder autour', orbit: 'Vue exterieure', tower: 'Vue tour de controle' }[m]);
+      this.flash({ chase: 'Vue poursuite', cockpit: 'Vue cockpit — glisse pour regarder autour', orbit: 'Vue exterieure', tower: 'Vue tour de controle', cinema: '🎬 Camera cinema' }[m]);
       this.updatePilotViewUI();
     });
 
@@ -688,6 +690,7 @@ class Game {
     this.resetFlight();
     this.assist.reset();
     this.arcade.resetFlight();
+    this.sky.reset();
     this.fun.onFlightStart();
     this.hint = '';
     this.hintUntil = 0;
@@ -737,7 +740,7 @@ class Game {
     $('launchBtn').classList.toggle('hidden',
       !(ac.onGround && !this.assist.launched && !ac.touchdown && !this.reportShown));
     $('helpLandBtn').classList.toggle('hidden', ac.onGround || this.assist.landing);
-    $('ringChip').classList.toggle('hidden', ac.onGround);
+    $('ringChip').classList.toggle('hidden', ac.onGround || this.sky.busy);
     $('ringN').textContent = this.arcade.ringsThisFlight;
   }
 
@@ -785,7 +788,7 @@ class Game {
     if (boarded === 0) lines.push('💡 Fais embarquer des passagers au terminal pour gagner plus !');
     $('kidRepBonus').innerHTML = lines.join('<br>');
 
-    const funLines = this.fun.reportFx(rate, flightCoins + bonus + (pr ? pr.bonus : 0));
+    const funLines = this.fun.reportFx(rate, flightCoins + bonus + (pr ? pr.bonus : 0)).concat(this.sky.reportLines());
     if (funLines.length) $('kidRepBonus').innerHTML = funLines.join('<br>') + '<br>' + $('kidRepBonus').innerHTML;
     $('kidReport').classList.remove('hidden');
     if (rate.stars >= 2) { arc.confetti(rate.stars === 3 ? 90 : 45); }
@@ -2732,6 +2735,7 @@ class Game {
         this.updateEnvChip();
         this.arcade.update(dt);
         this.fun.update(dt);
+        this.sky.update(dt);
 
         /* L'aeroport vit : vehicules, avions, helicoptere, voyageurs. Les operations sur la
            piste s'arretent des que le joueur prend l'avion (jamais deux appareils au meme endroit). */

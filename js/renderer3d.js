@@ -202,7 +202,7 @@ export class Renderer3D {
     this.camera = new THREE.PerspectiveCamera(62, 1, 0.5, 60000);
     this.camera.position.set(0, 12, 940);
 
-    this.cameraModes = ['chase', 'cockpit', 'orbit', 'tower'];
+    this.cameraModes = ['chase', 'cockpit', 'orbit', 'tower', 'cinema'];
     /* Regard libre en vue cockpit (glisser pour tourner la tete). Le
        regard revient au centre des qu'on relache. */
     this.look = { yaw: 0, pitch: 0, hold: false };
@@ -3479,7 +3479,14 @@ boom.add(dockGrp);
     cam.up.set(0, 1, 0);
     cam.near = this.cameraMode === 'cockpit' ? 0.2 : 0.5;
 
-    if (this.cameraMode === 'cockpit') {
+    /* Camera cinema : plans qui s'enchainent (poursuite, cote, orbite, tour). */
+    let mode = this.cameraMode;
+    if (mode === 'cinema') {
+      this._cinemaT = (this._cinemaT || 0) + dt;
+      mode = ['chase', 'side', 'orbit', 'chase', 'front', 'tower'][Math.floor(this._cinemaT / 5) % 6];
+    }
+
+    if (mode === 'cockpit') {
       /* Regard libre : revient au centre quand on relache. */
       const L = this.look;
       if (!L.hold) {
@@ -3503,7 +3510,7 @@ boom.add(dockGrp);
       cam.quaternion.copy(ac.quat).multiply(this._headQuat);
       cam.fov = 82;
 
-    } else if (this.cameraMode === 'chase') {
+    } else if (mode === 'chase') {
       const ks = this.camScale || 1;
       const off = new THREE.Vector3(0, 7.5 * ks, 42 * ks).applyQuaternion(this._smoothQuat);
       cam.position.copy(this._smoothPos).add(off);
@@ -3519,7 +3526,17 @@ boom.add(dockGrp);
       /* Champ de vision qui s'ouvre avec la vitesse. */
       cam.fov = 58 + Math.min(12, ac.tas * 0.075);
 
-    } else if (this.cameraMode === 'orbit') {
+    } else if (mode === 'side' || mode === 'front') {
+      /* plan lateral ou de face, un peu en avance de l'appareil */
+      const ks = this.camScale || 1;
+      const fwd = ac.forward(), right = ac.right();
+      if (mode === 'side') cam.position.copy(ac.pos).addScaledVector(right, 34 * ks).addScaledVector(fwd, 12 * ks).add(new THREE.Vector3(0, 6 * ks, 0));
+      else cam.position.copy(ac.pos).addScaledVector(fwd, 60 * ks).addScaledVector(right, 10 * ks).add(new THREE.Vector3(0, 8 * ks, 0));
+      cam.position.y = Math.max(cam.position.y, 2);
+      cam.lookAt(ac.pos);
+      cam.fov = 52;
+
+    } else if (mode === 'orbit') {
       this.orbitAngle += dt * 0.22;
       const r = 62 * (this.camScale || 1);
       cam.position.set(
