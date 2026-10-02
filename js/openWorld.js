@@ -552,7 +552,7 @@ export class OpenWorld {
     const show = flying && !!n && !this.g.sky.m;
     chip.classList.toggle('hidden', !show);
     if (!show) return;
-    const rel = this.g.arcade._relativeAngle({ x: n.s.x, z: n.s.z });
+    const rel = this.g.arcade._relativeAngle({ x: n.s.x, z: n.s.z }, true);
     const txt = `⭐ ${Math.round(n.d)} m`;
     if (chip.firstChild && chip.firstChild.nodeValue !== txt) chip.firstChild.nodeValue = txt;
     const ar = chip.querySelector('.arr');

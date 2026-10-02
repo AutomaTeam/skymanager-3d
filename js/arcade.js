@@ -1735,7 +1735,7 @@ export class Arcade {
   }
 
   /* Angle ecran (rad, 0 = tout droit) et distance vers une cible monde. */
-  _relativeAngle(target) {
+  _relativeAngle(target, forced = false) {
     const g = this.g;
     let px, pz, fx, fz;
     if (g.state === 'HUB') {
@@ -1753,10 +1753,12 @@ export class Arcade {
       fx = f.x / l; fz = f.z / l;
       /* Aux commandes, le point du hub ne veut plus rien dire : la fleche
          montre l'anneau, sinon la piste. */
-      target = null;
-      if (g.sky && g.sky.m) target = g.sky.target();
-      else if (this.ring) target = { x: this.ring.x, z: this.ring.z };
-      else if (this.wantRunwayArrow()) target = g.ac.heli ? { x: 95, z: 1190 } : { x: 0, z: -1500 };
+      if (!forced) {
+        target = null;
+        if (g.sky && g.sky.m) target = g.sky.target();
+        else if (this.ring) target = { x: this.ring.x, z: this.ring.z };
+        else if (this.wantRunwayArrow()) target = g.ac.heli ? { x: 95, z: 1190 } : { x: 0, z: -1500 };
+      }
     } else {
       return null;
     }

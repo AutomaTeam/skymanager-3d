@@ -1170,6 +1170,13 @@ class Game {
        bloquants (rapport, incident, mini-jeu) ne se ferment pas ainsi :
        ils attendent une decision du joueur. */
     closeTopPanel() {
+      if (!$('photoPanel').classList.contains('hidden')) { $('photoPanel').classList.add('hidden'); return true; }
+      if (!$('photoAlbum').classList.contains('hidden')) { $('photoAlbum').classList.add('hidden'); return true; }
+      if (!$('albumPanel').classList.contains('hidden')) { $('albumPanel').classList.add('hidden'); return true; }
+      if (!$('settingsPanel').classList.contains('hidden')) { $('settingsPanel').classList.add('hidden'); return true; }
+      if (!$('mg2').classList.contains('hidden')) { this.minigames.close(); return true; }
+      if (this.hangar.active) { this.hangar.close(false); return true; }
+      if (this.deco.active) { this.deco.close(); return true; }
       if (!$('checkPanel').classList.contains('hidden')) { this.closeCheckPanel(); return true; }
       if (!$('helpPanel').classList.contains('hidden')) { $('helpPanel').classList.add('hidden'); return true; }
       if (this.hub && this.hub.isOpen) { this.hub.close(); return true; }
