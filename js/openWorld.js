@@ -35,7 +35,7 @@ export const ISLANDS = [
   { id: 'fun',        ico: '🎡', name: 'Ile des Manèges',      x: 4350, z: -4550, r: 320, hint: 'Un parc d\'attractions geant' },
   { id: 'castle',     ico: '🏰', name: 'Ile du Chateau',       x: 2400, z: -6150, r: 310, hint: 'Chevaliers et dragons ?' },
   { id: 'volcano',    ico: '🌋', name: 'Ile du Volcan',        x: 3950, z: -6050, r: 390, hint: 'Attention, il fume !' },
-  { id: 'ice',        ico: '🧊', name: 'Banquise des Pingouins', x: 3250, z: -6950, r: 300, hint: 'Brrr ! Il fait froid ici' }
+  { id: 'ice',        ico: '🧊', name: 'Banquise des Pingouins', x: 3250, z: -6700, r: 300, hint: 'Brrr ! Il fait froid ici' }
 ];
 export const islandOf = (id) => ISLANDS.find(i => i.id === id);
 

@@ -102,8 +102,30 @@ const DAILY_POOL = [
   { id: 'rings',  ev: 'ring',       icon: '🟡', text: (n) => `Traverse ${n} anneaux dores`,            min: 6, max: 10, reward: 25 },
   { id: 'cabin',  ev: 'cabinServe', icon: '🥤', text: (n) => `Sers ${n} passagers en cabine`,          min: 4, max: 8,  reward: 20 },
   { id: 'buy',    ev: 'buy',        icon: '🛍️', text: () => 'Achete une amelioration a la tour',       min: 1, max: 1,  reward: 25 },
-  { id: 'stunt',  ev: 'stunt',      icon: '🌀', text: (n) => `Fais ${n} acrobaties (tonneau ou looping)`, min: 3, max: 6, reward: 30 }
+  { id: 'stunt',  ev: 'stunt',      icon: '🌀', text: (n) => `Fais ${n} acrobaties (tonneau ou looping)`, min: 3, max: 6, reward: 30 },
+  { id: 'mission', ev: 'mission',   icon: '🎯', text: (n) => `Termine ${n} mission${n > 1 ? 's' : ''} aerienne${n > 1 ? 's' : ''}`, min: 1, max: 2, reward: 35 },
+  { id: 'secret', ev: 'secret',     icon: '⭐', text: (n) => `Trouve ${n} etoiles dorees dans le ciel`, min: 2, max: 4, reward: 30 },
+  { id: 'minigame', ev: 'minigame', icon: '🧽', text: (n) => `Joue a ${n} mini-jeux`,                  min: 2, max: 3, reward: 25 },
+  { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une carte postale pendant un vol', min: 1, max: 1, reward: 20 }
 ];
+
+/* Defis de la semaine : un objectif plus long, qui rapporte gros. */
+const WEEKLY_POOL = [
+  { id: 'wstars',   ev: 'secret',   icon: '🌟', text: (n) => `Trouve ${n} etoiles dorees`,            target: [8, 12],  reward: 120 },
+  { id: 'wmission', ev: 'mission',  icon: '🏅', text: (n) => `Termine ${n} missions aeriennes`,       target: [5, 8],   reward: 130 },
+  { id: 'wstunt',   ev: 'stunt',    icon: '🌀', text: (n) => `Fais ${n} acrobaties`,                  target: [25, 40], reward: 120 },
+  { id: 'wstar3',   ev: 'star3',    icon: '💎', text: (n) => `Reussis ${n} atterrissages parfaits`,   target: [3, 5],   reward: 130 },
+  { id: 'wmini',    ev: 'minigame', icon: '🎮', text: (n) => `Joue a ${n} mini-jeux`,                 target: [10, 15], reward: 100 },
+  { id: 'wisland',  ev: 'island',   icon: '🏝️', text: (n) => `Decouvre ${n} nouvelle${n > 1 ? 's' : ''} ile${n > 1 ? 's' : ''}`, target: [2, 3], reward: 110 }
+];
+const weekKey = () => {
+  const d = new Date();
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - dayNum);
+  const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+  return `${t.getUTCFullYear()}-W${Math.ceil(((t - y0) / 86400000 + 1) / 7)}`;
+};
 
 const todayKey = () => {
   const d = new Date();
@@ -219,6 +241,7 @@ const TREASURE_SPOTS = [
 const LEVEL_UNLOCKS = { 3: 'nuit', 5: 'neige', 8: 'bonbon' };
 export const nextUnlock = (lvl) => { const k = Object.keys(LEVEL_UNLOCKS).map(Number).find(n => n > lvl); return k ? { level: k, theme: LEVEL_UNLOCKS[k] } : null; };
 const COMBO_EVENTS = ['serve', 'repair', 'cabinServe', 'ring'];
+const GENERIC_EVENTS = ['stunt', 'mission', 'missionGold', 'secret', 'island', 'egg', 'minigame', 'meet', 'dog', 'build', 'photo', 'rainbow'];
 const COMBO_TIME = 9;                 // s pour enchainer une action de plus
 const QUESTS = [
   { id: 'bag',   ico: '🧳', text: 'Une valise est perdue ! Va la chercher vite.',   time: 75, reward: 8,  pick: (a) => a.randomSpot() },
@@ -308,7 +331,22 @@ export const BADGES = [
   { id: 'plans',    ico: '🌍', name: 'Globe-trotter',        desc: 'Reussis 5 defis de vol.',                 test: d => d.stats.plans >= 5 },
   { id: 'world',    ico: '🧭', name: 'Tour du monde',        desc: 'Visite 8 villes differentes.',            test: d => (d.visited || []).length >= 8 },
   { id: 'boss',     ico: '👔', name: 'Grand patron',         desc: 'Recrute 6 employes.',                     test: d => (d.staff || 0) >= 6 },
-  { id: 'streak3',  ico: '🔥', name: 'Fidele',               desc: 'Ouvre le cadeau 3 jours de suite.',       test: d => !!(d.gift && d.gift.streak >= 3) }
+  { id: 'streak3',  ico: '🔥', name: 'Fidele',               desc: 'Ouvre le cadeau 3 jours de suite.',       test: d => !!(d.gift && d.gift.streak >= 3) },
+  { id: 'stunt10',  ico: '🌀', name: 'Acrobate',             desc: 'Fais 10 acrobaties.',                     test: d => d.stats.stunt >= 10 },
+  { id: 'stunt50',  ico: '🤹', name: 'Roi de la voltige',    desc: 'Fais 50 acrobaties.',                     test: d => d.stats.stunt >= 50 },
+  { id: 'mission1', ico: '🎯', name: 'Missionnaire',         desc: 'Termine une mission aerienne.',           test: d => d.stats.mission >= 1 },
+  { id: 'mission10', ico: '🏅', name: 'Pro des missions',    desc: 'Termine 10 missions aeriennes.',          test: d => d.stats.mission >= 10 },
+  { id: 'gold',     ico: '🥇', name: 'Medaille d\'or',       desc: 'Gagne une medaille d\'or.',                test: d => d.stats.missionGold >= 1 },
+  { id: 'secret10', ico: '⭐', name: 'Chercheur d\'etoiles', desc: 'Trouve 10 etoiles dorees.',               test: d => d.stats.secret >= 10 },
+  { id: 'secret40', ico: '🌌', name: 'Constellation',        desc: 'Trouve les 40 etoiles dorees.',           test: d => d.stats.secret >= 40 },
+  { id: 'island6',  ico: '🏝️', name: 'Explorateur',          desc: 'Decouvre les 6 iles.',                    test: d => d.stats.island >= 6 },
+  { id: 'egg3',     ico: '👽', name: 'Curieux',              desc: 'Trouve 3 surprises cachees dans le ciel.', test: d => d.stats.egg >= 3 },
+  { id: 'rainbow',  ico: '🌈', name: 'Au bout de l\'arc-en-ciel', desc: 'Traverse un arc-en-ciel.',        test: d => d.stats.rainbow >= 1 },
+  { id: 'mini10',   ico: '🧽', name: 'Touche-a-tout',        desc: 'Joue a 10 mini-jeux.',                    test: d => d.stats.minigame >= 10 },
+  { id: 'meet4',    ico: '🎭', name: 'Sociable',             desc: 'Rencontre 4 visiteurs.',                  test: d => d.stats.meet >= 4 },
+  { id: 'dog',      ico: '🐕', name: 'Ami des chiens',       desc: 'Rattrape le chien echappe.',              test: d => d.stats.dog >= 1 },
+  { id: 'build5',   ico: '🏗️', name: 'Architecte',           desc: 'Pose 5 objets sur ta place.',             test: d => d.stats.build >= 5 },
+  { id: 'photo5',   ico: '📷', name: 'Reporter',             desc: 'Prends 5 cartes postales.',               test: d => d.stats.photo >= 5 }
 ];
 
 /* « Le savais-tu ? » : petits faits d'aviation affiches dans le menu pause. */
@@ -370,6 +408,7 @@ export class Arcade {
     this._beaconKey = '';
     this.applyBodyClass();
     this._ensureDaily();
+    this._ensureWeekly();
   }
 
   /* ---------------- Persistance ---------------- */
@@ -491,7 +530,20 @@ export class Arcade {
     if (type === 'cabinServe') { s.cabinServe = (s.cabinServe || 0) + n; if (this.cabinSess) this.cabinSess.served += n; }
     if (type === 'ring') s.rings += n;
     if (type === 'star3') s.star3 += n;
+    if (GENERIC_EVENTS.includes(type)) s[type] = (s[type] || 0) + n;
 
+    /* Defi de la semaine. */
+    const wk = this.data.weekly;
+    if (wk && wk.item && !wk.item.done && wk.item.ev === type) {
+      wk.item.progress = Math.min(wk.item.target, wk.item.progress + n);
+      if (wk.item.progress >= wk.item.target) {
+        wk.item.done = true;
+        sfx.levelUp();
+        this.confetti(90);
+        this.giveCoins(wk.item.reward, { silent: true, xp: 40 });
+        this.g.toast(`🏆 DEFI DE LA SEMAINE reussi ! +${wk.item.reward} 🪙`, 5200, 'ok');
+      }
+    }
     /* Defis du jour. */
     const daily = this.data.daily;
     if (daily) {
@@ -528,7 +580,21 @@ export class Arcade {
     this.save();
   }
 
-  get dailyItems() { return (this.data.daily && this.data.daily.items) || []; }
+  _ensureWeekly() {
+    const wk = weekKey();
+    if (this.data.weekly && this.data.weekly.week === wk) return;
+    const rnd = seeded('week' + wk);
+    const d = WEEKLY_POOL[Math.floor(rnd() * WEEKLY_POOL.length)];
+    const target = d.target[0] + Math.floor(rnd() * (d.target[1] - d.target[0] + 1));
+    this.data.weekly = { week: wk, item: { id: d.id, ev: d.ev, icon: d.icon, label: '📅 Semaine : ' + d.text(target), target, progress: 0, reward: d.reward, done: false, weekly: true } };
+    this.save();
+  }
+
+  get dailyItems() {
+    const items = (this.data.daily && this.data.daily.items) || [];
+    const w = this.data.weekly && this.data.weekly.item;
+    return w ? items.concat([w]) : items;
+  }
 
   /* ---------------- Objectif courant ---------------- */
   get step() {

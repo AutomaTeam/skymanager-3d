@@ -1818,3 +1818,26 @@ body.in-deco #btnInspect, body.in-deco #btnCounter, body.in-deco #btnServe, body
 .star-chip.hidden { display: none; }
 .star-chip .arr { display: inline-block; color: #fde047; font-size: 15px; }
 .star-chip.hot { animation: bigPulse 0.6s ease-in-out infinite; background: rgba(180, 83, 9, 0.95); }
+
+/* ============================================================
+   VAGUE 6 — reglages, gaucher, gros texte
+   ============================================================ */
+.set-list { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.6rem; }
+.set-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; border-radius: 1rem; background: rgba(30, 41, 59, 0.9); border: 2px solid rgba(71, 85, 105, 0.7); color: #e2e8f0; text-align: left; }
+.set-row.on { border-color: #fde047; background: rgba(113, 63, 18, 0.45); }
+.set-row .set-ico { font-size: 1.6rem; }
+.set-row b { flex: 1; font-size: 14px; }
+.set-row small { font-size: 12px; color: #fde68a; font-weight: 800; }
+/* Gaucher : les gros boutons passent a gauche, le manche a droite. */
+body.lefty #stickPad, body.lefty #hubStickPad, body.lefty #cabStickPad { left: auto !important; right: 0 !important; }
+body.lefty .fun-pad { right: auto; left: 0.75rem; align-items: flex-start; }
+body.lefty .turbo-wrap { flex-direction: row-reverse; }
+body.lefty .action-btn { right: auto; left: 5.6rem; }
+body.lefty .big-btn { right: auto; left: 1.4rem; }
+body.lefty #btnInspect, body.lefty #btnCounter, body.lefty #btnServe { right: auto !important; left: 1.5rem; }
+body.lefty .stunt-chip { right: auto; left: 5.6rem; }
+body.lefty .mascot { left: auto; right: 0.75rem; flex-direction: row-reverse; }
+/* Gros texte */
+body.bigtext .obj-text, body.bigtext .panel-sub, body.bigtext .m-bub, body.bigtext .st-mid p, body.bigtext .hg-sub,
+body.bigtext .kp-tile small, body.bigtext .al-card b, body.bigtext .hg-item small, body.bigtext .sky-chip, body.bigtext .mg-help { font-size: 118%; }
+body.bigtext .fun-btn small, body.bigtext .action-btn small { font-size: 11px; }

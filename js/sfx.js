@@ -51,6 +51,9 @@ export const sfx = {
   /* A appeler depuis un vrai geste (clic sur DEMARRER). */
   unlock() { audio(); },
 
+  /* Contexte audio partage (musique) ; null si le son est coupe. */
+  context() { return audio(); },
+
   coin()  { tone(988, 0, 0.09, 'square', 0.06); tone(1319, 0.08, 0.16, 'square', 0.06); },
   ding()  { tone(880, 0, 0.14, 'triangle', 0.12); tone(1175, 0.1, 0.2, 'triangle', 0.1); },
   ring()  { tone(660, 0, 0.1, 'triangle', 0.13); tone(880, 0.07, 0.1, 'triangle', 0.13); tone(1320, 0.14, 0.22, 'triangle', 0.13); },

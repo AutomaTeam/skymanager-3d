@@ -335,6 +335,7 @@
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+        <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Reglages</b><small>musique, confort</small></button>
         <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📖</span><b>Album</b><small>ma collection</small></button>
         <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
         <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
@@ -833,6 +834,30 @@
     <button id="hgFly" class="hg-fly">🛫 Voler !</button>
   </div>
   <p class="hg-drag">↔ Glisse pour tourner autour de l'avion</p>
+</div>
+
+<!-- ============ REGLAGES (confort, accessibilite) ============ -->
+<div id="settingsPanel" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <h2 class="panel-title">⚙️ Reglages</h2>
+    <div class="set-list">
+      <button id="setQuality" class="set-row"><span class="set-ico">🖥️</span><b>Qualite d'image</b><small>Auto</small></button>
+      <button id="setMusic" class="set-row"><span class="set-ico">🎵</span><b>Musique</b><small>Activee</small></button>
+      <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons a droite</small></button>
+      <button id="setBig" class="set-row"><span class="set-ico">🔠</span><b>Taille du texte</b><small>Normal</small></button>
+      <button id="setBreak" class="set-row"><span class="set-ico">⏰</span><b>Rappel de pause</b><small>Pas de rappel</small></button>
+    </div>
+    <p class="panel-note">Le son global se coupe aussi dans le menu (tuile « Son »).</p>
+    <button id="setClose" class="panel-btn primary mt-2">Termine</button>
+  </div>
+</div>
+<div id="breakPanel" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <div class="quiz-ico">😴</div>
+    <h2 class="panel-title">C'est l'heure de la pause !</h2>
+    <p class="panel-sub">Tu joues depuis un bon moment. Bois un verre d'eau, regarde au loin, etire-toi… puis reviens voler !</p>
+    <button id="breakOk" class="panel-btn primary mt-2">J'ai fait ma pause !</button>
+  </div>
 </div>
 
 <!-- ============ MINI-JEUX ============ -->
