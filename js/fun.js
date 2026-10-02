@@ -217,14 +217,15 @@ export class Fun {
       pilot: { name: '', avatar: AVATARS[0] },
       trail: 'white', difficulty: 'normal', voice: false,
       stats: { rolls: 0, loops: 0, boosts: 0, photos: 0, bestStunt: 0, chests: 0, flights: 0, combo: 0 },
-      photos: [], pendingBoost: false
+      photos: [], pendingBoost: false, streak: { last: '', n: 0 }
     };
     try {
       const d = JSON.parse(localStorage.getItem(STORE) || 'null');
       if (d) return Object.assign(def, d, {
         pilot: Object.assign(def.pilot, d.pilot || {}),
         stats: Object.assign(def.stats, d.stats || {}),
-        photos: d.photos || []
+        photos: d.photos || [],
+        streak: Object.assign(def.streak, d.streak || {})
       });
     } catch (e) { /* ignore */ }
     return def;
@@ -235,8 +236,35 @@ export class Fun {
   get diff() { return DIFFS[this.data.difficulty] || DIFFS.normal; }
   get active() { return this.g.arcade.on; }
 
+  /* ---------------- Serie quotidienne ---------------- */
+  _dayKey(offset = 0) {
+    const d = new Date(Date.now() + offset * 86400000);
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
+
+  /* A l'ouverture de la partie : compte les jours consecutifs et offre un cadeau. */
+  checkStreak() {
+    const s = this.data.streak, today = this._dayKey();
+    if (s.last === today) return null;
+    s.n = s.last === this._dayKey(-1) ? s.n + 1 : 1;
+    s.last = today;
+    this.save();
+    const coins = 5 + Math.min(s.n, 7) * 3;
+    this.g.arcade.giveCoins(coins, { silent: true });
+    const msg = s.n > 1 ? `🔥 ${s.n} jours de suite ! Cadeau : +${coins} 🪙` : `🌞 Bienvenue ! Cadeau du jour : +${coins} 🪙`;
+    setTimeout(() => { this.g.toast(msg, 4600, 'ok'); sfx.levelUp(); this.g.arcade.confetti(40); }, 900);
+    return s.n;
+  }
+
   /* ---------------- Ecran d'accueil ---------------- */
   _refreshBoot() {
+    const sb = $('streakBadge');
+    if (sb) {
+      const s = this.data.streak;
+      const alive = s.last === this._dayKey() || s.last === this._dayKey(-1);
+      sb.classList.toggle('hidden', !(alive && s.n >= 1));
+      sb.textContent = `🔥 ${s.n} jour${s.n > 1 ? 's' : ''} de suite`;
+    }
     const inp = $('pilotName');
     if (inp) inp.value = this.data.pilot.name || '';
     document.querySelectorAll('.av-btn').forEach(b => b.classList.toggle('on', b.dataset.av === this.data.pilot.avatar));

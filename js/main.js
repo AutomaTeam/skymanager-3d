@@ -32,6 +32,10 @@ import { FlightAssist } from './flightAssist.js?v=1790900000';
 import { Fun } from './fun.js?v=1790900000';
 import { Hangar } from './hangar.js?v=1790900000';
 import { SkyMissions } from './skyMissions.js?v=1790900000';
+import { MiniGames } from './minigames.js?v=1790900000';
+import { GroundFun } from './groundFun.js?v=1790900000';
+import { Deco } from './deco.js?v=1790900000';
+import { Album } from './album.js?v=1790900000';
 import { planeOf } from './fleet.js?v=1790900000';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
@@ -73,6 +77,9 @@ const HUB_WALK_SPEED = 5.2;   // m/s — releve pour rendre le grand plan pratic
 const HOTSPOTS = [
   ...STATIONS.map(s => ({ ...s, type: 'mechanic', frame: 'aircraft' })),
   { key: 'cockpit', type: 'cockpit', frame: 'aircraft', label: 'MONTER AUX COMMANDES', pos: [-2.0, -0.3, -13.2] },
+  /* Mini-jeux au sol (vague 4) : laver l'avion, faire le plein. */
+  { key: 'wash', type: 'game', game: 'wash', frame: 'aircraft', label: 'LAVER L\'AVION', pos: [-3.7, -1.2, 8.2] },
+  { key: 'refuel', type: 'game', game: 'fuel', frame: 'aircraft', label: 'FAIRE LE PLEIN', pos: [-4.2, -1.2, -9.6] },
   { key: 'cabinDoor', type: 'cabin', frame: 'aircraft', label: 'EMBARQUER EN CABINE', pos: [-1.9, -0.9, -6.0] },
   /* La tour (x 252..272) et son bureau (x 273..283) sont a 100 m de la
      porte d'embarquement. Le point de gestion est devant la porte du bureau,
@@ -98,6 +105,7 @@ const ARCADE_LABEL = {
   cockpit: () => '✈️ MONTER DANS L\'AVION',
   cabin: () => '🥤 SERVIR EN CABINE',
   tower: () => '🗼 MA TOUR DE CONTROLE',
+  game: (h) => h.game === 'wash' ? '🧽 LAVER L\'AVION' : '⛽ FAIRE LE PLEIN',
   terminal: () => '🏢 ENTRER DANS LE TERMINAL'
 };
 
@@ -141,6 +149,10 @@ class Game {
     this.fun = new Fun(this);
     this.hangar = new Hangar(this);
     this.sky = new SkyMissions(this);
+    this.minigames = new MiniGames(this);
+    this.ground = new GroundFun(this);
+    this.deco = new Deco(this);
+    this.album = new Album(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -1407,6 +1419,7 @@ class Game {
       else if (h.type === 'cockpit') this.boardAircraft();
       else if (h.type === 'cabin') this.enterCabin();
       else if (h.type === 'tower') this.openTycoonPanel();
+      else if (h.type === 'game') this.minigames.open(h.game);
     }
 
   /* ========================================================== */
@@ -2240,6 +2253,8 @@ class Game {
     if (this.arcade.on) this.arcade.seedWear();
     this.placeAircraftAtGate();
     this.hangar.applyAll();
+    this.deco.restore();
+    this.fun.checkStreak();
     /* Les PNJ n'entrent en scene qu'ici : la pose de l'appareil est
        desormais publiee, leurs postes sont projetables. */
     this.agents.begin();
@@ -2734,8 +2749,12 @@ class Game {
         this.r3d.applyEnvironment(this.env, dt);
         this.updateEnvChip();
         this.arcade.update(dt);
-        this.fun.update(dt);
-        this.sky.update(dt);
+        /* Les couches « fun » ne doivent jamais figer le jeu : une erreur y est notee une fois. */
+        for (const m of [this.fun, this.sky, this.ground, this.deco]) {
+          try { m.update(dt); } catch (err) {
+            if (!m._errLogged) { m._errLogged = true; console.error('Erreur dans ' + m.constructor.name + '.update', err); }
+          }
+        }
 
         /* L'aeroport vit : vehicules, avions, helicoptere, voyageurs. Les operations sur la
            piste s'arretent des que le joueur prend l'avion (jamais deux appareils au meme endroit). */
@@ -2802,7 +2821,7 @@ class Game {
     else if (this.state === 'CABIN') this.r3d.updateCabinCamera(this.attendant, dt);
     else this.r3d.updateCamera(this.ac, dt);
     this.r3d.render();
-    this.fun.afterRender();
+    try { this.fun.afterRender(); } catch (err) { console.error(err); }
     perfHud.tick(this.r3d.renderer, this.r3d.scene);
 
     requestAnimationFrame(() => this.loop());

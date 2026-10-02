@@ -549,6 +549,8 @@ export class Arcade {
       if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau dore ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
       return { icon: '🛬', text: 'Suis la fleche vers la piste et atterris doucement.', target: null };
     }
+    const ge = this.g.state === 'HUB' && this.g.ground && this.g.ground.goal();
+    if (ge) return ge;
     if (this.quest && this.g.state === 'HUB') return { icon: this.quest.ico, text: '⚡ ' + this.quest.text + (this.quest.goal ? ` (${this.quest.prog}/${this.quest.goal})` : ''), target: this.quest.target };
     const st = this.step;
     if (st) return { icon: st.icon, text: st.text, target: st.target(this.g) };

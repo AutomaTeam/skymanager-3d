@@ -2357,7 +2357,7 @@ boom.add(dockGrp);
     this.hotspotMarkers = {};
     const ringGeo = new THREE.RingGeometry(0.5, 0.68, 24);
     const dotGeo = new THREE.SphereGeometry(0.22, 10, 8);
-    const FIXED_COLOR = { cockpit: 0x38bdf8, cabin: 0xf59e0b, tower: 0xa78bfa, terminal: 0x22d3ee };
+    const FIXED_COLOR = { cockpit: 0x38bdf8, cabin: 0xf59e0b, tower: 0xa78bfa, terminal: 0x22d3ee, game: 0xf472b6 };
 
     hotspots.forEach(h => {
       const grp = new THREE.Group();

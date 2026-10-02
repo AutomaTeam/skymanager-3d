@@ -52,6 +52,7 @@
         🎨 MON HANGAR
       </button>
     </div>
+    <p id="streakBadge" class="arcade-only hidden mt-3 streak-badge"></p>
     <p id="bootTip" class="mt-6 text-[11px] text-slate-500 max-w-xs mx-auto">
       <span id="bootTipOrientation">Orientation paysage recommandee. </span>Ajoutez la page a l'ecran d'accueil pour le plein ecran.
     </p>
@@ -333,6 +334,9 @@
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📖</span><b>Album</b><small>ma collection</small></button>
+        <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
+        <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
         <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
         <button id="pauseHangar" class="kp-tile"><span class="kp-ico">🎨</span><b>Mon hangar</b><small>avions et peinture</small></button>
         <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
@@ -829,6 +833,47 @@
   </div>
   <p class="hg-drag">↔ Glisse pour tourner autour de l'avion</p>
 </div>
+
+<!-- ============ MINI-JEUX ============ -->
+<div id="mg2" class="hidden panel-overlay">
+  <div class="panel-card center kid mg-card">
+    <h2 id="mg2Title" class="panel-title">Mini-jeu</h2>
+    <div id="mg2Body"></div>
+    <button id="mg2Close" class="panel-btn mt-3">Fermer</button>
+  </div>
+</div>
+
+<!-- ============ RENCONTRE (visiteur de l'aeroport) ============ -->
+<div id="storyCard" class="hidden story-card">
+  <div class="st-box">
+    <div id="storyIco" class="st-ico">👵</div>
+    <div class="st-mid">
+      <b id="storyName">Nom</b>
+      <p id="storyText">Bonjour !</p>
+      <div class="st-btns"><button id="storyGame" class="panel-btn sm hidden">🎮 Jouer</button><button id="storyOk" class="panel-btn primary sm">Suite ▶</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ALBUM DE COLLECTION ============ -->
+<div id="albumPanel" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <h2 class="panel-title text-center">📖 Mon album</h2>
+    <p class="text-center text-xs text-slate-300">Cartes trouvees : <b id="albumTotal">0 / 0</b></p>
+    <div class="al-bar"><span id="albumBar"></span></div>
+    <div id="albumTabs" class="al-tabs"></div>
+    <div id="albumGrid" class="al-grid"></div>
+    <button id="albumClose" class="panel-btn mt-3">Fermer</button>
+  </div>
+</div>
+
+<!-- ============ CONSTRUCTION : MA PLACE ============ -->
+<div id="decoBar" class="hidden deco-bar">
+  <div class="deco-top"><span class="deco-coins">🪙 <b id="decoCoins">0</b></span><span id="decoInfo" class="deco-info"></span><button id="decoClose" class="deco-close">✖ Fermer</button></div>
+  <div id="decoList" class="deco-list"></div>
+  <div class="deco-btns"><button id="decoMode" class="deco-mode">🗑️ Enlever</button><button id="decoRot" class="deco-mode">⟲ Tourner</button><button id="decoPlace" class="deco-place">✔ Poser</button></div>
+</div>
+<div id="eventChip" class="hidden event-chip"></div>
 
 <!-- ============ ALBUM PHOTOS ============ -->
 <div id="photoAlbum" class="hidden panel-overlay">

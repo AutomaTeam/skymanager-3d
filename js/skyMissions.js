@@ -381,9 +381,13 @@ const CARGOS = {
   zoo: [
     { ico: '🐧', name: 'le pingouin', mode: 'calm', from: 'la banquise', to: 'le zoo', say: ['Brrr ! Pas de secousses !', 'Oui oui ! Tout doux !'] },
     { ico: '🐼', name: 'le panda', mode: 'calm', from: 'la foret', to: 'le zoo', say: ['Miam… je dors… ne me reveille pas !', 'Ronron ! Doucement !'] },
-    { ico: '🦁', name: 'le lion', mode: 'wild', from: 'la savane', to: 'le zoo', say: ['Grrr ! Je m\'ennuie… fais des acrobaties !', 'ROAAAR ! Encore un tonneau !'] }
+    { ico: '🦁', name: 'le lion', mode: 'wild', from: 'la savane', to: 'le zoo', say: ['Grrr ! Je m\'ennuie… fais des acrobaties !', 'ROAAAR ! Encore un tonneau !'] },
+    { ico: '🐘', name: 'l\'elephant', mode: 'calm', from: 'la savane', to: 'le zoo', say: ['Prout… euh, pardon ! Doucement !', 'Je suis lourd, tiens bien le manche !'] },
+    { ico: '🐵', name: 'le singe', mode: 'wild', from: 'la jungle', to: 'le zoo', say: ['Ouh ouh ! Fais des tonneaux !', 'Aaah aaah ! Plus fort !'] },
+    { ico: '🐨', name: 'le koala', mode: 'calm', from: 'l\'Australie', to: 'le zoo', say: ['Zzz… je m\'accroche… doucement !', 'Mon eucalyptus va tomber !'] }
   ]
 };
+export const ANIMALS = CARGOS.zoo;
 
 class CarryMission extends Mission {
   setup() {
@@ -545,7 +549,7 @@ export class SkyMissions {
   get busy() { return !!(this.m || this.armed || this.flown); }
 
   _load() {
-    const def = { best: {}, ghosts: {}, done: 0 };
+    const def = { best: {}, ghosts: {}, done: 0, animals: [] };
     try {
       const d = JSON.parse(localStorage.getItem(STORE) || 'null');
       if (d) return Object.assign(def, d, { best: d.best || {}, ghosts: d.ghosts || {} });
@@ -676,6 +680,13 @@ export class SkyMissions {
     if (res.medal > (b.medal || 0)) this.data.best[def.id] = Object.assign({}, b, { medal: res.medal, score: res.score });
     else if (res.score > (b.score || 0) && def.id !== 'race') this.data.best[def.id] = Object.assign({}, b, { score: res.score });
     this.data.done++;
+    if (def.id === 'zoo' && m.arrived && m.cargo) {
+      this.data.animals = this.data.animals || [];
+      if (!this.data.animals.includes(m.cargo.ico)) {
+        this.data.animals.push(m.cargo.ico);
+        res.lines.push(`📖 Nouvel animal dans ton album : ${m.cargo.ico} !`);
+      }
+    }
     this.save();
     this.lastResult = { def, res, coins };
     sfx[res.medal >= 2 ? 'tada' : 'star'](res.medal);
