@@ -30,6 +30,8 @@ import { Hub } from './hub.js?v=1790900000';
 import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINATIONS } from './arcade.js?v=1790900000';
 import { FlightAssist } from './flightAssist.js?v=1790900000';
 import { Fun } from './fun.js?v=1790900000';
+import { Hangar } from './hangar.js?v=1790900000';
+import { planeOf } from './fleet.js?v=1790900000';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
 import { iconify } from './icons.js?v=1790900000';
@@ -136,6 +138,7 @@ class Game {
     this.arcade = new Arcade(this);
     this.assist = new FlightAssist();
     this.fun = new Fun(this);
+    this.hangar = new Hangar(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -245,6 +248,22 @@ class Game {
   /* ========================================================== */
   setupUI() {
     $('btnStart').addEventListener('click', () => this.start());
+    $('btnHangar').addEventListener('click', () => {
+      if (this.state !== 'BOOT') return;
+      sfx.click();
+      this.start();
+      this.hangar.applyAll();
+      this.hangar.open();
+    });
+    $('pauseHangar').addEventListener('click', () => {
+      if (this.state !== 'HUB') { this.toast('Retourne d\'abord a l\'aeroport pour ouvrir ton hangar.', 2800, 'warn'); return; }
+      this.hangar.open();
+    });
+    $('kidRepHangar').addEventListener('click', () => {
+      sfx.click();
+      this.returnHome();
+      this.hangar.open();
+    });
 
     /* ---- Menu pause (plus de menu de choix de role : on s'en approche) ---- */
     $('btnMenu').addEventListener('click', () => this.openPause());
@@ -635,6 +654,15 @@ class Game {
   }
 
   /* Roulage automatique : le tracteur amene l'avion en bout de piste. */
+  /* Choisit l'avion du vol (profil physique, modele 3D, livree). */
+  setFlightPlane(id) {
+    const P = planeOf(id);
+    this.ac.applyProfile(id, P.phys);
+    this.ac.gain = P.gain;
+    this.r3d.setActivePlane(id, P.camScale);
+    this.r3d.applyLivery(id, this.hangar.livery(id));
+  }
+
   /* Decollage assiste (bouton DECOLLER, touche Entree ou compte a rebours). */
   launchNow() {
     if (this.state !== 'PILOT' || !this.ac.onGround || this.assist.launched) return;
@@ -656,6 +684,7 @@ class Game {
   startArcadeFlight() {
     const quick = this._flyNow;
     this._flyNow = false;
+    this.setFlightPlane(this.hangar.selected);
     this.resetFlight();
     this.assist.reset();
     this.arcade.resetFlight();
@@ -724,7 +753,9 @@ class Game {
     const boarded = this.terminal.consumeBoardedSinceFlight();
     const bagsLoaded = this.terminal.consumeBagsSinceFlight();
     const fr = this.tycoon.registerFlight(ac, { fpm: t.fpm, offset: Math.abs(t.offset) }, boarded);
-    const flightCoins = Math.max(0, Math.round(fr.profit / COIN));
+    const plane = planeOf(this.ac.profile);
+    const flightCoins = Math.max(0, Math.round(fr.profit / COIN * plane.income));
+    const paxShown = Math.min(fr.pax, plane.seats);
     const bonus = rate.stars * 10 + arc.ringsThisFlight * 3;
     arc.giveStars(rate.stars);
     arc.giveCoins(bonus, { silent: true });
@@ -741,13 +772,13 @@ class Game {
     $('kidRepTitle').textContent = rate.title;
     $('kidRepTitle').className = 'panel-title ' + (rate.stars === 3 ? 'text-amber-300' : rate.stars > 0 ? 'text-sky-300' : 'text-orange-300');
     $('kidRepTip').textContent = rate.tip;
-    $('kidRepPax').textContent = fr.pax;
+    $('kidRepPax').textContent = paxShown;
     $('kidRepRings').textContent = `${arc.ringsThisFlight}/5`;
     $('kidRepCoins').textContent = `+${flightCoins + bonus + (pr ? pr.bonus : 0)}`;
     const lines = [];
     if (rate.stars) lines.push(`⭐ ${rate.stars} etoile${rate.stars > 1 ? 's' : ''} = +${rate.stars * 10} 🪙`);
     if (arc.ringsThisFlight) lines.push(`🟡 ${arc.ringsThisFlight} anneau${arc.ringsThisFlight > 1 ? 'x' : ''} = +${arc.ringsThisFlight * 3} 🪙`);
-    lines.push(`🎫 ${fr.pax} passagers = +${flightCoins} 🪙`);
+    lines.push(`🎫 ${paxShown} passager${paxShown > 1 ? 's' : ''} = +${flightCoins} 🪙`);
     if (pr) lines.push(pr.line);
     if (bagsLoaded) lines.push(`🧳 ${bagsLoaded} bagage${bagsLoaded > 1 ? 's' : ''} charge${bagsLoaded > 1 ? 's' : ''} dans la soute`);
     else if (boarded > 0) lines.push('🧳 Aucun bagage charge : passe au tri des bagages !');
@@ -1138,6 +1169,10 @@ class Game {
      premier demarrage, jamais pendant le jeu libre. */
   placeAircraftAtGate() {
     const gate = this.r3d.gatePosition;
+    /* A l'aeroport on voit toujours le jet de ligne (le petit avion du hangar ne sert qu'en vol). */
+    this.ac.applyProfile('liner', null);
+    this.ac.gain = planeOf('liner').gain;
+    this.r3d.setActivePlane('liner');
     this.ac.reset({
       pos: new THREE.Vector3(gate.x, 3.14, gate.z),
       heading: 270, speed: 0, flaps: 1, gear: true, fuel: 9000
@@ -2201,6 +2236,7 @@ class Game {
     $('boot').classList.add('hidden');
     if (this.arcade.on) this.arcade.seedWear();
     this.placeAircraftAtGate();
+    this.hangar.applyAll();
     /* Les PNJ n'entrent en scene qu'ici : la pose de l'appareil est
        desormais publiee, leurs postes sont projetables. */
     this.agents.begin();
@@ -2220,8 +2256,8 @@ class Game {
 
   resetFlight() {
     this.ac.reset({
-      pos: new THREE.Vector3(0, 3.14, RUNWAY.startZ - 120),
-      heading: 0, speed: 0, flaps: 1, gear: true, fuel: 9000
+      pos: new THREE.Vector3(0, this.ac.groundY, RUNWAY.startZ - 120),
+      heading: 0, speed: 0, flaps: 1, gear: true, fuel: planeOf(this.ac.profile).fuel
     });
     this._activeFaultComponents.clear();
     /* Vent et turbulence du moment, donnes par la meteo (phase 7) */
@@ -2747,7 +2783,7 @@ class Game {
               this.updateHUD();
               if (this.arcade.on) { this.arcade.updateRings(dt); this.updateArcadePilotUI(); }
             } else if (this.state === 'HUB') {
-      this.updateHub(dt);
+      if (!this.hangar.active) this.updateHub(dt);
     } else if (this.state === 'CABIN') {
       this.updateCabin(dt);
     }
@@ -2757,7 +2793,8 @@ class Game {
     this.r3d.updateTerminalScene(this.terminal, ref, dt, this.time);
 
     if (this.state !== 'CABIN') this.r3d.syncAircraft(this.ac, dt, this.time);
-    if (this.state === 'HUB') this.r3d.updateHubCamera(this.player, dt);
+    if (this.hangar.active) { this.hangar.placePreview(); this.r3d._shadowFocus = this.r3d.gatePosition; this.hangar.updateCamera(this.r3d.camera, dt); }
+    else if (this.state === 'HUB') this.r3d.updateHubCamera(this.player, dt);
     else if (this.state === 'CABIN') this.r3d.updateCabinCamera(this.attendant, dt);
     else this.r3d.updateCamera(this.ac, dt);
     this.r3d.render();
@@ -2782,6 +2819,7 @@ window.addEventListener('load', () => {
     $('bootMsg').textContent = 'Systemes prets.';
     $('btnStart').classList.remove('hidden');
     $('btnFlyNow').classList.remove('hidden');
+    $('btnHangar').classList.remove('hidden');
     $('pilotCard').classList.remove('hidden');
     $('modePick').classList.remove('hidden');
     game.loop();

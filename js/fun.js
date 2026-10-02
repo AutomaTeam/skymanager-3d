@@ -25,9 +25,7 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const KTS = 1.94384;
 
-const GROUND_Y = 3.14;
 const STUNT_MIN_AGL = 200;            // m : pas d'acrobatie plus bas
-const STUNT_MIN_KT = 140;
 const COMBO_WINDOW = 9;               // s pour enchainer une acrobatie
 const BOOST_DRAIN = 1 / 4.5;          // jauge/s pendant le turbo
 const BOOST_REGEN = 1 / 22;           // jauge/s au repos
@@ -408,9 +406,9 @@ export class Fun {
     const g = this.g, ac = g.ac;
     if (!this.active || g.state !== 'PILOT' || g.reportShown || this.stunt) return false;
     if (ac.onGround || g.assist.landing) return false;
-    const agl = ac.pos.y - GROUND_Y;
+    const agl = ac.pos.y - ac.groundY;
     if (agl < STUNT_MIN_AGL) { if (say) this.sayKey('tooLow', 2); return false; }
-    if (ac.tas * KTS < STUNT_MIN_KT) { if (say) this.sayKey('tooSlow', 2); return false; }
+    if (ac.tas * KTS < ac.stuntMinKt) { if (say) this.sayKey('tooSlow', 2); return false; }
     return true;
   }
 
@@ -422,7 +420,7 @@ export class Fun {
       kind, t: 0,
       dur: kind === 'roll' ? 1.8 : 4.6,
       q0: ac.quat.clone(),
-      speed: Math.max(ac.vel.length(), 90),
+      speed: Math.max(ac.vel.length(), ac.stuntMinKt / KTS * 0.8),
       dir: ac.vel.clone().normalize(),
       sign: bank < -0.25 ? -1 : 1
     };
@@ -447,7 +445,7 @@ export class Fun {
     else ac.vel.copy(ac.forward()).multiplyScalar(s.speed);
     ac.pos.addScaledVector(ac.vel, dt);
     ac.omega.set(0, 0, 0);
-    if (ac.pos.y < GROUND_Y + 40) { ac.pos.y = GROUND_Y + 40; }     // filet de securite
+    if (ac.pos.y < ac.groundY + 40) { ac.pos.y = ac.groundY + 40; }     // filet de securite
     if (u >= 1) this._endStunt();
     return true;
   }
@@ -460,7 +458,7 @@ export class Fun {
     /* L'aide au pilotage reprend : elle garde le cap et l'assiette actuels. */
     g.assist.hdgHold = null;
     g.assist.pitchHold = null;
-    ac.vel.copy(ac.forward()).multiplyScalar(Math.max(s.speed, 100));
+    ac.vel.copy(ac.forward()).multiplyScalar(s.speed);
     this._stuntDone(s.kind);
   }
 
@@ -594,6 +592,17 @@ export class Fun {
     const btn = $('kidChest');
     if (!btn || btn.dataset.open === '1') return;
     btn.dataset.open = '1';
+    /* Parfois, le coffre cache un objet pour le hangar (couleur, motif, autocollant). */
+    const unlock = (Math.random() < 0.3 && this.g.hangar) ? this.g.hangar.randomUnlock() : null;
+    if (unlock) {
+      this.data.stats.chests++;
+      this.save();
+      sfx.chest();
+      this.g.arcade.confetti(70);
+      btn.classList.add('opened');
+      btn.innerHTML = `<span class="chest-ico">${unlock.item.ico || '🎨'}</span><b>NOUVEAU pour ton hangar : ${unlock.label} !</b>`;
+      return;
+    }
     const total = GIFTS.reduce((s, x) => s + x.w, 0);
     let r = Math.random() * total, gift = GIFTS[0];
     for (const x of GIFTS) { r -= x.w; if (r <= 0) { gift = x; break; } }
@@ -666,7 +675,7 @@ export class Fun {
 
     if (this.active && g.state === 'PILOT') {
       const f = this._flags;
-      const agl = ac.pos.y - GROUND_Y;
+      const agl = ac.pos.y - ac.groundY;
       if (!ac.onGround && !f.air) { f.air = true; this.sayKey('takeoff', 2, 2600); }
       if (f.air && !f.hint && agl > 260 && !this.data.stats.rolls && !this.data.stats.loops) { f.hint = true; this.sayKey('stuntHint', 2, 4200); $('btnRoll') && $('btnRoll').classList.add('hint-pulse'); }
       if (this.data.stats.rolls || this.data.stats.loops) $('btnRoll') && $('btnRoll').classList.remove('hint-pulse');
@@ -691,7 +700,7 @@ export class Fun {
     if (pad) pad.classList.toggle('hidden', !show);
     if (!show) return;
     const ac = g.ac;
-    const ok = !ac.onGround && !g.assist.landing && (ac.pos.y - GROUND_Y) >= STUNT_MIN_AGL && ac.tas * KTS >= STUNT_MIN_KT && !this.stunt;
+    const ok = !ac.onGround && !g.assist.landing && (ac.pos.y - ac.groundY) >= STUNT_MIN_AGL && ac.tas * KTS >= ac.stuntMinKt && !this.stunt;
     ['btnRoll', 'btnLoop'].forEach(id => { const b = $(id); if (b) b.classList.toggle('dim', !ok); });
     const tb = $('btnTurbo');
     if (tb) { tb.classList.toggle('dim', ac.onGround || this.boostGauge < BOOST_MIN); tb.classList.toggle('on', this.boosting); }

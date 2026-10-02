@@ -31,6 +31,10 @@ export function airDensity(altM) {
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
 export class Aircraft {
+  static PROFILE_KEYS = ['S', 'b', 'c', 'oswald', 'emptyMass', 'payload', 'fuelCap', 'Ipitch', 'Iyaw', 'Iroll',
+    'CL0', 'CLa', 'alphaStall', 'CD0', 'CYb', 'Cm0', 'Cma', 'Cmq', 'Cme', 'Clda', 'Clp', 'Clb', 'Cnb', 'Cnr', 'Cndr',
+    'Cnda', 'engines', 'thrustPerEngine', 'sfc', 'gearK', 'gearC'];
+
   constructor() {
     /* ---- Geometrie / masse ---- */
     this.S = 122.6;            // surface alaire m2
@@ -143,6 +147,45 @@ export class Aircraft {
         this._tmpA = new THREE.Vector3();
     this._tmpB = new THREE.Vector3();
     this._qi = new THREE.Quaternion();
+
+    /* ---- Profil d'appareil (mode Arcade, js/fleet.js) ----
+       Les valeurs ci-dessus sont celles du jet de ligne. applyProfile()
+       les remplace pour un petit avion et les restaure au retour. */
+    this.groundY = 3.14;       // altitude du centre de gravite sur le train
+    this.maxFlap = 4;
+    this.fixedGear = false;
+    this.noReverse = false;
+    this.rateDamping = 3.2;    // amortissement arcade de la rotation
+    this.propVmax = 0;         // > 0 : helice, la poussee tombe avec la vitesse (m/s)
+    this.vne = 350;            // vitesse a ne jamais depasser (kt)
+    this.speeds = { climb: 215, cruise: 235, boost: 305 };
+    this.flareAgl = 24;
+    this.stuntMinKt = 140;
+    this.profile = 'liner';
+    this.gain = { roll: 1, pitch: 1 };     // gains de l'aide au pilotage (flightAssist.js)
+    this._base = {};
+    for (const k of Aircraft.PROFILE_KEYS) this._base[k] = this[k];
+    this._baseGear = this.gearPoints.map(g => ({ ...g, p: g.p.clone() }));
+  }
+
+  /* Applique un profil physique (objet `phys` de fleet.js) ; null = jet de ligne. */
+  applyProfile(id, phys) {
+    for (const k of Aircraft.PROFILE_KEYS) this[k] = this._base[k];
+    this.gearPoints = this._baseGear.map(g => ({ ...g, p: g.p.clone() }));
+    this.groundY = 3.14; this.maxFlap = 4; this.fixedGear = false; this.noReverse = false;
+    this.rateDamping = 3.2; this.propVmax = 0; this.vne = 350; this.flareAgl = 24; this.stuntMinKt = 140;
+    this.speeds = { climb: 215, cruise: 235, boost: 305 };
+    if (phys) {
+      const { gear, ...rest } = phys;
+      Object.assign(this, rest);
+      if (gear) {
+        this.gearPoints = gear.map(g => ({ name: g.name, p: new THREE.Vector3(...g.p), steer: !!g.steer, brake: !!g.brake, load: 0 }));
+      }
+    }
+    this.AR = this.b * this.b / this.S;
+    this.profile = id;
+    this.gain = (phys && phys.gain) || { roll: 1, pitch: 1 };
+    if (this.fixedGear) this.gearDown = true;
   }
 
   /* -------------------------------------------------- */
@@ -191,7 +234,7 @@ export class Aircraft {
     this.omega.set(0, 0, 0);
     this.fuel = o.fuel;
     this.flapIndex = o.flaps;
-    this.gearDown = o.gear;
+    this.gearDown = o.gear || this.fixedGear;
     this.spoilers = false;
     this.reverse = false;
     this.n1 = this.n1Target = 20;
@@ -325,8 +368,9 @@ export class Aircraft {
     const altFactor = rho / RHO0;
     let thrust = this.engines * this.thrustPerEngine * thrustRatio * (0.35 + 0.65 * altFactor);
         thrust *= this.faults.thrust * this.thrustBoost;
+        if (this.propVmax > 0) thrust *= clamp(1 - 0.78 * (V / this.propVmax) * (V / this.propVmax), 0.18, 1);
         if (this.fuel <= 0) thrust = 0;
-    if (this.reverse) thrust *= (this.onGround ? -0.42 : 0);
+    if (this.reverse && !this.noReverse) thrust *= (this.onGround ? -0.42 : 0);
     forces.addScaledVector(this.forward(), thrust);
     this.thrustN = thrust;
 
@@ -378,7 +422,7 @@ export class Aircraft {
        seul, quel que soit l'angle ou la vitesse. Les commandes du joueur
        restent pleinement prioritaires : ce terme ne fait que dissiper
        l'exces de rotation, il ne pousse vers aucune assiette cible. */
-    const ARCADE_RATE_DAMPING = 3.2;
+    const ARCADE_RATE_DAMPING = this.rateDamping;
     angAcc.x -= ARCADE_RATE_DAMPING * this.omega.x;
     angAcc.y -= ARCADE_RATE_DAMPING * 0.6 * this.omega.y;
     angAcc.z -= ARCADE_RATE_DAMPING * this.omega.z;
@@ -495,7 +539,7 @@ export class Aircraft {
 
   lowestPointY() {
     let lo = Infinity;
-    const pts = this.gearDown
+    const pts = (this.gearDown || this.fixedGear)
       ? this.gearPoints.map(g => g.p)
       : [new THREE.Vector3(0, -2.3, -8), new THREE.Vector3(0, -2.3, 6)];
     for (const p of pts) {
@@ -514,8 +558,8 @@ export class Aircraft {
 
     /* Limitations structurelles */
     const iasKt = this.ias * KTS;
-    this.overspeed = iasKt > 350;
-    if (this.overspeed) this.stress.overspeed += (iasKt - 350) * dt * 0.01;
+    this.overspeed = iasKt > this.vne;
+    if (this.overspeed) this.stress.overspeed += (iasKt - this.vne) * dt * 0.01;
     if (this.flapIndex > 0 && iasKt > this.flaps.vfe) {
       this.stress.flapOverspeed += (iasKt - this.flaps.vfe) * dt * 0.02;
     }
@@ -554,7 +598,7 @@ export class Aircraft {
       return true;
     }
     toggleGear() {
-      if (this.faults.gear) return false;       // train bloque
+      if (this.faults.gear || this.fixedGear) return false;       // train bloque ou fixe
       if (this.ias * KTS > 270) return false;   // Vlo
       this.gearDown = !this.gearDown;
       return true;

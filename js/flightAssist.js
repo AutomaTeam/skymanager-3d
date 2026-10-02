@@ -91,7 +91,7 @@ export class FlightAssist {
      l'appareil (train, volets, spoilers) via ses methodes. */
   update(ac, inp, dt) {
     const ias = ac.ias * KTS;
-    const agl = ac.pos.y - GROUND_Y;
+    const agl = ac.pos.y - ac.groundY;
     const vs = ac.vel.y;
     const out = { pitch: 0, roll: 0, yaw: 0, throttle: 0, brake: 0 };
     const hdg = ac.heading;
@@ -104,8 +104,8 @@ export class FlightAssist {
         this.state = 'ROLLOUT';
         this.rolloutT += dt;
         ac.spoilers = true;
-        ac.reverse = ias > 60;
-        out.throttle = ias > 60 ? 0.6 : 0;       // l'inverseur a besoin de gaz
+        ac.reverse = ias > 60 && !ac.noReverse;
+        out.throttle = (ias > 60 && !ac.noReverse) ? 0.6 : 0;       // l'inverseur a besoin de gaz
         out.brake = ias > 25 ? 0.75 : 1;
         this._steerToCenterline(ac, out, 180, ias);
         this.hint = 'On freine ! Doucement...';
@@ -157,11 +157,11 @@ export class FlightAssist {
     if (this.landing) {
       vTarget = ac.vRef() * KTS + 8;
     } else if (agl < 700 && vs > 1) {
-      vTarget = SPEED.climb;
+      vTarget = ac.speeds.climb;
     } else {
-      vTarget = SPEED.cruise;
+      vTarget = ac.speeds.cruise;
     }
-    if (this.boost && !this.landing) vTarget = 305;
+    if (this.boost && !this.landing) vTarget = ac.speeds.boost;
     const err = vTarget - ias;
     const base = this.landing ? 0.30 : 0.55;
     let thrTarget = clamp(base + err * 0.03, this.landing ? 0.0 : 0.15, 1);
@@ -192,7 +192,8 @@ export class FlightAssist {
       bankTarget = clamp(wrap180(this.hdgHold - hdg) * 0.8, -20, 20);
     }
     if (low) bankTarget = clamp(bankTarget, -10, 10);
-    out.roll = clamp((bankTarget - ac.bankDeg) * 0.11, -1, 1);
+    const gain = ac.gain || { roll: 1, pitch: 1 };
+    out.roll = clamp((bankTarget - ac.bankDeg) * 0.11 * gain.roll, -1, 1);
     if (Math.abs(ac.bankDeg) > 40) out.roll = clamp(-Math.sign(ac.bankDeg) * 0.8, -1, 1);
 
     /* --- Tangage --- */
@@ -204,7 +205,7 @@ export class FlightAssist {
       const hDesired = Math.tan(3 * Math.PI / 180) * dist;
       const e = agl - hDesired;
       let vsTarget = clamp(-ac.ias * Math.tan(3 * Math.PI / 180) - e * 0.05, -7, -1);
-      if (agl < FLARE_AGL) {
+      if (agl < ac.flareAgl) {
         /* Arrondi : on ralentit la chute jusqu'au poser. */
         this.flare = true;
         vsTarget = clamp(-0.35 - agl * 0.05, -1.6, -0.35);
@@ -237,7 +238,7 @@ export class FlightAssist {
         const stallMargin = ias - ac.stallSpeed() * KTS * 1.18;
         let target = this.pitchHold;
         if (stallMargin < 0) target = Math.min(target, 2 + stallMargin * 0.4);
-        out.pitch = clamp((target - pitch) * 0.09, -0.6, 0.6);
+        out.pitch = clamp((target - pitch) * 0.09 * gain.pitch, -0.6, 0.6);
       }
       this.hint = '';
     }
@@ -295,7 +296,7 @@ export class FlightAssist {
     /* Assiette souhaitee = fonction de l'ecart de vitesse verticale. */
     const gain = this.flare ? 7 : 0.9;
     const pitchTarget = clamp(pitch + (vsTarget - ac.vel.y) * gain, -8, this.flare ? 12 : 10);
-    out.pitch = clamp((pitchTarget - pitch) * 0.12, -0.5, 0.5);
+    out.pitch = clamp((pitchTarget - pitch) * 0.12 * ((ac.gain || { pitch: 1 }).pitch), -0.5, 0.5);
   }
 
   /* Train et volets. */
@@ -303,8 +304,10 @@ export class FlightAssist {
     this.gearTimer += dt;
     const wantDown = this.finalLike(ac) && agl < 500 && vs < 1;
     const wantUp = agl > 160 && vs > 0.5 && !wantDown;
-    if (wantDown && !ac.gearDown && ias < 250) ac.toggleGear();
-    if (wantUp && ac.gearDown && ias < 250) ac.toggleGear();
+    if (!ac.fixedGear) {
+      if (wantDown && !ac.gearDown && ias < 250) ac.toggleGear();
+      if (wantUp && ac.gearDown && ias < 250) ac.toggleGear();
+    }
 
     /* Volets : on choisit le cran le plus grand autorise a cette vitesse,
        avec un cran mini selon la phase. */
@@ -314,6 +317,7 @@ export class FlightAssist {
     else if (agl < 150) want = 2;
     else want = 0;
     // respecte la vitesse maxi de chaque cran
+    want = Math.min(want, ac.maxFlap);
     while (want > 0 && ias > (ac.constructor.FLAP_LIMITS ? ac.constructor.FLAP_LIMITS[want] : [999, 230, 200, 185, 175][want]) - 4) want--;
     if (want !== ac.flapIndex && this.gearTimer > 0.5) {
       this.gearTimer = 0;

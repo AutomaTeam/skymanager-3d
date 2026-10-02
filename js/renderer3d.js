@@ -14,6 +14,8 @@ import { REQUEST_ICONS } from './cabinService.js?v=1790900000';
 import { AirportLife } from './airportLife.js?v=1790900000';
 import { buildCockpit, COCKPIT_EYE } from './cockpit.js?v=1790900000';
 import * as AF from './airframe.js?v=1790900000';
+import { LiveryRig } from './livery.js?v=1790900000';
+import { buildPlaneModel } from './planeModels.js?v=1790900000';
 import { buildLandscape, buildAirportDecor } from './scenery.js?v=1790900000';
 import { buildTerminalShell, buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1790900000';
 
@@ -229,6 +231,7 @@ export class Renderer3D {
     this.buildAirport();
     this.aircraft = this.buildAircraft();
     this.scene.add(this.aircraft.group);
+    this.setupFleet();
         this.buildBloom();
 
     this.resize();
@@ -2081,6 +2084,71 @@ boom.add(dockGrp);
     };
   }
 
+  /* ---------------------------------------------------------- */
+  /* Hangar (vague 2) : livrees et petits avions                   */
+  /* ---------------------------------------------------------- */
+  setupFleet() {
+    const A = this.aircraft;
+    /* Emplacements des decalques sur le fuselage du jet de ligne. */
+    const slots = {
+      radius: (z) => AF.fuselageRadius(z),
+      band: { z0: -12.2, z1: 9.2, yc: -0.62, h: 0.34 },
+      name: { z0: -8.6, z1: 4.0, yc: 1.22, h: 0.26 },
+      stickers: [
+        { z: -14.4, yc: -0.05, size: 1.25 },
+        { z: -11.0, yc: -0.25, size: 1.05 },
+        { z: 11.2, yc: 0.15, size: 1.2 }
+      ],
+      tailFin: { zc: 10.7, yc: 4.0, size: 2.3, halfThick: 0.17 }
+    };
+    const rig = new LiveryRig({ group: A.group, body: [A.materials.bodyMat], accent: [A.materials.accentMat], slots });
+    A.hull.push(rig.group);
+    this.liveryRigs = { liner: rig };
+    this.fleetModels = {};
+    this.activeModel = null;
+    this.activePlane = 'liner';
+    this.camScale = 1;
+    this._linerAccentMap = A.materials.accentMat.map;
+  }
+
+  /* Cree (une fois) le modele d'un petit avion et sa livree. */
+  ensurePlane(id) {
+    if (id === 'liner') return null;
+    if (this.fleetModels[id]) return this.fleetModels[id];
+    const model = buildPlaneModel(id);
+    if (!model) return null;
+    model.group.visible = false;
+    this.scene.add(model.group);
+    this.fleetModels[id] = model;
+    this.liveryRigs[id] = new LiveryRig(model);
+    return model;
+  }
+
+  /* Choisit l'avion affiche (jet de ligne ou petit avion). */
+  setActivePlane(id, camScale = 1) {
+    const model = id === 'liner' ? null : this.ensurePlane(id);
+    for (const m of Object.values(this.fleetModels)) m.group.visible = (m === model);
+    this.aircraft.group.visible = !model;
+    this.activeModel = model;
+    this.activePlane = model ? id : 'liner';
+    this.camScale = model ? camScale : 1;
+    if (model && this.cameraMode === 'cockpit') this.cameraMode = 'chase';
+    this._initialized = false;
+  }
+
+  /* Applique une livree (couleurs, motif, autocollants, nom) a un avion. */
+  applyLivery(id, lv) {
+    if (id !== 'liner') this.ensurePlane(id);
+    const rig = this.liveryRigs[id];
+    if (!rig) return;
+    if (id === 'liner') {
+      /* la texture bleue d'origine ternirait la couleur choisie */
+      this.aircraft.materials.accentMat.map = null;
+      this.aircraft.materials.accentMat.needsUpdate = true;
+    }
+    rig.apply(lv);
+  }
+
   /* Traduit l'etat d'usure des composants en signes visuels sur la
      cellule : salissure, suie, poussiere de frein. Appele a basse
      frequence (voir main.js) car rien ici ne change vite. */
@@ -2107,6 +2175,13 @@ boom.add(dockGrp);
   /* ---------------------------------------------------------- */
   /* Synchronisation modele <- physique */
   syncAircraft(ac, dt, t) {
+    if (this.activeModel) {
+      const M = this.activeModel;
+      M.group.position.copy(ac.pos);
+      M.group.quaternion.copy(ac.quat);
+      M.update(ac, dt, t);
+      return;
+    }
     const A = this.aircraft;
     A.group.position.copy(ac.pos);
     A.group.quaternion.copy(ac.quat);
@@ -3429,25 +3504,27 @@ boom.add(dockGrp);
       cam.fov = 82;
 
     } else if (this.cameraMode === 'chase') {
-      const off = new THREE.Vector3(0, 7.5, 42).applyQuaternion(this._smoothQuat);
+      const ks = this.camScale || 1;
+      const off = new THREE.Vector3(0, 7.5 * ks, 42 * ks).applyQuaternion(this._smoothQuat);
       cam.position.copy(this._smoothPos).add(off);
       cam.position.y = Math.max(cam.position.y, 1.6);
       /* La camera suit un peu le roulis : on sent les virages. */
       cam.up.lerp(ac.up(), 0.30).normalize();
+      const la = ks < 1 ? 0.2 : 0.35;
       cam.lookAt(
-        ac.pos.x + ac.vel.x * 0.35,
-        ac.pos.y + 2.5 + ac.vel.y * 0.3,
-        ac.pos.z + ac.vel.z * 0.35
+        ac.pos.x + ac.vel.x * la,
+        ac.pos.y + 2.5 * ks + ac.vel.y * la * 0.85,
+        ac.pos.z + ac.vel.z * la
       );
       /* Champ de vision qui s'ouvre avec la vitesse. */
       cam.fov = 58 + Math.min(12, ac.tas * 0.075);
 
     } else if (this.cameraMode === 'orbit') {
       this.orbitAngle += dt * 0.22;
-      const r = 62;
+      const r = 62 * (this.camScale || 1);
       cam.position.set(
         ac.pos.x + Math.cos(this.orbitAngle) * r,
-        ac.pos.y + 14,
+        ac.pos.y + 14 * (this.camScale || 1),
         ac.pos.z + Math.sin(this.orbitAngle) * r
       );
       cam.position.y = Math.max(cam.position.y, 3);
@@ -3478,8 +3555,9 @@ boom.add(dockGrp);
       }
 
   nextCamera() {
-    const i = this.cameraModes.indexOf(this.cameraMode);
-    this.cameraMode = this.cameraModes[(i + 1) % this.cameraModes.length];
+    const modes = this.activeModel ? this.cameraModes.filter(m => m !== 'cockpit') : this.cameraModes;
+    const i = modes.indexOf(this.cameraMode);
+    this.cameraMode = modes[(i + 1) % modes.length];
     return this.cameraMode;
   }
 
