@@ -600,6 +600,7 @@
   </div>
   <canvas id="miniMap" class="hidden mini-map" width="480" height="462" role="button" aria-label="Agrandir la carte"></canvas>
   <div id="funDock" class="hidden fun-dock">
+    <button id="rideBtn" class="fun-main ride-main" aria-label="Montures : skate, trottinette, BMX (R)"><span>🛹</span></button>
     <button id="funToggle" class="fun-main" aria-label="Petits gestes rigolos">🎈</button>
     <div id="funRow" class="fun-row hidden">
       <button data-emote="honk" data-scope="hub" aria-label="Klaxon">📯</button>
@@ -612,6 +613,22 @@
       <button data-emote="selfie" aria-label="Selfie">📸</button>
     </div>
   </div>
+  <!-- Montures (phase 40) : boutons, tableau de score, bandeau de figure -->
+  <div id="ridePad" class="hidden ride-pad">
+    <div class="ride-boost"><span class="turbo-bar"><span id="rideBoostFill" class="turbo-fill"></span></span>
+      <button id="rideBoost" class="fun-btn turbo" aria-label="Turbo (Maj)"><span>⚡</span><small>TURBO</small></button></div>
+    <button id="rideTrick" class="fun-btn trick" aria-label="Figure (F)"><span>🌀</span><small>FIGURE</small></button>
+    <button id="rideJump" class="fun-btn jump" aria-label="Sauter (Espace)"><span>⤴️</span><small>SAUT</small></button>
+  </div>
+  <div id="rideHud" class="hidden ride-hud">
+    <div class="rh-top"><span class="rh-speed"><b id="rhSpeed">0</b><small>km/h</small></span><span class="rh-total">🏆 <b id="rhTotal">0</b></span></div>
+    <div id="rhCombo" class="hidden rh-combo">
+      <span id="rhNames" class="rh-names"></span>
+      <span class="rh-score"><b id="rhPts">0</b> <em id="rhMult">x1</em></span>
+      <span class="rh-bankbar"><span id="rhBank"></span></span>
+    </div>
+  </div>
+  <div id="rideBanner" class="ride-banner"></div>
   <button id="btnHub" class="hidden hub-btn" aria-label="Ouvrir le Hub de gestion (H)">🏢<small>HUB</small></button>
   <div id="planChip" class="hidden plan-chip"></div>
   <div id="comboChip" class="hidden combo-chip"><span id="comboTxt">COMBO</span><span class="combo-bar"><span id="comboFill"></span></span></div>
@@ -711,6 +728,18 @@
   </div>
 </div>
 
+<!-- ============ MONTURES (phase 40) ============ -->
+<div id="ridePicker" class="hidden panel-overlay">
+  <div class="panel-card wide kid">
+    <div class="panel-head">
+      <div><h2 class="panel-title">🛹 Choisis ta monture</h2><p class="panel-sub !mb-0">Roule plus vite qu'à pied, saute et fais des figures. Le skatepark est près de la tour !</p></div>
+      <button id="rideClose" class="panel-btn sm !w-auto px-3">Fermer</button>
+    </div>
+    <div id="rideList" class="ride-list"></div>
+    <p class="ride-help">🕹️ Joystick : diriger · <b>SAUT</b> (Espace) : sauter, plus longtemps = plus haut · <b>FIGURE</b> (F) en l'air : figure — avec le joystick à gauche / droite / haut (flip avant) / bas (flip arrière) ; maintenu = grab · à terre : manual / wheelie · en l'air, tiens le joystick de côté pour tourner · saute sur un rail jaune pour glisser · <b>TURBO</b> (Maj) · R : monter / descendre.</p>
+  </div>
+</div>
+
 <!-- ============ AIDE (Arcade) : comment jouer ============ -->
 <div id="helpPanel" class="hidden panel-overlay">
   <div class="panel-card wide kid">
@@ -725,6 +754,7 @@
       <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DECOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dores</b> et ramasse les pieces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
       <details><summary>🥤 La cabine</summary><p>Avance dans l'allee et sers les passagers qui ont une bulle. 💬 = une question (reponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
       <details><summary>⚡ Missions, combos, defis</summary><p>Enchaine les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les defis du jour et la chasse aux pieces cachees sont dans la tour.</p></details>
+      <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour monter sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de cote pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pieces quand tu te poses tranquille. Le <b>skatepark</b> est pres de la tour !</p></details>
       <details><summary>🗼 La tour de controle</summary><p>C'est ton bureau : cadeau du jour, boutique (billets, ameliorations, nouvel avion, style de carte) et album de trophees.</p></details>
     </div>
   </div>

@@ -19,13 +19,15 @@
    ============================================================ */
 
 import * as THREE from 'three';
+import { LAYOUT } from './layout.js?v=1790900000';
 
 const KTS = 1.94384;
 const FPM = 196.85;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const wrap180 = (a) => ((a + 540) % 360) - 180;
 
-export const HELIPAD = { x: 95, z: 1190, r: 13 };
+/* L'heliport vient du plan de l'aeroport (layout.js) : une seule source. */
+export const HELIPAD = { x: LAYOUT.helipad.x, z: LAYOUT.helipad.z, r: LAYOUT.helipad.r };
 
 const _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _q3 = new THREE.Quaternion();
 const _Y = new THREE.Vector3(0, 1, 0), _X = new THREE.Vector3(1, 0, 0), _mZ = new THREE.Vector3(0, 0, -1);

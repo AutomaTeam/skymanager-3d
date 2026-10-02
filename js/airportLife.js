@@ -273,9 +273,10 @@ export class AirportLife {
     const sh = ff.shed;
     add(g, box(sh.x1 - sh.x0, 5, sh.z1 - sh.z0), concrete, (sh.x0 + sh.x1) / 2, 2.5, (sh.z0 + sh.z1) / 2);
     add(g, box(sh.x1 - sh.x0 + 1, 0.4, sh.z1 - sh.z0 + 1), roof, (sh.x0 + sh.x1) / 2, 5.2, (sh.z0 + sh.z1) / 2);
-    add(g, cyl(0.35, 0.35, 45, 8), mat(0x9ca3af, { m: 0.6 }), 611, 1.5, 811, 0, 0, Math.PI / 2);
-    flat(80, 34, 612, 822, asphalt);
-    sign('CARBURANT', 612, 16, 795, { bg: '#b45309', w: 32, h: 9 });
+    const fcx0 = ff.tanks[1].x, fz0 = ff.tanks[0].z;
+    add(g, cyl(0.35, 0.35, 45, 8), mat(0x9ca3af, { m: 0.6 }), fcx0, 1.5, fz0 + 13, 0, 0, Math.PI / 2);
+    flat(80, 44, fcx0, fz0 + 17, asphalt);
+    sign('CARBURANT', fcx0, 16, sh.z1 + 12, { bg: '#b45309', w: 32, h: 9 });
 
     /* --- Hall de fret : quais et rampes cote sud --- */
     const cg = L.cargo, cw = cg.x1 - cg.x0, cd = cg.z1 - cg.z0, ccx = (cg.x0 + cg.x1) / 2, ccz = (cg.z0 + cg.z1) / 2;

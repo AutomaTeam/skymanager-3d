@@ -41,12 +41,13 @@ const EXCL = [
   [630, 690, 1100, 1360],            // entree
   [495, 585, 840, 1180],             // hangars
   [235, 305, 1095, 1170],            // tour + bureau
-  [70, 120, 1165, 1215],             // heliport
   [45, 80, 995, 1410],               // route de service
-  [50, 135, 1380, 1480],             // pompiers
-  [570, 655, 780, 840],              // reservoirs
-  [175, 285, 770, 860],              // fret
-  [55, 145, 625, 735]                // aviation legere
+  [170, 222, 1212, 1256],            // heliport
+  [158, 232, 1264, 1352],            // pompiers
+  [548, 625, 1196, 1262],            // reservoirs
+  [578, 662, 1040, 1192],            // fret + conteneurs
+  [62, 138, 1022, 1118],             // aviation legere
+  [165, 295, 955, 1082]              // skatepark
 ];
 const free = (x, z, pad = 0) => !EXCL.some(r => x > r[0] - pad && x < r[1] + pad && z > r[2] - pad && z < r[3] + pad);
 
@@ -157,7 +158,7 @@ export function buildDecor() {
   let ci = 0;
   for (let row = 0; row < 2; row++) {
     for (let col = 0; col < 4; col++) {
-      const x = 300 + col * 4.4, z = 792 + row * 22;
+      const x = 592 + col * 4.4, z = 1050 + row * 22;
       cont[contKeys[ci++ % 3]].push({ x, z });
       block(x, z, 1.9, 4.2, 'conteneur');
       if (col === 1 || col === 2) cont[contKeys[ci++ % 3]].push({ x, z, y: 3.4 });
@@ -182,12 +183,12 @@ export function buildDecor() {
   group.add(instanced(P + 'helicopter-jeremy.glb', [{ x: 95, z: 1226, r: 0.6 }], { length: 12, cast: true }));
 
   /* Chariot elevateur (poly.pizza, CC BY 3.0) dans la zone de fret. */
-  group.add(instanced(P + 'forklift-kolos.glb', [{ x: 262, z: 812, r: 2.2 }], { length: 3.4, cast: true }));
-  block(262, 812, 1.0, 1.6, 'chariot elevateur');
-  group.add(instanced(C + 'firetruck.glb', [{ x: 82, z: 1408, r: Math.PI }], { length: 8.5, cast: true }));
-  group.add(instanced(C + 'ambulance.glb', [{ x: 108, z: 1408, r: Math.PI }], { length: 6.2, cast: true }));
-  block(82, 1408, 1.7, 4.3, 'camion de pompiers');
-  block(108, 1408, 1.5, 3.2, 'ambulance');
+  group.add(instanced(P + 'forklift-kolos.glb', [{ x: 640, z: 1158, r: 2.2 }], { length: 3.4, cast: true }));
+  block(640, 1158, 1.0, 1.6, 'chariot elevateur');
+  group.add(instanced(C + 'firetruck.glb', [{ x: 178, z: 1285, r: Math.PI }], { length: 8.5, cast: true }));
+  group.add(instanced(C + 'ambulance.glb', [{ x: 212, z: 1285, r: Math.PI }], { length: 6.2, cast: true }));
+  block(178, 1285, 1.7, 4.3, 'camion de pompiers');
+  block(212, 1285, 1.5, 3.2, 'ambulance');
 
   /* --------------------------------------------------------
      Quartier de maisons au sud (derriere le parking), avec cloture

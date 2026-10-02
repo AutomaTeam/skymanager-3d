@@ -1077,7 +1077,7 @@ boom.add(dockGrp);
     /* Camion de piste : modele importe (glTF, CC0, deja a l'echelle
        reelle -- pas de correction necessaire, voir assets/models/CREDITS.md). */
     const fuelTruck = spawnModel(MODEL.truck);
-    fuelTruck.position.set(262, 0, 1000);
+    fuelTruck.position.set(326, 0, 1034);
     fuelTruck.rotation.y = Math.PI / 2;
     g.add(fuelTruck);
 
@@ -1091,7 +1091,7 @@ boom.add(dockGrp);
     const cartTrainMat = pbr(TEX.paintedMetal(), { color: 0x7c8794, rough: 0.65, metal: 0.3, repeat: [2, 1] });
     for (let i = 0; i < 3; i++) {
       const cart = new THREE.Group();
-      cart.position.set(255 - i * 2.3, 0, 1030);
+      cart.position.set(338 - i * 2.3, 0, 1072);
       const bed = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.6, 1.4), cartTrainMat);
       bed.position.y = 0.55;
       cart.add(bed);
@@ -2559,7 +2559,7 @@ boom.add(dockGrp);
     if (!this._balloons) {
       if (!visible) return;
       const spots = [[240, 1276], [300, 1276], [420, 1276], [480, 1276], [250, 1302], [470, 1302], [125, 880], [125, 1170],
-                     [535, 1170], [200, 1190], [90, 1130], [45, 1200], [600, 900], [600, 1100], [660, 1290], [180, 1060]];
+                     [535, 1170], [200, 1190], [90, 1130], [45, 1200], [600, 900], [600, 1100], [660, 1290], [172, 1100]];
       const cols = [0xef4444, 0xfacc15, 0x38bdf8, 0x4ade80, 0xf472b6, 0xa78bfa, 0xfb923c];
       const grp = new THREE.Group();
       const geo = new THREE.SphereGeometry(1, 18, 14);
@@ -3591,10 +3591,13 @@ boom.add(dockGrp);
          d'ombre : le frustum de 140 m couvre largement l'avatar, les
          agents proches et l'appareil quand on s'en approche. */
       this._shadowFocus = player.pos;
-      const fwd = new THREE.Vector3(Math.sin(player.heading), 0, Math.cos(player.heading));
+      /* A roulettes (phase 40) : camera plus loin, plus haute et plus large quand on va vite. */
+      const rc = player.rideCam;
+      const ch = rc && player.camHeading != null ? player.camHeading : player.heading;
+      const fwd = new THREE.Vector3(Math.sin(ch), 0, Math.cos(ch));
     const py = player.pos.y || 0;
-    const target = new THREE.Vector3(player.pos.x, py + 1.25, player.pos.z).addScaledVector(fwd, 2.2);
-    const desired = new THREE.Vector3(player.pos.x, py + 3.4, player.pos.z).addScaledVector(fwd, -6.5);
+    const target = new THREE.Vector3(player.pos.x, py + (rc ? rc.look : 1.25), player.pos.z).addScaledVector(fwd, rc ? rc.ahead : 2.2);
+    const desired = new THREE.Vector3(player.pos.x, py + (rc ? rc.height : 3.4), player.pos.z).addScaledVector(fwd, rc ? -rc.dist : -6.5);
     /* Dans le terminal, la camera reste sous le plafond et a l'interieur
        des murs (sinon elle traverserait la facade quand on longe une vitre). */
     const hall = this.terminalHall;
@@ -3605,10 +3608,12 @@ boom.add(dockGrp);
     }
 
     if (!this._hubCamInit) { this._smoothPos.copy(desired); this._hubCamInit = true; }
-    this._smoothPos.lerp(desired, Math.min(1, dt * 4));
+    this._smoothPos.lerp(desired, Math.min(1, dt * (rc ? rc.follow : 4)));
     cam.position.copy(this._smoothPos);
     cam.lookAt(target);
-    cam.fov = 58;
+    const wantFov = rc ? rc.fov : 58;
+    cam.fov = this._hubFovOn && Math.abs(cam.fov - wantFov) < 30 ? cam.fov + (wantFov - cam.fov) * Math.min(1, dt * 5) : wantFov;
+    this._hubFovOn = true;
     cam.updateProjectionMatrix();
         /* En vue pietonne on veut voir loin, mais la meteo doit rester
            sensible : on derive la portee de la base de l'environnement. */

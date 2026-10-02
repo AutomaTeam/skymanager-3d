@@ -1867,3 +1867,77 @@ body.bigtext .fun-btn small, body.bigtext .action-btn small { font-size: 11px; }
   .hg-panel { padding-top: 2.8rem; }
   .hg-item { min-height: 3.2rem; }
 }
+
+
+/* ============================================================
+   PHASE 40 — Montures, figures, skatepark
+   ============================================================ */
+.ride-main { background: linear-gradient(135deg, #7dd3fc, #38bdf8); animation: none !important; }
+.ride-main.on { background: linear-gradient(135deg, #fde047, #f59e0b); }
+.ride-pad {
+  position: absolute; right: 0.75rem; bottom: max(0.9rem, calc(env(safe-area-inset-bottom) + 0.9rem));
+  display: flex; align-items: flex-end; gap: 0.55rem; z-index: 13;
+}
+.ride-pad.hidden { display: none; }
+.ride-boost { display: flex; align-items: flex-end; gap: 0.3rem; }
+.ride-pad .fun-btn { user-select: none; -webkit-user-select: none; touch-action: none; }
+.fun-btn.jump { width: 4.8rem; height: 4.8rem; background: linear-gradient(135deg, #86efac, #22c55e); color: #052e16; }
+.fun-btn.trick { background: linear-gradient(135deg, #f9a8d4, #ec4899); color: #500724; }
+.fun-btn.down { transform: scale(0.91); filter: brightness(1.18); }
+.ride-hud {
+  position: absolute; left: 50%; transform: translateX(-50%); top: max(7.6rem, calc(env(safe-area-inset-top) + 7.6rem));
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem; pointer-events: none; z-index: 11;
+}
+.ride-hud.hidden { display: none; }
+.rh-top {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.22rem 0.85rem; border-radius: 999px; font-weight: 800; font-size: 13px;
+  color: #e2e8f0; background: rgba(15, 23, 42, 0.72); border: 2px solid rgba(255, 255, 255, 0.5);
+}
+.rh-speed b { font-size: 1.15rem; color: #7dd3fc; font-variant-numeric: tabular-nums; }
+.rh-speed small { font-size: 9px; margin-left: 2px; color: #94a3b8; }
+.rh-total b { color: #fde047; font-variant-numeric: tabular-nums; }
+.rh-combo {
+  display: flex; flex-direction: column; align-items: center; gap: 0.1rem; min-width: 9rem; padding: 0.3rem 1rem 0.4rem; border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(253, 224, 71, 0.96), rgba(249, 115, 22, 0.96)); color: #431407; font-weight: 900;
+  border: 3px solid #fff; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+.rh-combo.hidden { display: none; }
+.rh-names { font-size: 11.5px; max-width: 17rem; text-align: center; line-height: 1.15; }
+.rh-score b { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.rh-score em { font-style: normal; font-size: 1rem; color: #7c2d12; }
+.rh-bankbar { width: 100%; height: 5px; border-radius: 99px; background: rgba(67, 20, 7, 0.25); overflow: hidden; }
+#rhBank { display: block; height: 100%; width: 100%; background: #431407; }
+.ride-banner {
+  position: absolute; left: 50%; top: 34%; transform: translate(-50%, 0); opacity: 0; pointer-events: none; z-index: 14; white-space: nowrap;
+  font-weight: 900; font-size: clamp(1.3rem, 5vw, 2.4rem); letter-spacing: 0.02em; color: #fff;
+  text-shadow: 0 3px 0 #0f172a, 0 0 18px rgba(56, 189, 248, 0.9);
+}
+.ride-banner.go { animation: rideBan 1s ease-out both; }
+.ride-banner.ok { color: #fde047; } .ride-banner.g { color: #fb923c; } .ride-banner.x { color: #fca5a5; }
+.ride-banner.bank { color: #86efac; } .ride-banner.m { color: #e9d5ff; }
+@keyframes rideBan {
+  0% { opacity: 0; transform: translate(-50%, 12px) scale(0.5); } 16% { opacity: 1; transform: translate(-50%, 0) scale(1.18); }
+  28% { transform: translate(-50%, 0) scale(1); } 78% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -28px) scale(1); }
+}
+.ride-list { display: grid; gap: 0.55rem; margin-top: 0.8rem; }
+.ride-card {
+  position: relative; display: flex; align-items: center; gap: 0.8rem; padding: 0.65rem 0.9rem; border-radius: 1rem; text-align: left;
+  background: rgba(30, 41, 59, 0.92); border: 3px solid var(--rc, #38bdf8); color: #e2e8f0; touch-action: manipulation;
+}
+.ride-card:active { transform: scale(0.98); }
+.ride-card.cur { background: rgba(14, 116, 144, 0.55); }
+.ride-card.locked { filter: saturate(0.65); }
+.rc-ico { font-size: 2.3rem; line-height: 1; }
+.rc-body { flex: 1; display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+.rc-body b { font-size: 15px; }
+.rc-body small { color: #94a3b8; font-size: 11.5px; line-height: 1.3; }
+.rc-act { font-weight: 900; font-size: 12px; padding: 0.4rem 0.75rem; border-radius: 0.8rem; background: var(--rc, #38bdf8); color: #0f172a; white-space: nowrap; }
+.ride-card kbd { position: absolute; right: 0.45rem; top: 0.15rem; font-size: 9px; opacity: 0.5; }
+.ride-help { margin-top: 0.8rem; font-size: 11.5px; color: #94a3b8; line-height: 1.55; }
+body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; }
+@media (max-height: 460px) {
+  .ride-pad .fun-btn { width: 3.3rem; height: 3.3rem; } .fun-btn.jump { width: 3.9rem; height: 3.9rem; }
+  .ride-pad .fun-btn span { font-size: 1.25rem; } .ride-pad .turbo-bar { height: 3.3rem; }
+  .ride-hud { top: max(4.8rem, calc(env(safe-area-inset-top) + 4.8rem)); }
+  .ride-banner { top: 28%; }
+}

@@ -13,6 +13,7 @@ import * as THREE from 'three';
 import { Aircraft, KTS, FT } from '../js/flightPhysics.js';
 import { FlightAssist } from '../js/flightAssist.js';
 import { PLANES } from '../js/fleet.js';
+import { HELIPAD } from '../js/heliModel.js';
 
 const dt = 1 / 60;
 const failures = [];
@@ -64,7 +65,7 @@ const WINDS = [[0, 0, 0.35], [5, 2, 0.6]];
 
 /* Helicoptere : decollage, vol, stationnaire, atterrissage automatique sur l'helipad. */
 function heliTests(id, P) {
-  const pad = { x: 95, z: 1190 };
+  const pad = { x: HELIPAD.x, z: HELIPAD.z };
   const start = (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(pad.x, ac.groundY, pad.z), heading: 0, fuel: P.fuel }); as.launch(); };
   let r = sim(id, start, 30, idle, [0, 0, 0.3]);
   check(!r.ac.onGround && r.ac.pos.y - r.ac.groundY > 25, `helico : decolle et prend de l'altitude (${(r.ac.pos.y - r.ac.groundY).toFixed(0)} m)`);
@@ -75,7 +76,7 @@ function heliTests(id, P) {
   r = sim(id, start, 60, (t) => ({ pitch: t > 15 && t < 25 ? 1 : t > 35 ? -1 : 0, roll: 0, yaw: 0 }), [0, 0, 0.3]);
   check(!r.ac.crashed, 'helico : descente au manche sans crash');
   /* atterrissage automatique depuis divers points */
-  for (const [x, z, alt] of [[300, 900, 90], [-100, 1500, 150], [95, 1190 - 300, 60]]) {
+  for (const [x, z, alt] of [[pad.x + 205, pad.z - 290, 90], [pad.x - 195, pad.z + 310, 150], [pad.x, pad.z - 300, 60]]) {
     r = sim(id, (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(x, alt, z), heading: 0, fuel: P.fuel }); ac.onGround = false; ac.wasOnGround = false; as.launched = true; ac.heli.auto = 'land'; ac.heli.vf = 15; ac.heli.airT = 5; ac.armedForLanding = true; }, 90, idle, [3, 1, 0.4]);
     const td = r.ac.touchdown;
     check(!!td && !r.ac.crashed, `helico : atterrissage automatique depuis (${x},${z})`);

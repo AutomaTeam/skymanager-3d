@@ -140,6 +140,13 @@ export const sfx = {
   chirp() { tone(1500, 0, 0.05, 'sine', 0.07); tone(2100, 0.06, 0.05, 'sine', 0.07); tone(1800, 0.12, 0.08, 'sine', 0.06); },
   tick() { tone(1200, 0, 0.03, 'square', 0.04); },
   chest() { [262, 330, 392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.07, 0.2, 'triangle', 0.12)); },
+  /* Montures et skatepark (phase 40) */
+  ollie() { this.swoosh(0.12, 900, 2600); tone(280, 0, 0.07, 'square', 0.05); },
+  land(k = 1) { tone(130, 0, 0.12, 'sine', 0.15 * k); tone(72, 0.02, 0.18, 'sine', 0.13 * k); this.swoosh(0.1, 500, 200); },
+  trick(n = 1) { const f = 660 * Math.pow(1.0595, Math.min(n, 12) * 2); tone(f, 0, 0.08, 'triangle', 0.1); tone(f * 1.5, 0.06, 0.13, 'triangle', 0.09); },
+  grindOn() { this.swoosh(0.25, 1500, 4200); tone(1800, 0, 0.1, 'square', 0.03); },
+  bump(v = 5) { const k = Math.min(1, v / 12); tone(150, 0, 0.08, 'square', 0.05 + 0.05 * k); tone(100, 0.04, 0.12, 'square', 0.04 + 0.04 * k); },
+  crash() { tone(300, 0, 0.15, 'sawtooth', 0.08); tone(180, 0.12, 0.2, 'sawtooth', 0.08); tone(110, 0.26, 0.3, 'sawtooth', 0.07); },
   whoosh() {
     const a = audio();
     if (!a) return;

@@ -17,6 +17,7 @@
 import { sfx } from './sfx.js?v=1790900000';
 import { LAYOUT } from './layout.js?v=1790900000';
 import { drawIcon, iconify } from './icons.js?v=1790900000';
+import { PARK, buildPark } from './rideCourse.js?v=1790900000';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -241,7 +242,8 @@ const TREASURE_SPOTS = [
 const LEVEL_UNLOCKS = { 3: 'nuit', 5: 'neige', 8: 'bonbon' };
 export const nextUnlock = (lvl) => { const k = Object.keys(LEVEL_UNLOCKS).map(Number).find(n => n > lvl); return k ? { level: k, theme: LEVEL_UNLOCKS[k] } : null; };
 const COMBO_EVENTS = ['serve', 'repair', 'cabinServe', 'ring'];
-const GENERIC_EVENTS = ['stunt', 'mission', 'missionGold', 'secret', 'island', 'egg', 'minigame', 'meet', 'dog', 'build', 'photo', 'rainbow'];
+const GENERIC_EVENTS = ['stunt', 'mission', 'missionGold', 'secret', 'island', 'egg', 'minigame', 'meet', 'dog', 'build', 'photo', 'rainbow',
+  'ride', 'rideKind', 'trick', 'grind', 'bigair', 'wheelie', 'rideKm'];
 const COMBO_TIME = 9;                 // s pour enchainer une action de plus
 const QUESTS = [
   { id: 'bag',   ico: '🧳', text: 'Une valise est perdue ! Va la chercher vite.',   time: 75, reward: 8,  pick: (a) => a.randomSpot() },
@@ -346,7 +348,17 @@ export const BADGES = [
   { id: 'meet4',    ico: '🎭', name: 'Sociable',             desc: 'Rencontre 4 visiteurs.',                  test: d => d.stats.meet >= 4 },
   { id: 'dog',      ico: '🐕', name: 'Ami des chiens',       desc: 'Rattrape le chien echappe.',              test: d => d.stats.dog >= 1 },
   { id: 'build5',   ico: '🏗️', name: 'Architecte',           desc: 'Pose 5 objets sur ta place.',             test: d => d.stats.build >= 5 },
-  { id: 'photo5',   ico: '📷', name: 'Reporter',             desc: 'Prends 5 cartes postales.',               test: d => d.stats.photo >= 5 }
+  { id: 'photo5',   ico: '📷', name: 'Reporter',             desc: 'Prends 5 cartes postales.',               test: d => d.stats.photo >= 5 },
+  { id: 'ride1',    ico: '🛹', name: 'Premier tour',         desc: 'Monte sur une monture.',                  test: d => d.stats.ride >= 1 },
+  { id: 'ride5',    ico: '🎠', name: 'Collectionneur de montures', desc: 'Essaie les 5 montures.',            test: d => d.stats.rideKind >= 5 },
+  { id: 'trick10',  ico: '🤸', name: 'Apprenti rider',       desc: 'Reussis 10 figures.',                     test: d => d.stats.trick >= 10 },
+  { id: 'trick100', ico: '🏆', name: 'Roi du skatepark',     desc: 'Reussis 100 figures.',                    test: d => d.stats.trick >= 100 },
+  { id: 'grind10',  ico: '⚙️', name: 'Maitre du rail',       desc: 'Glisse 10 fois sur un rail.',             test: d => d.stats.grind >= 10 },
+  { id: 'combo1000', ico: '💯', name: 'Gros combo',          desc: 'Marque 1000 points en un seul combo.',    test: d => d.stats.bestTrick >= 1000 },
+  { id: 'combo5000', ico: '🌠', name: 'Combo legendaire',    desc: 'Marque 5000 points en un seul combo.',    test: d => d.stats.bestTrick >= 5000 },
+  { id: 'bigair',   ico: '🚀', name: 'Haut perche',          desc: 'Saute a plus de 4 metres de haut.',       test: d => d.stats.bigair >= 1 },
+  { id: 'wheelie',  ico: '🎡', name: 'Equilibriste',         desc: 'Tiens un wheelie ou un manual 5 secondes.', test: d => d.stats.wheelie >= 1 },
+  { id: 'rideKm',   ico: '🛣️', name: 'Globe-rider',          desc: 'Roule 5 kilometres.',                     test: d => d.stats.rideKm >= 5 }
 ];
 
 /* « Le savais-tu ? » : petits faits d'aviation affiches dans le menu pause. */
@@ -848,6 +860,15 @@ export class Arcade {
     x.fillStyle = '#fde047'; x.beginPath(); x.arc(X(L.papi.x), Z(L.papi.z), 3 * k, 0, Math.PI * 2); x.fill();
     /* Aire de stationnement. */
     rect(L.apron.x0, L.apron.z0, L.apron.x1, L.apron.z1, T.apron, T.taxiLine, 1.2);
+    /* Skatepark (phase 40) : dalle teintee, rampes colorees, rails jaunes. */
+    {
+      const pk = PARK.area, course = this._parkCourse || (this._parkCourse = buildPark());
+      rect(pk.x0, pk.z0, pk.x1, pk.z1, 'rgba(56,189,248,0.28)', '#38bdf8', 1.4);
+      for (const p of course.prims) rect(p.box.x0, p.box.z0, p.box.x1, p.box.z1, '#' + (p.color || 0x38bdf8).toString(16).padStart(6, '0'), 'rgba(15,23,42,0.45)', 0.8);
+      x.strokeStyle = '#fde047'; x.lineWidth = 2 * k; x.lineCap = 'round';
+      for (const r of course.rails) { x.beginPath(); x.moveTo(X(r.x0), Z(r.z0)); x.lineTo(X(r.x1), Z(r.z1)); x.stroke(); }
+      x.lineCap = 'butt';
+    }
     /* Routes. */
     rect(L.road.x0, L.road.z - L.road.w / 2, L.road.x1, L.road.z + L.road.w / 2, T.road);
     rect(L.entrance.x - 7, L.entrance.z0, L.entrance.x + 7, L.entrance.z1, T.road);
@@ -900,9 +921,10 @@ export class Arcade {
       [L.apron.x0 - 5, L.apron.z0 - 5, L.apron.x1 + 5, L.apron.z1 + 5], [L.road.x0 - 5, L.road.z - 12, L.road.x1 + 5, L.road.z + 12],
       [P.x0 - 6, P.z0 - 6, P.x1 + 6, P.z1 + 6], [t.x0 - 6, t.z0 - 6, t.x1 + 6, t.z1 + 6],
       [c.x0 - 6, c.z0 - 6, c.x1 + 6, c.z1 + 6], [L.fireApron.x0 - 6, L.fireApron.z0 - 6, fr.x1 + 6, fr.z1 + 6],
-      [580, 790, 650, 840], [hp.x - 22, hp.z - 22, hp.x + 22, hp.z + 22], [L.entrance.x - 14, L.entrance.z0 - 10, L.entrance.x + 14, L.entrance.z1 + 10],
+      [L.fuelFarm.shed.x0 - 12, L.fuelFarm.tanks[0].z - 14, L.fuelFarm.shed.x1 + 12, L.fuelFarm.shed.z1 + 10], [L.gaApron.x0 - 6, L.gaApron.z0 - 6, L.gaApron.x1 + 6, L.gaApron.z1 + 6], [hp.x - 22, hp.z - 22, hp.x + 22, hp.z + 22], [L.entrance.x - 14, L.entrance.z0 - 10, L.entrance.x + 14, L.entrance.z1 + 10],
       [L.serviceRoad.x - 8, L.serviceRoad.z0, L.serviceRoad.x + 8, L.serviceRoad.z1],
       [L.tower.x - 22, L.tower.z - 22, L.tower.x + 22, L.tower.z + 22],
+      [PARK.area.x0, PARK.area.z0, PARK.area.x1, PARK.area.z1],
       ...L.hangars.map(hg => [hg.x0 - 8, hg.z0 - 8, hg.x1 + 8, hg.z1 + 8])
     ];
     const trng = seeded('map-trees');
@@ -920,20 +942,22 @@ export class Arcade {
 
     /* Icones des lieux + etiquettes (grande carte seulement). */
     emoji('🏢', (t.x0 + t.x1) / 2 + 60, (t.z0 + t.z1) / 2, 22);
+    emoji('🛹', (PARK.area.x0 + PARK.area.x1) / 2, (PARK.area.z0 + PARK.area.z1) / 2, 20);
     emoji('🗼', L.tower.x, L.tower.z, 20);
     emoji('🔧', 540, 900, 18); emoji('🔧', 540, 1010, 18); emoji('🔧', 540, 1120, 18);
     emoji('🅿️', (P.x0 + P.x1) / 2, (P.z0 + P.z1) / 2, 20);
     emoji('📦', (c.x0 + c.x1) / 2, (c.z0 + c.z1) / 2, 18);
     emoji('🚒', (fr.x0 + fr.x1) / 2, (fr.z0 + fr.z1) / 2, 17);
-    emoji('⛽', 612, 800, 15);
+    emoji('⛽', L.fuelFarm.tanks[1].x, L.fuelFarm.tanks[0].z, 15);
     pill('TERMINAL', (t.x0 + t.x1) / 2, t.z1 + 14);
+    pill('SKATEPARK', (PARK.area.x0 + PARK.area.x1) / 2, PARK.area.z1 + 11);
     pill('TOUR', L.tower.x, L.tower.z - 26);
     pill('HANGARS', 541, 850);
     pill('PARKING', (P.x0 + P.x1) / 2, P.z1 + 12);
     pill('AIRE DES AVIONS', 330, 892);
     pill('PISTE', rw.x, 1330);
     pill('FRET', (c.x0 + c.x1) / 2, c.z0 - 10);
-    pill('CARBURANT', 612, 780);
+    pill('CARBURANT', L.fuelFarm.tanks[1].x, L.fuelFarm.tanks[0].z - 18);
     pill('POMPIERS', (fr.x0 + fr.x1) / 2, fr.z0 - 12);
     pill('HELIPORT', hp.x + 30, hp.z - 24);
     pill('AVIATION LEGERE', L.gaApron.x1 + 34, (L.gaApron.z0 + L.gaApron.z1) / 2);

@@ -39,15 +39,19 @@ export const LAYOUT = {
   parking:  { x0: 240, x1: 480, z0: 1306, z1: 1384 },
   entrance: { x: 660, z0: 1120, z1: 1340 },
 
-  /* ---- Vie de l'aeroport (phase 20) : batiments supplementaires ---- */
-  fireStation: { x0: 62, x1: 122, z0: 1425, z1: 1465 },       // caserne, portes vers le nord
-  fireApron:   { x0: 60, x1: 124, z0: 1392, z1: 1425 },       // parvis des pompiers
+  /* ---- Vie de l'aeroport (phase 20) : batiments supplementaires ----
+     Phase 40 : tout ce qu'on visite a pied ou a roulettes est regroupe a moins
+     de ~260 m de la porte d'embarquement (avant : jusqu'a 560 m). Les pompiers
+     et l'heliport sont a l'ouest du terminal, le fret et le carburant a l'est,
+     l'aviation legere au bord du taxiway. */
+  fireStation: { x0: 165, x1: 225, z0: 1305, z1: 1345 },      // caserne, portes vers le nord
+  fireApron:   { x0: 163, x1: 227, z0: 1272, z1: 1305 },      // parvis des pompiers (relie a la route)
   serviceRoad: { x: 62, z0: 1005, z1: 1392, w: 5 },           // route de service le long de la piste
-  fuelFarm:    { tanks: [{ x: 590, z: 800 }, { x: 612, z: 800 }, { x: 634, z: 800 }], r: 9,
-                 shed: { x0: 585, x1: 640, z0: 815, z1: 830 } },
-  cargo:       { x0: 190, x1: 270, z0: 785, z1: 845 },        // fret, quais vers le sud
-  helipad:     { x: 95, z: 1190, r: 13 },
-  gaApron:     { x0: 70, x1: 130, z0: 640, z1: 720 },         // aviation legere
+  fuelFarm:    { tanks: [{ x: 565, z: 1215 }, { x: 587, z: 1215 }, { x: 609, z: 1215 }], r: 9,
+                 shed: { x0: 560, x1: 615, z0: 1236, z1: 1251 } },
+  cargo:       { x0: 585, x1: 655, z0: 1085, z1: 1140 },      // fret, quais vers le sud
+  helipad:     { x: 195, z: 1232, r: 13 },
+  gaApron:     { x0: 66, x1: 118, z0: 1030, z1: 1110 },       // aviation legere
   papi:        { x: -40, z: -1330 },                          // indicateur de pente, seuil nord
   landsideDoor: { x: 360, z: 1265, w: 12 },                    // entree cote ville du terminal
   standS2:     { x: 450, z: 1010, heading: 180 },             // poste de l'avion de ligne « vivant »
@@ -86,9 +90,9 @@ export const LAYOUT = {
   routes: {
     baggage: [[340, 1190, 4], [340, 1136, 0], [366, 1136, 18]],
     bus:     [[400, 1189, 4], [432, 1120, 0], [470, 1050, 0], [476, 1012, 16]],
-    fuel:    [[600, 832, 4], [520, 832, 0], [495, 832, 0], [495, 960, 0], [450, 972, 22]],
-    cargo:   [[230, 850, 5], [330, 905, 0], [420, 905, 8]],
-    fire:    [[75, 1410, 6], [62, 1392, 0], [62, 1200, 0], [62, 1010, 5]],
+    fuel:    [[600, 1260, 4], [520, 1258, 0], [500, 1180, 0], [497, 1010, 22]],
+    cargo:   [[615, 1172, 5], [540, 1190, 0], [497, 1185, 0], [497, 1070, 0], [462, 1052, 8]],
+    fire:    [[195, 1289, 6], [62, 1290, 0], [62, 1010, 5]],
     /* Avion de ligne : du poste jusqu'au point d'attente de la piste (z 1380). */
     taxiOut: [[450, 1010], [450, 930], [165, 930], [150, 945], [150, 1370], [100, 1380], [27, 1380]],
     /* Arrivee : sortie de piste par la bretelle z = -300, retour au poste. */

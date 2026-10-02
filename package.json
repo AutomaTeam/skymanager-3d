@@ -8,6 +8,7 @@
     "test:terminal": "node tools/terminal.test.mjs",
     "test:fleet": "node tools/fleet.sim.mjs",
     "test:data": "node tools/data.test.mjs",
-    "test": "node tools/flightAssist.sim.mjs && node tools/fleet.sim.mjs && node tools/data.test.mjs && node tools/terminal.test.mjs"
+    "test:rides": "node tools/rides.test.mjs",
+    "test": "node tools/flightAssist.sim.mjs && node tools/fleet.sim.mjs && node tools/data.test.mjs && node tools/terminal.test.mjs && node tools/rides.test.mjs"
   }
 }

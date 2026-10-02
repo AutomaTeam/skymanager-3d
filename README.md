@@ -2060,6 +2060,61 @@ Suivi du plan : `PLAN_FUN_ENFANT.md`. Tout est en mode Arcade (rien ne change en
 | 38 (vague 6) | **Reglages** : qualite d'image automatique, mode gaucher, gros texte, rappel de pause parent ; **musique dynamique** (3 intensites) ; **defi de la semaine** ; 16 nouveaux trophees ; conseil « prochain vol » dans le rapport | `comfort.js`, `music.js` |
 | 39 (vague 7) | **Colibri**, l'**helicoptere** : stationnaire, atterrissage automatique sur l'helipad, pose partout | `heliModel.js` |
 
+## Phase 40 — Carte compacte, montures et skatepark
+
+Retour du joueur : « la carte est trop grande pour aller d'un endroit a l'autre ; ajoute des skates, BMX, trottinettes, et que tout soit agreable a conduire avec des figures ». Deux reponses : **raccourcir les trajets** et **les rendre amusants**.
+
+### Une carte plus compacte (`js/layout.js`)
+
+Tout ce qu'on visite a pied est maintenant a **moins de ~260 m de la porte d'embarquement** (avant : jusqu'a 560 m). La piste, le taxiway, l'aire, le terminal, la tour et les hangars n'ont pas bouge (le bloc terminal est fige) ; on a deplace les lieux annexes :
+
+| Lieu | Avant | Maintenant | Distance de la porte |
+|---|---|---|---|
+| Pompiers | extremite sud, a cote de la piste | ouest du terminal, relies a la route | 420 m → 210 m |
+| Heliport | (95, 1190) | (195, 1232), a cote des pompiers | 270 m → 180 m |
+| Fret | nord de l'aire | est des hangars | 380 m → 255 m |
+| Carburant | nord-est | est du terminal | 430 m → 215 m |
+| Aviation legere | tres au nord | bord ouest du taxiway | 560 m → 295 m |
+
+Les itineraires des vehicules (`LAYOUT.routes`), le decor (`decor.js`, zones d'exclusion), la carte (`arcade.js`, coordonnees lues dans `LAYOUT`) et l'heliport du Colibri (`heliModel.js`, qui lit maintenant `LAYOUT.helipad` : une seule source) suivent. 30/30 tests de navigation (les deux tests du decor demandent un faux `document` hors navigateur).
+
+### Les montures (`js/rides.js`)
+
+Un bouton **🛹** (touche **R**), disponible partout sur le tarmac en mode Arcade, ouvre le choix de monture ; on roule 2 a 3 fois plus vite qu'a pied et on descend d'un appui. Les montures se debloquent avec des pieces.
+
+| Monture | Prix | Vitesse (turbo) | Caractere | Figures (joystick au moment de l'appui) |
+|---|---|---|---|---|
+| Skate | gratuit | 11 (16,5) m/s | classique, il faut pousser | Kickflip / Heelflip / Pop shove-it |
+| Trottinette | gratuit | 9,8 (14,5) | stable, facile | Barspin / Tailwhip / No-hander |
+| BMX | 25 | 13 (19) | rapide, gros sauts | Barspin / Tailwhip / No-hander |
+| Rollers | 40 | 11,8 (17) | glisse tres loin | Tuck / Spread eagle / Torque |
+| Hoverboard | 70 | 14,5 (21) | flotte, derape | Board spin / Flip board / Hover freeze |
+
+**Commandes** : joystick / fleches / ZQSD = diriger · **SAUT** (Espace) = sauter, plus longtemps = plus haut · **FIGURE** (F) · **TURBO** (Maj, jauge qui se recharge) · R = monter / descendre. En l'air : tenir le joystick de cote plus de 0,2 s = **tourner** (180°, 360°...) ; FIGURE = figure de planche (neutre / gauche / droite), **flip avant / arriere** avec le joystick vers le haut / bas (s'il reste assez de temps de vol, sinon la figure de planche), FIGURE maintenu = **grab**. A terre : FIGURE maintenu = **manual / wheelie**. Sauter sur un **rail jaune** = **grind**.
+
+**Pensees pour un enfant** : les rotations se « magnetisent » quand on lache le joystick ; un atterrissage de travers est d'abord « un peu bancal » (vitesse reduite, combo garde) avant d'etre une chute (on perd juste le combo, 1 s) ; un coup de joystick lateral en l'air dirige au lieu de tourner ; pousser le joystick en avant pendant un saut ne fait jamais basculer ; un flip trop ambitieux se transforme en figure de planche ; les vehicules et les murs ne tuent rien (choc + glissement).
+
+**Score** : points par figure (rotation, flips, planche, grab, temps de vol, grind, manual) × un multiplicateur de combo qui monte a chaque figure differente ; le combo est « banque » apres 1,8 s calme a terre et devient des **pieces** (+ XP). 10 nouveaux **trophees** (Premier tour, Collectionneur de montures, Apprenti rider, Roi du skatepark, Maitre du rail, Gros combo, Combo legendaire, Haut perche, Equilibriste, Globe-rider).
+
+### Le skatepark (`js/rideCourse.js`, `js/ridePark.js`)
+
+Pose sur l'aire, a l'ouest de la tour (entre la ligne des cones et le taxiway) : **half-pipe** (deux quarts de pipe de 4,6 m de rayon, sortie « verticale » qui ramene sur la rampe), **spine**, **pyramide**, **fun box** avec ses deux rails, **rail plat**, **down-rail** et **rail montant**, **saut de gap** (kicker + reception), **big air** (rampe de 2,5 m) et un quart de pipe sud. Il est sur la carte et la mini-carte (rampes colorees, rails jaunes, panneau « SKATEPARK »). Les rampes sont des primitives (`kicker`, `quarter`, `box`, `pyramid`, `spine`) : la physique, la carte et le rendu lisent les memes, donc ce qu'on voit est ce qu'on roule. Un pieton ne grimpe pas un mur de rampe (> 0,45 m) mais marche sur les pentes douces.
+
+### Architecture
+
+| Module | Role | Dependances |
+|---|---|---|
+| `rideCourse.js` | primitives de relief, rails, plan du skatepark, `heightAt()` | aucune (pur) |
+| `ridePhysics.js` | monture, saut, figures, rails, combo, collisions via un `resolve()` injecte | aucune (pur) |
+| `ridePark.js` | meshes du skatepark | Three.js |
+| `rideModels.js` | modeles des 5 montures + poses (pieds, mains, bassin) | Three.js |
+| `rideIK.js` | cinematique inverse a deux os : l'avatar glTF « se pose » sur la monture sans connaitre ses axes | Three.js |
+| `rides.js` | colle : commandes, camera (plus large et plus loin avec la vitesse), effets, sons, HUD, selecteur, trophees | tout |
+
+`tools/rides.test.mjs` (dans `npm test`) verifie hors navigateur : vitesses et freinage, sauts a plat et charges, decollage / vol / atterrissage depuis un kicker, mur de rampe, quart de pipe (retour sur la rampe), spin / flip / figure / chute, rails, murs de navigation et geometrie du skatepark (aucun chevauchement, pentes rideables).
+
+Donnees enregistrees : `skymanager.rides` (monture, montures achetees, meilleur score, figures, astuces deja vues).
+
 ### Les avions (`js/fleet.js`)
 
 Un avion = un **profil** (coefficients du moteur de vol via `Aircraft.applyProfile`, vitesses de l'aide au pilotage, camera, economie). Le jet de ligne reste l'avion de l'aeroport (cabine, atelier) ; le petit avion choisi au hangar ne sert qu'en vol, et le jet reapparait a la porte au retour. Ajouter un avion : un profil dans `fleet.js` + un constructeur dans `planeModels.js` (`MODEL_BUILDERS`) ; `tools/fleet.sim.mjs` le fait decoller, monter, atterrir et s'arreter tout seul avec l'aide au pilotage et verifie la maniabilite.
@@ -2084,7 +2139,7 @@ Une mission est une classe (`setup`, `update`, `goal`, `result`...). Elle est ch
 
 ```
 npm install three@0.169.0 --no-save
-npm test          # aide au pilotage, avions du hangar, coherence des catalogues, terminal
+npm test          # aide au pilotage, avions du hangar, coherence des catalogues, terminal, montures
 ```
 
 - `tools/fleet.sim.mjs` : chaque avion decolle, monte, supporte les manches extremes, atterrit seul et s'arrete (2 vents) ; l'helicoptere decolle, stationne et se pose sur l'helipad.

@@ -38,6 +38,7 @@ import { Deco } from './deco.js?v=1790900000';
 import { Album } from './album.js?v=1790900000';
 import { OpenWorld } from './openWorld.js?v=1790900000';
 import { Comfort } from './comfort.js?v=1790900000';
+import { Rides } from './rides.js?v=1790900000';
 import { planeOf } from './fleet.js?v=1790900000';
 import { HELIPAD } from './heliModel.js';
 import { sfx } from './sfx.js?v=1790900000';
@@ -158,6 +159,7 @@ class Game {
     this.album = new Album(this);
     this.openWorld = new OpenWorld(this);
     this.comfort = new Comfort(this);
+    this.rides = new Rides(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -1179,6 +1181,7 @@ class Game {
       if (this.deco.active) { this.deco.close(); return true; }
       if (!$('checkPanel').classList.contains('hidden')) { this.closeCheckPanel(); return true; }
       if (!$('helpPanel').classList.contains('hidden')) { $('helpPanel').classList.add('hidden'); return true; }
+      if (this.rides.pickerOpen) { this.rides.closePicker(); return true; }
       if (this.hub && this.hub.isOpen) { this.hub.close(); return true; }
       if (!$('mapBig').classList.contains('hidden')) { this.closeMapBig(); return true; }
       if (!$('kidAlbum').classList.contains('hidden')) { this.closeAlbum(); return true; }
@@ -1305,6 +1308,9 @@ class Game {
         this.player.pos.set(a.wx, a.wy, a.wz);
         this.player.heading = a.heading;
         this.player.moving = a.moving;
+      } else if (this.rides.active) {
+        /* A roulettes (phase 40) : la monture conduit le joueur, voir js/rides.js. */
+        this.rides.drive(dt);
       } else {
         /* Tourner en continu (gauche/droite) et avancer/reculer selon le
            cap courant (haut/bas), sans angle cible fixe : voir
@@ -1323,16 +1329,17 @@ class Game {
           /* Murs, obstacles fixes (graphe), coque de l'avion, personnes et vehicules :
              deplacement par petits pas avec glissement (js/bodies.js). */
           const next = slideMove(this.nav, p, to, collectBodies(this),
-            (x, z) => this.agents._clearOfHull(null, x, z));
+            (x, z) => this.agents._clearOfHull(null, x, z) && this.rides.walkable(x, z, p.y));
           p.x = next.x;
           p.z = next.z;
           /* Le sol n'est pas plat partout : la rampe de la passerelle
              mobile s'eleve du hall jusqu'a la porte cabine. */
-                    p.y = this.r3d.groundHeight(p.x, p.z);
+                    p.y = Math.max(this.r3d.groundHeight(p.x, p.z), this.rides.surface(p.x, p.z));
         }
       }
 
       this.r3d.updateHubScene(this.ac, this.mechanic, this.player, dt, this.time);
+      this.rides.afterScene(dt);
       this.r3d.reactCones(this.player.pos.x, this.player.pos.z, dt);
 
       /* Point d'interaction le plus proche : poste de maintenance, cockpit,
@@ -1432,10 +1439,11 @@ class Game {
     handleHubInteract() {
       /* Le bouton contextuel sert d'abord a la prise/au rendu de controle. */
       if (this.controlled) { this.releaseControl(); return; }
-      if (this.nearAgent) { this.takeControl(this.nearAgent); return; }
+      if (this.nearAgent) { this.rides.dismount(true); this.takeControl(this.nearAgent); return; }
 
       const h = this.nearHotspot;
       if (!h) return;
+      this.rides.dismount(true);
       if (h.type === 'mechanic') this.openStationPanel(h.key);
       else if (h.type === 'cockpit') this.boardAircraft();
       else if (h.type === 'cabin') this.enterCabin();
@@ -2774,7 +2782,7 @@ class Game {
         this.updateEnvChip();
         this.arcade.update(dt);
         /* Les couches « fun » ne doivent jamais figer le jeu : une erreur y est notee une fois. */
-        for (const m of [this.fun, this.sky, this.ground, this.deco, this.openWorld, this.comfort]) {
+        for (const m of [this.fun, this.sky, this.ground, this.deco, this.openWorld, this.comfort, this.rides]) {
           try { m.update(dt); } catch (err) {
             if (!m._errLogged) { m._errLogged = true; console.error('Erreur dans ' + m.constructor.name + '.update', err); }
           }
