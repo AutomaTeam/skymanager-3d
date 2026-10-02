@@ -13,6 +13,7 @@ import { STICKERS } from './livery.js?v=1790900000';
 import { DESTINATIONS } from './arcade.js?v=1790900000';
 import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1790900000';
 import { STORIES } from './groundFun.js?v=1790900000';
+import { ISLANDS, EGGS } from './openWorld.js?v=1790900000';
 
 const $ = (id) => document.getElementById(id);
 
@@ -21,6 +22,7 @@ const TABS = [
   { id: 'cities',   ico: '🌍', label: 'Villes' },
   { id: 'animals',  ico: '🐾', label: 'Animaux' },
   { id: 'people',   ico: '🎭', label: 'Rencontres' },
+  { id: 'world',    ico: '🏝️', label: 'Monde' },
   { id: 'medals',   ico: '🏅', label: 'Medailles' },
   { id: 'stickers', ico: '⭐', label: 'Stickers' }
 ];
@@ -39,13 +41,20 @@ export class Album {
     const g = this.g;
     switch (tab) {
       case 'planes':
-        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: id === 'zebulon' ? 'Niveau 3 + 150 pieces' : 'Dans ton hangar' }));
+        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: id === 'zebulon' ? 'Niveau 3 + 150 pieces' : id === 'hydravion' ? 'Niveau 2 + 120 pieces' : 'Dans ton hangar' }));
       case 'cities':
         return DESTINATIONS.map(d => ({ ico: d.flag, name: d.city, got: (g.arcade.data.visited || []).includes(d.city), hint: 'Vole vers cette ville (plan de vol)' }));
       case 'animals':
         return ANIMALS.map(a => ({ ico: a.ico, name: a.name.replace('le ', '').replace('la ', ''), got: (g.sky.data.animals || []).includes(a.ico), hint: 'Mission « Transport d\'animaux »' }));
       case 'people':
         return STORIES.map(s => ({ ico: s.ico, name: s.name, got: g.ground.data.met.includes(s.id), hint: 'Un visiteur arrive parfois a l\'aeroport' }));
+      case 'world': {
+        const ow = g.openWorld.data;
+        const out = ISLANDS.map(i => ({ ico: i.ico, name: i.name, got: ow.islands.includes(i.id), hint: 'Survole cette ile (au nord-est)' }));
+        for (const e of EGGS) out.push({ ico: e.ico, name: e.name, got: !!ow.eggs[e.id], hint: 'Une surprise cachee dans le ciel…' });
+        for (const n of [10, 20, 30, 40]) out.push({ ico: '⭐', name: `${n} etoiles`, got: ow.stars.length >= n, hint: `Trouve ${n} etoiles dorees (${ow.stars.length}/40)` });
+        return out;
+      }
       case 'medals':
         return MISSION_DEFS.filter(d => d.id !== 'zoo' || true).map(d => {
           const m = (g.sky.data.best[d.id] || {}).medal || 0;

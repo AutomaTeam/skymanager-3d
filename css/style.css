@@ -1779,7 +1779,7 @@ body.in-hangar #arcadeHud > *:not(#popHost) { display: none !important; }
 .event-chip.late { border-color: #fb7185; animation: bigPulse 0.7s ease-in-out infinite; }
 .al-bar { height: 10px; border-radius: 99px; background: rgba(30, 41, 59, 0.9); overflow: hidden; margin: 0.3rem 0 0.7rem; }
 .al-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #f472b6, #fde047, #4ade80); }
-.al-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.25rem; margin-bottom: 0.6rem; }
+.al-tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem; margin-bottom: 0.6rem; }
 .al-tabs button { display: flex; flex-direction: column; align-items: center; padding: 0.3rem 0; border-radius: 0.8rem; font-size: 1.2rem; line-height: 1.1; background: rgba(30, 41, 59, 0.8); border: 2px solid transparent; color: #e2e8f0; }
 .al-tabs button small { font-size: 8.5px; font-weight: 800; }
 .al-tabs button em { font-style: normal; font-size: 9px; color: #fde047; }
@@ -1812,3 +1812,9 @@ body.in-hangar #arcadeHud > *:not(#popHost) { display: none !important; }
 .deco-place { flex: 2; padding: 0.7rem; border-radius: 0.9rem; font-weight: 900; font-size: 15px; color: #052e16; background: linear-gradient(135deg, #86efac, #22c55e); border: 3px solid #fff; }
 .deco-place:disabled { background: #475569; color: #94a3b8; border-color: transparent; }
 body.in-deco #btnInspect, body.in-deco #btnCounter, body.in-deco #btnServe, body.in-deco #objBar, body.in-deco #questBar, body.in-deco #miniMap { display: none !important; }
+
+/* Vague 5 : etoiles cachees */
+.star-chip { position: absolute; left: 50%; transform: translateX(-50%); top: max(11.2rem, calc(env(safe-area-inset-top) + 11.2rem)); padding: 0.3rem 0.8rem; border-radius: 999px; font-weight: 900; font-size: 13px; color: #fef9c3; background: rgba(113, 63, 18, 0.88); border: 2px solid #fde047; z-index: 12; display: flex; gap: 0.4rem; align-items: center; }
+.star-chip.hidden { display: none; }
+.star-chip .arr { display: inline-block; color: #fde047; font-size: 15px; }
+.star-chip.hot { animation: bigPulse 0.6s ease-in-out infinite; background: rgba(180, 83, 9, 0.95); }

@@ -36,6 +36,7 @@ import { MiniGames } from './minigames.js?v=1790900000';
 import { GroundFun } from './groundFun.js?v=1790900000';
 import { Deco } from './deco.js?v=1790900000';
 import { Album } from './album.js?v=1790900000';
+import { OpenWorld } from './openWorld.js?v=1790900000';
 import { planeOf } from './fleet.js?v=1790900000';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
@@ -153,6 +154,7 @@ class Game {
     this.ground = new GroundFun(this);
     this.deco = new Deco(this);
     this.album = new Album(this);
+    this.openWorld = new OpenWorld(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -703,6 +705,7 @@ class Game {
     this.assist.reset();
     this.arcade.resetFlight();
     this.sky.reset();
+    this.openWorld.resetFlight();
     this.fun.onFlightStart();
     this.hint = '';
     this.hintUntil = 0;
@@ -2750,7 +2753,7 @@ class Game {
         this.updateEnvChip();
         this.arcade.update(dt);
         /* Les couches « fun » ne doivent jamais figer le jeu : une erreur y est notee une fois. */
-        for (const m of [this.fun, this.sky, this.ground, this.deco]) {
+        for (const m of [this.fun, this.sky, this.ground, this.deco, this.openWorld]) {
           try { m.update(dt); } catch (err) {
             if (!m._errLogged) { m._errLogged = true; console.error('Erreur dans ' + m.constructor.name + '.update', err); }
           }

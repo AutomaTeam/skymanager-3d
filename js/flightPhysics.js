@@ -161,6 +161,7 @@ export class Aircraft {
     this.speeds = { climb: 215, cruise: 235, boost: 305 };
     this.flareAgl = 24;
     this.stuntMinKt = 140;
+    this.safeAgl = 0;          // > 0 : altitude de securite reduite (rase-mottes sur l'eau)
     this.profile = 'liner';
     this.gain = { roll: 1, pitch: 1 };     // gains de l'aide au pilotage (flightAssist.js)
     this._base = {};

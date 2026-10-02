@@ -22,6 +22,7 @@
 import * as THREE from 'three';
 import { sfx } from './sfx.js?v=1790900000';
 import { SkyWorld } from './skyWorld.js?v=1790900000';
+import { ISLANDS } from './openWorld.js?v=1790900000';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -514,6 +515,52 @@ class ShowMission extends Mission {
   }
 }
 
+/* ------------------------------------------------------------
+   Exploration : survole 3 iles de l'archipel
+   ------------------------------------------------------------ */
+class IslandMission extends Mission {
+  setup() {
+    const ow = this.g.openWorld;
+    const seen = ow.data.islands;
+    let pool = ISLANDS.slice().sort((a, b) => (seen.includes(a.id) ? 1 : 0) - (seen.includes(b.id) ? 1 : 0) + (Math.random() - 0.5) * 0.9);
+    let pick3 = pool.slice(0, 3);
+    /* ordre : du plus proche au plus lointain depuis le depart */
+    let cur = { x: 0, z: 1380 }, order = [];
+    while (pick3.length) {
+      pick3.sort((a, b) => Math.hypot(a.x - cur.x, a.z - cur.z) - Math.hypot(b.x - cur.x, b.z - cur.z));
+      const n = pick3.shift(); order.push(n); cur = n;
+    }
+    this.targets = order;
+    this.hoops = order.map(i => this.world.hoop({ x: i.x, y: 170, z: i.z, yaw: 0, radius: 120 }));
+    this.idx = 0;
+    this.hoops.forEach((h, i) => h.setState(i === 0 ? 'next' : 'later'));
+    let L = 0, p = { x: 0, z: 1380 };
+    for (const i of order) { L += Math.hypot(i.x - p.x, i.z - p.z); p = i; }
+    this.limit = L / (this.ac.speeds.cruise / KTS) * 2.2 + 50;
+  }
+  update(dt) {
+    const h = this.hoops[this.idx], ac = this.ac;
+    if (!h) { this.done = true; return; }
+    if (Math.hypot(ac.pos.x - h.x, ac.pos.y - h.y, ac.pos.z - h.z) < h.radius) {
+      sfx.ring(); this.g.arcade.confetti(25);
+      this.sky.reward(6, `${this.targets[this.idx].ico} ${this.idx + 1}/${this.targets.length}`);
+      h.setState('done');
+      this.idx++;
+      if (this.hoops[this.idx]) this.hoops[this.idx].setState('next');
+      else this.done = true;
+    }
+  }
+  target() { const i = this.targets[this.idx]; return i ? { x: i.x, z: i.z } : null; }
+  guide() { const i = this.targets[this.idx]; return i ? { x: i.x, y: 170, z: i.z } : null; }
+  goal() { const i = this.targets[this.idx]; return { icon: '🏝️', text: i ? `Cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Exploration terminee !', target: this.target() }; }
+  progressText() { return `🏝️ ${this.idx}/${this.targets.length}`; }
+  dispose() { this.hoops.forEach(h => this.world.remove(h)); }
+  result() {
+    const s = this.idx;
+    return { score: s, medal: s >= 3 ? 3 : s >= 2 ? 2 : s >= 1 ? 1 : 0, lines: [`🏝️ ${s} ile${s > 1 ? 's' : ''} survolee${s > 1 ? 's' : ''} sur ${this.targets.length}`] };
+  }
+}
+
 /* ============================================================
    Catalogue
    ============================================================ */
@@ -522,6 +569,7 @@ export const MISSION_DEFS = [
   { id: 'race',     ico: '🏁', name: 'Course d\'anneaux',  brief: 'Passe tous les anneaux le plus vite possible. Bats ton record !', level: 1, limit: 0, cls: RaceMission },
   { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Eteins les feux de foret avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
   { id: 'parcel',   ico: '🎁', name: 'Livreur de colis',   brief: 'Largue les colis a parachute sur les cibles.', level: 2, limit: 170, cls: ParcelMission },
+  { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission },
   { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
   { id: 'zoo',      ico: '🐧', name: 'Transport d\'animaux', brief: 'Amene un animal au zoo. Chacun a ses gouts !', level: 4, limit: 200, cls: CarryMission }

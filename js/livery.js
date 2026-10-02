@@ -97,7 +97,7 @@ export const find = (list, id) => list.find(x => x.id === id) || list[0];
 
 export const defaultLivery = (planeId) => ({
   body: planeId === 'zebulon' ? 'white' : 'white',
-  accent: planeId === 'zebulon' ? 'orange' : planeId === 'pioupiou' ? 'red' : 'blue',
+  accent: planeId === 'zebulon' ? 'orange' : planeId === 'pioupiou' ? 'red' : planeId === 'hydravion' ? 'blue' : 'blue',
   pattern: 'none',
   stickers: ['none', 'none', 'none'],
   name: ''

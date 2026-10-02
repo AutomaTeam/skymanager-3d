@@ -175,7 +175,8 @@ export class FlightAssist {
     /* Trajectoire sol (et non cap) : c'est elle qui compte pour rester sur
        l'axe de piste quand il y a du vent de travers. */
     const trk = (Math.atan2(ac.vel.x, -ac.vel.z) * 180 / Math.PI + 360) % 360;
-    const low = agl < SAFE_AGL && !this.landing;      // trop bas pour virer serre
+    const SAFE = ac.safeAgl || SAFE_AGL;
+    const low = agl < SAFE && !this.landing;      // trop bas pour virer serre
     let bankTarget = 0;
     if (stickRoll) {
       bankTarget = clamp(inp.roll * 32, -32, 32);
@@ -248,10 +249,10 @@ export class FlightAssist {
     /* Altitude de securite : hors approche, on ne descend pas sous
        SAFE_AGL. Le manche vers l'avant ne fait plus piquer vers le sol. */
     if (!this.landing && !ac.onGround) {
-      if (agl < SAFE_AGL) {
+      if (agl < SAFE) {
         const sink = -vs;
         if (sink > -1 && out.pitch < 0.1) out.pitch = Math.max(out.pitch, clamp((3 - pitch) * 0.1, 0, 0.5));
-        if (agl < SAFE_AGL * 0.6 && vs < 0) out.pitch = Math.max(out.pitch, 0.5);
+        if (agl < SAFE * 0.6 && vs < 0) out.pitch = Math.max(out.pitch, 0.5);
       }
     }
     /* Protection : gard-fou sur l'assiette extreme. */

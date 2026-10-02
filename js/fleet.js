@@ -50,6 +50,35 @@ export const PLANES = {
     gain: { roll: 0.7, pitch: 0.8 }
   },
 
+  hydravion: {
+    id: 'hydravion', name: 'Hydravion', ico: '🛩️', level: 2, price: 120,
+    blurb: 'Des flotteurs ! Rase l\'eau, rempli ton reservoir et eteins les feux.',
+    stars: { ease: 4, fun: 4, speed: 2 },
+    seats: 3, income: 0.5, fuel: 110,
+    camScale: 0.46, camMode: 'chase',
+    phys: {
+      S: 17.5, b: 12.0, c: 1.6, oswald: 0.78,
+      emptyMass: 720, payload: 200, fuelCap: 130,
+      Ipitch: 1700, Iyaw: 2700, Iroll: 1250,
+      CL0: 0.25, CLa: 5.0, alphaStall: 0.30, CD0: 0.040,
+      Cm0: 0.03, Cma: -1.3, Cmq: -28, Cme: 0.30,
+      Clda: 0.085, Clp: -0.5, Clb: -0.1,
+      Cnb: 0.12, Cnr: -0.25, Cndr: 0.04, Cnda: -0.01,
+      engines: 1, thrustPerEngine: 5000, sfc: 2.8e-6,
+      gearK: 6.0e4, gearC: 10500,
+      gear: [
+        { name: 'lf', p: [-1.35, -1.52, -1.5], steer: true, brake: true },
+        { name: 'rf', p: [1.35, -1.52, -1.5], steer: true, brake: true },
+        { name: 'lr', p: [-1.35, -1.52, 1.5], brake: true },
+        { name: 'rr', p: [1.35, -1.52, 1.5], brake: true }
+      ],
+      groundY: 1.46, maxFlap: 2, fixedGear: true, noReverse: true,
+      rateDamping: 3.2, propVmax: 95, vne: 150, flareAgl: 8, stuntMinKt: 72,
+      speeds: { climb: 78, cruise: 95, boost: 122 }
+    },
+    gain: { roll: 0.7, pitch: 0.8 }
+  },
+
   zebulon: {
     id: 'zebulon', name: 'Zebulon', ico: '🛩️', level: 3, price: 150,
     blurb: 'Avion de voltige : vif, rapide, il adore les tonneaux !',

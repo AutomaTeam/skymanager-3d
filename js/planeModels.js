@@ -109,10 +109,10 @@ function makeProp(radius, bladeM, discM) {
 /* ============================================================
    PIOUPIOU — aile haute, helice, train fixe
    ============================================================ */
-function buildPioupiou() {
+function buildPioupiou(opts = {}) {
   const group = new THREE.Group();
-  const body = mat(0xf4f0e6, { rough: 0.38 });
-  const accent = mat(0xe53935, { rough: 0.38 });
+  const body = mat(opts.bodyColor ?? 0xf4f0e6, { rough: 0.38 });
+  const accent = mat(opts.accentColor ?? 0xe53935, { rough: 0.38 });
   const dark = mat(0x2a2f36, { rough: 0.7 });
   const glass = mat(0x0f2740, { rough: 0.05, metal: 0.8, transparent: true, opacity: 0.62, env: 1.3 });
   const skin = mat(0xf1c9a5, { rough: 0.7 });
@@ -184,7 +184,7 @@ function buildPioupiou() {
   rud.add(rb);
   group.add(rud);
 
-  /* Train fixe */
+  /* Train fixe, ou flotteurs pour l'hydravion */
   const tireM = mat(0x1d2025, { rough: 0.95 });
   const addGear = (x, y, z, r, w, top) => {
     const wh = wheel(r, w, tireM, metal);
@@ -193,15 +193,30 @@ function buildPioupiou() {
     return wh;
   };
   const wheels = [];
-  wheels.push(addGear(0, -1.19, -1.65, 0.26, 0.12));
-  group.add(strut([0, -0.35, -1.55], [0, -1.15, -1.65], 0.045, metal));
-  for (const s of [-1, 1]) {
-    wheels.push(addGear(s * 1.15, -1.2, 0.25, 0.3, 0.14));
-    group.add(strut([s * 0.45, -0.35, -0.1], [s * 1.12, -1.15, 0.25], 0.05, metal));
-    const pant = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), accent);
-    pant.scale.set(0.45, 0.85, 1.25);
-    pant.position.set(s * 1.15, -1.2, 0.25);
-    group.add(pant);
+  if (opts.floats) {
+    for (const s of [-1, 1]) {
+      const fl = new THREE.Mesh(new THREE.CapsuleGeometry(0.34, 3.6, 6, 12), accent);
+      fl.rotation.x = Math.PI / 2;
+      fl.scale.set(1, 1, 0.8);
+      fl.position.set(s * 1.35, -1.2, 0.05);
+      group.add(fl);
+      const nose = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), accent);
+      nose.scale.set(1, 0.8, 1.6); nose.position.set(s * 1.35, -1.2, -2.15);
+      group.add(nose);
+      group.add(strut([s * 0.45, -0.35, -0.45], [s * 1.3, -1.0, -0.9], 0.05, metal));
+      group.add(strut([s * 0.45, -0.35, 0.35], [s * 1.3, -1.0, 0.9], 0.05, metal));
+    }
+  } else {
+    wheels.push(addGear(0, -1.19, -1.65, 0.26, 0.12));
+    group.add(strut([0, -0.35, -1.55], [0, -1.15, -1.65], 0.045, metal));
+    for (const s of [-1, 1]) {
+      wheels.push(addGear(s * 1.15, -1.2, 0.25, 0.3, 0.14));
+      group.add(strut([s * 0.45, -0.35, -0.1], [s * 1.12, -1.15, 0.25], 0.05, metal));
+      const pant = new THREE.Mesh(new THREE.SphereGeometry(0.34, 10, 8), accent);
+      pant.scale.set(0.45, 0.85, 1.25);
+      pant.position.set(s * 1.15, -1.2, 0.25);
+      group.add(pant);
+    }
   }
 
   /* Feux */
@@ -221,7 +236,7 @@ function buildPioupiou() {
     tailFin: { zc: 3.5, yc: 0.95, size: 0.5, halfThick: 0.045 }
   };
   return {
-    id: 'pioupiou', group, body: [body], accent: [accent], slots,
+    id: opts.id || 'pioupiou', group, body: [body], accent: [accent], slots,
     update(ac, dt, t) {
       const rpm = 8 + (ac.n1 - 20) * 0.9;
       prop.spin.rotation.z += rpm * dt;
@@ -363,7 +378,8 @@ function buildZebulon() {
 }
 
 export const MODEL_BUILDERS = {
-  pioupiou: buildPioupiou,
+  pioupiou: () => buildPioupiou(),
+  hydravion: () => buildPioupiou({ id: 'hydravion', floats: true, bodyColor: 0xfff1a8, accentColor: 0x1e6fe0 }),
   zebulon: buildZebulon
 };
 
