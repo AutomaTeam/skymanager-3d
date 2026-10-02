@@ -35,8 +35,17 @@
       <button id="modeArcade" class="mode-btn on"><span class="mode-ico">🎮</span><span class="mode-t">Arcade</span><span class="mode-s">facile et fun</span></button>
       <button id="modePro" class="mode-btn"><span class="mode-ico">🛠️</span><span class="mode-t">Pilote</span><span class="mode-s">simulation complete</span></button>
     </div>
-    <button id="btnStart" class="hidden mt-6 px-10 py-4 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-lg shadow-lg shadow-sky-500/30">
-      DEMARRER LE VOL
+    <div id="pilotCard" class="arcade-only hidden mt-5 pilot-card">
+      <input id="pilotName" maxlength="12" autocomplete="off" placeholder="Ton prenom de pilote" />
+      <div class="av-row">
+        <button class="av-btn" data-av="🧑‍✈️">🧑‍✈️</button><button class="av-btn" data-av="🦊">🦊</button><button class="av-btn" data-av="🐱">🐱</button><button class="av-btn" data-av="🐶">🐶</button><button class="av-btn" data-av="🤖">🤖</button><button class="av-btn" data-av="🦄">🦄</button><button class="av-btn" data-av="🐼">🐼</button><button class="av-btn" data-av="🐸">🐸</button>
+      </div>
+    </div>
+    <button id="btnFlyNow" class="arcade-only hidden mt-5 px-10 py-5 rounded-2xl bg-emerald-400 active:bg-emerald-500 text-slate-900 font-black text-xl shadow-lg shadow-emerald-400/40 fly-now">
+      ✈️ VOLER MAINTENANT !
+    </button>
+    <button id="btnStart" class="hidden mt-4 px-10 py-3 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-base shadow-lg shadow-sky-500/30">
+      🏢 MON AEROPORT
     </button>
     <p id="bootTip" class="mt-6 text-[11px] text-slate-500 max-w-xs mx-auto">
       <span id="bootTipOrientation">Orientation paysage recommandee. </span>Ajoutez la page a l'ecran d'accueil pour le plein ecran.
@@ -105,6 +114,20 @@
   <button id="launchBtn" class="arcade-only hidden big-btn launch">🛫 DECOLLER !</button>
   <button id="helpLandBtn" class="arcade-only hidden big-btn help">🛬 ATTERRIR (aide)</button>
   <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
+  <div id="stuntChip" class="arcade-only hidden stunt-chip"></div>
+
+  <!-- Boutons fun (vague 1) : acrobaties, turbo, fumee, photo -->
+  <div id="funPad" class="arcade-only hidden fun-pad">
+    <button id="btnPhoto" class="fun-btn small" title="Photo (P)"><span>📸</span></button>
+    <button id="btnTrail" class="fun-btn small" title="Fumee (F)"><span>💨</span></button>
+    <button id="btnLoop" class="fun-btn" title="Looping (E)"><span>🔄</span><small>LOOPING</small></button>
+    <button id="btnRoll" class="fun-btn" title="Tonneau (R)"><span>🌀</span><small>TONNEAU</small></button>
+    <div class="turbo-wrap">
+      <div class="turbo-bar"><div id="turboFill" class="turbo-fill"></div></div>
+      <button id="btnTurbo" class="fun-btn turbo" title="Turbo (B)"><span>⚡</span><small>TURBO</small></button>
+    </div>
+  </div>
+  <div id="speedLines" class="speed-lines"></div>
 
   <!-- Palonnier + frein -->
   <div class="pro-only absolute left-1/2 -translate-x-1/2 bottom-[max(0.6rem,env(safe-area-inset-bottom))] flex gap-2">
@@ -303,6 +326,9 @@
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+        <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
+        <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
+        <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupee</small></button>
       </div>
 
       <div class="panel-group">
@@ -759,8 +785,20 @@
       <div class="kid-tile gold"><b id="kidRepCoins">+0</b><span>pieces</span></div>
     </div>
     <div id="kidRepBonus" class="kid-bonus"></div>
+    <button id="kidChest" class="kid-chest"><span class="chest-ico">🎁</span><b>Ouvre ton coffre surprise !</b></button>
     <button id="kidRepHome" class="panel-btn primary mt-3 !py-4 !text-base">🏠 Retour a l'aeroport</button>
     <button id="kidRepAgain" class="panel-btn mt-2">✈️ Rejouer un vol</button>
+  </div>
+</div>
+
+<!-- ============ PHOTO / CARTE POSTALE ============ -->
+<div id="photoFlash" class="photo-flash"></div>
+<div id="photoPanel" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <h2 class="panel-title text-amber-300">📸 Carte postale !</h2>
+    <img id="photoImg" class="photo-img" alt="Carte postale" />
+    <a id="photoSave" class="panel-btn primary mt-3 !py-3 block" download="carte-postale.jpg">💾 Enregistrer l'image</a>
+    <button id="photoClose" class="panel-btn mt-2">Continuer</button>
   </div>
 </div>
 

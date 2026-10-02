@@ -81,6 +81,7 @@ export class Aircraft {
 
     /* ---- Propulsion ---- */
     this.engines = 2;
+    this.thrustBoost = 1;           // turbo (mode Arcade) : multiplicateur de poussee
     this.thrustPerEngine = 111000;  // N au decollage, niveau mer
     this.n1 = 20;                   // % regime actuel (lisse)
     this.n1Target = 20;
@@ -323,7 +324,7 @@ export class Aircraft {
     const thrustRatio = Math.pow(n1n, 1.35);
     const altFactor = rho / RHO0;
     let thrust = this.engines * this.thrustPerEngine * thrustRatio * (0.35 + 0.65 * altFactor);
-        thrust *= this.faults.thrust;
+        thrust *= this.faults.thrust * this.thrustBoost;
         if (this.fuel <= 0) thrust = 0;
     if (this.reverse) thrust *= (this.onGround ? -0.42 : 0);
     forces.addScaledVector(this.forward(), thrust);

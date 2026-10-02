@@ -64,6 +64,7 @@ export class FlightAssist {
     this.flare = false;
     this.thr = 0;               // poussee commandee (lissee)
     this.gearTimer = 0;
+    this.boost = false;         // turbo demande (fun.js)
   }
 
   /* Appui sur DECOLLER : plein gaz, roulage guide. */
@@ -160,11 +161,14 @@ export class FlightAssist {
     } else {
       vTarget = SPEED.cruise;
     }
+    if (this.boost && !this.landing) vTarget = 305;
     const err = vTarget - ias;
     const base = this.landing ? 0.30 : 0.55;
     let thrTarget = clamp(base + err * 0.03, this.landing ? 0.0 : 0.15, 1);
     if (this.flare) thrTarget = 0.22;
-    this.thr += clamp(thrTarget - this.thr, -dt * 0.5, dt * 0.5);
+    if (this.boost) thrTarget = 1;
+    const thrRate = this.boost ? 2.5 : 0.5;
+    this.thr += clamp(thrTarget - this.thr, -dt * thrRate, dt * thrRate);
     out.throttle = this.thr;
 
     /* --- Roulis --- */

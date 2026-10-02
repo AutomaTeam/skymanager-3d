@@ -91,6 +91,52 @@ export const sfx = {
     src.connect(lp).connect(g).connect(a.destination);
     src.start(t0);
   },
+  /* Acrobaties : balayage de bruit qui monte (tonneau, looping) */
+  swoosh(dur = 0.9, from = 300, to = 2200) {
+    const a = audio();
+    if (!a) return;
+    const t0 = a.currentTime;
+    const buf = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const src = a.createBufferSource();
+    src.buffer = buf;
+    const bp = a.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.Q.value = 1.4;
+    bp.frequency.setValueAtTime(from, t0);
+    bp.frequency.exponentialRampToValueAtTime(to, t0 + dur * 0.8);
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.22, t0 + dur * 0.25);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    src.connect(bp).connect(g).connect(a.destination);
+    src.start(t0);
+  },
+  /* Turbo : grondement qui monte */
+  boost() {
+    const a = audio();
+    if (!a) return;
+    const t0 = a.currentTime;
+    const o = a.createOscillator();
+    const g = a.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(90, t0);
+    o.frequency.exponentialRampToValueAtTime(520, t0 + 0.7);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.09, t0 + 0.15);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.8);
+    o.connect(g).connect(a.destination);
+    o.start(t0);
+    o.stop(t0 + 0.85);
+    this.swoosh(0.7, 500, 3500);
+  },
+  /* Combo qui monte : plus le combo est haut, plus la note est aigue */
+  combo(n = 1) { const f = 523 * Math.pow(1.122, Math.min(n, 10)); tone(f, 0, 0.1, 'square', 0.07); tone(f * 1.5, 0.07, 0.16, 'square', 0.07); },
+  /* Mascotte : petit gazouillis */
+  chirp() { tone(1500, 0, 0.05, 'sine', 0.07); tone(2100, 0.06, 0.05, 'sine', 0.07); tone(1800, 0.12, 0.08, 'sine', 0.06); },
+  tick() { tone(1200, 0, 0.03, 'square', 0.04); },
+  chest() { [262, 330, 392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.07, 0.2, 'triangle', 0.12)); },
   whoosh() {
     const a = audio();
     if (!a) return;

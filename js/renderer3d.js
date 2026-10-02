@@ -3461,6 +3461,12 @@ boom.add(dockGrp);
       cam.fov = THREE.MathUtils.clamp(2600 / Math.max(80, d), 8, 55);
     }
 
+    /* Turbo (fun.js) : champ de vision elargi et legere vibration. */
+    if (this.fovKick) cam.fov += this.fovKick;
+    if (this.camShake) {
+      cam.position.x += (Math.random() - 0.5) * this.camShake;
+      cam.position.y += (Math.random() - 0.5) * this.camShake;
+    }
     cam.updateProjectionMatrix();
 
     /* Le brouillard s'eclaircit en altitude, en partant de la base

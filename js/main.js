@@ -29,6 +29,7 @@ import { History } from './history.js?v=1790900000';
 import { Hub } from './hub.js?v=1790900000';
 import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINATIONS } from './arcade.js?v=1790900000';
 import { FlightAssist } from './flightAssist.js?v=1790900000';
+import { Fun } from './fun.js?v=1790900000';
 import { sfx } from './sfx.js?v=1790900000';
 import { perfHud } from './perfHud.js?v=1790900000';
 import { iconify } from './icons.js?v=1790900000';
@@ -134,6 +135,7 @@ class Game {
     this.hotspots = HOTSPOTS;
     this.arcade = new Arcade(this);
     this.assist = new FlightAssist();
+    this.fun = new Fun(this);
     this.applyArcadeFlags();
     /* Personnel et Hub de gestion (mode Arcade). */
     this.staff = new Staff(this);
@@ -604,13 +606,7 @@ class Game {
     $('kidName').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') e.target.blur(); });
 
     /* Vol : DECOLLER et aide a l'atterrissage. */
-    const launch = () => {
-      if (this.state !== 'PILOT' || !this.ac.onGround || this.assist.launched) return;
-      this.assist.launch();
-      this.controls.setThrottle(1);
-      sfx.whoosh();
-      $('launchBtn').classList.add('hidden');
-    };
+    const launch = () => this.launchNow();
     $('launchBtn').addEventListener('click', launch);
     $('helpLandBtn').addEventListener('click', () => this.helpLanding());
     window.addEventListener('keydown', (e) => {
@@ -639,13 +635,39 @@ class Game {
   }
 
   /* Roulage automatique : le tracteur amene l'avion en bout de piste. */
+  /* Decollage assiste (bouton DECOLLER, touche Entree ou compte a rebours). */
+  launchNow() {
+    if (this.state !== 'PILOT' || !this.ac.onGround || this.assist.launched) return;
+    this.assist.launch();
+    this.controls.setThrottle(1);
+    sfx.whoosh();
+    $('launchBtn').classList.add('hidden');
+  }
+
+  /* « Voler maintenant » : de l'ecran d'accueil au decollage en quelques secondes. */
+  flyNow() {
+    if (this.state !== 'BOOT') return;
+    this.start();
+    if (!this.arcade.on) return;
+    this._flyNow = true;
+    this.boardAircraft();
+  }
+
   startArcadeFlight() {
+    const quick = this._flyNow;
+    this._flyNow = false;
     this.resetFlight();
     this.assist.reset();
     this.arcade.resetFlight();
+    this.fun.onFlightStart();
     this.hint = '';
     this.hintUntil = 0;
     sfx.whoosh();
+    if (quick) {
+      /* Depart express : pas de plan de vol, decollage automatique. */
+      this.fun.countdownLaunch();
+      return;
+    }
     this.toast('🚜 Le tracteur t\'amene au bout de la piste !', 2600);
     /* Choix du plan de vol (destination + defi). */
     this.arcade.offerPlan();
@@ -732,6 +754,8 @@ class Game {
     if (boarded === 0) lines.push('💡 Fais embarquer des passagers au terminal pour gagner plus !');
     $('kidRepBonus').innerHTML = lines.join('<br>');
 
+    const funLines = this.fun.reportFx(rate, flightCoins + bonus + (pr ? pr.bonus : 0));
+    if (funLines.length) $('kidRepBonus').innerHTML = funLines.join('<br>') + '<br>' + $('kidRepBonus').innerHTML;
     $('kidReport').classList.remove('hidden');
     if (rate.stars >= 2) { arc.confetti(rate.stars === 3 ? 90 : 45); }
     else if (rate.stars === 0) sfx.oops();
@@ -1073,6 +1097,7 @@ class Game {
       const th = this.arcade.treasureHeat();
       $('pauseMapN').textContent = th ? `pieces : ${th.found}/${th.total}` : 'pieces cachees';
       this.refreshPauseLabels();
+      this.fun.refreshPause();
       $('pauseMenu').classList.remove('hidden');
   }
 
@@ -2639,6 +2664,7 @@ class Game {
     let dt = (now - this.lastFrame) / 1000;
     this.lastFrame = now;
     dt = Math.min(dt, 0.05);
+    dt *= this.fun.timeScale;         // ralenti sur l'atterrissage parfait
     this.dt = dt;
     this.time += dt;
     if (this._bodyState !== this.state) { this._bodyState = this.state; document.body.dataset.state = this.state; }
@@ -2669,6 +2695,7 @@ class Game {
         this.r3d.applyEnvironment(this.env, dt);
         this.updateEnvChip();
         this.arcade.update(dt);
+        this.fun.update(dt);
 
         /* L'aeroport vit : vehicules, avions, helicoptere, voyageurs. Les operations sur la
            piste s'arretent des que le joueur prend l'avion (jamais deux appareils au meme endroit). */
@@ -2704,7 +2731,8 @@ class Game {
       this.ac.ctl.throttle = c.throttle;
       this.ac.ctl.brake = c.brake;
 
-      this.ac.update(dt, this.time);
+      /* Acrobatie en cours : animation cinematique, la physique attend. */
+      if (!(this.arcade.on && this.fun.stepStunt(dt))) this.ac.update(dt, this.time);
       /* Arcade : les obstacles du decor font rebondir l'avion, jamais le detruire. */
       if (this.arcade.on) {
         const hit = bounceOffScenery(this.ac, this.nav.blockers);
@@ -2733,6 +2761,7 @@ class Game {
     else if (this.state === 'CABIN') this.r3d.updateCabinCamera(this.attendant, dt);
     else this.r3d.updateCamera(this.ac, dt);
     this.r3d.render();
+    this.fun.afterRender();
     perfHud.tick(this.r3d.renderer, this.r3d.scene);
 
     requestAnimationFrame(() => this.loop());
@@ -2752,6 +2781,8 @@ window.addEventListener('load', () => {
     if (bar) bar.classList.add('done');
     $('bootMsg').textContent = 'Systemes prets.';
     $('btnStart').classList.remove('hidden');
+    $('btnFlyNow').classList.remove('hidden');
+    $('pilotCard').classList.remove('hidden');
     $('modePick').classList.remove('hidden');
     game.loop();
   } catch (err) {

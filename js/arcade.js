@@ -101,7 +101,8 @@ const DAILY_POOL = [
   { id: 'star3',  ev: 'star3',      icon: '⭐', text: () => 'Reussis un atterrissage 3 etoiles',        min: 1, max: 1,  reward: 40 },
   { id: 'rings',  ev: 'ring',       icon: '🟡', text: (n) => `Traverse ${n} anneaux dores`,            min: 6, max: 10, reward: 25 },
   { id: 'cabin',  ev: 'cabinServe', icon: '🥤', text: (n) => `Sers ${n} passagers en cabine`,          min: 4, max: 8,  reward: 20 },
-  { id: 'buy',    ev: 'buy',        icon: '🛍️', text: () => 'Achete une amelioration a la tour',       min: 1, max: 1,  reward: 25 }
+  { id: 'buy',    ev: 'buy',        icon: '🛍️', text: () => 'Achete une amelioration a la tour',       min: 1, max: 1,  reward: 25 },
+  { id: 'stunt',  ev: 'stunt',      icon: '🌀', text: (n) => `Fais ${n} acrobaties (tonneau ou looping)`, min: 3, max: 6, reward: 30 }
 ];
 
 const todayKey = () => {
@@ -1761,13 +1762,14 @@ export class Arcade {
     }
     const dx = ac.pos.x - this.ring.x, dy = ac.pos.y - this.ring.y, dz = ac.pos.z - this.ring.z;
     const d = Math.hypot(dx, dy, dz);
-    if (d < RING_RADIUS) {
+    if (d < RING_RADIUS * (this.g.fun ? this.g.fun.diff.ring : 1)) {
       this.ringsThisFlight++;
       sfx.ring();
       this.event('ring');
       this.giveCoins(2, { silent: true });
       this.g.toast(`Anneau ${this.ringsThisFlight}/${RING_TOTAL} ! +2 🪙`, 1400, 'ok');
       this.confetti(10);
+      if (this.g.fun) this.g.fun.onRing();
       this.clearRing();
       if (this.ringsThisFlight < RING_TOTAL) this.spawnRing();
       else this.g.toast('🟡 Tous les anneaux ! Suis la fleche pour retourner a la piste.', 4200, 'ok');
@@ -1827,7 +1829,7 @@ export class Arcade {
       x: ac.pos.x + (x - ac.pos.x) * k, y: ac.pos.y + (y - ac.pos.y) * k, z: ac.pos.z + (z - ac.pos.z) * k, got: false
     }));
     g.r3d.setSkyCoins(this.skyCoins);
-    g.assist.guide = this.ring;          // aimant : l'avion s'oriente doucement vers l'anneau
+    g.assist.guide = (g.fun && !g.fun.diff.magnet) ? null : this.ring;          // aimant : l'avion s'oriente doucement vers l'anneau
   }
 
   clearRing() {
