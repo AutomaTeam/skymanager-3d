@@ -31,9 +31,12 @@
 /* Le vol du jour : tout billet pour un autre vol doit etre refuse. */
 export const TODAY = { flight: 'SKY 214', dest: 'LYON', gate: 'PORTE 3', bagLimit: 20, feePerKg: 4 };
 
-const NAMES = ['Lea M.', 'Tom B.', 'Sarah K.', 'Yanis D.', 'Emma R.', 'Hugo P.', 'Nina C.',
-  'Adam F.', 'Zoe L.', 'Lucas T.', 'Ines A.', 'Noah G.', 'Manon V.', 'Jules H.'];
-const FACES = ['🧑', '👩', '👨', '👧', '👦', '🧓', '👴', '👵'];
+/* Prenom + visage assortis : une « Zoe » ne s'affiche plus avec un grand-pere. */
+const PEOPLE = [
+  ['Lea M.', 'f'], ['Tom B.', 'm'], ['Sarah K.', 'f'], ['Yanis D.', 'm'], ['Emma R.', 'f'], ['Hugo P.', 'm'], ['Nina C.', 'f'],
+  ['Adam F.', 'm'], ['Zoe L.', 'f'], ['Lucas T.', 'm'], ['Ines A.', 'f'], ['Noah G.', 'm'], ['Manon V.', 'f'], ['Jules H.', 'm']
+];
+const FACES = { f: ['👩', '👧', '👵', '🧑'], m: ['👨', '👦', '👴', '🧑'] };
 const OTHER_FLIGHTS = ['SKY 145', 'SKY 302', 'SKY 411', 'SKY 219', 'SKY 076'];
 const SAFE_ITEMS = ['👕', '👟', '📱', '💻', '🎧', '📚', '🧸', '🧦', '🕶️', '🎮'];
 const DANGER_ITEMS = [
@@ -66,10 +69,11 @@ let _id = 1;
    qu'environ un passager sur trois demande une vraie decision. */
 export function makePassenger(rng = Math.random) {
   const row = 1 + Math.floor(rng() * 24);
+  const person = pick(PEOPLE, rng);
   const p = {
     id: _id++,
-    name: pick(NAMES, rng),
-    face: pick(FACES, rng),
+    name: person[0],
+    face: pick(FACES[person[1]], rng),
     shirt: Math.floor(rng() * SHIRTS.length),
     flight: TODAY.flight,
     seat: `${row}${'ABCDEF'[Math.floor(rng() * 6)]}`,

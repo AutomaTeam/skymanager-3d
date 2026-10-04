@@ -2150,3 +2150,19 @@ npm test          # aide au pilotage, avions du hangar, coherence des catalogues
 - Navigateur integre de l'application : la capture d'ecran ne montre que 80 % de la page ; pour tout voir, appliquer `document.body.style.cssText='width:100vw;height:100vh;transform-origin:0 0;transform:scale(.8)'` (test seulement).
 - Rendu logiciel : ~2 images/s. Pour tester la logique, remplacer `__game.r3d.render` par une fonction vide.
 - Non fait (voulu) : pilotage a l'inclinaison de l'iPad (a tester sur l'appareil), planeur et thermiques, vol en formation avec un avion IA, voix enregistrees.
+
+## Phase 41 — Passe de verification avant les tests de la famille
+
+Passe complete (tests, simulation image par image dans le navigateur, balayage de tous les points d'interaction du tarmac, depart a zero) avant de laisser jouer un enfant. Bugs trouves et corriges :
+
+| Probleme | Cause | Correction |
+|---|---|---|
+| **Le bouton ATTERRIR ne posait jamais l'avion** (Pioupiou, Hydravion, Zebulon) | `helpLanding()` rentrait le train (`gearDown = false`) ; ces avions ont un train fixe et l'approche guidee exige le train sorti | le train fixe reste « sorti » (`js/main.js`) |
+| **Le Colibri disparaissait** des qu'un anneau le guidait (altitude NaN) | `heliCommand` lisait `gd.y`, absent du retour de `_guideInfo` | `_guideInfo` renvoie aussi `y` (`js/flightAssist.js`) |
+| Les petits avions se posaient **500 m avant la piste** (1 500 m avec du vent de face) | descente guidee reglee sur la vitesse air, pente jamais retenue sous 1 m/s, pas de terme integral | pente suivie par rapport au sol, aplatissement possible, terme integral sur l'ecart au plan de descente (`flightAssist.js`) |
+| Echap fermait la fiche de reparation mais **le monde restait fige** | `closeTopPanel` oubliait `_worldPaused = false` | corrige (`main.js`) |
+| Le conseil de l'ecran d'accueil (PC) montrait les commandes du **mode Pilote** en mode Arcade | `setupPcHints` ecrasait le texte du mode | un seul texte, selon le mode et le tactile (`main.js`) |
+| Le choix du plan de vol pouvait rester ouvert a l'aeroport | non masque au retour | masque dans `goToHub` |
+| Passagers « Zoe » avec un visage de grand-pere | visage et prenom tires au hasard separement | prenoms associes a un genre de visage (`terminalFlow.js`) |
+
+Tests ajoutes : `fleet.sim.mjs` (gros vent de face + « s'arrete sur la piste » pour chaque avion, helicoptere guide par un anneau). Le numero de version des scripts passe a `1791200000` (index.html y compris) pour forcer les navigateurs a recharger.

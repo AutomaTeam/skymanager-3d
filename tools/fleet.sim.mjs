@@ -61,7 +61,7 @@ const final = (x, hdg = 180, alt = 215, z = -5500) => (ac, as, P) => {
   as.launched = true;
 };
 
-const WINDS = [[0, 0, 0.35], [5, 2, 0.6]];
+const WINDS = [[0, 0, 0.35], [5, 2, 0.6], [4, -12, 0.5]];   // le dernier : gros vent de face (l'avion posait avant la piste)
 
 /* Helicoptere : decollage, vol, stationnaire, atterrissage automatique sur l'helipad. */
 function heliTests(id, P) {
@@ -72,6 +72,11 @@ function heliTests(id, P) {
   check(Math.hypot(r.ac.vel.x, r.ac.vel.z) > 15, `helico : avance en croisiere (${(Math.hypot(r.ac.vel.x, r.ac.vel.z) * KTS).toFixed(0)} kt)`);
   r = sim(id, start, 45, idle, [0, 0, 0.3], (ac, as, t) => { if (t > 20 && !ac.heli.hover) ac.heli.hover = true; });
   check(Math.hypot(r.ac.vel.x, r.ac.vel.z) < 0.5 && r.ac.pos.y - r.ac.groundY > 25, `helico : le bouton STOP le met en vol stationnaire`);
+  /* aimant d'anneau (reglage par defaut du jeu) : l'altitude visee ne doit jamais devenir NaN */
+  r = sim(id, start, 40, idle, [0, 0, 0.3], (ac, as, t) => {
+    if (ac.pos.y > 8 && !as.guide) as.guide = { x: ac.pos.x + 20, y: ac.pos.y + 60, z: ac.pos.z - 500 };
+  });
+  check(Number.isFinite(r.ac.pos.y) && Number.isFinite(r.ac.vel.y) && !r.ac.crashed, 'helico : guide par un anneau, position toujours valide');
   /* manche a cabrer / piquer : montee puis descente douce */
   r = sim(id, start, 60, (t) => ({ pitch: t > 15 && t < 25 ? 1 : t > 35 ? -1 : 0, roll: 0, yaw: 0 }), [0, 0, 0.3]);
   check(!r.ac.crashed, 'helico : descente au manche sans crash');
@@ -127,6 +132,7 @@ for (const id of ids) {
         check(td.fpm < 350, `pose douce (${td.fpm.toFixed(0)} fpm, ${td.ias.toFixed(0)} kt)` + tag);
         const gs = Math.hypot(r.ac.vel.x, r.ac.vel.z) * KTS;
         check(gs < 2, `s'arrete tout seul (vitesse sol ${gs.toFixed(1)} kt)` + tag);
+        check(r.ac.pos.z > -1500, `s'arrete sur la piste, pas avant le seuil (z=${r.ac.pos.z.toFixed(0)})` + tag);
       }
     }
   }

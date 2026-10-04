@@ -8,43 +8,43 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1790900000';
-import { slideMove, collectBodies } from './bodies.js?v=1790900000';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791200000';
+import { slideMove, collectBodies } from './bodies.js?v=1791200000';
 import * as THREE from 'three';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1790900000';
-import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1790900000';
-import { TouchControls } from './touchControls.js?v=1790900000';
-import { WalkJoystick } from './mechanicControls.js?v=1790900000';
-import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1790900000';
-import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1790900000';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1790900000';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1790900000';
-import { TODAY, CHOICES, SHIRTS, gateNotes } from './terminalFlow.js?v=1790900000';
-import { Navigation } from './navigation.js?v=1790900000';
-import { AgentSystem } from './agents.js?v=1790900000';
-import { Environment } from './environment.js?v=1790900000';
-import { MissionSystem } from './missions.js?v=1790900000';
-import { Staff } from './staff.js?v=1790900000';
-import { History } from './history.js?v=1790900000';
-import { Hub } from './hub.js?v=1790900000';
-import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINATIONS } from './arcade.js?v=1790900000';
-import { FlightAssist } from './flightAssist.js?v=1790900000';
-import { Fun } from './fun.js?v=1790900000';
-import { Hangar } from './hangar.js?v=1790900000';
-import { SkyMissions } from './skyMissions.js?v=1790900000';
-import { MiniGames } from './minigames.js?v=1790900000';
-import { GroundFun } from './groundFun.js?v=1790900000';
-import { Deco } from './deco.js?v=1790900000';
-import { Album } from './album.js?v=1790900000';
-import { OpenWorld } from './openWorld.js?v=1790900000';
-import { Comfort } from './comfort.js?v=1790900000';
-import { Rides } from './rides.js?v=1790900000';
-import { planeOf } from './fleet.js?v=1790900000';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791200000';
+import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791200000';
+import { TouchControls } from './touchControls.js?v=1791200000';
+import { WalkJoystick } from './mechanicControls.js?v=1791200000';
+import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791200000';
+import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791200000';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791200000';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791200000';
+import { TODAY, CHOICES, SHIRTS, gateNotes } from './terminalFlow.js?v=1791200000';
+import { Navigation } from './navigation.js?v=1791200000';
+import { AgentSystem } from './agents.js?v=1791200000';
+import { Environment } from './environment.js?v=1791200000';
+import { MissionSystem } from './missions.js?v=1791200000';
+import { Staff } from './staff.js?v=1791200000';
+import { History } from './history.js?v=1791200000';
+import { Hub } from './hub.js?v=1791200000';
+import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINATIONS } from './arcade.js?v=1791200000';
+import { FlightAssist } from './flightAssist.js?v=1791200000';
+import { Fun } from './fun.js?v=1791200000';
+import { Hangar } from './hangar.js?v=1791200000';
+import { SkyMissions } from './skyMissions.js?v=1791200000';
+import { MiniGames } from './minigames.js?v=1791200000';
+import { GroundFun } from './groundFun.js?v=1791200000';
+import { Deco } from './deco.js?v=1791200000';
+import { Album } from './album.js?v=1791200000';
+import { OpenWorld } from './openWorld.js?v=1791200000';
+import { Comfort } from './comfort.js?v=1791200000';
+import { Rides } from './rides.js?v=1791200000';
+import { planeOf } from './fleet.js?v=1791200000';
 import { HELIPAD } from './heliModel.js';
-import { sfx } from './sfx.js?v=1790900000';
-import { perfHud } from './perfHud.js?v=1790900000';
-import { iconify } from './icons.js?v=1790900000';
-import { drawPFD } from './cockpit.js?v=1790900000';
+import { sfx } from './sfx.js?v=1791200000';
+import { perfHud } from './perfHud.js?v=1791200000';
+import { iconify } from './icons.js?v=1791200000';
+import { drawPFD } from './cockpit.js?v=1791200000';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -237,10 +237,6 @@ class Game {
      et au clavier plutot qu'au doigt. */
   setupPcHints() {
     if (IS_TOUCH) return;
-    $('bootTip').innerHTML =
-      'Deplacement : fleches ou ZQSD. Aux commandes : cliquez-glissez le manche ' +
-      'et la manette des gaz, ou fleches (tangage/roulis) · Q/D (palonnier) · ' +
-      'W/S (gaz) · Espace (freins).';
     document.querySelectorAll('.pc-hint').forEach(el => el.classList.remove('hidden'));
   }
 
@@ -567,8 +563,12 @@ class Game {
       this.refreshPauseLabels();
       /* Conseils de l'ecran de demarrage selon le mode. */
       $('bootTip').innerHTML = mode === 'arcade'
-        ? 'Jeu facile : suis la <b>fleche jaune</b> et le <b>faisceau de lumiere</b> pour trouver quoi faire. Deplacement : joystick ou fleches. En vol : gauche/droite = virer, haut/bas = monter/descendre.'
-        : 'Simulation complete : volets, train, gaz, maintenance et gestion detaillee. Deplacement : fleches ou ZQSD. Aux commandes : manche, gaz, palonnier.';
+        ? 'Jeu facile : suis la <b>fleche jaune</b> et le <b>faisceau de lumiere</b> pour trouver quoi faire. ' +
+          (IS_TOUCH ? 'Deplacement : joystick. ' : 'Deplacement : fleches ou ZQSD (Maj pour courir). ') +
+          'En vol : gauche/droite = virer, haut/bas = monter/descendre.'
+        : 'Simulation complete : volets, train, gaz, maintenance et gestion detaillee. ' +
+          (IS_TOUCH ? 'Aux commandes : manche et manette des gaz a l\'ecran.'
+            : 'Deplacement : fleches ou ZQSD. Aux commandes : cliquez-glissez le manche et la manette des gaz, ou fleches (tangage/roulis) · Q/D (palonnier) · W/S (gaz) · Espace (freins).');
     };
     $('modeArcade').addEventListener('click', () => { sfx.click(); pick('arcade'); });
     $('modePro').addEventListener('click', () => { sfx.click(); pick('pro'); });
@@ -741,7 +741,7 @@ class Game {
     ac.quat.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI);   // cap 180
     ac.vel.set(0, 0, 0).addScaledVector(ac.forward(), 78);
     ac.omega.set(0, 0, 0);
-    ac.gearDown = false;
+    ac.gearDown = !!ac.fixedGear;     // train fixe : il reste « sorti », sinon l'approche guidee ne demarre jamais
     ac.setFlaps(0);
     this.assist.reset();
     this.assist.launched = true;
@@ -804,6 +804,7 @@ class Game {
     $('kidRepTitle').className = 'panel-title ' + (rate.stars === 3 ? 'text-amber-300' : rate.stars > 0 ? 'text-sky-300' : 'text-orange-300');
     $('kidRepTip').textContent = rate.tip;
     $('kidRepPax').textContent = paxShown;
+    $('kidRepPax').nextElementSibling.textContent = paxShown > 1 ? 'passagers' : 'passager';
     $('kidRepRings').textContent = `${arc.ringsThisFlight}/5`;
     $('kidRepCoins').textContent = `+${flightCoins + bonus + (pr ? pr.bonus : 0)}`;
     const lines = [];
@@ -1194,6 +1195,7 @@ class Game {
       }
       if (!$('stationPanel').classList.contains('hidden')) {
         $('stationPanel').classList.add('hidden');
+        this._worldPaused = false;      // le panneau gele le monde : Echap doit le rendre (comme le bouton Fermer)
         return true;
       }
       return false;
@@ -1241,6 +1243,7 @@ class Game {
          mode : l'agent est rendu a sa routine avant la bascule. */
       if (this.controlled) this.releaseControl();
       $('hudPilot').classList.add('hidden');
+      $('flightPlan').classList.add('hidden');       // le choix du vol ne doit pas rester ouvert a l'aeroport
     if (this.state === 'CABIN') this.r3d.exitCabinMode();
     $('hudCabin').classList.add('hidden');
     $('hudHub').classList.remove('hidden');

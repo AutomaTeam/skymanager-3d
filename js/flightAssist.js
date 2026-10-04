@@ -68,6 +68,7 @@ export class FlightAssist {
     this.gearTimer = 0;
     this.boost = false;         // turbo demande (fun.js)
     this.altHold = null;        // altitude tenue (helicoptere)
+    this.vsI = 0;               // terme integral de la descente guidee
   }
 
   /* Appui sur DECOLLER : plein gaz, roulage guide. */
@@ -209,7 +210,10 @@ export class FlightAssist {
       const dist = Math.max(0, Z_TOUCH - ac.pos.z);
       const hDesired = Math.tan(3 * Math.PI / 180) * dist;
       const e = agl - hDesired;
-      let vsTarget = clamp(-ac.ias * Math.tan(3 * Math.PI / 180) - e * 0.05, -7, -1);
+      /* Pente suivie par rapport au SOL : avec du vent de face, la vitesse air est
+         bien plus grande que la vitesse sol et l'avion plongeait trop court. */
+      const gs = Math.hypot(ac.vel.x, ac.vel.z);
+      let vsTarget = clamp(-gs * Math.tan(3 * Math.PI / 180) - e * 0.05, -7, -0.3);
       if (agl < ac.flareAgl) {
         /* Arrondi : on ralentit la chute jusqu'au poser. */
         this.flare = true;
@@ -218,10 +222,17 @@ export class FlightAssist {
         this.flare = false;
       }
       this._vsHold(ac, out, vsTarget, pitch);
+      /* Terme integral sur l'ecart au plan : sans lui, un petit avion s'installe sous la pente
+         (il chute a 2 m/s au lieu de 1) et se pose 500 m avant la piste. */
+      if (!this.flare) {
+        this.vsI = clamp(this.vsI - e * dt * 0.002, -0.25, 0.25);
+        out.pitch = clamp(out.pitch + this.vsI, -0.6, 0.6);
+      }
       this.state = this.flare ? 'FLARE' : 'APPROACH';
       this.hint = this.flare ? 'Arrondi...' : 'Descente vers la piste : tout est automatique !';
     } else {
       this.flare = false;
+      this.vsI = 0;
       this.state = agl < 700 && vs > 0.5 ? 'CLIMB' : 'FLIGHT';
       if (stickPitch) {
         out.pitch = clamp(inp.pitch, -1, 1);
@@ -274,7 +285,7 @@ export class FlightAssist {
     if (hd > 900 || hd < 25) return null;
     const bearing = (Math.atan2(dx, -dz) * 180 / Math.PI + 360) % 360;
     if (Math.abs(wrap180(bearing - ac.heading)) > 65) return null;   // derriere : on laisse tomber
-    return { bearing, slope: Math.atan2(dy, hd) * 180 / Math.PI };
+    return { bearing, slope: Math.atan2(dy, hd) * 180 / Math.PI, y: g.y };
   }
 
   /* L'appareil est-il aligne a peu pres sur la finale (cap sud, proche
