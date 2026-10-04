@@ -92,6 +92,7 @@ const ENTRY = [360, 1264];               // porte cote ville
 const AIR_DOOR = [360, 1194.5];          // porte cote piste, vers la passerelle
 const LANE_MID = 1231.5;                 // allee centrale (entre les postes et les commerces)
 const LANE_SOUTH = 1256.8;               // allee sud (sous les files d'enregistrement)
+const LANE_ENTRY = 1259.8;               // allee d'entree, au nord des canapes et plantes du mur sud (z >= 1261.2)
 
 const P = (x, z, dwell = 0) => [x, z, dwell];
 
@@ -100,7 +101,7 @@ const P = (x, z, dwell = 0) => [x, z, dwell];
 const routes = {
   arrive(deskId, idx) {
     const d = CT[deskId], tail = slotPos(deskId, idx);
-    return tail[1] > 1262 ? [P(...ENTRY), P(...tail)] : [P(...ENTRY), P(d.pos[0], 1262.5), P(...tail)];
+    return tail[1] > 1262 ? [P(...ENTRY), P(...tail)] : [P(...ENTRY), P(358, LANE_ENTRY), P(d.pos[0], LANE_ENTRY), P(...tail)];
   },
   /* Apres l'enregistrement : on contourne le guichet par l'est et on rejoint la surete. */
   checkinToSecurity(deskId, idx) {
@@ -122,7 +123,7 @@ const routes = {
   /* Refuse au guichet : il sort par la porte cote ville. */
   checkinToExit(deskId) {
     const from = slotPos(deskId, 0), x = CT[deskId].pos[0] + 4.8;
-    return [P(...from), P(x, from[1]), P(x, 1262), P(...ENTRY)];
+    return [P(...from), P(x, from[1]), P(x, LANE_ENTRY), P(358, LANE_ENTRY), P(...ENTRY)];
   },
   /* Refuse a la porte : il traverse le hall et sort. */
   gateToExit() {

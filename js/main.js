@@ -1347,7 +1347,7 @@ class Game {
 
       /* Point d'interaction le plus proche : poste de maintenance, cockpit,
          porte cabine ou bureau d'exploitation. */
-      let nearest = null, nearestDist = 6.5;
+      let nearest = null, nearestDist = 8.5;   // 8.5 : le laveur et l'aile droite sont a 7-8 m du bord de la zone interdite autour de l'avion
             const markers = this.r3d.hotspotMarkers || {};
             for (const h of HOTSPOTS) {
               if (h.passive) continue;

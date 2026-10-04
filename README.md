@@ -2168,3 +2168,10 @@ Passe complete (tests, simulation image par image dans le navigateur, balayage d
 Tests ajoutes : `fleet.sim.mjs` (gros vent de face + « s'arrete sur la piste » pour chaque avion, helicoptere guide par un anneau). Le numero de version des scripts passe a `1791200000` (index.html y compris) pour forcer les navigateurs a recharger.
 
 **Correctif equipe** : les employes (`staff.js`) faisaient le travail du joueur sans rien lui rapporter (l'embauche etait payee, aucune piece ne revenait). Chaque action d'un employe verse maintenant ~60 % de ce qu'aurait gagne le joueur (`_pay`), avec un petit message « Ton equipe a gagne +N 🪙 » toutes les 25 s.
+
+### Passe pathfinding (phase 41, suite)
+
+Balayage dans le navigateur : graphe praticable d'un seul tenant (aucun ilot), PNJ du tarmac sans blocage, 5 montures en fuzz aleatoire (jamais hors du sol praticable), patrouilles du personnel, 5 900 positions de passagers du hall. Deux defauts :
+
+- **Passagers qui traversaient les canapes du mur sud** : leur allee d'entree (z 1262,5) passait dans les canapes et plantes ajoutes plus tard par `decor.js` ; nouvelle allee `LANE_ENTRY` (z 1259,8) dans `terminalSystem.js`.
+- **Laveur et aile droite inaccessibles a pied** : l'obstacle de l'avion (35 x 36 m) laisse ces deux points a 7-8 m du bord, au-dela du rayon d'interaction de 6,5 m ; rayon porte a 8,5 m (`main.js`). Le portique de surete reste traverse volontairement.
