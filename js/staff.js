@@ -11,7 +11,7 @@
    - 8 metiers, chacun avec un nombre de postes maximum ;
    - 3 niveaux de formation (plus vite, plus fiable) ;
    - certains metiers se debloquent avec le niveau de l'aeroport ;
-   - pas de salaire : un employe reste, il n'y a jamais de spirale
+   - pas de salaire, et leurs gains reviennent au joueur (_pay) : un employe reste, jamais de spirale
      de dettes. Le cout est l'embauche et la formation.
 
    Etat sauvegarde : localStorage « skymanager.staff ».
@@ -239,6 +239,7 @@ export class Staff {
       this._syncActors();
     }
     this._moveActors(dt);
+    this._reportEarnings(dt);
     for (const r of ROLES) {
       const h = this.hired[r.id];
       if (h.n < 1) continue;
@@ -266,22 +267,23 @@ export class Staff {
         const pax = term.headOf(cid);
         if (!pax) return;
         const choice = Math.random() < this.accuracy(role.id) ? bestChoice(c.kind, pax) : DEFAULT_CHOICE[c.kind];
-        term.decide(cid, choice);
+        const res = term.decide(cid, choice);
+        if (res && res.ok) this._pay(res.coins || 1);
         break;
       }
       case 'baggage':
-        if (term.counters.baggage.line.length) term.loadBag();
+        if (term.counters.baggage.line.length && term.loadBag()) this._pay(1);
         break;
       case 'shop': {
         const cid = role.counters[i % role.counters.length];
         const c = term.counters[cid];
-        if (c && c.open && c.line.length) term.serveNext(cid);
+        if (c && c.open && c.line.length && term.serveNext(cid) != null) this._pay(3);
         break;
       }
       case 'stock': {
         if (term.carry > 0) {
           const m = term.lowMachine() || ['shop', 'cafe', 'vending'].map(id => term.counters[id]).sort((a, b) => a.stock - b.stock)[0];
-          if (m) term.restock(m.id);
+          if (m) { const r = term.restock(m.id); if (r && r.ok) this._pay(3); }
           if (term.carry > 0 && m && m.stock >= 12) term.carry = 0;          // machine pleine : on range la caisse
         } else if (term.lowMachine()) {
           term.takeCrate();
@@ -294,6 +296,7 @@ export class Staff {
         for (const k in mech.components) { const c = mech.components[k]; if (c.wear > 12 && (!worst || c.wear > worst.wear)) worst = c; }
         if (!worst) return;
         worst.wear = Math.max(0, worst.wear - 3 * this.speed('mechanic'));
+        this._pay(1);
         if (mech._refreshWorkOrders) mech._refreshWorkOrders();
         break;
       }
@@ -309,6 +312,23 @@ export class Staff {
         break;
       }
     }
+  }
+
+  /* Les employes travaillent pour le joueur : leurs gains lui reviennent (avant, il payait
+     l'embauche et ne touchait rien). Pieces versees en silence, resume de temps en temps. */
+  _pay(n) {
+    n = Math.max(1, Math.round(n * 0.6));         // un employe rapporte un peu moins que le joueur
+    this.g.arcade.giveCoins(n, { silent: true });
+    this._earned = (this._earned || 0) + n;
+  }
+
+  /* Petit message « ton equipe a gagne ... » au plus toutes les 25 s. */
+  _reportEarnings(dt) {
+    if (!this._earned) return;
+    this._earnT = (this._earnT || 0) + dt;
+    if (this._earnT < 25) return;
+    this.g.toast(`👥 Ton equipe a gagne +${this._earned} 🪙`, 2200, 'ok');
+    this._earned = 0; this._earnT = 0;
   }
 
   /* ---------------- Sauvegarde ---------------- */

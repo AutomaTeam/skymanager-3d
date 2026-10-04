@@ -2166,3 +2166,5 @@ Passe complete (tests, simulation image par image dans le navigateur, balayage d
 | Passagers « Zoe » avec un visage de grand-pere | visage et prenom tires au hasard separement | prenoms associes a un genre de visage (`terminalFlow.js`) |
 
 Tests ajoutes : `fleet.sim.mjs` (gros vent de face + « s'arrete sur la piste » pour chaque avion, helicoptere guide par un anneau). Le numero de version des scripts passe a `1791200000` (index.html y compris) pour forcer les navigateurs a recharger.
+
+**Correctif equipe** : les employes (`staff.js`) faisaient le travail du joueur sans rien lui rapporter (l'embauche etait payee, aucune piece ne revenait). Chaque action d'un employe verse maintenant ~60 % de ce qu'aurait gagne le joueur (`_pay`), avec un petit message « Ton equipe a gagne +N 🪙 » toutes les 25 s.
