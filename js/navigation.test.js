@@ -17,7 +17,7 @@
 import * as THREE from 'three';
 import { Navigation, ZONES, PORTALS, BLOCKERS } from './navigation.js';
 import { LAYOUT } from './layout.js';
-import { slideMove, pushOut } from './bodies.js?v=1791200000';
+import { slideMove, pushOut, depenetrate } from './bodies.js?v=1791200000';
 import { bounceOffScenery, obstacleHeight } from './sceneryCollision.js?v=1791200000';
 import { buildDecor } from './decor.js?v=1791200000';
 
@@ -431,6 +431,22 @@ test("corps mobiles : on glisse le long d'un obstacle et on ressort s'il nous en
   const out = pushOut(veh, 400.2, 900);
   assert(out && Math.abs(out.x - 400) > 1.7, 'le point englobe doit etre repousse hors de la boite');
   assert(pushOut(veh, 420, 900) === null, 'un point libre ne doit pas bouger');
+});
+
+test("corps mobiles : un PNJ ne traverse pas une personne, et une personne qui avance sur l'avatar le repousse", () => {
+  const nav = makeNav();
+  const me = {};
+  const other = { x: 350, z: 900, r: 0.35, ref: {} };
+  /* Un PNJ (self = lui) fonce sur une autre personne : il s'arrete devant elle. */
+  const r = slideMove(nav, { x: 350, z: 920 }, { x: 350, z: 880 }, [other, { x: 350, z: 910, r: 0.35, ref: me }], null, me);
+  assert(r.z > 900.5, `la personne est traversee (z=${r.z})`);
+  /* On ne se repousse pas soi-meme. */
+  const r2 = slideMove(nav, { x: 350, z: 920 }, { x: 350, z: 915 }, [{ x: 350, z: 920, r: 0.35, ref: me }], null, me);
+  assert(Math.abs(r2.z - 915) < 1e-6, 'un corps ne doit pas se bloquer lui-meme');
+  /* Avatar immobile avec une personne qui lui marche dessus : repousse hors du corps. */
+  const p = depenetrate(nav, 350.1, 900, [other]);
+  assert(p && Math.hypot(p.x - other.x, p.z - other.z) >= 0.7, "l'avatar doit etre repousse");
+  assert(depenetrate(nav, 360, 900, [other]) === null, 'pas de repoussee a distance');
 });
 
 test("vol : un avion qui fonce dans un arbre ou un hangar rebondit, sans le traverser", () => {

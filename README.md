@@ -2175,3 +2175,12 @@ Balayage dans le navigateur : graphe praticable d'un seul tenant (aucun ilot), P
 
 - **Passagers qui traversaient les canapes du mur sud** : leur allee d'entree (z 1262,5) passait dans les canapes et plantes ajoutes plus tard par `decor.js` ; nouvelle allee `LANE_ENTRY` (z 1259,8) dans `terminalSystem.js`.
 - **Laveur et aile droite inaccessibles a pied** : l'obstacle de l'avion (35 x 36 m) laisse ces deux points a 7-8 m du bord, au-dela du rayon d'interaction de 6,5 m ; rayon porte a 8,5 m (`main.js`). Le portique de surete reste traverse volontairement.
+
+### Personnages physiques (phase 41, suite)
+
+Plus personne ne se traverse (`js/bodies.js`) :
+- **Corps pris en compte** : PNJ du tarmac, employes, passagers du hall (files et trajets), voyageurs du parking, visiteur et chien des rencontres, vehicules d'ambiance et le joueur lui-meme (`collectBodies`, option `player`).
+- **Les PNJ contournent** le joueur et les autres (`agents._step` passe par `slideMove`, avec `self` pour ne pas se bloquer soi-meme) ; avant, seul le joueur etait bloque par les gens, et pas par les passagers du hall.
+- **L'avatar immobile est repousse** par ceux qui lui marchent dessus (`depenetrate`, main.js).
+- **Employes visibles** : ils s'arretent devant une personne, les deux bagagistes ont chacun leur file (ils partageaient le meme point), l'hotesse attend si le joueur est dans l'allee de la cabine.
+- Reste volontaire : les passagers du hall suivent des trajets scriptes (ils se croisent parfois entre eux), et le portique de surete se traverse.

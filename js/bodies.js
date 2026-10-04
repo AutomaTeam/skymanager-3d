@@ -42,7 +42,7 @@ export function pushOut(b, x, z, pr = PERSON_R) {
 
 /* Deplace `from` vers `to` : navigation d'abord (murs, obstacles fixes), puis corps mobiles.
    `clear(x, z)` facultatif : test supplementaire (ex. coque de l'avion). Rend { x, z, hit }. */
-export function slideMove(nav, from, to, bodies = [], clear = null) {
+export function slideMove(nav, from, to, bodies = [], clear = null, self = null) {
   const dx = to.x - from.x, dz = to.z - from.z;
   const n = Math.max(1, Math.ceil(Math.hypot(dx, dz) / STEP_MAX));
   let x = from.x, z = from.z, hit = false;
@@ -57,6 +57,7 @@ export function slideMove(nav, from, to, bodies = [], clear = null) {
     if (clear && !clear(c.x, c.z)) c = { x, z };
     for (let pass = 0; pass < 2; pass++) {
       for (const b of bodies) {
+        if (self && b.ref === self) continue;      // on ne se pousse pas soi-meme
         const p = pushOut(b, c.x, c.z);
         if (!p) continue;
         hit = true;
@@ -69,26 +70,58 @@ export function slideMove(nav, from, to, bodies = [], clear = null) {
   return { x, z, hit };
 }
 
-/* Rassemble les corps mobiles du jeu (personnes visibles + vehicules d'ambiance). */
-export function collectBodies(game) {
+/* Si des corps mobiles ont marche sur (x, z) (un passager qui avance, un PNJ), rend le point
+   repousse sur du sol praticable ; sinon null. Sert a l'avatar immobile : sans cela un PNJ
+   pourrait le traverser. */
+export function depenetrate(nav, x, z, bodies, clear = null, self = null) {
+  let c = null;
+  for (const b of bodies) {
+    if (self && b.ref === self) continue;
+    const p = pushOut(b, c ? c.x : x, c ? c.z : z);
+    if (!p) continue;
+    if (nav.isWalkable(p.x, p.z) && (!clear || clear(p.x, p.z))) c = p;
+  }
+  return c;
+}
+
+/* Rassemble les corps mobiles du jeu : personnes visibles (PNJ, employes, passagers du hall,
+   voyageurs du parking, visiteur et chien des rencontres) + vehicules d'ambiance.
+   `opts.player` : ajoute l'avatar du joueur (pour les PNJ qui doivent le contourner). */
+export function collectBodies(game, opts = {}) {
   const out = [];
   const ag = game.agents && game.agents.agents;
   if (ag) for (const a of ag) {
     if (a.hidden || a === game.controlled || !a.mesh || !a.mesh.group.visible) continue;
     if (a.gate === 'cabin') continue;       // la cabine a son propre repere
-    out.push({ x: a.wx, z: a.wz, r: PERSON_R });
+    out.push({ x: a.wx, z: a.wz, r: PERSON_R, ref: a });
   }
   const staff = game.staff && game.staff.actors;
   if (staff) for (const a of staff.values()) {
     if (!a.ent || !a.ent.group.visible) continue;
     const p = a.ent.group.position;
-    out.push({ x: p.x, z: p.z, r: PERSON_R });
+    out.push({ x: p.x, z: p.z, r: PERSON_R, ref: a });
+  }
+  /* Passagers du hall (files et trajets) : seulement quand le hall est affiche. */
+  const tg = game.r3d && game.r3d.terminalGroup;
+  if (game.terminal && tg && tg.visible) {
+    for (const c of game.terminal.crowd()) out.push({ x: c.x, z: c.z, r: PERSON_R, ref: c.id });
   }
   const life = game.r3d && game.r3d.life;
-  if (life) for (const it of life.movers) {
-    if (it.g && it.g.visible === false) continue;
-    const m = it.mv;
-    out.push({ x: m.x, z: m.z, h: m.h, hl: m.len / 2, hw: it.kind === 'car' ? 0.95 : 1.4 });
+  if (life) {
+    for (const it of life.movers) {
+      if (it.g && it.g.visible === false) continue;
+      const m = it.mv;
+      out.push({ x: m.x, z: m.z, h: m.h, hl: m.len / 2, hw: it.kind === 'car' ? 0.95 : 1.4, ref: it });
+    }
+    if (life.walkers) for (const w of life.walkers) {
+      if (w.state === 'WALK' && w.ent.group.visible) out.push({ x: w.x, z: w.z, r: PERSON_R, ref: w });
+    }
+  }
+  /* Rencontres au sol : le visiteur et le chien sont de vrais corps (le chien est plus petit). */
+  const ev = game.ground && game.ground.ev;
+  if (ev && Number.isFinite(ev.x) && Number.isFinite(ev.z)) out.push({ x: ev.x, z: ev.z, r: ev.kind === 'dog' ? 0.3 : PERSON_R, ref: ev });
+  if (opts.player && game.state === 'HUB' && !game.controlled) {
+    out.push({ x: game.player.pos.x, z: game.player.pos.z, r: PERSON_R, ref: game.player });
   }
   return out;
 }

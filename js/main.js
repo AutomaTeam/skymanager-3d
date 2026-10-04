@@ -9,7 +9,7 @@
    ============================================================ */
 
 import { bounceOffScenery } from './sceneryCollision.js?v=1791200000';
-import { slideMove, collectBodies } from './bodies.js?v=1791200000';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791200000';
 import * as THREE from 'three';
 import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791200000';
 import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791200000';
@@ -176,6 +176,8 @@ class Game {
        agents d'escale. Leurs maillages sont construits au premier
        update, une fois la pose de l'appareil publiee au graphe. */
     this.agents = new AgentSystem(this.nav, this.r3d);
+    /* Les PNJ contournent le joueur et les autres personnes (js/bodies.js). */
+    this.agents.bodyProvider = () => collectBodies(this, { player: true });
 
     /* Environnement (phase 7) : heure de jeu et meteo dynamique.
        Il pilote le ciel, les lumieres, le brouillard, la pluie, et
@@ -1339,6 +1341,14 @@ class Game {
              mobile s'eleve du hall jusqu'a la porte cabine. */
                     p.y = Math.max(this.r3d.groundHeight(p.x, p.z), this.rides.surface(p.x, p.z));
         }
+      }
+
+      /* Un passager ou un PNJ qui avance sur l'avatar immobile le repousse : personne ne se traverse. */
+      if (!this.controlled && !this.rides.active) {
+        const pp = this.player.pos;
+        const push = depenetrate(this.nav, pp.x, pp.z, collectBodies(this),
+          (x, z) => this.agents._clearOfHull(null, x, z) && this.rides.walkable(x, z, pp.y));
+        if (push) { pp.x = push.x; pp.z = push.z; }
       }
 
       this.r3d.updateHubScene(this.ac, this.mechanic, this.player, dt, this.time);

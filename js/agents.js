@@ -495,6 +495,7 @@ export class AgentSystem {
     if (!this.active) return;
     this._build();
     if (!this.agents.length) return;
+    this._bodies = this.bodyProvider ? this.bodyProvider() : null;
 
     const termVisible = !!(this.r3d && this.r3d.terminalGroup && this.r3d.terminalGroup.visible);
     const cabinVisible = !!(this.r3d && this.r3d.cabinGroup && this.r3d.cabinGroup.visible);
@@ -688,7 +689,12 @@ export class AgentSystem {
     this._from.z = a.wz;
     this._to.x = a.wx + (dx / d) * step;
     this._to.z = a.wz + (dz / d) * step;
-    const r = nav.resolve(this._from, this._to);
+    /* Murs et obstacles (graphe), coque, et AUTRES PERSONNES (joueur, passagers, employes,
+       vehicules) : un PNJ ne traverse plus personne. Sans fournisseur de corps (tests) : graphe seul. */
+    const bodies = this._bodies;
+    const r = bodies
+      ? slideMove(nav, this._from, this._to, bodies, (x, z) => this._clearOfHull(a, x, z), a)
+      : nav.resolve(this._from, this._to);
 
     /* La coque se teste apres le glissement : `resolve` ne connait que
        les bloqueurs du graphe, pas le fuselage. */

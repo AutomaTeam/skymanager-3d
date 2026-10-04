@@ -19,6 +19,7 @@
 
 import { bestChoice, DEFAULT_CHOICE } from './terminalFlow.js?v=1791200000';
 import { sfx } from './sfx.js?v=1791200000';
+import { collectBodies, PERSON_R } from './bodies.js?v=1791200000';
 
 const STORE = 'skymanager.staff';
 const COIN = 1000;                              // EUR par piece (meme valeur que arcade.js)
@@ -180,8 +181,9 @@ export class Staff {
           a.x = c.pos[0] + Math.sin(f) * 1.9; a.z = c.pos[1] + Math.cos(f) * 1.9;
           a.h = Math.atan2(-Math.sin(f), -Math.cos(f));               // il fait face a la file
         } else if (PATROL[r.id]) {
-          a.path = PATROL[r.id]; a.pi = (i * 2) % a.path.length;
-          a.x = a.path[a.pi][0]; a.z = a.path[a.pi][1];
+          a.path = PATROL[r.id]; a.pi = (i * Math.max(1, a.path.length >> 1)) % a.path.length;
+          a.off = i % 2 ? 0.9 : 0;                 // deux employes sur la meme ronde : deux files, pas le meme point
+          a.x = a.path[a.pi][0]; a.z = a.path[a.pi][1] + a.off;
         } else if (r.id === 'hostess') {
           a.path = [[0.58, 0.4], [0.58, -5.2]]; a.pi = i % 2; a.x = a.path[a.pi][0]; a.z = a.path[a.pi][1];
         }
@@ -207,15 +209,19 @@ export class Staff {
       } else {
         if (a.path) {
           const t = a.path[a.pi];
-          const dx = t[0] - a.x, dz = t[1] - a.z, d = Math.hypot(dx, dz);
+          const dx = t[0] - a.x, dz = t[1] + (a.off || 0) - a.z, d = Math.hypot(dx, dz);
           if (d < 0.12) {
             a.pi += a.dir;
             if (a.pi >= a.path.length || a.pi < 0) { a.dir *= -1; a.pi += 2 * a.dir; }
           } else {
             const step = Math.min(d, WALK * dt);
-            a.x += dx / d * step; a.z += dz / d * step;
+            const nx = a.x + dx / d * step, nz = a.z + dz / d * step;
+            /* Physique : un employe s'arrete devant le joueur ou une autre personne (pas de traversee). */
+            if (a.role === 'hostess' ? !this._cabinBlocked(a, nx, nz) : !this._blockedAt(a, nx, nz)) {
+              a.x = nx; a.z = nz;
+              a.moving = true;
+            }
             a.h = Math.atan2(dx, dz);
-            a.moving = true;
           }
         }
         grp.visible = a.role === 'hostess' ? true : Math.hypot(cam.x - a.x, cam.z - a.z) < 170;
@@ -225,6 +231,28 @@ export class Staff {
       grp.rotation.y = a.h;
       r3d.updateAvatarAnim(a.ent, a.moving, dt);
     }
+  }
+
+  /* Cabine (repere de l'avion) : l'hotesse ne traverse pas le joueur dans l'allee etroite. */
+  _cabinBlocked(a, nx, nz) {
+    const att = this.g.attendant;
+    if (this.g.state !== 'CABIN' || !att) return false;
+    const lim = 0.7;
+    if (Math.hypot(a.x - att.x, a.z - att.z) < lim) return false;      // deja colles : on se degage
+    return Math.hypot(nx - att.x, nz - att.z) < lim;
+  }
+
+  /* Un corps mobile est-il sur le chemin ? (on ne bloque que s'il n'y etait pas deja : pas de coincage.) */
+  _blockedAt(a, nx, nz) {
+    if (!this._bodiesT || this._bodiesT !== this.g.time) { this._bodies = collectBodies(this.g, { player: true }); this._bodiesT = this.g.time; }
+    for (const b of this._bodies) {
+      if (b.ref === a || b.r === undefined) continue;
+      const lim = b.r + PERSON_R;
+      const dNow = Math.hypot(a.x - b.x, a.z - b.z);
+      if (dNow < lim) continue;
+      if (Math.hypot(nx - b.x, nz - b.z) < lim) return true;
+    }
+    return false;
   }
 
   /* ---------------- Travail ---------------- */
