@@ -9,6 +9,7 @@
     "test:fleet": "node tools/fleet.sim.mjs",
     "test:data": "node tools/data.test.mjs",
     "test:rides": "node tools/rides.test.mjs",
+    "lint": "eslint js",
     "test:save": "node tools/save.test.mjs",
     "test:stamp": "node tools/stamp.test.mjs",
     "bump": "node tools/bumpStamp.mjs",

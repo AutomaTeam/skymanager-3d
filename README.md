@@ -2299,3 +2299,7 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 ### Sauvegardes centralisees (phase 58)
 
 `js/save.js` : `load(cle, defauts, version, migrate)`, `write(cle, data, version)`, `resetAll({keep})`, `exportAll()` / `importAll()`. Un contenu corrompu (JSON invalide, mauvais type) est ignore, le stockage indisponible (Safari prive) ne leve jamais d'exception. Migres : pet, deco, comfort et la remise a zero du menu pause ; les autres modules gardent leur propre lecture (deja tolerante, verifiee avec `{`, `null`, `5`). Test : `npm run test:save`.
+
+### Lint (phase 59)
+
+`npm install eslint@9 globals --no-save` une fois, puis `npm run lint` (config `eslint.config.js` : `no-undef`, `no-dupe-keys`, `no-redeclare`... en erreur, `no-unused-vars` en avertissement). 0 erreur actuellement.
