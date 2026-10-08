@@ -826,6 +826,9 @@
       <button id="setTilt" class="set-row"><span class="set-ico">📱</span><b>Pilotage par inclinaison</b><small>Coupe</small></button>
       <button id="setTiltCal" class="set-row hidden"><span class="set-ico">🎯</span><b>Calibrer</b><small>Tiens l'iPad comme tu veux, puis touche</small></button>
       <button id="setLimit" class="set-row"><span class="set-ico">🌙</span><b>Temps par jour</b><small>Pas de limite</small></button>
+      <button id="setExport" class="set-row"><span class="set-ico">💾</span><b>Sauvegarder dans un fichier</b><small>garde ta partie en lieu sur</small></button>
+      <button id="setImport" class="set-row"><span class="set-ico">📂</span><b>Charger un fichier</b><small>retrouve ta partie</small></button>
+      <input id="setImportFile" type="file" accept="application/json,.json" class="hidden">
       <button id="setBreak" class="set-row"><span class="set-ico">⏰</span><b>Rappel de pause</b><small>Pas de rappel</small></button>
     </div>
     <p class="panel-note">Le son global se coupe aussi dans le menu (tuile « Son »).</p>
@@ -964,7 +967,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791468807').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791468840').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -972,6 +975,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791468807"></script>
+<script type="module" src="js/main.js?v=1791468840"></script>
 </body>
 </html>

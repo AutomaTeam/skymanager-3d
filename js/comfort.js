@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468807';
-import * as Save from './save.js?v=1791468807';
-import { Music } from './music.js?v=1791468807';
+import { sfx } from './sfx.js?v=1791468840';
+import * as Save from './save.js?v=1791468840';
+import { Music } from './music.js?v=1791468840';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -64,6 +64,10 @@ export class Comfort {
     t('setBig', () => { this.data.textSize = (this.data.textSize + 1) % 3; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
     t('setVoiceRate', () => { const R = [0.8, 1, 1.2]; this.data.voiceRate = R[(R.indexOf(this.data.voiceRate) + 1) % R.length]; this._changed(); this.g.voice.speak('Voila ma voix !', { prio: 3 }); });
+    t('setExport', () => this.exportFile());
+    t('setImport', () => $('setImportFile').click());
+    const fi = $('setImportFile');
+    if (fi) fi.addEventListener('change', () => { const f = fi.files && fi.files[0]; if (f) this.importFile(f); fi.value = ''; });
     t('setHaptic', () => { this.data.haptics = !this.data.haptics; this._changed(); });
     t('setTilt', async () => {
       const c = this.g.controls, on = !c.tilt.on;
@@ -84,6 +88,37 @@ export class Comfort {
     });
     t('setBreak', () => { this.data.breakMin = BREAKS[(BREAKS.indexOf(this.data.breakMin) + 1) % BREAKS.length]; this._playT = 0; this._changed(); });
     t('breakOk', () => { $('breakPanel').classList.add('hidden'); this.g._worldPaused = false; this._playT = 0; sfx.click(); });
+  }
+
+  /* I07 : toutes les sauvegardes `skymanager.*` dans un seul fichier JSON (protege contre la perte de donnees de Safari). */
+  exportFile() {
+    try {
+      const data = { app: 'skymanager', version: 1, date: new Date().toISOString(), keys: Save.exportAll() };
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `skymanager-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      this.g.toast('💾 Fichier de sauvegarde cree !', 3200, 'ok');
+    } catch (e) { this.g.toast('💾 Impossible de creer le fichier.', 3000, 'warn'); }
+  }
+
+  importFile(file) {
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const d = JSON.parse(String(rd.result));
+        if (!d || d.app !== 'skymanager' || !d.keys || typeof d.keys !== 'object') throw new Error('format');
+        if (!window.confirm('Remplacer ta partie par celle du fichier ?')) return;
+        const n = Save.importAll(d.keys);
+        if (!n) throw new Error('vide');
+        this.g.toast(`📂 Partie chargee (${n} elements). Le jeu redemarre…`, 2600, 'ok');
+        setTimeout(() => window.location.reload(), 1200);
+      } catch (e) { this.g.toast('📂 Ce fichier n\'est pas une sauvegarde SkyManager.', 3600, 'warn'); }
+    };
+    rd.onerror = () => this.g.toast('📂 Lecture impossible.', 3000, 'warn');
+    rd.readAsText(file);
   }
 
   _changed() {
