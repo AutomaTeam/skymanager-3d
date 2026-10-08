@@ -8,7 +8,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { profile } from './rideCourse.js?v=1791466423';
+import { profile } from './rideCourse.js?v=1791466783';
 
 const CONCRETE = new THREE.MeshStandardMaterial({ color: 0xb6bcc6, roughness: 0.9 });
 const COPING = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.3, metalness: 0.8 });
