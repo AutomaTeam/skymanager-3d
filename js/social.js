@@ -10,9 +10,9 @@
    Pres de Biscuit (pet.js), le meme bouton sert a le caresser.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469458';
-import { collectBodies } from './bodies.js?v=1791469458';
-import { emojiSprite } from './groundFun.js?v=1791469458';
+import { sfx } from './sfx.js?v=1791469540';
+import { collectBodies } from './bodies.js?v=1791469540';
+import { emojiSprite } from './groundFun.js?v=1791469540';
 
 const RANGE = 2.8;               // m pour saluer quelqu'un
 const COINS_PER_DAY = 12;

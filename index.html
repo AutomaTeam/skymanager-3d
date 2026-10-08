@@ -618,6 +618,12 @@
   <canvas id="miniMap" class="hidden mini-map" width="480" height="462" role="button" aria-label="Agrandir la carte"></canvas>
   <div id="funDock" class="hidden fun-dock">
     <button id="rideBtn" class="fun-main ride-main" aria-label="Montures : skate, trottinette, BMX (R)"><span>🛹</span></button>
+    <div id="petTricks" class="hidden pet-tricks" role="group" aria-label="Astuces du chien">
+      <button data-trick="sit" aria-label="Assis">⬇️<small>Assis</small></button>
+      <button data-trick="lie" aria-label="Couche">🛌<small>Couché</small></button>
+      <button data-trick="spin" aria-label="Tourne">🔄<small>Tourne</small></button>
+      <button data-trick="five" aria-label="Haut la">✋<small>Haut-là</small></button>
+    </div>
     <button id="petBall" class="fun-main hidden" aria-label="Lancer la balle a ton chien">🎾</button>
     <button id="funToggle" class="fun-main" aria-label="Petits gestes rigolos">🎈</button>
     <div id="funRow" class="fun-row hidden">
@@ -973,7 +979,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791469458').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469540').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -981,6 +987,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791469458"></script>
+<script type="module" src="js/main.js?v=1791469540"></script>
 </body>
 </html>

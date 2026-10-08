@@ -13,9 +13,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791469458';
-import { sfx } from './sfx.js?v=1791469458';
-import { buildDog, emojiSprite } from './groundFun.js?v=1791469458';
+import * as Save from './save.js?v=1791469540';
+import { sfx } from './sfx.js?v=1791469540';
+import { buildDog, emojiSprite } from './groundFun.js?v=1791469540';
 
 const STORE = 'skymanager.pet';
 const SNIFF_RANGE = 30;          // m autour du joueur ou Biscuit sent une piece
@@ -27,6 +27,14 @@ const PET_LINES = [
   '{n} te donne la patte !',
   '{n} est le plus heureux des chiens !'
 ];
+/* ---------------- Astuces (H02) : 3 repetitions = apprise ---------------- */
+const TRICKS = {
+  sit:  { name: 'Assis',   ico: '⬇️', dur: 1.8 },
+  lie:  { name: 'Couche',  ico: '🛌', dur: 2.2 },
+  spin: { name: 'Tourne',  ico: '🔄', dur: 1.3 },
+  five: { name: 'Haut-la', ico: '✋', dur: 1.6 }
+};
+const LEARN = 3;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 
@@ -44,6 +52,9 @@ export class Pet {
     this._sniffed = '';          // derniere piece annoncee (on ne l'annonce qu'une fois)
     const tile = document.getElementById('pausePet');
     if (tile) tile.addEventListener('click', () => this.rename());
+    this.act = null;             // astuce en cours { id, t, dur } (H02) ou fouille { id: 'dig' }
+    this.tricksBar = document.getElementById('petTricks');
+    if (this.tricksBar) this.tricksBar.querySelectorAll('[data-trick]').forEach(b => b.addEventListener('click', () => this.trick(b.dataset.trick)));
     this.fetch = null;           // partie de balle en cours { phase, t, from, to, ball }
     this.ballBtn = document.getElementById('petBall');
     if (this.ballBtn) this.ballBtn.addEventListener('click', () => this.throwBall());
@@ -173,8 +184,10 @@ export class Pet {
   }
 
   _load() {
-    const def = { adopted: false, name: 'Biscuit', pets: 0, petDay: '', fur: 0xc58a4a };
-    return Save.load(STORE, def);
+    const def = { adopted: false, name: 'Biscuit', pets: 0, petDay: '', fur: 0xc58a4a, tricks: { sit: 0, lie: 0, spin: 0, five: 0 }, digDay: '' };
+    const d = Save.load(STORE, def);
+    d.tricks = Object.assign({ sit: 0, lie: 0, spin: 0, five: 0 }, d.tricks && typeof d.tricks === 'object' ? d.tricks : {});
+    return d;
   }
   save() { Save.write(STORE, this.data); }
 
@@ -199,6 +212,68 @@ export class Pet {
     if (!show) { if (this.fetch) this._endFetch(false); return; }
     this._move(dt);
     this._animate(dt);
+    this._updateTricks(dt);
+  }
+
+  /* H02 : barre d'astuces visible quand on est pres du chien et a l'arret ; fouille quotidienne d'un tresor rare. */
+  _updateTricks(dt) {
+    const g = this.g, p = g.player.pos;
+    const near = !this.fetch && Math.hypot(this.x - p.x, this.z - p.z) < 4 && !g.player.moving && !g.inTerminal && !g.rides.active && !g.driving && !g._worldPaused;
+    if (this.tricksBar) {
+      this.tricksBar.classList.toggle('hidden', !near);
+      if (near) this.tricksBar.querySelectorAll('[data-trick]').forEach(b => b.classList.toggle('learned', this.data.tricks[b.dataset.trick] >= LEARN));
+    }
+    if (this.act) {
+      this.act.t += dt;
+      if (this.act.t >= this.act.dur) this._endAct();
+      return;
+    }
+    /* Une fois par jour, a l'arret et pres de son maitre : il creuse et trouve un tresor rare. */
+    if (this.data.digDay !== todayKey() && g.arcade.data.tutorialDone && !this.moving && this.idle > 5 && near) {
+      this.data.digDay = todayKey();
+      this.save();
+      this.act = { id: 'dig', t: 0, dur: 3.2 };
+      this._say('👃', 3);
+      sfx.bark();
+    }
+  }
+
+  trick(id) {
+    const T = TRICKS[id];
+    if (!T || this.act || !this.dog || this.joy > 0) return;
+    this.act = { id, t: 0, dur: T.dur };
+    const n = this.data.tricks[id];
+    const learned = n >= LEARN;
+    this._say(learned ? T.ico : '❓', T.dur);
+    sfx.bark();
+    if (!learned) {
+      this.data.tricks[id] = n + 1;
+      if (this.data.tricks[id] >= LEARN) {
+        this.g.arcade.giveCoins(8, { silent: true, xp: 10 });
+        this.g.arcade.confetti(40);
+        sfx.tada();
+        this.g.toast(`🐕 ${this.data.name} a appris « ${T.name} » ! +8 🪙`, 4000, 'ok');
+        if (Object.values(this.data.tricks).every(v => v >= LEARN)) { this.g.fun.say(`${this.data.name} sait faire TOUTES les astuces ! Quel chien intelligent !`, 3, 4800); this.g.arcade.giveStars(1); }
+      } else {
+        this.g.arcade.popup(`🐕 Entrainement « ${T.name} » : ${this.data.tricks[id]}/${LEARN}`);
+      }
+    } else this.g.arcade.popup(`🐕 ${T.name} !`);
+    this.save();
+  }
+
+  _endAct() {
+    const a = this.act;
+    this.act = null;
+    this.idle = 0;
+    if (a && a.id === 'dig') {
+      const g = this.g;
+      g.arcade.giveCoins(20, { silent: true, xp: 12 });
+      const u = Math.random() < 0.25 ? g.hangar.randomUnlock() : null;
+      g.arcade.confetti(50);
+      sfx.sparkle();
+      this._say('💎', 3);
+      g.toast(`🐕 ${this.data.name} a deterre un tresor rare ! 💎 +20 🪙${u ? ' · ' + u.label + ' !' : ''}`, 4800, 'ok');
+    }
   }
 
   _adopt() {
@@ -239,6 +314,11 @@ export class Pet {
 
   _move(dt) {
     const g = this.g, p = g.player.pos, ph = g.player.heading;
+    if (this.act) {                      // astuce ou fouille en cours : il ne bouge pas
+      this.moving = false; this.idle += dt;
+      this.h = lerpAngle(this.h, Math.atan2(p.x - this.x, p.z - this.z), Math.min(1, dt * 4));
+      return;
+    }
     const coin = this.joy > 0 || this.fetch ? null : this._scent();
     let tx, tz;
     const ft = this.fetch && this._stepFetch(dt);
@@ -314,6 +394,15 @@ export class Pet {
       const k = sit && i >= 2 ? -1.2 : Math.sin(t * 15 * Math.max(run, 0.3) + (i % 2 ? Math.PI : 0)) * 0.75 * run;
       l.rotation.x += (k - l.rotation.x) * Math.min(1, dt * 12);
     });
+    const A = this.act;
+    if (A) {
+      const u = clamp(A.t / A.dur, 0, 1), env = Math.sin(u * Math.PI);          // 0 -> 1 -> 0
+      if (A.id === 'sit') { d.group.rotation.x = 0.42 * Math.min(1, env * 2); d.legs.forEach((l, i) => { if (i >= 2) l.rotation.x = -1.3 * Math.min(1, env * 2); }); }
+      else if (A.id === 'lie') { d.group.position.y = y - 0.2 * Math.min(1, env * 2); d.group.rotation.x = 0.1; d.legs.forEach((l, i) => { l.rotation.x = (i < 2 ? 1.25 : -1.25) * Math.min(1, env * 2); }); d.tail.rotation.z = Math.sin(t * 6) * 0.3; }
+      else if (A.id === 'spin') { d.group.rotation.y = this.h + Math.PI + u * Math.PI * 2; d.group.position.y = y + Math.abs(Math.sin(u * Math.PI * 2)) * 0.12; }
+      else if (A.id === 'five') { d.group.rotation.x = 0.3 * Math.min(1, env * 2); d.legs[1].rotation.x = -1.4 * Math.min(1, env * 2) + Math.sin(t * 14) * 0.2 * env; }
+      else if (A.id === 'dig') { d.group.rotation.x = -0.35 * Math.min(1, env * 2.5); d.legs[0].rotation.x = Math.sin(t * 22) * 1.0; d.legs[1].rotation.x = -Math.sin(t * 22) * 1.0; d.group.position.y = y; }
+    }
     if (this.bubble) {
       this.bubbleT -= dt;
       this.bubble.position.y = 2.2 + Math.sin(t * 5) * 0.08;
