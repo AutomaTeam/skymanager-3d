@@ -12,8 +12,8 @@
    _mission(dt), near(), goal(), et facultativement action()/doAction().
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791470179';
-import { collectBodies } from './bodies.js?v=1791470179';
+import { sfx } from './sfx.js?v=1791470282';
+import { collectBodies } from './bodies.js?v=1791470282';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 

@@ -4,9 +4,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791470179';
-import { spawnModel } from './assetLoader.js?v=1791470179';
-import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791470179';
+import * as TEX from './textures.js?v=1791470282';
+import { spawnModel } from './assetLoader.js?v=1791470282';
+import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791470282';
 
 export const avatarMethods = {
   /* ============================================================
