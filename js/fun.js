@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791469365';
+import { sfx } from './sfx.js?v=1791469398';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -645,6 +645,26 @@ export class Fun {
     return true;
   }
 
+  /* H09 : photo de groupe. Les personnes a moins de 10 m se tournent vers le groupe, avec une bulle joyeuse ;
+     le chien et les spotteurs aussi. */
+  _groupPose(s, P) {
+    const g = this.g;
+    const ags = (g.agents && g.agents.agents) || [];
+    const near = [];
+    for (const a of ags) {
+      if (a.hidden || a === g.controlled || !a.mesh || !a.mesh.group.visible || a.gate === 'cabin') continue;
+      if (Math.hypot(a.wx - P.pos.x, a.wz - P.pos.z) < 10) near.push(a);
+    }
+    for (const a of near) a.heading = Math.atan2(P.pos.x - a.wx, P.pos.z - a.wz);
+    if (!s.posed) {
+      s.posed = true;
+      const em = ['😀', '😄', '🤩', '✌️', '📸'];
+      near.slice(0, 5).forEach((a, i) => { try { g.social._bubble(a.wx, a.wz, em[i % em.length]); } catch (e) { /* bulle facultative */ } });
+      if (near.length) g.arcade.popup(`📸 Photo de groupe ! ${near.length + 1} personnes`);
+      try { if (g.pet.dog) g.pet._say('📸', 2); } catch (e) { /* chien facultatif */ }
+    }
+  }
+
   _updateSelfie(dt) {
     const s = this._selfie;
     if (!s) return;
@@ -652,6 +672,7 @@ export class Fun {
     s.t += dt;
     if (g.state !== 'HUB') { this._selfie = null; P.rideCam = s.prev; P.camHeading = s.prevH; return; }
     P.camHeading = P.heading + Math.PI + 0.35;
+    this._groupPose(s, P);
     if (s.t > 0.9 && !s.shot) { s.shot = true; this.requestPhoto(); }
     if (s.t > 1.3) { this._selfie = null; P.rideCam = s.prev; P.camHeading = s.prevH; }
   }

@@ -5,7 +5,7 @@
    Module du registre (js/registry.js).
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469365';
+import { sfx } from './sfx.js?v=1791469398';
 
 export class Lightning {
   constructor(game) {
