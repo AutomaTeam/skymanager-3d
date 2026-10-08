@@ -35,7 +35,7 @@ export const MAX_ACTIVE = 24;
 
 /* Au-dela de cette distance du point d'interet, un agent passe a
    5 Hz : il accumule dt et avance d'un coup. */
-import { slideMove } from './bodies.js?v=1791477435';
+import { slideMove } from './bodies.js?v=1791477567';
 
 const SLOW_DIST = 95;
 const SLOW_DIST2 = SLOW_DIST * SLOW_DIST;
@@ -494,6 +494,7 @@ export class AgentSystem {
   /* `refX`/`refZ` : point d'interet (le joueur) pour le niveau de
      detail. Sans lui, tous les agents restent a pleine frequence. */
   update(dt, refX = 0, refZ = 0) {
+    this._refX = refX; this._refZ = refZ;
     if (!this.active) return;
     this._build();
     if (!this.agents.length) return;
@@ -890,7 +891,18 @@ export class AgentSystem {
     /* Leger rebond de marche, comme l'avatar du joueur. */
     const bob = a.moving ? Math.abs(Math.sin(a.phase)) * 0.05 : 0;
     g.position.set(a.wx, a.wy + bob, a.wz);
-    g.rotation.y = a.heading;
+    /* K06 : a l'arret, il tourne doucement la tete (le corps) vers le joueur qui passe pres de lui. */
+    let gz = 0;
+    if (!a.moving && a !== this.controlled) {
+      const dx = this._refX - a.wx, dz = this._refZ - a.wz;
+      if (dx * dx + dz * dz < 36 && dx * dx + dz * dz > 0.5) {
+        gz = (Math.atan2(dx, dz) - a.heading) % (Math.PI * 2);
+        if (gz > Math.PI) gz -= Math.PI * 2; else if (gz < -Math.PI) gz += Math.PI * 2;
+        gz = Math.max(-0.9, Math.min(0.9, gz));
+      }
+    }
+    a.gaze = (a.gaze || 0) + (gz - (a.gaze || 0)) * Math.min(1, dt * 4);
+    g.rotation.y = a.heading + a.gaze;
     a.mesh.gaitScale = a.gait || 1;
     if (this.r3d && this.r3d.updateAvatarAnim) this.r3d.updateAvatarAnim(a.mesh, a.moving, dt);
   }

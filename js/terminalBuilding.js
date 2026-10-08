@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791477435';
-import { LAYOUT } from './layout.js?v=1791477435';
-import { SHIRTS } from './terminalFlow.js?v=1791477435';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791477435';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791477567';
+import { LAYOUT } from './layout.js?v=1791477567';
+import { SHIRTS } from './terminalFlow.js?v=1791477567';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791477567';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -505,6 +505,20 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
           mesh(table, new THREE.CylinderGeometry(0.05, 0.05, 0.75, 6), steelMat, 0, 0.37, 0);
           for (const a of [0, 2.1, 4.2]) {
             mesh(table, new THREE.CylinderGeometry(0.22, 0.22, 0.06, 10), seatMat, Math.cos(a) * 0.85, 0.46, Math.sin(a) * 0.85);
+          }
+          /* H05 : des clients attablés (2 tables sur 4), assis, avec une tasse. */
+          if (t % 3 === 0) {
+            const sit = [[0, 0x60a5fa], [2.1, 0xf472b6]];
+            for (let k = 0; k <= t % 2; k++) {
+              const [a, hex] = sit[(k + t) % 2];
+              const px = Math.cos(a) * 0.85, pz = Math.sin(a) * 0.85;
+              const guest = new THREE.Mesh(personGeometry(hex), PERSON_MAT);
+              guest.position.set(px, 0.2, pz);
+              guest.scale.y = 0.82;
+              guest.rotation.y = Math.atan2(-px, -pz);
+              table.add(guest);
+            }
+            mesh(table, new THREE.CylinderGeometry(0.06, 0.05, 0.1, 8), steelMat, 0.15, 0.82, 0.1);
           }
           deskGroup.add(table);
         }

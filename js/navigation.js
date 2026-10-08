@@ -19,7 +19,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791477435';
+import { LAYOUT } from './layout.js?v=1791477567';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 

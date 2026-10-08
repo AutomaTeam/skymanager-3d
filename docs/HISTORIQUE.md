@@ -2448,3 +2448,7 @@ Au comptoir boutique du terminal (mode Arcade, sans file), le bouton « Acheter 
 ## Phase 104 - jumelles de spotting (H05)
 
 Deux postes aux vitres cote piste du terminal (`BINOC_SPOTS` dans `social.js`) : bouton « Jumelles », camera zoomee (fov 14) qui balaie la piste (`renderCamera.js`), +2 pieces par jour. Marcher repose les jumelles.
+
+## Phase 105 - clients au cafe, regards (H05, K06)
+
+Des clients assis aux tables du cafe du terminal (`terminalBuilding.js`) ; les agents a l'arret se tournent vers le joueur a moins de 6 m (`a.gaze` dans `agents.js`, visuel seulement).
