@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791469066';
+import { sfx } from './sfx.js?v=1791469136';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -578,12 +578,29 @@ export class Fun {
     const tf = want ? 16 : 0;
     this._fov += (tf - this._fov) * Math.min(1, dt * 4);
     r3d.fovKick = this._fov;
-    r3d.camShake = want ? 0.35 : 0;
+    r3d.camShake = want ? 0.35 : (this._tdShake > 0 ? 0.22 : 0);      // K04 : petite secousse au toucher
+    if (this._tdShake > 0) this._tdShake -= dt;
     const sl = $('speedLines');
     if (sl) sl.style.opacity = String(clamp(this._fov / 16, 0, 1) * 0.9);
   }
 
   /* ---------------- Fumee ---------------- */
+  /* K04 : fumee blanche des pneus au toucher + petite secousse de camera (plus forte si l'atterrissage est parfait). */
+  _touchdownFx(rate) {
+    const g = this.g, ac = g.ac, tr = this.trail;
+    this._tdShake = rate.stars === 3 ? 0.45 : 0.3;
+    if (!tr) return;
+    const ks = Math.max(0.35, g.r3d.camScale || 1);
+    const pts = (ac.gearPoints || []).filter(p => p.name !== 'nose');
+    const spots = pts.length ? pts.map(p => p.p) : [new THREE.Vector3(-1, -ac.groundY, 0), new THREE.Vector3(1, -ac.groundY, 0)];
+    for (const sp of spots) {
+      const base = sp.clone().applyQuaternion(ac.quat).add(ac.pos);
+      for (let i = 0; i < 9; i++) {
+        tr.emit(base.x + (Math.random() - 0.5) * 2.2 * ks, base.y + 0.3 + Math.random() * 0.8, base.z + (Math.random() - 0.5) * 2.2 * ks, 0xf3f4f6, (3.6 + Math.random() * 2.2) * ks, 1.2 + Math.random() * 0.9);
+      }
+    }
+  }
+
   _updateTrail(dt, flying) {
     const tr = this.trail;
     if (!tr) return;
@@ -857,6 +874,7 @@ export class Fun {
       if (ac.touchdown && ac.touchdown !== this._tdObj) {
         this._tdObj = ac.touchdown;
         const rate = g.arcade.rateLanding(ac.touchdown, ac.crashed);
+        this._touchdownFx(rate);
         if (ac.crashed) this.sayKey('oops', 3, 4200);
         else if (rate.stars === 3) { this._slowT = 1.6; g.arcade.confetti(70); sfx.tada(); this.sayKey('star3', 3, 4200); }
         else if (rate.stars === 2) this.sayKey('star2', 3, 3600);
