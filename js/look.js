@@ -10,8 +10,8 @@
    Etat sauvegarde : localStorage « skymanager.look ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791470927';
-import { SKIN_TONES, HAIR_TONES } from './renderer3d.js?v=1791470927';
+import { sfx } from './sfx.js?v=1791471013';
+import { SKIN_TONES, HAIR_TONES } from './renderer3d.js?v=1791471013';
 
 const STORE = 'skymanager.look';
 const SHIRTS = [0xf97316, 0xef4444, 0xec4899, 0xa855f7, 0x3b82f6, 0x06b6d4, 0x22c55e, 0xfacc15, 0xf8fafc, 0x1f2937];

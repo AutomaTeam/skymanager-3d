@@ -13,9 +13,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791470927';
-import { Vehicle } from './vehicle.js?v=1791470927';
-import { emojiSprite } from './groundFun.js?v=1791470927';
+import { sfx } from './sfx.js?v=1791471013';
+import { Vehicle } from './vehicle.js?v=1791471013';
+import { emojiSprite } from './groundFun.js?v=1791471013';
 
 const ENTER_RANGE = 5.5;
 

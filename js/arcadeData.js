@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { LAYOUT } from './layout.js?v=1791470927';
-import { iconify } from './icons.js?v=1791470927';
+import { LAYOUT } from './layout.js?v=1791471013';
+import { iconify } from './icons.js?v=1791471013';
 
 export const COIN = 1000;
 

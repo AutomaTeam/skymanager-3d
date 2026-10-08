@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791470927';
-import { itemOf } from './deco.js?v=1791470927';
+import { sfx } from './sfx.js?v=1791471013';
+import { itemOf } from './deco.js?v=1791471013';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -27,6 +27,27 @@ const rng = (seed) => () => { seed = (seed * 1664525 + 1013904223) % 4294967296;
 /* ---------------- Geographie ---------------- */
 export const SEA = { x: 3300, z: -5200, r: 1950 };
 const LAKE = { x: 1900, z: -3300, rx: 832, rz: 520 };
+
+/* K02 : carte de relief des vagues (canvas 128 x 128, sans fichier) : somme de sinus periodiques, convertie en normales. */
+function waterNormal() {
+  const N = 128, h = new Float32Array(N * N);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const u = x / N * Math.PI * 2, v = y / N * Math.PI * 2;
+    h[y * N + x] = Math.sin(u * 3 + Math.sin(v * 2) * 1.3) * 0.5 + Math.sin(v * 4 + u) * 0.35 + Math.sin((u + v) * 5) * 0.18 + Math.sin((u - v * 2) * 7) * 0.1;
+  }
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = N;
+  const c = cv.getContext('2d'), img = c.createImageData(N, N);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const hx = h[y * N + (x + 1) % N] - h[y * N + (x + N - 1) % N], hy = h[((y + 1) % N) * N + x] - h[((y + N - 1) % N) * N + x];
+    const nx = -hx * 1.2, ny = -hy * 1.2, nz = 1, l = Math.hypot(nx, ny, nz), i = (y * N + x) * 4;
+    img.data[i] = (nx / l * 0.5 + 0.5) * 255; img.data[i + 1] = (ny / l * 0.5 + 0.5) * 255; img.data[i + 2] = (nz / l * 0.5 + 0.5) * 255; img.data[i + 3] = 255;
+  }
+  c.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(cv);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
 
 export const ISLANDS = [
   { id: 'lighthouse', ico: '🗼', name: 'Ile du Phare',         x: 3200, z: -4300, r: 210, hint: 'Le phare veille sur la mer' },
@@ -188,6 +209,11 @@ export class OpenWorld {
     /* mer */
     const sea = new THREE.Mesh(new THREE.CircleGeometry(SEA.r, 64), new THREE.MeshStandardMaterial({ color: 0x1f86c4, roughness: 0.12, metalness: 0.35, envMapIntensity: 1.3 }));
     sea.rotation.x = -Math.PI / 2; sea.position.set(SEA.x, -0.02, SEA.z);
+    /* K02 : vagues (relief qui defile lentement) et reflets du soleil sur l'eau */
+    this.waterNm = waterNormal();
+    this.waterNm.repeat.set(90, 90);
+    sea.material.normalMap = this.waterNm;
+    sea.material.normalScale.set(0.45, 0.45);
     const foam = new THREE.Mesh(new THREE.RingGeometry(SEA.r - 30, SEA.r + 40, 64), new THREE.MeshBasicMaterial({ color: 0xe8f6ff, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthWrite: false }));
     foam.rotation.x = -Math.PI / 2; foam.position.set(SEA.x, -0.01, SEA.z);
     this.root.add(sea, foam);
@@ -323,6 +349,7 @@ export class OpenWorld {
     if (!this._built) { if (g.state === 'PILOT') this.build(); else return; }
     const t = g.time;
     for (const o of this.islands) if (o.obj.update) o.obj.update(t);
+    if (this.waterNm) { this.waterNm.offset.x += dt * 0.006; this.waterNm.offset.y += dt * 0.0035; }
     this._updateFx(dt);
     const ac = g.ac;
     const flying = g.state === 'PILOT' && !ac.onGround && !g.reportShown;

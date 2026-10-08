@@ -3,7 +3,7 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { STATIONS } from './mechanicSystem.js?v=1791470927';
+import { STATIONS } from './mechanicSystem.js?v=1791471013';
 
 export const $ = (id) => document.getElementById(id);
 
