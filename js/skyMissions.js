@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791469887';
-import { SkyWorld } from './skyWorld.js?v=1791469887';
-import { HELIPAD } from './heliModel.js?v=1791469887';
-import { ISLANDS } from './openWorld.js?v=1791469887';
+import { sfx } from './sfx.js?v=1791469997';
+import { SkyWorld } from './skyWorld.js?v=1791469997';
+import { HELIPAD } from './heliModel.js?v=1791469997';
+import { ISLANDS } from './openWorld.js?v=1791469997';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -379,6 +379,35 @@ class ParcelMission extends Mission {
   result() {
     const s = this.score;
     return { score: s, medal: s >= 12 ? 3 : s >= 8 ? 2 : s >= 4 ? 1 : 0, lines: [`🎁 ${s} points sur 15 (${this.hits} colis bien places)`] };
+  }
+}
+
+/* ------------------------------------------------------------
+   Livraison inter-iles : « 3 caisses de glaces pour l'ile … » (G10)
+   Meme largage que le livreur de colis, mais la commande est tiree au sort et la cible est sur une ile.
+   ------------------------------------------------------------ */
+const ORDERS = [
+  { ico: '🍦', what: 'caisses de glaces' }, { ico: '🍎', what: 'caisses de pommes' }, { ico: '📚', what: 'colis de livres' },
+  { ico: '🧸', what: 'sacs de jouets' }, { ico: '🥖', what: 'paniers de pain frais' }, { ico: '🎨', what: 'pots de peinture' }
+];
+class DeliveryMission extends ParcelMission {
+  setup() {
+    const isle = pick(ISLANDS), order = pick(ORDERS);
+    this.isle = isle; this.order = order;
+    /* une cible au centre de l'ile et deux autour (tolerance de largage) */
+    const offs = [[0, 0], [70, 40], [-60, -50]];
+    this.targets = offs.map(([ox, oz]) => this.world.beacon({ x: isle.x + ox, z: isle.z + oz, radius: ox ? 20 : 26, color: ox ? 0xfde68a : 0xffd23f, height: 280 }));
+    this.parcels = 3; this.dropped = 0; this.score = 0; this.hits = 0;
+    this.sky.say(`${order.ico} Commande : 3 ${order.what} pour ${isle.name} ! Largue-les sur les colonnes jaunes.`, 3, 5200);
+  }
+  actionInfo() { return { ico: this.order.ico, label: 'LIVRER', count: this.parcels }; }
+  goal() { return { icon: this.order.ico, text: `Livre ${this.parcels} ${this.order.what} a ${this.isle.name} ! (${this.score} pts)`, target: this.target() }; }
+  progressText() { return `${this.order.ico} ${this.parcels} · ${this.score} pts`; }
+  /* la cible la plus proche est toujours l'ile (3 cibles groupees) */
+  _nearest() { return this.targets[0]; }
+  result() {
+    const s = this.score;
+    return { score: s, medal: s >= 7 ? 3 : s >= 5 ? 2 : s >= 3 ? 1 : 0, lines: [`${this.order.ico} ${s} points sur 9 pour ${this.isle.name}`] };
   }
 }
 
@@ -841,6 +870,7 @@ export const MISSION_DEFS = [
   { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
   { id: 'glide',    ico: '🪂', name: 'Vol a voile',        brief: 'Planeur : reste 3 minutes en l\'air grace aux ascendances.', level: 3, limit: 0, cls: GlideMission, gliderOnly: true, glider: true },
+  { id: 'delivery', ico: '📦', name: 'Livraison aux iles', brief: 'Une commande pour une ile : largue-la au bon endroit !', level: 3, limit: 240, cls: DeliveryMission },
   { id: 'rainbow',  ico: '🌈', name: 'Arc-en-ciel',        brief: 'Traverse 4 arcs-en-ciel dans le ciel !', level: 2, limit: 150, cls: RainbowMission, glider: true },
   { id: 'banner',   ico: '🪁', name: 'Banniere',           brief: 'Ecris un message et promene-le au-dessus de la foule.', level: 2, limit: 190, cls: BannerMission, needsText: true },
   { id: 'winch',    ico: '🚁', name: 'Treuillage',         brief: 'En helicoptere : sauve un randonneur sur une ile !', level: 2, limit: 260, cls: WinchMission, heliOnly: true },

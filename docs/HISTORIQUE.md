@@ -2403,3 +2403,11 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 
 - **Aide en cartes** (F05) : le menu ❓ commence par 8 cartes illustrees (icone + une phrase + **Montre-moi 👉**) : la fleche d'objectif pointe l'endroit pendant 25 s (poste de reparation, terminal, tour, avion, cadeau), ou le bouton du HUD se met a briller (monture, balle du chien). Les anciens textes restent dessous.
 - **Couleurs pour tous** (F03, Reglages > 🎨) : vert -> bleu, rouge -> orange sur les verdicts, quiz, mini-jeux, anneaux et jauges ; une icone ✔ / ✖ accompagne desormais la couleur dans les verdicts du terminal, les reponses de quiz et les mini-jeux.
+
+### Livraison inter-iles (phase 93)
+
+Mission 📦 **Livraison aux iles** (G10, niveau 3) : une commande tiree au sort (« 3 caisses de glaces pour l'Ile du Phare »...) a larguer sur trois colonnes jaunes au centre de l'ile ; meme largage et meme viseur que le livreur de colis, medailles selon les points (sur 9). Non fait : le lien avec le tracteur pour charger les caisses au sol.
+
+### Documentation (phase 93)
+
+`README.md` est maintenant un guide court (lancer, installer, deployer, architecture, tests, debogage) ; tout l'historique est dans `docs/HISTORIQUE.md`, la carte des modules est generee dans `docs/MODULES.md` (`npm run modules`), les anciens plans sont dans `docs/plans/`.
