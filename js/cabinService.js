@@ -86,7 +86,11 @@ export class CabinService {
   get paxCapacity() { return 30 * this.seatsPerRow; }
 
   /* A appeler chaque frame pendant que le joueur est en mode cabine */
-  update(dt) {
+  /* `inFlight` faux : l'avion est gare (cabine visitee a la porte), il ne peut pas y avoir de turbulences.
+     `crew` vrai : le joueur n'est pas en cabine (il pilote) ; l'equipage s'occupe des demandes et des
+     annonces, sans bonus ni penalite. Avant, la satisfaction s'effondrait pendant chaque vol sans que
+     le joueur puisse rien y faire. */
+  update(dt, inFlight = true, crew = false) {
     /* Requetes passagers */
     this._spawnTimer -= dt;
     if (this._spawnTimer <= 0 && this.requests.length < 5) {
@@ -95,7 +99,9 @@ export class CabinService {
     }
     let expiredCount = 0;
     this.requests.forEach(r => { r.timeLeft -= dt; if (r.timeLeft <= 0) expiredCount++; });
-    if (expiredCount) {
+    if (expiredCount && crew) {
+      this.requests = this.requests.filter(r => r.timeLeft > 0);
+    } else if (expiredCount) {
       this.satisfaction = Math.max(this.arcade ? 30 : 0, this.satisfaction - expiredCount * (this.arcade ? 1.5 : 4));   // Arcade : plancher a 30 %
       this.requests.filter(r => r.timeLeft <= 0).forEach(r => this._bumpRow(r.row, -5));
       this.requests = this.requests.filter(r => r.timeLeft > 0);
@@ -103,7 +109,9 @@ export class CabinService {
 
     /* Turbulences et passager indiscipline : Pilote uniquement. */
     if (this.arcade) this.unruly = null;
-    if (!this.turbulence.active) {
+    if (!inFlight || (crew && this.turbulence.active)) {
+      if (this.turbulence.active) { this.turbulence.active = false; this._turbTimer = 30 + Math.random() * 20; }
+    } else if (!this.turbulence.active) {
       this._turbTimer -= dt;
       if (this._turbTimer <= 0) this.triggerTurbulence();
     } else {

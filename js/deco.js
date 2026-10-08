@@ -12,7 +12,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
 
 const STORE = 'skymanager.deco';
 const $ = (id) => document.getElementById(id);
@@ -28,6 +28,9 @@ const C = (r0, r1, h, m, s = 14) => new THREE.Mesh(new THREE.CylinderGeometry(r0
 const S = (r, m) => new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), m);
 
 /* ---------------- Catalogue ---------------- */
+/* Revenu maximal de « Ma place » (pieces par minute), quel que soit le nombre d'attractions. */
+const DECO_INCOME_MAX = 8;
+
 export const ITEMS = [
   { id: 'tree',    ico: '🌳', name: 'Arbre',        cost: 6,   r: 1.4, charm: 1, income: 0, make: mkTree },
   { id: 'flowers', ico: '🌷', name: 'Fleurs',       cost: 4,   r: 1.3, charm: 1, income: 0, make: mkFlowers },
@@ -238,7 +241,9 @@ export class Deco {
   save() { try { localStorage.setItem(STORE, JSON.stringify(this.data)); } catch (e) { /* ignore */ } }
 
   get charm() { return this.data.items.reduce((s, r) => s + (itemOf(r.id) ? itemOf(r.id).charm : 0), 0); }
-  get incomePerMin() { return this.data.items.reduce((s, r) => s + (itemOf(r.id) ? itemOf(r.id).income : 0), 0); }
+  /* Plafonne : sans limite, quelques grandes roues rapportaient plus que voler, sans rien faire. */
+  get incomeRaw() { return this.data.items.reduce((s, r) => s + (itemOf(r.id) ? itemOf(r.id).income : 0), 0); }
+  get incomePerMin() { return Math.min(DECO_INCOME_MAX, this.incomeRaw); }
 
   /* Reconstruit les objets enregistres (au demarrage de la partie). */
   restore() {
@@ -302,7 +307,7 @@ export class Deco {
   _render() {
     const coins = this.g.arcade.coins;
     $('decoCoins').textContent = coins;
-    $('decoInfo').textContent = `Charme ${this.charm} · +${this.incomePerMin} 🪙/min`;
+    $('decoInfo').textContent = `Charme ${this.charm} · +${this.incomePerMin} 🪙/min` + (this.incomeRaw >= DECO_INCOME_MAX ? ` (maximum)` : '');
     $('decoMode').textContent = this.mode === 'place' ? '🗑️ Enlever' : '🏗️ Construire';
     $('decoPlace').textContent = this.mode === 'place' ? `✔ Poser (${this.cur.cost} 🪙)` : '🗑️ Enlever';
     const list = $('decoList');
@@ -324,7 +329,7 @@ export class Deco {
   update(dt) {
     const g = this.g;
     /* revenu passif : toutes les 60 s de jeu */
-    if (this.data.items.length && g.arcade.on) {
+    if (this.data.items.length && g.arcade.on && !g._worldPaused) {      // menus ouverts : pas de revenu
       this._income += dt;
       if (this._income >= 60) {
         this._income = 0;

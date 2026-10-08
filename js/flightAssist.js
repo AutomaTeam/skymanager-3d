@@ -17,7 +17,7 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js';
+import { heliCommand } from './heliModel.js?v=1791300000';
 
 const KTS = 1.94384;
 const FT = 3.28084;
@@ -217,7 +217,7 @@ export class FlightAssist {
       if (agl < ac.flareAgl) {
         /* Arrondi : on ralentit la chute jusqu'au poser. */
         this.flare = true;
-        vsTarget = clamp(-0.35 - agl * 0.05, -1.6, -0.35);
+        vsTarget = clamp(-0.3 - agl * 0.04, -1.25, -0.3);
       } else {
         this.flare = false;
       }

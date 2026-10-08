@@ -2184,3 +2184,91 @@ Plus personne ne se traverse (`js/bodies.js`) :
 - **L'avatar immobile est repousse** par ceux qui lui marchent dessus (`depenetrate`, main.js).
 - **Employes visibles** : ils s'arretent devant une personne, les deux bagagistes ont chacun leur file (ils partageaient le meme point), l'hotesse attend si le joueur est dans l'allee de la cabine.
 - Reste volontaire : les passagers du hall suivent des trajets scriptes (ils se croisent parfois entre eux), et le portique de surete se traverse.
+
+### Grand controle et mode enfant (phase 42)
+
+Bugs corriges :
+- **Une erreur JS figeait le jeu** : `loop()` protege maintenant chaque image (`_frame`), l'image suivante est toujours programmee.
+- **« Reinitialiser la progression » etait partiel** (hangar, etoiles, iles, missions du ciel, montures, Ma place restaient) : toutes les cles `skymanager.*` sont effacees, sauf confort et son. En Arcade, double confirmation.
+- **Le rapport de vol annoncait moins de pieces que ce qui etait verse** (Pioupiou : +53 affiche, +91 credite) : le rendement de l'avion (`income`) s'applique au credit reel (`registerFlight/estimateFlight(..., incomeMul)`).
+- **Turbulences en cabine avec l'avion gare** : `cabin.update(dt, inFlight)`.
+- **Defis impossibles** (« trouve 3 etoiles » quand les 40 sont ramassees, iles deja toutes connues) : ils ne sont plus tires, l'objectif affiche les saute, et les defis se renouvellent apres minuit sans recharger.
+
+Mode enfant :
+- **Tour a la portee d'un enfant** : prix en pieces dedies (boutique 40, porte 70, salon VIP 180, piste 260, terminal 380, avion 350) au lieu des prix Pilote / 1000 (un avion coutait 9 500). Chaque achat se voit : piste +12 passagers, terminal +10, salon VIP +10, boutique ~+4 pieces par vol ; chaque avion en plus rapporte +2 pieces par minute (message « Tes avions ont vole »).
+- **Ma place** : revenu plafonne a 8 pieces/min et suspendu menus ouverts (quelques grandes roues rapportaient plus que voler).
+- **Atterrissage** : arrondi plus doux de l'aide (pire cas simule 303 fpm au lieu de 347) et notation plus genereuse (3 etoiles sous 280 fpm, 2 sous 420).
+- **Menu pause** : deux groupes « A jouer » et « Mes tresors » ; son, reglages, voix, difficulte, fumee, aide, tutoriel et mode Pilote passent dans « Plus d'options ».
+
+Le numero de version des scripts passe a `1791300000` (y compris les imports de `heliModel.js`, qui n'en avaient pas).
+
+### Vie a pied (phase 43, mode Arcade)
+
+- **Courir sur tablette** : joystick (ou fleche) pousse a fond vers l'avant, on se met a courir apres un instant (avant : seule la touche Maj faisait courir, impossible sur iPad). L'avatar joue l'animation « Run » du modele (`updateAvatarAnim(..., running)`).
+- **Biscuit, le chien de compagnie** (`js/pet.js`) : le chien rattrape une premiere fois reste avec l'enfant. Il le suit a cote (pas derriere, il cachait l'avatar), s'assoit a l'arret, se laisse caresser (+3 pieces la premiere fois du jour, trophee « Meilleur ami ») et **flaire les pieces cachees** : a moins de 30 m il aboie et court se poster dessus. Le chien fugueur a ensuite un autre pelage.
+- **Dire bonjour** (`js/social.js`) : pres de n'importe quelle personne (passagers, voyageurs, employes, mecaniciens, pilote, hotesse), le bouton devient « 👋 DIRE BONJOUR » : bulle emoji, petite phrase selon le metier, +1 piece au premier bonjour (12 par jour), trophee « Ami de tous ». Pres de Biscuit, le meme bouton le caresse (le plus proche gagne).
+- **Surprises plus frequentes** (premiere apres 40-70 s, puis toutes les 80-130 s) et une nouvelle : **les ballons envoles** (6 ballons qui montent, on passe dessous pour les attraper, +1 piece chacun, +8 pour les 6).
+- Son « wouf » (`sfx.bark`).
+
+### Finitions (phase 44)
+
+- **Jouer a la balle** : bouton 🎾 (dehors, a pied, une fois le chien adopte) ; la balle part devant, le chien la rapporte (+1 piece pour les 5 premieres du jour, trophee « Lanceur de balle »). Le chien saute de joie aux gestes rigolos (fete, danse, klaxon...) et l'enfant peut **lui donner un nom** (tuile « Mon chien » du menu pause).
+- **4 nouveaux visiteurs** : Zigomar le magicien, Lina la footballeuse, Igor l'explorateur polaire, Docteur Ossa la paleontologue (12 en tout).
+- **Etoiles** : ⭐ = note d'atterrissage, 🌟 (icone avec halo, `goldstar` dans icons.js) = etoiles dorees du ciel a collectionner. Avant, les deux avaient la meme icone.
+- **Prix du billet en Arcade** : il change maintenant le nombre de passagers (pas cher = plus, luxe = moins) ; avant, « Luxe » etait toujours le meilleur choix. La tour affiche les passagers reels du prochain vol, pas la demande theorique.
+- **Acrobaties** : les pieces du combo plafonnent a x5 (un enchainement de tonneaux rapportait des centaines de pieces par minute).
+- **Mode Pilote** : la recette du hall (porte, commerces, surcharges, moins l'entretien) et le duty-free sont verses a la tresorerie (avant : compteurs affiches seulement) ; pendant le vol, l'equipage s'occupe de la cabine (la satisfaction ne s'effondre plus sans que le joueur puisse agir).
+- **Nettoyage** : ancien panneau de la tour (remplace par le Hub) supprime de `main.js` et `index.html`, imports inutiles retires.
+- Verifie par 350 actions aleatoires dans le navigateur (vols des 5 avions, cabine, terminal, mini-jeux, hangar, montures, chien, ballons, visiteurs) : aucune erreur.
+
+### Le tracteur a bagages (phase 45, mode Arcade)
+
+`js/tug.js` : le tracteur a bagages qui fait la navette (airportLife.js) se conduit. Pres de lui, le bouton devient « 🚜 CONDUIRE LE TRACTEUR » ; le tracteur ambiant est masque et remplace par celui du joueur (deux chariots articules, gyrophare, camera plus haute). Direction de voiture (haut/bas = avancer/reculer, gauche/droite = braquer), arret devant les murs, l'interieur du terminal, la coque de l'avion et les gens (klaxon).
+
+Mission en boucle : anneau bleu au quai bagages du terminal (le quai se remplit d'une valise toutes les 7 s, 6 au plus), anneau orange a la soute de l'avion. Chaque valise livree : +1 piece (+3 de bonus si le tracteur est plein) et elle compte comme chargee (rapport de vol, defis « bagages »). Trophee « Chauffeur de piste ». L'aide du jeu explique le tracteur et le chien.
+
+### Au feu les pompiers ! (phase 46, mode Arcade)
+
+- **Base commune des vehicules** (`js/vehicle.js`) : conduite de voiture, obstacles, klaxon, camera, bouton contextuel (action du vehicule ou « descendre »). Le tracteur (`tug.js`) en herite ; `game.vehicles` et `game.driving` remplacent les tests propres au tracteur (main, social, bodies, arcade, rides).
+- **Camion de pompiers** (`js/fireTruck.js`) : apres le tutoriel, toutes les 3 a 5 minutes, une poubelle prend feu sur le tarmac ou les abords (flammes, fumee, sirene « pin-pon »). L'objectif guide vers la caserne ; le premier camion gare devant se conduit (« 🚒 CONDUIRE LE CAMION DE POMPIERS »), gyrophare bleu/rouge. Pres du feu et a l'arret : « 💦 ARROSER LE FEU » (jet d'eau, 3 jets suffisent), +12 pieces, trophee « Pompier courageux ». Personne ne vient : les pompiers de l'aeroport l'eteignent au bout de 4 minutes (pas d'echec).
+- **Priorite du bouton d'action** : vehicule a prendre, puis les gens, puis le chien (il suit a 2 m et prenait le bouton devant tout le monde).
+
+### Performance (phase 47, pour l'iPad)
+
+Mesure : la logique du jeu coute ~1,4 ms par image ; le rendu est le vrai cout. Sur le tarmac en plein jour, **13 lumieres** etaient calculees pour chaque pixel ; il n'en reste que **2** (ciel et soleil) :
+- les 4 lampadaires du tarmac, la lampe du joueur et la lune ne s'allument (et ne sont comptes) que la nuit ;
+- le phare d'atterrissage etait allume avec l'avion **gare** a la porte (condition « train sorti et bas ») : il ne s'allume plus qu'au roulage et en vol, comme les phares d'ailes ;
+- l'eclairage du hall ne sert le jour qu'a l'interieur ; une lumiere a 0 est retiree du rendu (elle coutait autant qu'allumee).
+
+Le hall n'est plus dessine ni anime au-dela de ~53 m (272 appels de dessin au lieu d'environ 600 loin du terminal). La qualite automatique retient le dernier niveau trouve (`autoLevel`) : une tablette lente ne recommence plus chaque partie en haute qualite.
+
+### Visiteurs animes et vie calme (phase 48, mode Arcade)
+
+- **Visiteurs** (`groundFun.js`) : ils sortent du terminal par une porte cote piste et marchent jusqu'a un point degage de l'aire ; la, ils regardent le joueur et font coucou (petit saut, toutes les 6 s quand on approche), parlent avec les mains pendant l'histoire (clip « Working »), sautent pour dire au revoir puis repartent a pied vers le terminal (avant : ils apparaissaient et disparaissaient sur place).
+- **Gestes du personnage** : `entity.pose = 'jump' | 'work'` impose un clip (saut, bras) a la place de l'allure (`updateAvatarAnim`).
+- **Vie calme** (`js/ambience.js`), toujours au meme endroit pour ne pas faire de bazar :
+  - trois **spotteurs** au bord du taxiway, face a la piste (un papa, une fille, un papi) : ils montrent le ciel de temps en temps et sautent de joie avec des bulles 📸 🤩 quand l'avion de ligne decolle ou atterrit devant eux ; ils sont des corps (on ne les traverse pas) et on peut leur dire bonjour (repliques propres) ;
+  - deux **volees de pigeons** (pres de la tour, devant l'entree du terminal) qui picorent et s'envolent quand le joueur ou le chien approche, puis se reposent un peu plus loin.
+
+### Le bus et la decouverte (phase 49, mode Arcade)
+
+- **Bus des passagers** (`js/bus.js`, base `vehicle.js`) : le bus jaune de la navette se conduit (« 🚌 CONDUIRE LE BUS »). Les passagers montent a l'arret du terminal (anneau bleu, un toutes les 3 s, 20 au plus) et descendent au pied de l'avion gare au poste eloigne (anneau orange) : une piece pour deux passagers, +3 si le bus est plein. Trophee « Chauffeur de bus ».
+- **Faire decouvrir ce qu'on peut faire a pied** : quand il n'y a pas d'objectif en cours, la barre propose aussi le tracteur, le bus, le camion de pompiers, la balle avec le chien et les spotteurs (tant qu'on ne les a pas essayes) ; Coco en parle dans ses conseils apres un vol.
+- **Nouveaux defis du jour** : livrer des valises avec le tracteur, conduire le bus, dire bonjour, jouer a la balle (tire seulement si le chien est adopte). Evenements `tugTrip`, `busTrip`, `greet`, `fetch`, `fire`.
+
+### Accompagner les visiteurs (phase 50)
+
+- Mamie Jeannette, la chanteuse Stella et la classe de CE2 demandent, a la fin de leur histoire, qu'on les **accompagne jusqu'a la porte de l'avion** : ils suivent l'enfant (en courant s'il s'eloigne), la fleche montre la porte cabine ; a l'arrivee (meme portee que le bouton de la porte, 8,5 m), +8 pieces en plus de la rencontre, et ils montent a bord. Trophee « Guide de l'aeroport ». Sans reponse au bout de 2 min 30, ils trouvent leur chemin seuls (la rencontre compte quand meme).
+- Le bouton « caresser le chien » ne reste plus affiche en permanence (le chien suit a 2 m) : il revient 45 s apres une caresse, quand on est a l'arret.
+
+### Mon personnage et ambiance sonore (phase 51)
+
+- **Bug corrige : tous les personnages portaient la meme tenue.** Les clones du modele glTF partagent leur geometrie, et `paintHuman` y ecrivait les couleurs : le dernier personnage peint imposait ses couleurs a tous (PNJ, employes, visiteurs, joueur). Chaque personnage a maintenant sa copie de la geometrie.
+- **Mon perso** (`js/look.js`, tuile du menu pause) : t-shirt (10 couleurs), casquette (8), peau et cheveux (5 chacun), bouton « au hasard » ; l'avatar change en direct, sauvegarde `skymanager.look` (avant : t-shirt orange impose, peau et cheveux tires au hasard a chaque partie). `renderer.setPlayerLook`, `buildTechnician(..., look)`.
+- **Ambiance sonore discrete** (`ambience.js`) : grondement lointain quand l'avion de ligne met les gaz (`sfx.jet`, plus fort si on est pres), et dans le hall un carillon suivi d'une annonce toutes les ~75 s (`sfx.chime`).
+- Menu pause : « A jouer » sur trois colonnes (hangar, ma place, mini-jeux, carte, mon perso, mon chien).
+
+### Parapluies et pelage du chien (phase 52)
+
+- **Parapluies** (`ambience.js`) : quand il pleut, toutes les personnes dehors (joueur, PNJ du tarmac, employes, voyageurs du parking, visiteurs, spotteurs) sortent un parapluie colore ; jamais dans le terminal ni quand l'avatar est masque (au volant, a roulettes). Geometries et materiaux partages, fabriques a la premiere pluie seulement.
+- **Pelage du chien** : une fois le chien adopte, le panneau « Mon perso » propose aussi sa couleur (6 pelages) ; `pet.setFur` le reconstruit sur place.

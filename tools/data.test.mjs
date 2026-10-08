@@ -22,8 +22,8 @@ const L = await import('../js/livery.js');
 const { STORIES } = await import('../js/groundFun.js');
 const { ITEMS } = await import('../js/deco.js');
 const { MISSION_DEFS, ANIMALS } = await import('../js/skyMissions.js');
-const { ISLANDS, EGGS } = await import('../js/openWorld.js');
-const { BADGES, DESTINATIONS } = await import('../js/arcade.js');
+const { ISLANDS, EGGS, OpenWorld } = await import('../js/openWorld.js');
+const { BADGES, DESTINATIONS, SKY_STARS, SKY_ISLANDS } = await import('../js/arcade.js');
 const { GAMES } = await import('../js/minigames.js');
 
 /* ---- Avions ---- */
@@ -68,6 +68,9 @@ check(ANIMALS.length >= 6 && ANIMALS.every(a => a.say.length >= 2 && (a.mode ===
 
 /* ---- Monde ---- */
 check(unique(ISLANDS.map(i => i.id)) && ISLANDS.length === 6, 'iles : 6, identifiants uniques');
+/* Les defis du jour (arcade.js) comptent ce qui reste a trouver : memes totaux que le monde. */
+check(ISLANDS.length === SKY_ISLANDS, "defis : nombre d'iles identique dans arcade.js et openWorld.js");
+check(OpenWorld.prototype._starPositions.call({}).length === SKY_STARS, "defis : nombre d'etoiles dorees identique dans arcade.js et openWorld.js");
 const SEA = { x: 3300, z: -5200, r: 1950 };
 check(ISLANDS.every(i => Math.hypot(i.x - SEA.x, i.z - SEA.z) + i.r < SEA.r), 'iles : toutes a l\'interieur de la mer');
 let ok = true;

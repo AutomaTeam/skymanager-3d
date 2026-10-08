@@ -14,10 +14,10 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791200000';
-import { LAYOUT } from './layout.js?v=1791200000';
-import { drawIcon, iconify } from './icons.js?v=1791200000';
-import { PARK, buildPark } from './rideCourse.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
+import { LAYOUT } from './layout.js?v=1791300000';
+import { drawIcon, iconify } from './icons.js?v=1791300000';
+import { PARK, buildPark } from './rideCourse.js?v=1791300000';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -27,6 +27,10 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
 /* Points de progression du niveau d'aeroport (XP). */
 const xpForLevel = (lvl) => 60 + lvl * 40;
+
+/* Collections du ciel qui ne se trouvent qu'une fois (voir openWorld.js : _starPositions, ISLANDS). */
+export const SKY_STARS = 40;
+export const SKY_ISLANDS = 6;
 
 /* Anneaux d'un vol. */
 const RING_TOTAL = 5;
@@ -105,9 +109,13 @@ const DAILY_POOL = [
   { id: 'buy',    ev: 'buy',        icon: '🛍️', text: () => 'Achete une amelioration a la tour',       min: 1, max: 1,  reward: 25 },
   { id: 'stunt',  ev: 'stunt',      icon: '🌀', text: (n) => `Fais ${n} acrobaties (tonneau ou looping)`, min: 3, max: 6, reward: 30 },
   { id: 'mission', ev: 'mission',   icon: '🎯', text: (n) => `Termine ${n} mission${n > 1 ? 's' : ''} aerienne${n > 1 ? 's' : ''}`, min: 1, max: 2, reward: 35 },
-  { id: 'secret', ev: 'secret',     icon: '⭐', text: (n) => `Trouve ${n} etoiles dorees dans le ciel`, min: 2, max: 4, reward: 30 },
+  { id: 'secret', ev: 'secret',     icon: '🌟', text: (n) => `Trouve ${n} etoiles dorees dans le ciel`, min: 2, max: 4, reward: 30 },
   { id: 'minigame', ev: 'minigame', icon: '🧽', text: (n) => `Joue a ${n} mini-jeux`,                  min: 2, max: 3, reward: 25 },
-  { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une carte postale pendant un vol', min: 1, max: 1, reward: 20 }
+  { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une carte postale pendant un vol', min: 1, max: 1, reward: 20 },
+  { id: 'tug',    ev: 'tugTrip',    icon: '🚜', text: (n) => `Livre ${n} chargement${n > 1 ? 's' : ''} de valises avec le tracteur`, min: 1, max: 3, reward: 25 },
+  { id: 'bus',    ev: 'busTrip',    icon: '🚌', text: (n) => `Conduis ${n} fois les passagers en bus jusqu'a l'avion`, min: 1, max: 2, reward: 25 },
+  { id: 'greet',  ev: 'greet',      icon: '👋', text: (n) => `Dis bonjour a ${n} personnes de l'aeroport`, min: 4, max: 8, reward: 15 },
+  { id: 'fetch',  ev: 'fetch',      icon: '🎾', text: (n) => `Joue ${n} fois a la balle avec ton chien`, min: 3, max: 5, reward: 15 }
 ];
 
 /* Defis de la semaine : un objectif plus long, qui rapporte gros. */
@@ -313,7 +321,7 @@ const TERM_QUESTS = [
 export const BADGES = [
   { id: 'first',    ico: '🛫', name: 'Premier vol',          desc: 'Termine un vol.',                         test: d => d.stats.flights >= 1 },
   { id: 'pilot5',   ico: '🧑‍✈️', name: 'Vrai pilote',          desc: 'Fais 5 vols.',                            test: d => d.stats.flights >= 5 },
-  { id: 'star3',    ico: '🌟', name: 'Atterrissage parfait', desc: 'Obtiens 3 etoiles a un atterrissage.',    test: d => d.stats.star3 >= 1 },
+  { id: 'star3',    ico: '⭐', name: 'Atterrissage parfait', desc: 'Obtiens 3 etoiles a un atterrissage.',    test: d => d.stats.star3 >= 1 },
   { id: 'rings',    ico: '🟡', name: 'Chasseur d\'anneaux',  desc: 'Traverse 20 anneaux dores.',              test: d => d.stats.rings >= 20 },
   { id: 'mech',     ico: '🔧', name: 'Super mecano',         desc: 'Repare 10 pieces de l\'avion.',           test: d => d.stats.repair >= 10 },
   { id: 'serve',    ico: '🧳', name: 'Roi de l\'accueil',    desc: 'Fais avancer 30 passagers.',              test: d => d.stats.serve >= 30 },
@@ -334,12 +342,19 @@ export const BADGES = [
   { id: 'world',    ico: '🧭', name: 'Tour du monde',        desc: 'Visite 8 villes differentes.',            test: d => (d.visited || []).length >= 8 },
   { id: 'boss',     ico: '👔', name: 'Grand patron',         desc: 'Recrute 6 employes.',                     test: d => (d.staff || 0) >= 6 },
   { id: 'streak3',  ico: '🔥', name: 'Fidele',               desc: 'Ouvre le cadeau 3 jours de suite.',       test: d => !!(d.gift && d.gift.streak >= 3) },
+  { id: 'friendly', ico: '👋', name: 'Ami de tous',          desc: 'Dis bonjour a 25 personnes de l\'aeroport.', test: d => (d.stats.greet || 0) >= 25 },
+  { id: 'petlove',  ico: '🐶', name: 'Meilleur ami',         desc: 'Caresse ton chien 10 fois.',              test: d => (d.stats.pets || 0) >= 10 },
+  { id: 'fireman',  ico: '🚒', name: 'Pompier courageux',    desc: 'Eteins 3 feux avec le camion de pompiers.', test: d => (d.stats.fires || 0) >= 3 },
+  { id: 'guide',    ico: '🧭', name: 'Guide de l\'aeroport', desc: 'Accompagne 3 visiteurs jusqu\'a leur avion.', test: d => (d.stats.escorts || 0) >= 3 },
+  { id: 'bus',      ico: '🚌', name: 'Chauffeur de bus',     desc: "Conduis 5 fois les passagers jusqu'a l'avion.", test: d => (d.stats.busTrips || 0) >= 5 },
+  { id: 'tug',      ico: '🚜', name: 'Chauffeur de piste',   desc: 'Livre 10 chargements de valises avec le tracteur.', test: d => (d.stats.tugTrips || 0) >= 10 },
+  { id: 'fetch',    ico: '🎾', name: 'Lanceur de balle',     desc: 'Joue 20 fois a la balle avec ton chien.', test: d => (d.stats.fetch || 0) >= 20 },
   { id: 'stunt10',  ico: '🌀', name: 'Acrobate',             desc: 'Fais 10 acrobaties.',                     test: d => d.stats.stunt >= 10 },
   { id: 'stunt50',  ico: '🤹', name: 'Roi de la voltige',    desc: 'Fais 50 acrobaties.',                     test: d => d.stats.stunt >= 50 },
   { id: 'mission1', ico: '🎯', name: 'Missionnaire',         desc: 'Termine une mission aerienne.',           test: d => d.stats.mission >= 1 },
   { id: 'mission10', ico: '🏅', name: 'Pro des missions',    desc: 'Termine 10 missions aeriennes.',          test: d => d.stats.mission >= 10 },
   { id: 'gold',     ico: '🥇', name: 'Medaille d\'or',       desc: 'Gagne une medaille d\'or.',                test: d => d.stats.missionGold >= 1 },
-  { id: 'secret10', ico: '⭐', name: 'Chercheur d\'etoiles', desc: 'Trouve 10 etoiles dorees.',               test: d => d.stats.secret >= 10 },
+  { id: 'secret10', ico: '🌟', name: 'Chercheur d\'etoiles', desc: 'Trouve 10 etoiles dorees.',               test: d => d.stats.secret >= 10 },
   { id: 'secret40', ico: '🌌', name: 'Constellation',        desc: 'Trouve les 40 etoiles dorees.',           test: d => d.stats.secret >= 40 },
   { id: 'island6',  ico: '🏝️', name: 'Explorateur',          desc: 'Decouvre les 6 iles.',                    test: d => d.stats.island >= 6 },
   { id: 'egg3',     ico: '👽', name: 'Curieux',              desc: 'Trouve 3 surprises cachees dans le ciel.', test: d => d.stats.egg >= 3 },
@@ -574,6 +589,26 @@ export class Arcade {
     this.save();
   }
 
+  /* Combien reste-t-il a trouver pour un defi de collection ? Les 40 etoiles dorees et
+     les 6 iles (openWorld.js) ne se trouvent qu'une fois : sans ce test, un defi
+     « trouve 3 etoiles » pouvait etre tire alors qu'il n'en restait plus, et bloquer
+     l'objectif affiche toute la journee. Infinity pour les autres defis. */
+  _left(ev) {
+    if (ev === 'fetch') {
+      let pet = this.g.pet && this.g.pet.data;
+      if (!pet) { try { pet = JSON.parse(localStorage.getItem('skymanager.pet') || 'null'); } catch (e) { pet = null; } }
+      return pet && pet.adopted ? Infinity : 0;
+    }
+    if (ev !== 'secret' && ev !== 'island') return Infinity;
+    let w = this.g.openWorld && this.g.openWorld.data;
+    if (!w) { try { w = JSON.parse(localStorage.getItem('skymanager.world') || 'null'); } catch (e) { w = null; } }
+    const got = (w && (ev === 'secret' ? w.stars : w.islands)) || [];
+    return (ev === 'secret' ? SKY_STARS : SKY_ISLANDS) - got.length;
+  }
+
+  /* Un defi en cours peut-il encore etre reussi ? */
+  _doable(d) { return d.done || this._left(d.ev) >= d.target - d.progress; }
+
   _ensureDaily() {
     const day = todayKey();
     if (this.data.daily && this.data.daily.day === day) return;
@@ -582,7 +617,9 @@ export class Arcade {
     const items = [];
     while (items.length < 3 && pool.length) {
       const d = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
-      const n = d.min + Math.floor(rnd() * (d.max - d.min + 1));
+      const left = this._left(d.ev);
+      const n = Math.min(left, d.min + Math.floor(rnd() * (d.max - d.min + 1)));
+      if (n < d.min) continue;                       // plus rien a trouver : on tire un autre defi
       items.push({
         id: d.id, ev: d.ev, icon: d.icon, label: d.text(n),
         target: n, progress: 0, reward: d.reward, done: false
@@ -596,8 +633,10 @@ export class Arcade {
     const wk = weekKey();
     if (this.data.weekly && this.data.weekly.week === wk) return;
     const rnd = seeded('week' + wk);
-    const d = WEEKLY_POOL[Math.floor(rnd() * WEEKLY_POOL.length)];
-    const target = d.target[0] + Math.floor(rnd() * (d.target[1] - d.target[0] + 1));
+    /* Seulement les defis encore faisables (etoiles et iles epuisables, voir _left). */
+    const pool = WEEKLY_POOL.filter(x => this._left(x.ev) >= x.target[0]);
+    const d = pool[Math.floor(rnd() * pool.length)];
+    const target = Math.min(this._left(d.ev), d.target[0] + Math.floor(rnd() * (d.target[1] - d.target[0] + 1)));
     this.data.weekly = { week: wk, item: { id: d.id, ev: d.ev, icon: d.icon, label: '📅 Semaine : ' + d.text(target), target, progress: 0, reward: d.reward, done: false, weekly: true } };
     this.save();
   }
@@ -628,12 +667,13 @@ export class Arcade {
       if (ac.heli) return { icon: '🚁', text: 'Suis la fleche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
       return { icon: '🛬', text: 'Suis la fleche vers la piste et atterris doucement.', target: null };
     }
+    if (this.g.state === 'HUB') for (const v of this.g.vehicles || []) { const vg = v.goal(); if (vg) return vg; }
     const ge = this.g.state === 'HUB' && this.g.ground && this.g.ground.goal();
     if (ge) return ge;
     if (this.quest && this.g.state === 'HUB') return { icon: this.quest.ico, text: '⚡ ' + this.quest.text + (this.quest.goal ? ` (${this.quest.prog}/${this.quest.goal})` : ''), target: this.quest.target };
     const st = this.step;
     if (st) return { icon: st.icon, text: st.text, target: st.target(this.g) };
-    const d = this.dailyItems.find(x => !x.done);
+    const d = this.dailyItems.find(x => !x.done && this._doable(x));
     if (d) {
       const tgt = this._targetForChallenge(d);
       return {
@@ -657,6 +697,16 @@ export class Arcade {
     const unseen = DESTINATIONS.filter(d => !(this.data.visited || []).includes(d.city));
     opts.push({ icon: '🛫', text: unseen.length ? 'Prends un vol vers une nouvelle ville pour remplir ton carnet !' : 'Refais un vol pour battre ton record d\'etoiles !', target: this.markerPos('cockpit') });
     opts.push({ icon: '🥤', text: 'Va en cabine servir les passagers et repondre a leurs questions !', target: this.markerPos('cabinDoor') });
+    /* Ce qu'on peut faire a pied (souvent jamais decouvert sans un petit coup de pouce). */
+    const st = this.data.stats;
+    const tug = g.tug && g.tug._ambient();
+    if (tug && !(st.tugTrips > 2)) opts.push({ icon: '🚜', text: 'Conduis le tracteur a bagages jaune : charge les valises et livre-les a l\'avion !', target: { x: tug.mv.x, z: tug.mv.z } });
+    const bus = g.bus && g.bus._ambient();
+    if (bus && !(st.busTrips > 1)) opts.push({ icon: '🚌', text: 'Conduis le bus jaune : emmene les passagers du terminal jusqu\'a l\'avion !', target: { x: bus.mv.x, z: bus.mv.z } });
+    const ft = g.fire && g.fire._parked();
+    if (ft && !(st.fires > 0)) opts.push({ icon: '🚒', text: 'Va voir le camion de pompiers devant la caserne : tu peux le conduire !', target: { x: ft.position.x, z: ft.position.z - 6 } });
+    if (g.pet && g.pet.adopted && !(st.fetch > 3)) opts.push({ icon: '🎾', text: `Joue a la balle avec ${g.pet.data.name} : appuie sur 🎾 !`, target: null });
+    if (!(st.greet > 5)) opts.push({ icon: '👋', text: 'Dis bonjour aux gens de l\'aeroport : les spotteurs au bord de la piste adorent parler d\'avions !', target: { x: 92, z: 1188 } });
     return opts[Math.floor(g.time / 40) % opts.length];
   }
 
@@ -666,6 +716,9 @@ export class Arcade {
     if (d.ev === 'buy') return this.markerPos('tower');
     if (d.ev === 'cabinServe') return this.markerPos('cabinDoor');
     if (d.ev === 'landing' || d.ev === 'star3' || d.ev === 'ring') return this.markerPos('cockpit');
+    if (d.ev === 'tugTrip' && this.g.tug) { const t = this.g.tug._ambient(); return t ? { x: t.mv.x, z: t.mv.z } : null; }
+    if (d.ev === 'greet') return { x: 92, z: 1188 };
+    if (d.ev === 'busTrip' && this.g.bus) { const b = this.g.bus._ambient(); return b ? { x: b.mv.x, z: b.mv.z } : null; }
     return null;
   }
 
@@ -752,7 +805,13 @@ export class Arcade {
     this._updateDock();
     this._updateCabinHud(dt);
     this._badgeT = (this._badgeT || 0) + dt;
-    if (this._badgeT > 1) { this._badgeT = 0; this.checkBadges(); }
+    if (this._badgeT > 1) {
+      this._badgeT = 0;
+      this.checkBadges();
+      /* Le jeu peut rester ouvert apres minuit : nouveaux defis sans recharger la page. */
+      this._ensureDaily();
+      this._ensureWeekly();
+    }
   }
 
   _completeStep(st) {
@@ -1385,6 +1444,7 @@ export class Arcade {
     }[kind];
     if (!E) return;
     E.snd();
+    if (g.pet) g.pet.cheer(kind);          // Biscuit participe a la fete
     this.data.stats[kind] = (this.data.stats[kind] || 0) + 1;
     this.floatEmoji(E.ico, (kind === 'dance' || kind === 'music') ? 3 : kind === 'candy' ? 2 : 1);
     this.popup(`${E.ico} ${E.txt}`);
@@ -2049,8 +2109,9 @@ export class Arcade {
     if (crashed) return { stars: 0, title: 'Oups ! Un atterrissage brusque', tip: 'Pas grave, recommence : le train est sorti automatiquement.' };
     const off = Math.abs(td.offset);
     let stars = 1, title = 'Atterri ! Bien joue', tip = 'Essaie de descendre plus doucement.';
-    if (td.fpm < 320 && off < 20) { stars = 2; title = 'Tres bel atterrissage !'; tip = 'Encore un peu plus doux pour 3 etoiles.'; }
-    if (td.fpm < 230 && off < 14) { stars = 3; title = 'ATTERRISSAGE PARFAIT !'; tip = 'Tu es un vrai pilote !'; }
+    /* Seuils genereux : un enfant qui laisse faire l'aide (ou qui pose a peu pres droit) doit voir 2-3 etoiles. */
+    if (td.fpm < 420 && off < 24) { stars = 2; title = 'Tres bel atterrissage !'; tip = 'Encore un peu plus doux pour 3 etoiles.'; }
+    if (td.fpm < 280 && off < 16) { stars = 3; title = 'ATTERRISSAGE PARFAIT !'; tip = 'Tu es un vrai pilote !'; }
     return { stars, title, tip };
   }
 

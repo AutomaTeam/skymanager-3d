@@ -14,7 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
+import { LAYOUT } from './layout.js?v=1791300000';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -28,7 +29,7 @@ const SPOTS = [
 ];
 
 export const STORIES = [
-  { id: 'granny', ico: '👵', name: 'Mamie Jeannette', color: 0xb45f8a, hat: 0xe5e7eb, gift: { sticker: 'cat' }, coins: 10,
+  { id: 'granny', ico: '👵', name: 'Mamie Jeannette', color: 0xb45f8a, hat: 0xe5e7eb, gift: { sticker: 'cat' }, coins: 10, escort: 'Je ne trouve plus mon avion… tu m\'accompagnes ?',
     lines: ['Oh, bonjour mon petit ! Je pars voir mes petits-enfants.', 'Mon perroquet a mange mon billet… mais tu m\'as retrouvee, merci !', 'Tiens, un petit cadeau pour toi !'] },
   { id: 'clown', ico: '🤡', name: 'Pipo le clown', color: 0xe11d48, hat: 0xfacc15, gift: { sticker: 'smile' }, coins: 12,
     lines: ['Pouet pouet ! Je vais faire le spectacle dans une autre ville !', 'Mon nez rouge est reste dans l\'avion hier… Ah non, le voila !', 'Voici un sourire pour ton avion !'] },
@@ -36,20 +37,28 @@ export const STORIES = [
     lines: ['Arrr ! Mes bagages sont bizarres, moussaillon !', 'Aide-moi a trouver l\'intrus dans mes valises !'] },
   { id: 'astro', ico: '🧑‍🚀', name: 'Luna l\'astronaute', color: 0xf3f4f6, hat: 0x38bdf8, gift: { sticker: 'rocket' }, coins: 14,
     lines: ['Houston, nous avons un visiteur !', 'Je rentre de l\'espace. Le plus beau vol, c\'est quand meme celui-ci !', 'Prends cette fusee, elle porte bonheur !'] },
-  { id: 'star', ico: '🎤', name: 'La chanteuse Stella', color: 0x9333ea, hat: 0xfde047, gift: { sticker: 'star' }, coins: 16,
+  { id: 'star', ico: '🎤', name: 'La chanteuse Stella', color: 0x9333ea, hat: 0xfde047, gift: { sticker: 'star' }, coins: 16, escort: 'Vite, emmene-moi a l\'avion, mon concert commence bientot !',
     lines: ['Coucou ! Je suis en retard pour mon concert !', 'Tu me ramenes a l\'heure ? Tu es mon heros !', 'Une etoile pour toi, comme sur scene !'] },
   { id: 'robot', ico: '🤖', name: 'Bip-Bop le robot', color: 0x64748b, hat: 0x22d3ee, gift: { sticker: 'robot' }, coins: 12,
     lines: ['Bip bop ! Je suis un robot-voyageur.', 'Mon detecteur de sourires indique : 100 % !', 'Je te donne mon badge robot. Bip !'] },
-  { id: 'kids', ico: '🧒', name: 'La classe de CE2', color: 0x16a34a, hat: 0xf97316, gift: { sticker: 'rainbow' }, coins: 12,
+  { id: 'kids', ico: '🧒', name: 'La classe de CE2', color: 0x16a34a, hat: 0xf97316, gift: { sticker: 'rainbow' }, coins: 12, escort: 'La maitresse a dit de suivre le guide jusqu\'a l\'avion : c\'est toi !',
     lines: ['Bonjour ! On va voir la mer en classe verte !', 'On adore les avions ! Tu nous fais un tonneau, plus tard ?', 'On t\'offre un arc-en-ciel !'] },
   { id: 'chef', ico: '👨‍🍳', name: 'Chef Pizzaiolo', color: 0xf8fafc, hat: 0xf8fafc, gift: { sticker: 'pizza' }, coins: 12,
-    lines: ['Buongiorno ! Je transporte la meilleure pizza du monde.', 'Ne dis rien… Je t\'en garde une part !', 'Voici une pizza pour ton avion !'] }
+    lines: ['Buongiorno ! Je transporte la meilleure pizza du monde.', 'Ne dis rien… Je t\'en garde une part !', 'Voici une pizza pour ton avion !'] },
+  { id: 'magician', ico: '🎩', name: 'Zigomar le magicien', color: 0x312e81, hat: 0x111827, gift: { sticker: 'unicorn' }, coins: 14,
+    lines: ['Abracadabra ! J\'ai fait disparaitre ma valise…', 'Ah non, elle etait dans mon chapeau !', 'Pour toi, une licorne magique. Chut, c\'est un secret !'] },
+  { id: 'football', ico: '⚽', name: 'Lina la footballeuse', color: 0x2563eb, hat: 0xfacc15, gift: { sticker: 'flame' }, coins: 14,
+    lines: ['Salut ! Mon equipe joue la finale demain !', 'Tu veux faire une passe ? Attention, je tire fort !', 'Une flamme pour ton avion : tu es un champion !'] },
+  { id: 'polar', ico: '🐧', name: 'Igor l\'explorateur polaire', color: 0xe0f2fe, hat: 0xdc2626, gift: { sticker: 'fox' }, coins: 14,
+    lines: ['Brrr ! Je reviens du pole Nord, il faisait -40 degres !', 'Un renard des neiges m\'a suivi pendant trois jours.', 'Je te donne son portrait, pour ton hangar !'] },
+  { id: 'dino', ico: '🦖', name: 'Docteur Ossa la paleontologue', color: 0x92400e, hat: 0x65a30d, gift: { sticker: 'dino' }, coins: 16,
+    lines: ['Bonjour ! J\'emmene un os de dinosaure au musee.', 'Il est plus grand que toi ! Heureusement qu\'il voyage en soute.', 'Un dino pour ton avion. Roaaar !'] }
 ];
 
 /* Mini-chien procedural : corps, tete, oreilles, pattes, queue qui remue. */
-function buildDog() {
+export function buildDog(furColor = 0xc58a4a) {
   const g = new THREE.Group();
-  const fur = new THREE.MeshStandardMaterial({ color: 0xc58a4a, roughness: 0.85 });
+  const fur = new THREE.MeshStandardMaterial({ color: furColor, roughness: 0.85 });
   const dark = new THREE.MeshStandardMaterial({ color: 0x5b3a1a, roughness: 0.85 });
   const white = new THREE.MeshStandardMaterial({ color: 0xf4efe6, roughness: 0.85 });
   const body = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.34, 0.85), fur);
@@ -80,7 +89,7 @@ function buildDog() {
   return { group: g, tail, legs, head };
 }
 
-function emojiSprite(emoji, size = 1.6) {
+export function emojiSprite(emoji, size = 1.6) {
   const cv = document.createElement('canvas');
   cv.width = cv.height = 128;
   const x = cv.getContext('2d');
@@ -101,8 +110,9 @@ export class GroundFun {
   constructor(game) {
     this.g = game;
     this.data = this._load();
-    this.cd = 70 + Math.random() * 40;       // delai avant le premier evenement
+    this.cd = 40 + Math.random() * 30;       // delai avant le premier evenement
     this.ev = null;                          // evenement en cours
+    this.leaving = [];                       // visiteurs qui repartent a pied
     this._bind();
   }
 
@@ -126,6 +136,7 @@ export class GroundFun {
   update(dt) {
     const g = this.g;
     if (!g.arcade.on) return;
+    if (this.leaving.length) this._updateLeaving(dt);
     if (g.state !== 'HUB' || g.controlled || g.hangar.active) { this._renderHud(); return; }
     if (!this.ev) {
       const ready = g.arcade.data.tutorialDone || g.arcade.data.stats.flights >= 1;
@@ -137,8 +148,12 @@ export class GroundFun {
     }
     const e = this.ev;
     e.t -= dt;
-    e.kind === 'dog' ? this._updateDog(dt) : this._updateVisitor(dt);
-    if (this.ev && e.t <= 0) this._end(false);
+    if (e.kind === 'dog') this._updateDog(dt);
+    else if (e.kind === 'balloons') this._updateBalloons(dt);
+    else if (e.phase === 'follow') this._updateEscort(dt);
+    else this._updateVisitor(dt);
+    /* Temps ecoule : rate, sauf les ballons deja attrapes qui comptent quand meme. */
+    if (this.ev && e.t <= 0) this._end((e.kind === 'balloons' && e.n > 0) || e.phase === 'follow');   // la rencontre a eu lieu
     this._renderHud();
   }
 
@@ -148,13 +163,15 @@ export class GroundFun {
     const spots = SPOTS.filter(([x, z]) => Math.hypot(x - p.x, z - p.z) > 40 && g.nav.isWalkable(x, z));
     if (!spots.length) { this.cd = 30; return; }
     const [x, z] = pick(spots);
-    if (Math.random() < 0.5) this._startDog(x, z); else this._startVisitor(x, z);
+    const r = Math.random();
+    if (r < 0.34) this._startDog(x, z); else if (r < 0.67) this._startVisitor(); else this._startBalloons(x, z);
   }
 
   /* ---------------- Le chien ---------------- */
   _startDog(x, z) {
     const g = this.g;
-    const d = buildDog();
+    /* Si l'enfant a deja Biscuit (pet.js), le fugueur a un autre pelage : on ne les confond pas. */
+    const d = buildDog(g.pet && g.pet.adopted ? pick([0x2b2b2b, 0xe8e2d6, 0x8a8a8a, 0x7a4a2a]) : undefined);
     d.group.position.set(x, 0, z);
     g.r3d.airport.add(d.group);
     const mark = emojiSprite('🐕', 1.3);
@@ -203,36 +220,151 @@ export class GroundFun {
     e.mark.position.y = 2.9 + Math.sin(t * 5) * 0.12;
   }
 
+  /* ---------------- Les ballons envoles ---------------- */
+  /* Un lacher de ballons rate : 6 ballons montent doucement. On passe dessous pour les attraper
+     avant qu'ils ne s'envolent trop haut. */
+  _startBalloons(x, z) {
+    const g = this.g;
+    const COLORS = [0xef4444, 0xf59e0b, 0x22c55e, 0x3b82f6, 0xa855f7, 0xec4899];
+    const string = new THREE.MeshBasicMaterial({ color: 0xf8fafc });
+    const balloons = [];
+    for (let i = 0; i < 6; i++) {
+      let bx = x, bz = z;
+      for (let k = 0; k < 12; k++) {
+        const a = Math.random() * 6.28, d = 5 + Math.random() * 9;
+        if (g.nav.isWalkable(x + Math.cos(a) * d, z + Math.sin(a) * d)) { bx = x + Math.cos(a) * d; bz = z + Math.sin(a) * d; break; }
+      }
+      const grp = new THREE.Group();
+      const ball = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 12), new THREE.MeshStandardMaterial({ color: COLORS[i], roughness: 0.35, metalness: 0.05, emissive: COLORS[i], emissiveIntensity: 0.25 }));
+      ball.scale.y = 1.18;
+      ball.position.y = 1.25;
+      const str = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1.1, 4), string);
+      str.position.y = 0.55;
+      grp.add(ball, str);
+      grp.position.set(bx, 0.6 + Math.random() * 0.6, bz);
+      g.r3d.airport.add(grp);
+      balloons.push({ grp, x: bx, z: bz, y: grp.position.y, ph: Math.random() * 6, got: false, lost: false });
+    }
+    this.ev = { kind: 'balloons', t: 55, total: 55, balloons, x, z, n: 0 };
+    sfx.pop();
+    g.toast('🎈 Oh non, les ballons de la fete s\'envolent ! Passe dessous pour les attraper !', 4200, 'ok');
+    g.fun.say('Vite, attrape les ballons avant qu\'ils montent dans le ciel !', 3, 3800);
+  }
+
+  _updateBalloons(dt) {
+    const g = this.g, e = this.ev, p = g.player.pos, t = g.time;
+    let left = 0;
+    for (const b of e.balloons) {
+      if (b.got) continue;
+      /* Il monte doucement ; trop haut, il s'envole pour de bon (et plus vite). */
+      b.y += dt * (b.lost ? 2.5 : 0.11);
+      b.grp.position.set(b.x + Math.sin(t * 1.3 + b.ph) * 0.3, b.y, b.z + Math.cos(t * 1.1 + b.ph) * 0.3);
+      b.grp.rotation.z = Math.sin(t * 1.7 + b.ph) * 0.12;
+      if (b.lost) { if (b.y > 40) { g.r3d.airport.remove(b.grp); b.got = true; } continue; }
+      if (b.y > 6.5) { b.lost = true; continue; }
+      left++;
+      if (Math.hypot(b.x - p.x, b.z - p.z) < 2.4) {
+        b.got = true; e.n++;
+        g.r3d.airport.remove(b.grp);
+        sfx.pop();
+        g.arcade.giveCoins(1, { silent: true });
+        g.arcade.popup(`🎈 ${e.n}/6 +1 🪙`);
+      }
+    }
+    if (!left && !e.balloons.some(b => b.lost && !b.got)) this._end(e.n > 0);
+  }
+
   /* ---------------- Les visiteurs ---------------- */
-  _startVisitor(x, z) {
+  /* Le visiteur sort du terminal par une porte cote piste et marche jusqu'a un point degage
+     de l'aire, ou il attend en faisant coucou. Apres la rencontre (ou s'il attend trop),
+     il repart a pied vers le terminal au lieu de disparaitre d'un coup. */
+  _startVisitor() {
     const g = this.g;
     const met = this.data.met;
     const pool = STORIES.filter(s => !met.includes(s.id));
     const story = pick(pool.length ? pool : STORIES);
+    const T = LAYOUT.terminal;
+    const door = pick(T.airDoors);
+    const from = { x: door.x, z: T.z0 - 3 };
+    let to = null;
+    for (let k = 0; k < 10 && !to; k++) {
+      const c = g.nav.nearestWalkable(door.x + (Math.random() - 0.5) * 24, T.z0 - 14 - Math.random() * 12);
+      if (this._lineFree(from, c)) to = c;
+    }
+    if (!to) to = { x: from.x, z: from.z - 6 };
     const ent = g.r3d.buildTechnician(story.color, story.hat, false);
-    ent.group.position.set(x, 0, z);
+    ent.group.position.set(from.x, 0, from.z);
     g.r3d.airport.add(ent.group);
     const mark = emojiSprite(story.ico, 1.5);
     mark.position.set(0, 3.1, 0);
     ent.group.add(mark);
-    const beam = g.r3d.setBeacon ? null : null;
-    this.ev = { kind: 'visitor', t: 100, total: 100, story, ent, x, z, mark, wait: 0 };
+    this.ev = { kind: 'visitor', t: 100, total: 100, story, ent, x: from.x, z: from.z, mark, phase: 'arrive', to, door: from, waveT: 2, h: Math.PI };
     sfx.ding();
-    g.toast(`${story.ico} ${story.name} est arrive(e) ! Va le saluer.`, 4200, 'ok');
-    g.fun.say(`${story.ico} Regarde, ${story.name} vient d'arriver !`, 3, 3800);
+    g.toast(`${story.ico} ${story.name} sort du terminal ! Va le saluer.`, 4200, 'ok');
+    g.fun.say(`${story.ico} Regarde, ${story.name} arrive !`, 3, 3800);
+  }
+
+  /* Ligne droite praticable entre deux points (echantillonnee tous les 1,5 m). */
+  _lineFree(a, b) {
+    const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 1.5);
+    for (let i = 1; i <= n; i++) {
+      const k = i / n;
+      if (!this.g.nav.isWalkable(a.x + (b.x - a.x) * k, a.z + (b.z - a.z) * k)) return false;
+    }
+    return true;
+  }
+
+  /* Un pas de marche vers (tx, tz) ; rend true une fois arrive. */
+  _walk(w, tx, tz, dt, speed = 1.4) {
+    const dx = tx - w.x, dz = tz - w.z, d = Math.hypot(dx, dz);
+    if (d < 0.3) return true;
+    const st = Math.min(d, speed * dt);
+    w.x += dx / d * st; w.z += dz / d * st;
+    w.h = Math.atan2(dx, dz);
+    return false;
   }
 
   _updateVisitor(dt) {
     const g = this.g, e = this.ev, p = g.player.pos;
-    g.r3d.updateAvatarAnim(e.ent, false, dt);
-    e.mark.position.y = 3.1 + Math.sin(g.time * 4) * 0.15;
-    e.ent.group.rotation.y = Math.atan2(p.x - e.x, p.z - e.z);
-    if (Math.hypot(e.x - p.x, e.z - p.z) < 3.2 && !this.story) this._openStory(e.story);
+    const dp = Math.hypot(e.x - p.x, e.z - p.z);
+    let moving = false;
+    if (e.phase === 'arrive') {
+      moving = !this._walk(e, e.to.x, e.to.z, dt);
+      if (!moving) e.phase = 'wait';
+    }
+    if (e.phase === 'wait') {
+      /* Il regarde le joueur, et fait coucou (petit saut + bulle) quand il le voit approcher. */
+      e.h = Math.atan2(p.x - e.x, p.z - e.z);
+      e.waveT -= dt;
+      if (dp < 22 && e.waveT <= 0) { e.waveT = 6; e.ent.pose = 'jump'; e.poseT = 0.9; }
+    }
+    if (e.poseT > 0) { e.poseT -= dt; if (e.poseT <= 0 && !this.story) e.ent.pose = null; }
+    e.ent.group.position.set(e.x, 0, e.z);
+    e.ent.group.rotation.y = e.h;
+    g.r3d.updateAvatarAnim(e.ent, moving, dt);
+    e.mark.position.y = 3.1 + Math.sin(g.time * 4) * 0.15 + (e.ent.pose === 'jump' ? 0.3 : 0);
+    if (dp < 3.2 && !this.story) { e.h = Math.atan2(p.x - e.x, p.z - e.z); this._openStory(e.story); }
+  }
+
+  /* Visiteurs qui repartent vers le terminal (apres la rencontre ou un temps d'attente). */
+  _updateLeaving(dt) {
+    const g = this.g;
+    for (const w of this.leaving) {
+      if (w.byeT > 0) { w.byeT -= dt; if (w.byeT <= 0) w.ent.pose = null; }
+      const done = w.byeT <= 0 && this._walk(w, w.door.x, w.door.z, dt, 1.6);
+      w.ent.group.position.set(w.x, 0, w.z);
+      w.ent.group.rotation.y = w.h;
+      g.r3d.updateAvatarAnim(w.ent, w.byeT <= 0 && !done, dt);
+      if (done || w.t > 40) { g.r3d.airport.remove(w.ent.group); w.gone = true; }
+      w.t += dt;
+    }
+    this.leaving = this.leaving.filter(w => !w.gone);
   }
 
   _openStory(s) {
     this.story = s; this.line = 0;
     this.g._worldPaused = true;
+    if (this.ev && this.ev.ent) this.ev.ent.pose = 'work';        // il parle avec les mains
     $('storyIco').textContent = s.ico;
     $('storyName').textContent = s.name;
     $('storyGame').classList.toggle('hidden', !s.game);
@@ -251,10 +383,62 @@ export class GroundFun {
     sfx.click();
     if (this.line < s.lines.length - 1) { this.line++; this._showLine(); return; }
     this._closeStory();
+    if (s.escort && this.ev && this.ev.kind === 'visitor' && this.ev.phase !== 'follow') { this._startEscort(); return; }
     this._end(true);
+  }
+
+  /* ---------------- Accompagner un visiteur jusqu'a l'avion ---------------- */
+  _escortTarget() {
+    const d = this.g.arcade.markerPos('cabinDoor');
+    return d ? this.g.nav.nearestWalkable(d.x, d.z) : null;
+  }
+
+  _startEscort() {
+    const g = this.g, e = this.ev;
+    if (!this._escortTarget()) { this._end(true); return; }
+    e.phase = 'follow';
+    e.t = 150; e.total = 150;
+    e.ent.pose = null;
+    sfx.ding();
+    g.toast(`${e.story.ico} « ${e.story.escort} » Emmene ${e.story.name} jusqu'a la porte de l'avion !`, 5200, 'ok');
+  }
+
+  /* Le visiteur suit le joueur (un peu en arriere), en contournant les obstacles comme il peut. */
+  _updateEscort(dt) {
+    const g = this.g, e = this.ev, p = g.player.pos, ph = g.player.heading;
+    const tgt = this._escortTarget();
+    const tx = p.x - Math.sin(ph) * 1.6, tz = p.z - Math.cos(ph) * 1.6;
+    const d = Math.hypot(tx - e.x, tz - e.z);
+    let moving = false;
+    if (d > 25) {
+      const w = g.nav.nearestWalkable(tx, tz);
+      e.x = w.x; e.z = w.z;
+    } else if (d > 0.8) {
+      const speed = Math.min(5.5, 1.4 + d * 0.8), step = Math.min(d, speed * dt), base = Math.atan2(tx - e.x, tz - e.z);
+      for (const da of [0, 0.5, -0.5, 1.1, -1.1]) {
+        const a = base + da, nx = e.x + Math.sin(a) * step, nz = e.z + Math.cos(a) * step;
+        if (g.nav.isWalkable(nx, nz) && g.agents._clearOfHull(null, nx, nz)) { e.x = nx; e.z = nz; e.h = a; moving = true; break; }
+      }
+    }
+    e.ent.group.position.set(e.x, 0, e.z);
+    e.ent.group.rotation.y = e.h;
+    g.r3d.updateAvatarAnim(e.ent, moving, dt, d > 6);
+    e.mark.position.y = 3.1 + Math.sin(g.time * 4) * 0.15;
+    /* Arrive a la porte : merci, bonus, et il monte a bord. */
+    /* Meme portee que le bouton de la porte cabine (la coque empeche d'aller plus pres). */
+    if (tgt && (Math.hypot(p.x - tgt.x, p.z - tgt.z) < 8.5 || Math.hypot(e.x - tgt.x, e.z - tgt.z) < 8.5)) {
+      e.door = tgt;
+      g.arcade.giveCoins(8, { silent: true, xp: 6 });
+      this.data.escorts = (this.data.escorts || 0) + 1;
+      g.arcade.data.stats.escorts = (g.arcade.data.stats.escorts || 0) + 1;
+      g.arcade.popup('🧭 Bien guide ! +8 🪙');
+      g.fun.say(`${e.story.ico} Merci de m'avoir accompagne(e) jusqu'a l'avion !`, 3, 3600);
+      this._end(true);
+    }
   }
   _closeStory() {
     $('storyCard').classList.add('hidden');
+    if (this.ev && this.ev.ent && this.ev.ent.pose === 'work') this.ev.ent.pose = null;
     this.g._worldPaused = false;
     this.story = null;
   }
@@ -264,15 +448,27 @@ export class GroundFun {
     const g = this.g, e = this.ev;
     if (!e) return;
     this.ev = null;
-    this.cd = 130 + Math.random() * 90;
+    this.cd = 80 + Math.random() * 50;
     if (e.kind === 'dog') { g.r3d.airport.remove(e.dog.group); }
-    else { g.r3d.airport.remove(e.ent.group); }
+    else if (e.kind === 'balloons') { for (const b of e.balloons) g.r3d.airport.remove(b.grp); }
+    else {
+      /* Le visiteur ne disparait pas : il fait au revoir (si la rencontre a eu lieu) et repart. */
+      e.ent.pose = ok ? 'jump' : null;
+      e.mark.visible = false;
+      this.leaving.push({ ent: e.ent, x: e.x, z: e.z, h: e.h, door: e.door || { x: e.x, z: e.z }, byeT: ok ? 1.1 : 0, t: 0 });
+    }
     if (!ok) {
-      g.toast(e.kind === 'dog' ? '🐕 Le chien s\'est enfui… il reviendra peut-etre !' : `${e.story.ico} ${e.story.name} est reparti(e).`, 3200);
+      g.toast(e.kind === 'dog' ? '🐕 Le chien s\'est enfui… il reviendra peut-etre !'
+        : e.kind === 'balloons' ? '🎈 Les ballons sont partis dans le ciel… une autre fois !'
+        : `${e.story.ico} ${e.story.name} est reparti(e).`, 3200);
       return;
     }
     sfx.tada(); g.arcade.confetti(60);
-    if (e.kind === 'dog') {
+    if (e.kind === 'balloons') {
+      const all = e.n === 6;
+      if (all) g.arcade.giveCoins(8, { silent: true, xp: 8 });
+      g.toast(all ? '🎈 Les 6 ballons ! La fete est sauvee ! +8 🪙 de bonus' : `🎈 ${e.n} ballon${e.n > 1 ? 's' : ''} rattrape${e.n > 1 ? 's' : ''} ! Bien joue !`, 4000, 'ok');
+    } else if (e.kind === 'dog') {
       this.data.dogs++;
       g.arcade.giveCoins(14, { silent: true, xp: 8 });
       g.arcade.event('dog');
@@ -301,7 +497,17 @@ export class GroundFun {
   goal() {
     const e = this.ev;
     if (!e) return null;
-    if (e.kind === 'dog') return { icon: '🐕', text: 'Rattrape le chien ! Il court vite : cours (Maj) et coince-le !', target: { x: e.x, z: e.z } };
+    if (e.kind === 'visitor' && e.phase === 'follow') {
+      const t = this._escortTarget();
+      return { icon: e.story.ico, text: `Accompagne ${e.story.name} jusqu'a la porte de l'avion !`, target: t ? { x: t.x, z: t.z } : null };
+    }
+    if (e.kind === 'balloons') {
+      const p = this.g.player.pos;
+      let best = null, bd = Infinity;
+      for (const b of e.balloons) { if (b.got || b.lost) continue; const d = Math.hypot(b.x - p.x, b.z - p.z); if (d < bd) { bd = d; best = b; } }
+      return { icon: '🎈', text: `Attrape les ballons avant qu'ils s'envolent ! (${e.n}/6)`, target: best ? { x: best.x, z: best.z } : null };
+    }
+    if (e.kind === 'dog') return { icon: '🐕', text: 'Rattrape le chien ! Fonce tout droit pour courir et coince-le !', target: { x: e.x, z: e.z } };
     return { icon: e.story.ico, text: `Va saluer ${e.story.name} !`, target: { x: e.x, z: e.z } };
   }
 
@@ -312,7 +518,7 @@ export class GroundFun {
     chip.classList.toggle('hidden', !show);
     if (show) {
       const t = Math.max(0, Math.ceil(e.t));
-      const txt = `${e.kind === 'dog' ? '🐕' : e.story.ico} ⏱ ${t} s`;
+      const txt = `${e.kind === 'dog' ? '🐕' : e.kind === 'balloons' ? '🎈' : e.story.ico} ⏱ ${t} s`;
       if (chip.textContent !== txt) chip.textContent = txt;
       chip.classList.toggle('late', t < 15);
     }

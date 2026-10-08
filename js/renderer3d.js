@@ -4,20 +4,20 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791200000';
-import { spawnModel, preload } from './assetLoader.js?v=1791200000';
-import { LIGHT_GAIN } from './environment.js?v=1791200000';
-import { LAYOUT } from './layout.js?v=1791200000';
-import { buildDecor } from './decor.js?v=1791200000';
-import { buildSkyLife } from './skylife.js?v=1791200000';
-import { REQUEST_ICONS } from './cabinService.js?v=1791200000';
-import { AirportLife } from './airportLife.js?v=1791200000';
-import { buildCockpit, COCKPIT_EYE } from './cockpit.js?v=1791200000';
-import * as AF from './airframe.js?v=1791200000';
-import { LiveryRig } from './livery.js?v=1791200000';
-import { buildPlaneModel } from './planeModels.js?v=1791200000';
-import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791200000';
-import { buildTerminalShell, buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791200000';
+import * as TEX from './textures.js?v=1791300000';
+import { spawnModel, preload } from './assetLoader.js?v=1791300000';
+import { LIGHT_GAIN } from './environment.js?v=1791300000';
+import { LAYOUT } from './layout.js?v=1791300000';
+import { buildDecor } from './decor.js?v=1791300000';
+import { buildSkyLife } from './skylife.js?v=1791300000';
+import { REQUEST_ICONS } from './cabinService.js?v=1791300000';
+import { AirportLife } from './airportLife.js?v=1791300000';
+import { buildCockpit, COCKPIT_EYE } from './cockpit.js?v=1791300000';
+import * as AF from './airframe.js?v=1791300000';
+import { LiveryRig } from './livery.js?v=1791300000';
+import { buildPlaneModel } from './planeModels.js?v=1791300000';
+import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791300000';
+import { buildTerminalShell, buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791300000';
 
 /* Modeles externes (CC0/CC-BY, voir assets/models/CREDITS.md). Le
    fuselage/gouvernes de l'avion jouable restent procedurales (elles sont
@@ -144,14 +144,20 @@ const clamp01s = (v, lim) => Math.max(-lim, Math.min(lim, v));
 /* Le personnage glTF n'a aucune texture (un seul materiau gris) : on le
    colore par sommet selon l'os dominant (tete, bras, jambes, pieds...).
    Materiau mat (metalness 0) : supprime le halo blanc du bloom. */
-const SKIN_TONES = [0xf1c9a5, 0xe0ac86, 0xc68642, 0x8d5524, 0xffdbb4];
-const HAIR_TONES = [0x2b1d14, 0x5a3825, 0x1a1a1a, 0xb5651d, 0xd9b45b];
-function paintHuman(root, shirtHex) {
+export const SKIN_TONES = [0xf1c9a5, 0xe0ac86, 0xc68642, 0x8d5524, 0xffdbb4];
+export const HAIR_TONES = [0x2b1d14, 0x5a3825, 0x1a1a1a, 0xb5651d, 0xd9b45b];
+/* `look` facultatif ({ skin, hair } en couleurs) : l'avatar du joueur garde l'apparence choisie
+   (look.js) ; les PNJ, eux, sont tires au hasard. */
+function paintHuman(root, shirtHex, look = null) {
   const pick = (a) => new THREE.Color(a[Math.floor(Math.random() * a.length)]);
-  const skin = pick(SKIN_TONES), hair = pick(HAIR_TONES);
+  const skin = look && look.skin != null ? new THREE.Color(look.skin) : pick(SKIN_TONES);
+  const hair = look && look.hair != null ? new THREE.Color(look.hair) : pick(HAIR_TONES);
   const shirt = new THREE.Color(shirtHex), pants = new THREE.Color(0x475569), shoes = new THREE.Color(0x1f2937);
   root.traverse((o) => {
     if (!o.isMesh || !o.isSkinnedMesh) return;
+    /* Les clones du modele partagent la meme geometrie : sans copie, les couleurs du dernier
+       personnage peint s'appliquaient a TOUS (PNJ et joueur habilles pareil). */
+    if (!o.userData.ownGeo) { o.geometry = o.geometry.clone(); o.userData.ownGeo = true; }
     const names = o.skeleton.bones.map(b => b.name);
     const part = names.map(n =>
       /Foot|Toe/.test(n) ? shoes : /UpLeg|Leg|Hips/.test(n) ? pants :
@@ -675,6 +681,8 @@ export class Renderer3D {
         const inside = this.cameraMode === 'cabin' || this.cameraMode === 'terminal';
         if (this.sun && inside) this.sun.intensity = 0;
         if (this.moon && inside) this.moon.intensity = 0;
+        /* Une lumiere a 0 coute autant qu'une allumee (chaque pixel la calcule) : on la retire. */
+        if (this.moon) this.moon.visible = this.moon.intensity > 0.001;
         if (this.hemi) this.hemi.intensity = light.hemiIntensity * (inside ? 0.45 : 1);
         if (this.ambient) this.ambient.intensity = light.ambientIntensity * (inside ? 0.6 : 1);
 
@@ -703,8 +711,10 @@ export class Renderer3D {
         if (this.approachMat) {
           this.approachMat.color.setHex(lightsOn ? 0xffffff : 0xcfd6dd);
         }
+        /* Lampadaires du tarmac : la nuit seulement (le jour, quatre lumieres de plus
+           calculees pour chaque pixel, sans rien eclairer de visible). */
         if (this.apronLamps) {
-          for (const l of this.apronLamps) l.intensity = (lightsOn ? 1.6 : 0.5) * LIGHT_GAIN;
+          for (const l of this.apronLamps) { l.intensity = lightsOn ? 1.6 * LIGHT_GAIN : 0; l.visible = lightsOn; }
         }
         /* Interieurs : la cabine et le hall s'eclairent franchement la
            nuit, ou l'eclairage naturel ne suffit plus. */
@@ -2238,7 +2248,10 @@ boom.add(dockGrp);
         const night = this._lightsOn === true;
         const airborne = !ac.onGround;
         A.beacon.visible = Math.sin(t * 6) > 0 && !inCockpit;
-        A.landingLight.intensity = (ac.gearDown && ac.pos.y < 900) ? 4.5 * LIGHT_GAIN : 0;
+        /* Phare d'atterrissage : au decollage et a l'atterrissage, pas a l'arret au parking. */
+        const rolling = airborne || ac.ias > 15;
+        A.landingLight.intensity = (ac.gearDown && ac.pos.y < 900 && rolling) ? 4.5 * LIGHT_GAIN : 0;
+        A.landingLight.visible = A.landingLight.intensity > 0;
 
         /* Feux de navigation : allumes des que la nuit tombe ou que
            l'appareil est en vol. */
@@ -2253,8 +2266,8 @@ boom.add(dockGrp);
         A.strobes.forEach(s => s.visible = strobeOn);
 
         /* Phares d'ailes : la nuit, ou en approche sous 3000 ft. */
-        const wingOn = (night || (airborne && ac.pos.y < 900)) && ac.gearDown;
-        A.wingLights.forEach(l => l.intensity = wingOn ? 3.2 * LIGHT_GAIN : 0);
+        const wingOn = (night || (airborne && ac.pos.y < 900)) && ac.gearDown && rolling;
+        A.wingLights.forEach(l => { l.intensity = wingOn ? 3.2 * LIGHT_GAIN : 0; l.visible = wingOn; });
       }
 
   /* ============================================================
@@ -2268,7 +2281,7 @@ boom.add(dockGrp);
      toutes les surfaces eclairees. Les PNJ (phase 2, jusqu'a 24) sont donc
      construits sans lampe ; seuls le joueur et les rares avatars actifs en
      portent une. */
-  buildTechnician(uniformColor = 0xd97706, hatColor = 0xf5f5f5, withTorch = true) {
+  buildTechnician(uniformColor = 0xd97706, hatColor = 0xf5f5f5, withTorch = true, look = null) {
     const g = new THREE.Group();
 
     /* Avatar importe (glTF, CC0, anime marche/immobile) : le groupe est
@@ -2282,11 +2295,15 @@ boom.add(dockGrp);
           const clip = (name) => m.animations.find(a => a.name === name) || null;
           m.actions = {
             idle: (() => { const c = clip('Human Armature|Idle'); return c ? m.mixer.clipAction(c) : null; })(),
-            walk: (() => { const c = clip('Human Armature|Walk'); return c ? m.mixer.clipAction(c) : null; })()
+            walk: (() => { const c = clip('Human Armature|Walk'); return c ? m.mixer.clipAction(c) : null; })(),
+            run: (() => { const c = clip('Human Armature|Run'); return c ? m.mixer.clipAction(c) : null; })(),
+            /* Gestes (visiteurs, spotteurs) : saut de joie, bras qui s'activent (on parle). */
+            jump: (() => { const c = clip('Human Armature|Jump'); return c ? m.mixer.clipAction(c) : null; })(),
+            work: (() => { const c = clip('Human Armature|Working'); return c ? m.mixer.clipAction(c) : null; })()
           };
           if (m.actions.idle) m.actions.idle.play();
         }
-        paintHuman(m.scene, uniformColor);
+        paintHuman(m.scene, uniformColor, look);
       }
     });
     avatar.scale.setScalar(HUMAN_SCALE);
@@ -2320,7 +2337,18 @@ boom.add(dockGrp);
            lisible pour situer un PNJ par rapport au sol. Ils ne recoivent
            pas d'ombre entre eux (cout inutile a cette echelle). */
         g.traverse(o => { if (o.isMesh) o.castShadow = true; });
-        return { group: g, torch, avatar };
+        return { group: g, torch, avatar, hat };
+  }
+
+  /* Apparence du joueur (look.js) : t-shirt, casquette, peau, cheveux. Repeint l'avatar
+     s'il est charge ; sinon l'apparence sera appliquee a son chargement. */
+  setPlayerLook(look) {
+    this.playerLook = look;
+    const P = this.player;
+    if (!P) return;
+    if (P.hat) P.hat.material.color.setHex(look.cap);
+    const m = P.avatar && P.avatar.userData.model;
+    if (m && m.scene) paintHuman(m.scene, look.shirt, look);
   }
 
   /* Fait avancer l'animation (marche/immobile) d'un avatar construit par
@@ -2328,16 +2356,19 @@ boom.add(dockGrp);
      retourne par buildTechnician ; `moving` pilote le choix du clip. Ne
      fait rien tant que le glb n'est pas encore charge (avatar.userData
      vide) : le personnage reste alors une simple ombre en attendant. */
-  updateAvatarAnim(entity, moving, dt) {
+  updateAvatarAnim(entity, moving, dt, running = false) {
     const model = entity && entity.avatar && entity.avatar.userData.model;
     if (!model || !model.mixer) return;
     model.mixer.update(dt);
     if (!model.actions) return;
-    const want = !!moving;
-    if (model._walking !== want) {
-      model._walking = want;
-      const next = want ? model.actions.walk : model.actions.idle;
-      const prev = want ? model.actions.idle : model.actions.walk;
+    /* Trois allures : immobile, marche, course (clip « Run » du modele). Un geste impose
+       (setAvatarPose : saut, bras) remplace l'allure tant qu'il est actif. */
+    const forced = entity.pose && model.actions[entity.pose] ? entity.pose : null;
+    const want = forced || (!moving ? 'idle' : (running && model.actions.run ? 'run' : 'walk'));
+    if ((model._gait || 'idle') !== want) {
+      const prev = model.actions[model._gait || 'idle'];
+      model._gait = want;
+      const next = model.actions[want];
       if (prev) prev.fadeOut(0.2);
       if (next) next.reset().fadeIn(0.2).play();
     }
@@ -2635,7 +2666,8 @@ boom.add(dockGrp);
     this.hubMode = true;
 
     if (!this.player) {
-      this.player = this.buildTechnician(0xf97316, 0xf5f5f5);
+      const L = this.playerLook;
+      this.player = this.buildTechnician(L ? L.shirt : 0xf97316, L ? L.cap : 0xf5f5f5, true, L);
       this.scene.add(this.player.group);
     }
     this.player.group.visible = true;
@@ -3282,12 +3314,16 @@ boom.add(dockGrp);
     const dx = Math.max(h.x0 - pos.x, 0, pos.x - h.x1);
     const dz = Math.max(h.z0 - pos.z, 0, pos.z - h.z1);
     const dist = Math.hypot(dx, dz);
-    const target = Math.max(0, Math.min(1, 1 - (dist - 8) / 45));
-    this._termK += (target - this._termK) * Math.min(1, dt * 3);
     const night = this._nightLevel || 0;
+    /* Portee : au-dela de ~53 m le hall n'est ni anime ni dessine (on ne voit plus rien par les vitres). */
+    const reach = Math.max(0, Math.min(1, 1 - (dist - 8) / 45));
+    this.terminalGroup.visible = reach > 0;
+    /* Le jour, l'eclairage du hall ne sert qu'a l'interieur ; la nuit, il se voit par les vitres. */
+    const target = night > 0.25 || dist < 2 ? reach : 0;
+    this._termK += (target - this._termK) * Math.min(1, dt * 3);
     this._termApi.setLightLevel(this._termK, night);
     this.insideTerminal = dist === 0;
-    if (this._termK < 0.02 && target === 0) return;   // hors de portee : pas d'animation
+    if (reach <= 0) return;   // hors de portee : pas d'animation
 
     for (const id in this.terminalCounters) {
       const vis = this.terminalCounters[id];
@@ -3431,10 +3467,15 @@ boom.add(dockGrp);
     /* Petit rebond de marche */
     const moving = player.moving ? 1 : 0;
     grp.position.y += moving * Math.abs(Math.sin(t * 9)) * 0.05;
-    this.updateAvatarAnim(this.player, player.moving, dt);
+    this.updateAvatarAnim(this.player, player.moving, dt, player.running);
       /* La lampe suit le corps joue : l'avatar du joueur, ou l'agent
          qu'il conduit (la camera est alors sur l'agent). */
-      if (this.player.torch) this.player.torch.intensity = 1.6 * LIGHT_GAIN;
+      if (this.player.torch) {
+        /* La lampe ne s'allume que la nuit (le jour, elle ne se voyait pas mais coutait). */
+        const on = (this._nightLevel || 0) > 0.25;
+        this.player.torch.intensity = on ? 1.6 * LIGHT_GAIN : 0;
+        this.player.torch.visible = on;
+      }
 
     if (!this.hotspotMarkers) return;
     for (const key in this.hotspotMarkers) {

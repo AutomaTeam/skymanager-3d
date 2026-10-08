@@ -26,12 +26,22 @@ export const UPGRADES = {
               desc: 'Ameliore durablement la reputation de la compagnie (+8).' }
 };
 
+/* Niveaux de depart des infrastructures (voir le constructeur). */
+const START_LEVEL = { runways: 1, gates: 4, terminals: 1, shops: 2 };
+
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
 /* Mode Arcade : recettes triplees, couts forfaitaires (pas de carburant au
    kilo ni de redevances), pas de faillite possible. */
 const ARCADE_INCOME = 3;
 const ARCADE_COSTS = 1500;
+
+/* Mode Arcade : prix en pieces (1 piece = 1000 EUR) a la portee d'un enfant. Avant, la tour
+   reprenait les prix du mode Pilote (un avion a 9 500 pieces pour ~60 pieces par vol). */
+const KID_COST = { runways: 260, gates: 70, terminals: 380, shops: 40, vipLounge: 180 };
+const KID_AIRCRAFT = 350;
+/* Chaque avion en plus vole tout seul et rapporte des pieces chaque minute (main.js). */
+export const KID_FLEET_PER_MIN = 2;
 
 export class AirportTycoon {
   constructor() {
@@ -67,10 +77,13 @@ export class AirportTycoon {
   upgradeCost(key) {
     const u = UPGRADES[key];
     if (!u) return Infinity;
-    if (u.once) return this.infrastructure[key] ? null : u.baseCost;
+    const base = this.arcade ? KID_COST[key] * 1000 : u.baseCost;
+    if (u.once) return this.infrastructure[key] ? null : base;
     const level = this.infrastructure[key];
     if (level >= u.max) return null;
-    return Math.round(u.baseCost * Math.pow(u.growth, level - 1));
+    /* Arcade : le niveau de depart est gratuit, le premier achat coute le prix de base. */
+    const bought = level - START_LEVEL[key];
+    return Math.round(base * Math.pow(u.growth, this.arcade ? Math.max(0, bought) : level - 1));
   }
 
   canBuy(key) {
@@ -96,7 +109,7 @@ export class AirportTycoon {
 
   /* Cout d'un nouvel appareil : croit avec la taille de la flotte, plafonne par le nombre de portes */
   aircraftCost() {
-    return Math.round(9500000 * Math.pow(1.35, this.fleet.length - 1));
+    return Math.round((this.arcade ? KID_AIRCRAFT * 1000 : 9500000) * Math.pow(1.35, this.fleet.length - 1));
   }
   canBuyAircraft() {
     return this.fleet.length < this.infrastructure.gates && this.cash >= this.aircraftCost();
@@ -213,47 +226,63 @@ export class AirportTycoon {
      qui ne sont jamais montes a bord. Absent ou nul (le joueur vient
      de commencer, ou le terminal n'a pas encore eu le temps de tourner),
      on retombe sur la demande theorique seule, comme avant ce correctif. */
-  estimateFlight(ac, boardedSinceFlight = null) {
+  /* `incomeMul` : rendement de l'avion du vol (fleet.js, `income`) ; un petit avion
+     rapporte moins que le jet de ligne. Il s'applique a la recette passagers. */
+  estimateFlight(ac, boardedSinceFlight = null, incomeMul = 1) {
     const demand = this.paxPerFlight;
     const pax = this._flightPax(demand, boardedSinceFlight);
     const ticketRevenue = pax * this.ticketPrice * (this.arcade ? ARCADE_INCOME : 1);
-    const shopBonus = 1 + this.infrastructure.shops * 0.10 + (this.infrastructure.terminals - 1) * 0.15;
-    const passiveFleet = (this.fleet.length - 1) * 9500;
+    const shopBonus = this._shopBonus();
+    const passiveFleet = this.arcade ? 0 : (this.fleet.length - 1) * 9500;     // Arcade : verse chaque minute (main.js)
     const fuelBurn = Math.max(0, 9000 - (ac ? ac.fuel : 0));
     const upkeep = this.infrastructure.gates * 350 + this.infrastructure.runways * 1800
       + this.infrastructure.terminals * 2200 + (this.infrastructure.vipLounge ? 900 : 0);
     const costs = this.arcade ? ARCADE_COSTS : fuelBurn * this.fuelPrice + 9500 + upkeep;
-    const revenue = ticketRevenue * shopBonus + passiveFleet;
+    const revenue = ticketRevenue * shopBonus * incomeMul + passiveFleet;
     return {
       pax, demand, cappedByTerminal: pax < demand,
       ticketRevenue, shopBonus, passiveFleet, fuelBurn, upkeep, costs, revenue, profit: revenue - costs
     };
   }
 
+  /* Bonus des boutiques et du terminal sur la recette. En Arcade, une boutique se sent davantage. */
+  _shopBonus() {
+    const k = this.arcade ? 2 : 1;
+    return 1 + this.infrastructure.shops * 0.10 * k + (this.infrastructure.terminals - 1) * 0.15 * k;
+  }
+
   /* Passagers du vol. Mode Pilote : demande theorique plafonnee par ce qui
      a reellement embarque. Arcade : un socle de passagers, plus 6 par
      personne embarquee au terminal (chaque client represente un groupe). */
   _flightPax(demand, boarded) {
-    if (this.arcade) return Math.min(demand, 40 + Math.max(0, boarded || 0) * 6);
+    if (this.arcade) {
+      /* Chaque achat de la tour se voit au vol suivant : piste, terminal et salon VIP amenent du monde. */
+      const inf = this.infrastructure;
+      const base = 40 + (inf.runways - 1) * 12 + (inf.terminals - 1) * 10 + (inf.vipLounge ? 10 : 0);
+      /* Le prix du billet compte aussi en Arcade : pas cher = plus de passagers, luxe = moins
+         (sans cela, « Luxe » etait toujours le meilleur choix). */
+      const priceK = clamp(1 - (this.ticketPrice - 185) / 300, 0.6, 1.3);
+      return Math.min(demand, Math.round((base + Math.max(0, boarded || 0) * 6) * priceK));
+    }
     return boarded > 0 ? Math.min(demand, boarded) : demand;
   }
 
   /* Vol termine (appele depuis le rapport d'atterrissage de l'iteration 1) */
-  registerFlight(ac, quality, boardedSinceFlight = null) {
+  registerFlight(ac, quality, boardedSinceFlight = null, incomeMul = 1) {
     const demand = this.paxPerFlight;
     const pax = this._flightPax(demand, boardedSinceFlight);
     const ticketRevenue = pax * this.ticketPrice * (this.arcade ? ARCADE_INCOME : 1);
-    const shopBonus = 1 + this.infrastructure.shops * 0.10 + (this.infrastructure.terminals - 1) * 0.15;
+    const shopBonus = this._shopBonus();
 
     /* Le reste de la flotte continue de voler en arriere-plan pendant ce temps */
-    const passiveFleet = (this.fleet.length - 1) * (this.arcade ? 6000 : 7000 + Math.random() * 5000);
+    const passiveFleet = this.arcade ? 0 : (this.fleet.length - 1) * (7000 + Math.random() * 5000);
 
     const fuelBurn = Math.max(0, 9000 - ac.fuel);
     const upkeep = this.infrastructure.gates * 350 + this.infrastructure.runways * 1800
       + this.infrastructure.terminals * 2200 + (this.infrastructure.vipLounge ? 900 : 0);
     const costs = this.arcade ? ARCADE_COSTS : fuelBurn * this.fuelPrice + 9500 + upkeep;
 
-    const revenue = ticketRevenue * shopBonus + passiveFleet;
+    const revenue = ticketRevenue * shopBonus * incomeMul + passiveFleet;
 
     let repDelta = 2;
     if (this.arcade) {

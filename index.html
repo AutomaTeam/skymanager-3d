@@ -122,7 +122,7 @@
   <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
   <div id="stuntChip" class="arcade-only hidden stunt-chip"></div>
   <div id="skyChip" class="arcade-only hidden sky-chip"></div>
-  <div id="starChip" class="arcade-only hidden star-chip">⭐ <span class="arr">▲</span></div>
+  <div id="starChip" class="arcade-only hidden star-chip">🌟 <span class="arr">▲</span></div>
   <button id="btnAction" class="arcade-only hidden action-btn"></button>
 
   <!-- Boutons fun (vague 1) : acrobaties, turbo, fumee, photo -->
@@ -329,22 +329,21 @@
 
     <!-- Arcade : grosses tuiles -->
     <div class="arcade-only">
-      <div class="kp-grid">
-        <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophees</b><small id="pauseAlbumN">0 / 15</small></button>
-        <button id="pauseMap" class="kp-tile"><span class="kp-ico">🗺️</span><b>Grande carte</b><small id="pauseMapN">pieces cachees</small></button>
-        <button id="pauseMode" class="kp-tile"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
-        <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
-        <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
-        <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
-        <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Reglages</b><small>musique, confort</small></button>
-        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📖</span><b>Album</b><small>ma collection</small></button>
-        <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
-        <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
-        <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
+      <!-- Deux petits groupes pour l'enfant ; les reglages vont dans « Plus d'options ». -->
+      <p class="panel-group-lbl">🎉 A jouer</p>
+      <div class="kp-grid kp-3">
         <button id="pauseHangar" class="kp-tile"><span class="kp-ico">🎨</span><b>Mon hangar</b><small>avions et peinture</small></button>
-        <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
-        <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
-        <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupee</small></button>
+        <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
+        <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
+        <button id="pauseMap" class="kp-tile"><span class="kp-ico">🗺️</span><b>Grande carte</b><small id="pauseMapN">pieces cachees</small></button>
+        <button id="pauseLook" class="kp-tile"><span class="kp-ico">👕</span><b>Mon perso</b><small>mes couleurs</small></button>
+      </div>
+      <p class="panel-group-lbl">🏆 Mes tresors</p>
+      <div class="kp-grid kp-3">
+        <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophees</b><small id="pauseAlbumN">0 / 15</small></button>
+        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📖</span><b>Ma collection</b><small>avions, iles, surprises</small></button>
+        <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
+        <button id="pausePet" class="kp-tile hidden"><span class="kp-ico">🐕</span><b>Mon chien</b><small id="pausePetName">Biscuit</small></button>
       </div>
 
       <div class="panel-group">
@@ -383,10 +382,20 @@
 
     <details class="kp-more">
       <summary>⚙️ Plus d'options</summary>
+      <div class="kp-grid arcade-only kp-opts">
+        <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
+        <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
+        <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Reglages</b><small>musique, confort</small></button>
+        <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupee</small></button>
+        <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
+        <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
+        <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
+        <button id="pauseMode" class="kp-tile"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
+      </div>
       <div class="panel-group">
         <p class="panel-group-lbl">Progression</p>
         <button id="pauseResetProgress" class="panel-btn danger sm">Reinitialiser la progression</button>
-        <p class="panel-note">Efface tresorerie, reputation, flotte, usure, contrats, statistiques et trophees.</p>
+        <p class="panel-note">Efface tout : pieces, avions, decorations, etoiles, trophees, statistiques. Les reglages restent.</p>
       </div>
       <div class="panel-group">
         <p class="panel-group-lbl">Credits</p>
@@ -601,6 +610,7 @@
   <canvas id="miniMap" class="hidden mini-map" width="480" height="462" role="button" aria-label="Agrandir la carte"></canvas>
   <div id="funDock" class="hidden fun-dock">
     <button id="rideBtn" class="fun-main ride-main" aria-label="Montures : skate, trottinette, BMX (R)"><span>🛹</span></button>
+    <button id="petBall" class="fun-main hidden" aria-label="Lancer la balle a ton chien">🎾</button>
     <button id="funToggle" class="fun-main" aria-label="Petits gestes rigolos">🎈</button>
     <div id="funRow" class="fun-row hidden">
       <button data-emote="honk" data-scope="hub" aria-label="Klaxon">📯</button>
@@ -652,82 +662,6 @@
   <div id="popHost" class="pop-host"></div>
 </div>
 
-<!-- ============ TOUR (mode Arcade) : gestion simplifiee ============ -->
-<div id="kidTower" class="hidden panel-overlay">
-  <div class="panel-card wide kid">
-    <div class="panel-head">
-      <div class="min-w-0 flex-1">
-        <label class="kt-name">
-          <span class="kt-ico">🗼</span>
-          <input id="kidName" class="kt-input" maxlength="20" value="Mon aeroport" autocomplete="off" spellcheck="false" aria-label="Nom de ton aeroport">
-          <span class="kt-edit">✏️</span>
-        </label>
-        <p class="panel-sub !mb-0">Touche le nom pour le changer. Achete des ameliorations pour faire grandir ton aeroport !</p>
-      </div>
-      <button id="kidTowerClose" class="panel-btn sm !w-auto px-3">Fermer</button>
-    </div>
-
-    <div class="grid grid-cols-3 gap-2 mt-3">
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Pieces</span><span id="kidCoins" class="tycoon-stat-val">0 🪙</span></div>
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Etoiles</span><span id="kidStars" class="tycoon-stat-val">0 ⭐</span></div>
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Vols</span><span id="kidFlights" class="tycoon-stat-val">0 ✈️</span></div>
-    </div>
-
-    <div class="tycoon-section">
-      <h3 class="tycoon-h3">Niveau <span id="kidLevel">1</span></h3>
-      <div class="xp-bar big"><span id="kidXp" class="xp-fill"></span></div>
-      <div id="kidNextUnlock" class="text-xs text-slate-400 mt-1.5"></div>
-    </div>
-
-    <div class="kid-tabs">
-      <button class="kid-tab on" data-ktab="home">🏠 Aeroport</button>
-      <button class="kid-tab" data-ktab="shop">🛒 Boutique</button>
-      <button class="kid-tab" data-ktab="album">🏆 Trophees <span id="kidBadgeN" class="kid-tab-n"></span></button>
-    </div>
-
-    <div class="kid-pane" data-kpane="home">
-      <div id="kidGift" class="kid-gift"></div>
-
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Defis du jour</h3>
-        <div id="kidDaily" class="space-y-1.5"></div>
-      </div>
-
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Carnet de voyage</h3>
-        <div id="kidTravel"></div>
-      </div>
-
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Chasse aux pieces cachees</h3>
-        <div id="kidTreasure" class="kid-treasure"></div>
-      </div>
-    </div>
-
-    <div class="kid-pane hidden" data-kpane="shop">
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Prix des billets</h3>
-        <div class="grid grid-cols-3 gap-2" id="kidPrice"></div>
-        <div id="kidPriceNote" class="text-xs text-slate-400 mt-1.5"></div>
-      </div>
-
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Ameliorations</h3>
-        <div id="kidUpgrades" class="space-y-2"></div>
-      </div>
-
-      <div class="tycoon-section">
-        <h3 class="tycoon-h3">Style de la mini-carte</h3>
-        <div id="kidThemes" class="grid grid-cols-4 gap-2"></div>
-      </div>
-    </div>
-
-    <div class="kid-pane hidden" data-kpane="album">
-      <div id="kidAlbumTower" class="album-grid"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ============ MONTURES (phase 40) ============ -->
 <div id="ridePicker" class="hidden panel-overlay">
   <div class="panel-card wide kid">
@@ -748,13 +682,17 @@
       <button id="helpClose" class="panel-btn sm !w-auto px-3">Fermer</button>
     </div>
     <div class="help-list">
-      <details open><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Shift pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
+      <details open><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Pousse a fond (ou Shift) pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
       <details><summary>🔧 Reparer l'avion</summary><p>Va sur un point colore autour de l'avion et appuie sur le gros bouton. Plus la piece est usee, plus tu gagnes de pieces.</p></details>
       <details><summary>🏢 Le terminal</summary><p>Place-toi devant un comptoir et lis le dossier du passager : un billet, un bagage, un plateau... Si tout est bon, valide. Sinon refuse ou fais payer. Recharge les machines avec des caisses de la reserve.</p></details>
       <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DECOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dores</b> et ramasse les pieces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
       <details><summary>🥤 La cabine</summary><p>Avance dans l'allee et sers les passagers qui ont une bulle. 💬 = une question (reponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
       <details><summary>⚡ Missions, combos, defis</summary><p>Enchaine les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les defis du jour et la chasse aux pieces cachees sont dans la tour.</p></details>
       <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour monter sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de cote pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pieces quand tu te poses tranquille. Le <b>skatepark</b> est pres de la tour !</p></details>
+      <details><summary>🚜 Le tracteur a bagages</summary><p>Approche-toi du tracteur jaune (il attend souvent devant le terminal) et appuie sur <b>CONDUIRE LE TRACTEUR</b>. Haut = avancer, bas = reculer, gauche/droite = tourner. Charge les valises sur l'<b>anneau bleu</b> (au terminal), puis livre-les a la soute de l'avion sur l'<b>anneau orange</b>. Contourne l'avion par devant !</p></details>
+      <details><summary>🚌 Le bus des passagers</summary><p>Monte dans le bus jaune (il attend souvent devant le terminal) : les passagers montent sur l'<b>anneau bleu</b>, puis emmene-les jusqu'au grand avion gare plus loin, sur l'<b>anneau orange</b>.</p></details>
+      <details><summary>🚒 Au feu les pompiers !</summary><p>Quand l'alarme sonne, une poubelle brule quelque part. Cours a la <b>caserne</b> (la fleche te guide), monte dans le camion de pompiers, fonce jusqu'au feu et appuie plusieurs fois sur <b>ARROSER LE FEU</b>. Tu deviens un vrai pompier !</p></details>
+      <details><summary>🐕 Ton chien et les gens</summary><p>Rattrape un chien echappe : il devient ton compagnon ! Il te suit, aboie quand il sent une <b>piece cachee</b> (suis-le !) et rapporte la balle 🎾. Caresse-le, change son nom dans le menu pause. Pres de quelqu'un, appuie sur <b>DIRE BONJOUR</b> : chacun a quelque chose a te raconter.</p></details>
       <details><summary>🗼 La tour de controle</summary><p>C'est ton bureau : cadeau du jour, boutique (billets, ameliorations, nouvel avion, style de carte) et album de trophees.</p></details>
     </div>
   </div>
@@ -1002,6 +940,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=1791200000"></script>
+<script type="module" src="js/main.js?v=1791300000"></script>
 </body>
 </html>

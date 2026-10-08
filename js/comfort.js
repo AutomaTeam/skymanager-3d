@@ -11,8 +11,8 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791200000';
-import { Music } from './music.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
+import { Music } from './music.js?v=1791300000';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -26,7 +26,9 @@ export class Comfort {
     this.g = game;
     this.data = this._load();
     this.music = new Music();
-    this.level = 0;               // niveau de qualite applique : 0 haute, 1 moyenne, 2 basse
+    /* Niveau de qualite applique : 0 haute, 1 moyenne, 2 basse. En « auto », on repart du dernier
+       niveau trouve (sinon chaque partie recommencait en haute qualite et saccadait d'abord). */
+    this.level = Math.max(0, Math.min(2, this.data.autoLevel | 0));
     this._fpsAcc = 0; this._fpsN = 0; this._good = 0; this._bad = 0;
     this._playT = 0;
     this._shadowSkip = 0;
@@ -98,6 +100,8 @@ export class Comfort {
     this.applied = level;
   }
 
+  _keepLevel() { this.data.autoLevel = this.level; this.save(); }
+
   /* ---------------- Boucle ---------------- */
   update(dt) {
     const g = this.g;
@@ -114,8 +118,8 @@ export class Comfort {
       const fps = this._fpsN / this._fpsAcc;
       this._fpsAcc = 0; this._fpsN = 0;
       if (this.data.quality === 'auto' && !document.hidden) {
-        if (fps < 27 && this.level < 2) { this._bad++; if (this._bad >= 2) { this.level++; this._bad = 0; this._good = 0; this._applyQuality(this.level); this.render(); } }
-        else if (fps > 56 && this.level > 0) { this._good++; if (this._good >= 6) { this.level--; this._good = 0; this._applyQuality(this.level); this.render(); } }
+        if (fps < 27 && this.level < 2) { this._bad++; if (this._bad >= 2) { this.level++; this._bad = 0; this._good = 0; this._applyQuality(this.level); this.render(); this._keepLevel(); } }
+        else if (fps > 56 && this.level > 0) { this._good++; if (this._good >= 6) { this.level--; this._good = 0; this._applyQuality(this.level); this.render(); this._keepLevel(); } }
         else { this._bad = Math.max(0, this._bad - 1); if (fps < 50) this._good = 0; }
       }
     }

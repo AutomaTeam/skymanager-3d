@@ -7,8 +7,8 @@
    Usage : node tools/rides.test.mjs
    ============================================================ */
 
-import { RideBody, RIDES, RIDE_IDS, trickDir } from '../js/ridePhysics.js?v=1791200000';
-import { Course, buildPark, PARK, WALL_STEP } from '../js/rideCourse.js?v=1791200000';
+import { RideBody, RIDES, RIDE_IDS, trickDir } from '../js/ridePhysics.js?v=1791300000';
+import { Course, buildPark, PARK, WALL_STEP } from '../js/rideCourse.js?v=1791300000';
 
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); console.log((ok ? 'PASS' : 'FAIL') + ' — ' + msg); };

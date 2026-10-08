@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -503,7 +503,9 @@ export class Fun {
     const pts = base * this.combo.n;
     this.stuntScore += pts;
     this.stuntCount++;
-    const coins = (kind === 'roll' ? 3 : 5) + (this.combo.n - 1) * 2;
+    /* Le combo fait monter les points sans fin, mais les pieces plafonnent a x5 : sinon un
+       enchainement de tonneaux rapportait des centaines de pieces par minute. */
+    const coins = (kind === 'roll' ? 3 : 5) + (Math.min(this.combo.n, 5) - 1) * 2;
     this.stuntCoins += coins;
     arc.giveCoins(coins, { silent: true, xp: 4 });
     arc.event('stunt');
@@ -714,13 +716,16 @@ export class Fun {
     if (!g.sky.data.done) tips.push('🎯 Essaie une MISSION au tableau de depart : ballons, course, pompier…');
     else if (!Object.values(g.sky.data.best).some(b => b.medal === 3)) tips.push("🥇 Vise une medaille d'OR sur une mission !");
     if (st.rolls + st.loops < 3) tips.push('🌀 En vol, essaie TONNEAU et LOOPING pour gagner des points !');
-    if (g.openWorld.starCount < 8) tips.push('⭐ Des etoiles dorees sont cachees dans le ciel : cherche-les !');
+    if (g.openWorld.starCount < 8) tips.push('🌟 Des etoiles dorees sont cachees dans le ciel : cherche-les !');
     if (!g.openWorld.data.islands.length) tips.push("🏝️ Au nord-est, une mer et six iles t'attendent !");
     const h = g.hangar;
     if (g.arcade.coins >= 25 && !g.arcade.data.stats.hangarVisit) tips.push(`🎨 Tu as ${g.arcade.coins} pieces : passe a Mon hangar pour peindre ton avion !`);
     if (!h.planeOwned('hydravion') && g.arcade.data.level >= 2 && g.arcade.coins >= 120) tips.push("🛩️ Tu peux acheter l'Hydravion au hangar !");
     if (!h.planeOwned('zebulon') && g.arcade.data.level >= 3 && g.arcade.coins >= 150) tips.push('🛩️ Tu peux acheter le Zebulon (avion de voltige) au hangar !');
     if (!g.deco.data.items.length && g.arcade.coins >= 30) tips.push('🏗️ Construis ta place : fontaine, manege, grande roue…');
+    const ast = g.arcade.data.stats;
+    if (!(ast.tugTrips > 0)) tips.push('🚜 A l\'aeroport, monte dans le tracteur jaune et livre les valises a l\'avion !');
+    if (!(ast.fires > 0)) tips.push('🚒 Quand l\'alarme sonne, cours a la caserne : tu peux conduire le camion de pompiers !');
     if (!tips.length) tips.push("🔁 Refais un vol : bats ton record d'etoiles et d'acrobaties !");
     return tips[Math.floor(Math.random() * tips.length)];
   }

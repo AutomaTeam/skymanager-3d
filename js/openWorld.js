@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791200000';
-import { itemOf } from './deco.js?v=1791200000';
+import { sfx } from './sfx.js?v=1791300000';
+import { itemOf } from './deco.js?v=1791300000';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -382,7 +382,7 @@ export class OpenWorld {
     const arc = this.g.arcade;
     arc.giveCoins(3, { silent: true, xp: 3 });
     sfx.sparkle(); sfx.star(2);
-    arc.popup(`⭐ ${n}/${this.stars.length} +3 🪙`);
+    arc.popup(`🌟 ${n}/${this.stars.length} +3 🪙`);
     arc.event('secret');
     this.g.fun._boostGain(0.15);
     if (n % 10 === 0) {
@@ -553,7 +553,7 @@ export class OpenWorld {
     chip.classList.toggle('hidden', !show);
     if (!show) return;
     const rel = this.g.arcade._relativeAngle({ x: n.s.x, z: n.s.z }, true);
-    const txt = `⭐ ${Math.round(n.d)} m`;
+    const txt = `🌟 ${Math.round(n.d)} m`;
     if (chip.firstChild && chip.firstChild.nodeValue !== txt) chip.firstChild.nodeValue = txt;
     const ar = chip.querySelector('.arr');
     if (ar && rel) ar.style.transform = `rotate(${rel.rot.toFixed(3)}rad)`;

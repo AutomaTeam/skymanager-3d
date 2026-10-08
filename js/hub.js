@@ -14,10 +14,11 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791200000';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextUnlock } from './arcade.js?v=1791200000';
-import { UPGRADES } from './airportTycoon.js?v=1791200000';
-import { sfx } from './sfx.js?v=1791200000';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791300000';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextUnlock } from './arcade.js?v=1791300000';
+import { UPGRADES } from './airportTycoon.js?v=1791300000';
+import { planeOf } from './fleet.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791300000';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -183,7 +184,8 @@ export class Hub {
     const wears = Object.values(mech.components).map(c => c.wear);
     const health = 100 - (wears.reduce((a, b) => a + b, 0) / Math.max(1, wears.length));
     const worst = Object.entries(mech.components).sort((a, b) => b[1].wear - a[1].wear)[0];
-    const est = ty.estimateFlight(ac, term.boardedSinceFlight);
+    /* L'avion a la porte est toujours le jet ; le prochain vol se fait avec celui du hangar. */
+    const est = ty.estimateFlight(ac, term.boardedSinceFlight, planeOf(g.hangar.selected).income);
     const goal = arc.currentGoal();
     const done = arc.dailyItems.filter(d => d.done).length;
     const sat = cab.satisfaction, face = sat >= 88 ? '😍' : sat >= 70 ? '😀' : sat >= 50 ? '🙂' : sat >= 30 ? '😕' : '😠';
@@ -272,11 +274,12 @@ export class Hub {
     }).join('');
     const acc = Math.round(ty.aircraftCost() / COIN), acOk = ty.canBuyAircraft();
     const plane = `<div class="hub-role has${acOk ? ' afford' : ''}"><div class="hr-ico">✈️</div>
-      <div class="hr-mid"><div class="hr-name">Nouvel avion</div><div class="hr-desc">${ty.fleet.length >= ty.infrastructure.gates ? 'Il faut d\'abord une nouvelle porte !' : 'Un avion de plus rapporte des pieces tout seul.'}</div><div class="hr-lvl">${ty.fleet.length} avion${ty.fleet.length > 1 ? 's' : ''}</div></div>
+      <div class="hr-mid"><div class="hr-name">Nouvel avion</div><div class="hr-desc">${ty.fleet.length >= ty.infrastructure.gates ? 'Il faut d\'abord une nouvelle porte !' : 'Il vole tout seul : +2 🪙 par minute.'}</div><div class="hr-lvl">${ty.fleet.length} avion${ty.fleet.length > 1 ? 's' : ''}</div></div>
       <div class="hr-btns"><button class="hub-buy" data-act="plane" ${acOk ? '' : 'disabled'}><b>${fmt(acc)} 🪙</b></button></div></div>`;
     const cur = ty.ticketPrice;
     const prices = K.KID_PRICES.map(o => {
-      ty.ticketPrice = o.p; const pax = ty.paxPerFlight; ty.ticketPrice = cur;
+      /* Passagers reels du prochain vol (socle Arcade + embarques au terminal), pas la demande theorique. */
+      ty.ticketPrice = o.p; const pax = ty._flightPax(ty.paxPerFlight, g.terminal.boardedSinceFlight); ty.ticketPrice = cur;
       const on = K.KID_PRICES.every(x => Math.abs(cur - o.p) <= Math.abs(cur - x.p));
       return `<button class="price-btn${on ? ' on' : ''}" data-act="price:${o.p}">${o.ico} ${o.name}<small>≈ ${pax} passagers</small></button>`;
     }).join('');
@@ -329,7 +332,7 @@ export class Hub {
     const s = arc.data.stats;
     const cards = [
       ['🛫', 'Vols', s.flights], ['🪙', 'Pieces gagnees', fmt(arc.data.coinsEarned)], ['🧳', 'Passagers embarques', fmt(g.terminal.boarded)],
-      ['🌟', 'Atterrissages parfaits', s.star3], ['🟡', 'Anneaux', s.rings], ['✨', 'Pieces cachees', s.treasure]
+      ['⭐', 'Atterrissages parfaits', s.star3], ['🟡', 'Anneaux', s.rings], ['✨', 'Pieces cachees', s.treasure]
     ].map(c => `<div class="stat-card"><span>${c[0]}</span><b>${c[2]}</b><small>${c[1]}</small></div>`).join('');
 
     return `<div class="stat-cards">${cards}</div>

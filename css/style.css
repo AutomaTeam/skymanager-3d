@@ -1941,3 +1941,18 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
   .ride-hud { top: max(4.8rem, calc(env(safe-area-inset-top) + 4.8rem)); }
   .ride-banner { top: 28%; }
 }
+
+/* Menu pause Arcade : deux petits groupes (« A jouer », « Mes tresors ») et les reglages repliés. */
+#pauseMenu .arcade-only > .panel-group-lbl { margin: 1rem 0 0; font-size: 11px; color: #cbd5e1; }
+#pauseMenu .arcade-only > .panel-group-lbl + .kp-grid { margin-top: 0.45rem; }
+.kp-opts { grid-template-columns: repeat(4, 1fr); }
+.kp-3 { grid-template-columns: repeat(3, 1fr); }
+.kp-opts .kp-tile { padding: 0.45rem 0.3rem; }
+.kp-opts .kp-tile .kp-ico { font-size: 1.3rem; }
+
+/* Mon personnage (look.js) : pastilles de couleur. */
+.look-row { margin-top: 0.7rem; }
+.look-row b { display: block; font-size: 13px; color: #e2e8f0; margin-bottom: 0.35rem; }
+.look-sws { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.look-sw { width: 2.3rem; height: 2.3rem; border-radius: 999px; border: 3px solid rgba(255, 255, 255, 0.25); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18); }
+.look-sw.on { border-color: #fde047; transform: scale(1.12); box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.35); }

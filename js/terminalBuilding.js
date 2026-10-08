@@ -23,9 +23,9 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791200000';
-import { SHIRTS } from './terminalFlow.js?v=1791200000';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791200000';
+import { LAYOUT } from './layout.js?v=1791300000';
+import { SHIRTS } from './terminalFlow.js?v=1791300000';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791300000';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;

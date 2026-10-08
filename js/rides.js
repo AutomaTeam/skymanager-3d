@@ -19,13 +19,13 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791200000';
-import { buildPark, PARK } from './rideCourse.js?v=1791200000';
-import { buildParkMeshes } from './ridePark.js?v=1791200000';
-import { buildRide } from './rideModels.js?v=1791200000';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791200000';
-import { slideMove, collectBodies } from './bodies.js?v=1791200000';
-import { sfx } from './sfx.js?v=1791200000';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791300000';
+import { buildPark, PARK } from './rideCourse.js?v=1791300000';
+import { buildParkMeshes } from './ridePark.js?v=1791300000';
+import { buildRide } from './rideModels.js?v=1791300000';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791300000';
+import { slideMove, collectBodies } from './bodies.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791300000';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -259,6 +259,7 @@ export class Rides {
     const why = !g.arcade.on ? 'Les montures sont dans le mode Arcade.'
       : g.state !== 'HUB' ? ''
       : g.controlled ? 'Rends d\'abord le contrôle de l\'agent.'
+      : g.driving ? 'Descends d\'abord du vehicule.'
       : g.inTerminal ? 'Pas de roulettes dans le terminal ! Sors d\'abord.'
       : g.hangar.active || g.deco.active ? 'Ferme d\'abord cet écran.' : null;
     if (why === null) return true;
@@ -457,7 +458,7 @@ export class Rides {
       case 'land': {
         const hard = clamp((e.airT || 0) / 1.1, 0.3, 1.4);
         if (e.quality === 'crash') {
-          sfx.crash(); this._banner('Aïe ! 🌟', 'x');
+          sfx.crash(); this._banner('Aïe ! 💫', 'x');
           if (this.fx) { this.fx.burst(b.x, 1.2, b.z, 18, 0xfde047, 3.5, 4, 0.9); this.fx.burst(b.x, 0.2, b.z, 10, 0xd1d5db, 3, 1.5, 0.6); }
           this._camKick = 1;
         } else {

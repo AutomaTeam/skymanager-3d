@@ -8,43 +8,50 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791200000';
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791200000';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791300000';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791300000';
 import * as THREE from 'three';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791200000';
-import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791200000';
-import { TouchControls } from './touchControls.js?v=1791200000';
-import { WalkJoystick } from './mechanicControls.js?v=1791200000';
-import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791200000';
-import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791200000';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791200000';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791200000';
-import { TODAY, CHOICES, SHIRTS, gateNotes } from './terminalFlow.js?v=1791200000';
-import { Navigation } from './navigation.js?v=1791200000';
-import { AgentSystem } from './agents.js?v=1791200000';
-import { Environment } from './environment.js?v=1791200000';
-import { MissionSystem } from './missions.js?v=1791200000';
-import { Staff } from './staff.js?v=1791200000';
-import { History } from './history.js?v=1791200000';
-import { Hub } from './hub.js?v=1791200000';
-import { Arcade, COIN, BADGES, FUN_FACTS, MAP_THEMES, nextUnlock, QUIZ, DESTINATIONS } from './arcade.js?v=1791200000';
-import { FlightAssist } from './flightAssist.js?v=1791200000';
-import { Fun } from './fun.js?v=1791200000';
-import { Hangar } from './hangar.js?v=1791200000';
-import { SkyMissions } from './skyMissions.js?v=1791200000';
-import { MiniGames } from './minigames.js?v=1791200000';
-import { GroundFun } from './groundFun.js?v=1791200000';
-import { Deco } from './deco.js?v=1791200000';
-import { Album } from './album.js?v=1791200000';
-import { OpenWorld } from './openWorld.js?v=1791200000';
-import { Comfort } from './comfort.js?v=1791200000';
-import { Rides } from './rides.js?v=1791200000';
-import { planeOf } from './fleet.js?v=1791200000';
-import { HELIPAD } from './heliModel.js';
-import { sfx } from './sfx.js?v=1791200000';
-import { perfHud } from './perfHud.js?v=1791200000';
-import { iconify } from './icons.js?v=1791200000';
-import { drawPFD } from './cockpit.js?v=1791200000';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791300000';
+import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791300000';
+import { TouchControls } from './touchControls.js?v=1791300000';
+import { WalkJoystick } from './mechanicControls.js?v=1791300000';
+import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791300000';
+import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791300000';
+import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791300000';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791300000';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791300000';
+import { Navigation } from './navigation.js?v=1791300000';
+import { AgentSystem } from './agents.js?v=1791300000';
+import { Environment } from './environment.js?v=1791300000';
+import { MissionSystem } from './missions.js?v=1791300000';
+import { Staff } from './staff.js?v=1791300000';
+import { History } from './history.js?v=1791300000';
+import { Hub } from './hub.js?v=1791300000';
+import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791300000';
+import { FlightAssist } from './flightAssist.js?v=1791300000';
+import { Fun } from './fun.js?v=1791300000';
+import { Hangar } from './hangar.js?v=1791300000';
+import { SkyMissions } from './skyMissions.js?v=1791300000';
+import { MiniGames } from './minigames.js?v=1791300000';
+import { GroundFun } from './groundFun.js?v=1791300000';
+import { Pet } from './pet.js?v=1791300000';
+import { Social } from './social.js?v=1791300000';
+import { Tug } from './tug.js?v=1791300000';
+import { FireTruck } from './fireTruck.js?v=1791300000';
+import { Ambience } from './ambience.js?v=1791300000';
+import { Bus } from './bus.js?v=1791300000';
+import { Look } from './look.js?v=1791300000';
+import { Deco } from './deco.js?v=1791300000';
+import { Album } from './album.js?v=1791300000';
+import { OpenWorld } from './openWorld.js?v=1791300000';
+import { Comfort } from './comfort.js?v=1791300000';
+import { Rides } from './rides.js?v=1791300000';
+import { planeOf } from './fleet.js?v=1791300000';
+import { HELIPAD } from './heliModel.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791300000';
+import { perfHud } from './perfHud.js?v=1791300000';
+import { iconify } from './icons.js?v=1791300000';
+import { drawPFD } from './cockpit.js?v=1791300000';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -64,13 +71,6 @@ const PLAYER_TURN_SPEED = 2.8;
    le plein ecran automatique et l'affichage des rappels clavier PC. */
 const IS_TOUCH = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 
-/* Bornes de deplacement libre du joueur au sol : couvrent l'integralite
-   du complexe aeroportuaire construit (piste sur toute sa longueur,
-   taxiway, aire de stationnement, terminal, tour, bureau d'exploitation,
-   hangars, parking) — pas seulement les abords immediats de la porte.
-   Le joueur peut ainsi marcher partout ou l'avion pourrait se trouver
-   apres un vol, et explorer librement le reste des installations. */
-const HUB_BOUNDS = { minX: -140, maxX: 660, minZ: -1550, maxZ: 1650 };
 const HUB_WALK_SPEED = 5.2;   // m/s — releve pour rendre le grand plan praticable
 
 /* Points d'interaction combinant les postes de maintenance (iteration 2)
@@ -115,11 +115,11 @@ const ARCADE_LABEL = {
 
 /* Ameliorations de la tour, en mots simples (mode Arcade). */
 const KID_UPGRADE = {
-  runways:   { ico: '🛣️', name: 'Nouvelle piste',     desc: 'Plus d\'avions peuvent atterrir.' },
+  runways:   { ico: '🛣️', name: 'Nouvelle piste',     desc: '+12 passagers a chaque vol.' },
   gates:     { ico: '🚪', name: 'Nouvelle porte',      desc: 'Pour accueillir un avion de plus.' },
-  terminals: { ico: '🏢', name: 'Grand terminal',      desc: 'Plus de place pour les passagers.' },
-  shops:     { ico: '🛍️', name: 'Boutique',            desc: 'Rapporte des pieces a chaque vol.' },
-  vipLounge: { ico: '👑', name: 'Salon VIP',           desc: 'Les passagers adorent ton aeroport !' }
+  terminals: { ico: '🏢', name: 'Grand terminal',      desc: '+10 passagers et plus de pieces a chaque vol.' },
+  shops:     { ico: '🛍️', name: 'Boutique',            desc: 'Plus de pieces a chaque vol.' },
+  vipLounge: { ico: '👑', name: 'Salon VIP',           desc: '+10 passagers : ils adorent ton aeroport !' }
 };
 
 /* Prix de billet proposes en Arcade. */
@@ -155,6 +155,14 @@ class Game {
     this.sky = new SkyMissions(this);
     this.minigames = new MiniGames(this);
     this.ground = new GroundFun(this);
+    this.pet = new Pet(this);           // Biscuit, le chien de compagnie
+    this.social = new Social(this);     // dire bonjour aux gens, caresser Biscuit
+    this.tug = new Tug(this);           // conduire le tracteur a bagages
+    this.fire = new FireTruck(this);    // au feu les pompiers !
+    this.bus = new Bus(this);           // conduire le bus des passagers
+    this.vehicles = [this.fire, this.tug, this.bus];
+    this.ambience = new Ambience(this);  // spotteurs et pigeons
+    this.look = new Look(this);          // apparence de l'avatar
     this.deco = new Deco(this);
     this.album = new Album(this);
     this.openWorld = new OpenWorld(this);
@@ -237,6 +245,9 @@ class Game {
   /* Sur PC (pas de tactile detecte), remplace le conseil "ecran d'accueil"
      par les raccourcis clavier, puisque le jeu se joue alors a la souris
      et au clavier plutot qu'au doigt. */
+  /* Vehicule que l'enfant conduit (ou null). */
+  get driving() { return this.vehicles ? this.vehicles.find(v => v.active) || null : null; }
+
   setupPcHints() {
     if (IS_TOUCH) return;
     document.querySelectorAll('.pc-hint').forEach(el => el.classList.remove('hidden'));
@@ -343,6 +354,8 @@ class Game {
         /* PHASE 12 — remise a zero complete de la progression. */
         $('pauseResetProgress').addEventListener('click', () => {
           if (!window.confirm('Effacer toute la progression (tresorerie, flotte, usure, contrats, statistiques) ?')) return;
+          /* Arcade : un enfant peut appuyer par erreur, on redemande une fois. */
+          if (this.arcade.on && !window.confirm('Vraiment TOUT effacer ? Tes pieces, tes avions, tes etoiles et tes trophees disparaitront.')) return;
           AirportTycoon.reset();
           MechanicSystem.reset();
           CabinService.reset();
@@ -351,6 +364,15 @@ class Game {
           Arcade.reset();
           Staff.reset();
           History.reset();
+          /* Toutes les autres sauvegardes du jeu (hangar, etoiles et iles, missions du ciel,
+             mini-jeux, ma place, montures...) : sans elles la remise a zero n'etait que
+             partielle. Seuls les reglages (confort, son) sont conserves. */
+          try {
+            const keep = ['skymanager.comfort', 'skymanager.sfx'];
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+            for (const k of keys) if (k && k.startsWith('skymanager.') && !keep.includes(k)) localStorage.removeItem(k);
+          } catch (e) { /* ignore */ }
           window.location.reload();
         });
 
@@ -566,7 +588,7 @@ class Game {
       /* Conseils de l'ecran de demarrage selon le mode. */
       $('bootTip').innerHTML = mode === 'arcade'
         ? 'Jeu facile : suis la <b>fleche jaune</b> et le <b>faisceau de lumiere</b> pour trouver quoi faire. ' +
-          (IS_TOUCH ? 'Deplacement : joystick. ' : 'Deplacement : fleches ou ZQSD (Maj pour courir). ') +
+          (IS_TOUCH ? 'Deplacement : joystick (pousse a fond pour courir). ' : 'Deplacement : fleches ou ZQSD (tiens la fleche pour courir). ') +
           'En vol : gauche/droite = virer, haut/bas = monter/descendre.'
         : 'Simulation complete : volets, train, gaz, maintenance et gestion detaillee. ' +
           (IS_TOUCH ? 'Aux commandes : manche et manette des gaz a l\'ecran.'
@@ -636,17 +658,6 @@ class Game {
     document.querySelectorAll('[data-emote]').forEach(b =>
       b.addEventListener('click', () => this.arcade.emote(b.dataset.emote)));
 
-    /* Tour : onglets et nom de l'aeroport. */
-    document.querySelectorAll('.kid-tab').forEach(tab => tab.addEventListener('click', () => {
-      sfx.click();
-      this.showKidTab(tab.dataset.ktab);
-    }));
-    $('kidName').addEventListener('change', () => {
-      $('kidName').value = this.arcade.setName($('kidName').value);
-      sfx.ding();
-    });
-    $('kidName').addEventListener('keydown', e => { e.stopPropagation(); if (e.key === 'Enter') e.target.blur(); });
-
     /* Vol : DECOLLER et aide a l'atterrissage. */
     const launch = () => this.launchNow();
     $('launchBtn').addEventListener('click', launch);
@@ -663,9 +674,6 @@ class Game {
       const i = ['Digit1', 'Digit2', 'Digit3', 'Numpad1', 'Numpad2', 'Numpad3'].indexOf(e.code) % 3;
       if (i >= 0 && this._chkChoices[i]) this.decideCheck(this._chkChoices[i]);
     });
-
-    /* Tour (Arcade). */
-    $('kidTowerClose').addEventListener('click', () => this.closeKidTower());
 
     /* Rapport de vol (Arcade). */
     $('kidRepHome').addEventListener('click', () => { sfx.click(); this.returnHome(); });
@@ -785,9 +793,11 @@ class Game {
     this.tycoon.reputation = clamp(this.tycoon.reputation + this.terminal.registerFlight(), 0, 100);
     const boarded = this.terminal.consumeBoardedSinceFlight();
     const bagsLoaded = this.terminal.consumeBagsSinceFlight();
-    const fr = this.tycoon.registerFlight(ac, { fpm: t.fpm, offset: Math.abs(t.offset) }, boarded);
     const plane = planeOf(this.ac.profile);
-    const flightCoins = Math.max(0, Math.round(fr.profit / COIN * plane.income));
+    /* Le rendement de l'avion s'applique au credit reel (avant : seulement a l'affichage,
+       le rapport annoncait moins de pieces que ce qui etait verse). */
+    const fr = this.tycoon.registerFlight(ac, { fpm: t.fpm, offset: Math.abs(t.offset) }, boarded, plane.income);
+    const flightCoins = Math.max(0, Math.round(fr.profit / COIN));
     const paxShown = Math.min(fr.pax, plane.seats);
     const bonus = rate.stars * 10 + arc.ringsThisFlight * 3;
     arc.giveStars(rate.stars);
@@ -852,146 +862,6 @@ class Game {
       const on = !!got[b.id];
       return `<div class="badge${on ? ' on' : ''}"><span class="b-ico">${on ? b.ico : '❓'}</span><b>${on ? b.name : '???'}</b><small>${b.desc}</small></div>`;
     }).join('');
-  }
-
-  showKidTab(key) {
-    document.querySelectorAll('.kid-tab').forEach(t => t.classList.toggle('on', t.dataset.ktab === key));
-    document.querySelectorAll('.kid-pane').forEach(p => p.classList.toggle('hidden', p.dataset.kpane !== key));
-  }
-
-  openKidTower() { this.hub.open(); }
-
-  /* Ancien panneau de la tour, remplace par le Hub (hub.js) : conserve, non utilise. */
-  _legacyKidTower() {
-    this.arcade.event('tower');
-    this.showKidTab('home');
-    this.refreshKidTower();
-    $('kidTower').classList.remove('hidden');
-    this._worldPaused = true;
-    sfx.click();
-  }
-
-  closeKidTower() {
-    $('kidTower').classList.add('hidden');
-    this._worldPaused = false;
-  }
-
-  refreshKidTower() {
-    const ty = this.tycoon, arc = this.arcade;
-    $('kidCoins').textContent = `${arc.coins.toLocaleString('fr-FR')} 🪙`;
-    $('kidStars').textContent = `${arc.data.stars} ⭐`;
-    $('kidFlights').textContent = `${ty.flightsCompleted} ✈️`;
-    $('kidLevel').textContent = arc.data.level;
-    $('kidXp').style.width = `${Math.round(arc.xpProgress() * 100)}%`;
-    if (document.activeElement !== $('kidName')) $('kidName').value = arc.data.name;
-    const nu = nextUnlock(arc.data.level);
-    $('kidNextUnlock').textContent = nu ? `🎁 Niveau ${nu.level} : carte « ${MAP_THEMES[nu.theme].name} » offerte !` : '🌟 Tous les cadeaux de niveau sont debloques !';
-    $('kidBadgeN').textContent = `${arc.badgeCount()}/${BADGES.length}`;
-    this.renderAlbum($('kidAlbumTower'));
-
-    /* Cadeau du jour : une surprise chaque matin, plus grosse si on revient plusieurs jours de suite. */
-    const gift = $('kidGift');
-    const ready = arc.giftReady();
-    const streak = (arc.data.gift && arc.data.gift.streak) || 0;
-    gift.className = 'kid-gift' + (ready ? ' ready' : '');
-    gift.innerHTML = `<span class="gi">${ready ? '🎁' : '📭'}</span>` +
-      `<div class="gt"><b>${ready ? 'Ton cadeau du jour est la !' : 'Cadeau ouvert, a demain !'}</b>` +
-      `${streak > 0 ? `🔥 ${streak} jour${streak > 1 ? 's' : ''} de suite` : 'Reviens chaque jour pour un plus gros cadeau'}</div>` +
-      `<button id="kidGiftBtn" ${ready ? '' : 'disabled'}>${ready ? 'OUVRIR' : '✔'}</button>`;
-    $('kidGiftBtn').addEventListener('click', () => {
-      const r = arc.openGift();
-      if (!r) return;
-      this.toast(`🎁 +${r.coins} 🪙 ! ${r.streak > 1 ? `🔥 ${r.streak} jours de suite !` : 'Reviens demain pour plus !'}`, 4200, 'ok');
-      this.refreshKidTower();
-    });
-
-    /* Carnet de voyage : les villes deja visitees. */
-    const cities = DESTINATIONS.map(d => `<span class="trip${arc.data.visited.includes(d.city) ? ' on' : ''}" title="${d.city}">${arc.data.visited.includes(d.city) ? d.flag : '❔'}</span>`).join('');
-    $('kidTravel').innerHTML = `<div class="trips">${cities}</div><div class="text-xs text-slate-400 mt-1.5">${arc.data.visited.length}/${DESTINATIONS.length} villes visitees — choisis une nouvelle destination avant de decoller !</div>`;
-
-    /* Pieces cachees du jour. */
-    const th = arc.treasureHeat();
-    $('kidTreasure').innerHTML = th
-      ? `<div class="coins">${(arc.data.treasure.got).map(v => `<i class="${v ? 'on' : ''}">🪙</i>`).join('')}</div>` +
-        `<div class="flex-1">${th.found}/${th.total} trouvees.<br><span class="text-slate-400">Cherche-les sur l'aeroport, la mini-carte t'aide !</span></div>`
-      : '<div>Sors sur le tarmac pour les decouvrir !</div>';
-
-    /* Styles de mini-carte : on achete avec des pieces. */
-    $('kidThemes').innerHTML = Object.keys(MAP_THEMES).map(id => {
-      const t = MAP_THEMES[id];
-      const owned = arc.data.themes.includes(id);
-      const on = arc.data.mapTheme === id;
-      return `<button class="theme-btn${on ? ' on' : ''}${owned ? '' : ' locked'}" data-theme="${id}">${t.ico}<small>${t.name}</small>` +
-        `<span class="pr">${on ? '✔ choisi' : owned ? 'choisir' : t.cost + ' 🪙'}</span>` +
-        `<span class="sw" style="background:linear-gradient(90deg,${t.grass} 33%,${t.runway} 33% 66%,${t.hangar} 66%)"></span></button>`;
-    }).join('');
-    $('kidThemes').querySelectorAll('[data-theme]').forEach(b => b.addEventListener('click', () => {
-      const id = b.dataset.theme;
-      if (arc.data.themes.includes(id)) { arc.setTheme(id); sfx.click(); }
-      else if (arc.buyTheme(id)) this.toast(`🎨 Carte « ${MAP_THEMES[id].name} » debloquee !`, 2600, 'ok');
-      else { sfx.oops(); this.toast('Pas assez de pieces... Va en gagner !', 2200, 'warn'); }
-      this.refreshKidTower();
-    }));
-
-    $('kidDaily').innerHTML = arc.dailyItems.map(d =>
-      `<div class="kid-daily-row${d.done ? ' done' : ''}"><span class="ico">${d.done ? '✅' : d.icon}</span>` +
-      `<span>${d.label} <b>(${d.progress}/${d.target})</b></span><span class="rw">+${d.reward} 🪙</span></div>`
-    ).join('');
-
-    /* Prix du billet : trois choix, la demande se voit tout de suite. */
-    const cur = ty.ticketPrice;
-    $('kidPrice').innerHTML = KID_PRICES.map(o => {
-      ty.ticketPrice = o.p;
-      const pax = ty.paxPerFlight;
-      ty.ticketPrice = cur;
-      const on = Math.abs(cur - o.p) < 30 && KID_PRICES.every(x => Math.abs(cur - o.p) <= Math.abs(cur - x.p));
-      return `<button class="price-btn${on ? ' on' : ''}" data-price="${o.p}">${o.ico} ${o.name}<small>≈ ${pax} passagers</small></button>`;
-    }).join('');
-    $('kidPrice').querySelectorAll('[data-price]').forEach(b => b.addEventListener('click', () => {
-      ty.ticketPrice = parseInt(b.dataset.price, 10);
-      ty.save();
-      sfx.click();
-      this.refreshKidTower();
-    }));
-    $('kidPriceNote').textContent = 'Billet cher = moins de passagers. Billet pas cher = plus de passagers. A toi de choisir !';
-
-    /* Ameliorations + nouvel avion. */
-    const cards = Object.keys(UPGRADES).map(key => {
-      const k = KID_UPGRADE[key];
-      const cost = ty.upgradeCost(key);
-      const maxed = cost == null;
-      const coinsCost = maxed ? 0 : Math.round(cost / COIN);
-      const afford = !maxed && arc.coins >= coinsCost;
-      const lvl = UPGRADES[key].once ? (ty.infrastructure[key] ? 'Acquis' : '') : `Niveau ${ty.infrastructure[key]}`;
-      return `<div class="kid-up${afford ? ' afford' : ''}"><span class="ico">${k.ico}</span>` +
-        `<div class="info"><div class="t">${k.name}</div><div class="d">${k.desc}</div><div class="lv">${lvl}</div></div>` +
-        `<button class="kid-buy" data-up="${key}" ${maxed || !afford ? 'disabled' : ''}>${maxed ? 'MAX' : coinsCost.toLocaleString('fr-FR') + ' 🪙'}</button></div>`;
-    });
-    const acCost = Math.round(ty.aircraftCost() / COIN);
-    const acOk = ty.canBuyAircraft();
-    cards.push(`<div class="kid-up${acOk ? ' afford' : ''}"><span class="ico">✈️</span>` +
-      `<div class="info"><div class="t">Nouvel avion</div><div class="d">${ty.fleet.length >= ty.infrastructure.gates ? 'Il faut d\'abord une nouvelle porte !' : 'Un avion de plus rapporte des pieces tout seul.'}</div>` +
-      `<div class="lv">${ty.fleet.length} avion${ty.fleet.length > 1 ? 's' : ''}</div></div>` +
-      `<button class="kid-buy" data-plane="1" ${acOk ? '' : 'disabled'}>${acCost.toLocaleString('fr-FR')} 🪙</button></div>`);
-    $('kidUpgrades').innerHTML = cards.join('');
-    $('kidUpgrades').querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => {
-      if (this.tycoon.buyUpgrade(b.dataset.up)) {
-        sfx.levelUp();
-        this.arcade.confetti(50);
-        this.arcade.event('buy');
-        this.toast(`🎉 ${KID_UPGRADE[b.dataset.up].name} achete(e) !`, 2600, 'ok');
-        this.refreshKidTower();
-      }
-    }));
-    $('kidUpgrades').querySelectorAll('[data-plane]').forEach(b => b.addEventListener('click', () => {
-      if (this.tycoon.buyAircraft()) {
-        sfx.levelUp();
-        this.arcade.confetti(70);
-        this.arcade.event('buy');
-        this.toast('✈️ Nouvel avion livre ! Il gagne des pieces pour toi.', 3200, 'ok');
-        this.refreshKidTower();
-      }
-    }));
   }
 
   /* Pieces detachees : en Arcade, le stock se reconstitue tout seul. */
@@ -1089,6 +959,14 @@ class Game {
          resorbent meme quand le joueur est sur le tarmac ou en vol. */
       {
         this.terminal.update(step);
+        /* Mode Pilote : la recette du hall (porte, commerces, surcharges, moins l'entretien) va
+           dans la tresorerie. Avant, ce n'etait qu'un compteur affiche. (En Arcade, le hall paie en pieces.) */
+        if (!this.arcade.on) {
+          if (this._termRevSeen == null) this._termRevSeen = this.terminal.revenue;
+          const d = this.terminal.revenue - this._termRevSeen;
+          this._termRevSeen = this.terminal.revenue;
+          if (d) { this.tycoon.cash += d; this._termRevAcc = (this._termRevAcc || 0) + d; }
+        }
         /* Alerte croisee : sans elle, rien ne signale au joueur occupe en
            cockpit ou en cabine que le hall est en train de deborder -- il
            ne le decouvre qu'en y retournant, des dizaines de passagers
@@ -1105,15 +983,25 @@ class Game {
       /* Le service cabine ne tourne que si l'appareil est en vol : au
          sol, il n'y a personne a servir. Meme regle qu'au-dessus, le
          mode CABIN a son propre appel. */
-      if (!this.ac.onGround && this.state !== 'CABIN') this.cabin.update(step);
+      if (!this.ac.onGround && this.state !== 'CABIN') this.cabin.update(step, true, true);
 
       /* Revenu passif de la flotte : les autres appareils volent pour
          nous. Credite une fois par minute de jeu, pas a chaque frame. */
       this._fleetAcc = (this._fleetAcc || 0) + step;
       if (this._fleetAcc >= 60) {
         this._fleetAcc -= 60;
-        const gain = this.tycoon.creditPassiveFleet(60);
-        if (gain > 0) this._fleetIncome = (this._fleetIncome || 0) + gain;
+        if (this.arcade.on) {
+          /* Arcade : chaque avion achete a la tour rapporte quelques pieces par minute, et on le voit. */
+          const n = (this.tycoon.fleet.length - 1) * KID_FLEET_PER_MIN;
+          if (n > 0) {
+            this.arcade.giveCoins(n, { silent: true });
+            if (this.state === 'HUB') this.arcade.popup(`✈️ Tes avions ont vole : +${n} 🪙`);
+          }
+        } else {
+          const gain = this.tycoon.creditPassiveFleet(60);
+          if (gain > 0) this._fleetIncome = (this._fleetIncome || 0) + gain;
+          this.tycoon.save();                 // recette du hall creditee au fil de l'eau
+        }
       }
     }
 
@@ -1134,6 +1022,7 @@ class Game {
         parts.push(`Atelier : ${worst.label} a ${worst.wear.toFixed(0)}%`);
       }
       if (this._fleetIncome) parts.push(`Flotte : +${Math.round(this._fleetIncome).toLocaleString('fr-FR')} EUR`);
+      if (this._termRevAcc) parts.push(`Hall : ${this._termRevAcc >= 0 ? '+' : ''}${Math.round(this._termRevAcc).toLocaleString('fr-FR')} EUR`);
             parts.push(this.env.report());
             return parts.join(' · ');
     }
@@ -1145,6 +1034,7 @@ class Game {
       if (report) this.toast(report, 4200);
       /* Le revenu annonce ne doit pas etre reannonce au retour suivant. */
       this._fleetIncome = 0;
+      this._termRevAcc = 0;
     }
 
   openPause() {
@@ -1163,6 +1053,7 @@ class Game {
       $('pauseMapN').textContent = th ? `pieces : ${th.found}/${th.total}` : 'pieces cachees';
       this.refreshPauseLabels();
       this.fun.refreshPause();
+      this.pet.refreshPause();
       $('pauseMenu').classList.remove('hidden');
   }
 
@@ -1179,6 +1070,7 @@ class Game {
       if (!$('photoAlbum').classList.contains('hidden')) { $('photoAlbum').classList.add('hidden'); return true; }
       if (!$('albumPanel').classList.contains('hidden')) { $('albumPanel').classList.add('hidden'); return true; }
       if (!$('settingsPanel').classList.contains('hidden')) { $('settingsPanel').classList.add('hidden'); return true; }
+      if (this.look && this.look.isOpen) { this.look.close(); return true; }
       if (!$('mg2').classList.contains('hidden')) { this.minigames.close(); return true; }
       if (this.hangar.active) { this.hangar.close(false); return true; }
       if (this.deco.active) { this.deco.close(); return true; }
@@ -1189,7 +1081,6 @@ class Game {
       if (!$('mapBig').classList.contains('hidden')) { this.closeMapBig(); return true; }
       if (!$('kidAlbum').classList.contains('hidden')) { this.closeAlbum(); return true; }
       if (!$('pauseMenu').classList.contains('hidden')) { this.closePause(); return true; }
-      if (!$('kidTower').classList.contains('hidden')) { this.closeKidTower(); return true; }
       if (!$('tycoonPanel').classList.contains('hidden')) {
         $('tycoonPanel').classList.add('hidden');
         this._worldPaused = false;
@@ -1297,8 +1188,14 @@ class Game {
     const { move, turn } = this.hubCtl.read();
     /* Sprint (Shift) : utile pour traverser rapidement le complexe
        aeroportuaire desormais integralement praticable a pied. */
-    const running = this.hubCtl.keys.has('ShiftLeft') || this.hubCtl.keys.has('ShiftRight');
-    const speed = HUB_WALK_SPEED * (running ? 1.8 : 1);
+    const shift = this.hubCtl.keys.has('ShiftLeft') || this.hubCtl.keys.has('ShiftRight');
+    /* Course automatique : joystick (ou fleche) pousse a fond vers l'avant, on se met a
+       courir apres un court instant. Sur tablette il n'y a pas de touche Maj : sans cela
+       un enfant ne pouvait jamais courir (ni rattraper le chien). */
+    this._runT = move > 0.85 ? Math.min(1, (this._runT || 0) + dt / 0.7) : 0;
+    const runMul = shift ? 1.8 : 1 + 0.65 * clamp((this._runT - 0.4) / 0.6, 0, 1);
+    this.player.running = runMul > 1.3;
+    const speed = HUB_WALK_SPEED * runMul;
 
       /* Deux cas de figure : on conduit un PNJ, ou on deplace son propre
          avatar. Dans les deux cas la collision passe par le graphe de
@@ -1313,6 +1210,9 @@ class Game {
         this.player.pos.set(a.wx, a.wy, a.wz);
         this.player.heading = a.heading;
         this.player.moving = a.moving;
+      } else if (this.driving) {
+        /* Au volant d'un vehicule (tracteur, camion de pompiers : js/vehicle.js). */
+        this.driving.drive(dt);
       } else if (this.rides.active) {
         /* A roulettes (phase 40) : la monture conduit le joueur, voir js/rides.js. */
         this.rides.drive(dt);
@@ -1344,7 +1244,7 @@ class Game {
       }
 
       /* Un passager ou un PNJ qui avance sur l'avatar immobile le repousse : personne ne se traverse. */
-      if (!this.controlled && !this.rides.active) {
+      if (!this.controlled && !this.rides.active && !this.driving) {
         const pp = this.player.pos;
         const push = depenetrate(this.nav, pp.x, pp.z, collectBodies(this),
           (x, z) => this.agents._clearOfHull(null, x, z) && this.rides.walkable(x, z, pp.y));
@@ -1366,6 +1266,7 @@ class Game {
               const d = Math.hypot(m.group.position.x - this.player.pos.x, m.group.position.z - this.player.pos.z);
               if (d < nearestDist) { nearestDist = d; nearest = h; }
             }
+            if (this.driving) nearest = null;      // au volant, le bouton sert au vehicule
             this.nearHotspot = nearest;
 
       /* Terminal : comptoirs et HUD des files quand on est dans le batiment. */
@@ -1384,10 +1285,14 @@ class Game {
         $('btnInspect').classList.remove('hidden');
         $('btnInspectLabel').textContent = `PRENDRE LE CONTROLE (${CONTROL_LABEL[npc.role] || npc.role.toUpperCase()})`;
       } else {
-        $('btnInspect').classList.toggle('hidden', !nearest);
+        /* Rien a faire ici ? On peut toujours dire bonjour aux gens ou caresser Biscuit (social.js). */
+        const soc = this.driving ? this.driving.button() : nearest ? null : this.social.near();
+        this.nearSocial = soc;
+        $('btnInspect').classList.toggle('hidden', !nearest && !soc);
         if (nearest) $('btnInspectLabel').textContent = this.arcade.on
           ? (ARCADE_LABEL[nearest.type] ? ARCADE_LABEL[nearest.type](nearest) : nearest.label)
           : nearest.label;
+        else if (soc) $('btnInspectLabel').textContent = soc.label;
       }
 
       /* Rappel contextuel du role tenu. */
@@ -1455,7 +1360,7 @@ class Game {
       if (this.nearAgent) { this.rides.dismount(true); this.takeControl(this.nearAgent); return; }
 
       const h = this.nearHotspot;
-      if (!h) return;
+      if (!h) { if (this.nearSocial) this.social.interact(this.nearSocial); return; }
       this.rides.dismount(true);
       if (h.type === 'mechanic') this.openStationPanel(h.key);
       else if (h.type === 'cockpit') this.boardAircraft();
@@ -1883,7 +1788,7 @@ class Game {
     $('mgResult').textContent = bits.join(' · ');
     $('mgTapBtn').textContent = 'CONTINUER';
     if (this.arcade.on) {
-      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! 🌟' : rawAvg >= 55 ? 'Bien joue !' : 'Repare, mais essaie plus precis !';
+      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! ✨' : rawAvg >= 55 ? 'Bien joue !' : 'Repare, mais essaie plus precis !';
       this.arcade.giveCoins(3 + Math.round(rawAvg / 25), { label: 'Reparation !' });
       this.arcade.event('repair');
     }
@@ -2003,7 +1908,7 @@ class Game {
     att.x = clamp(att.x, inDoor ? -1.5 : -0.42, 0.42);
     att.moving = (!turning && move > 0.05) || Math.abs(turn) > 0.05;
 
-    if (!this._worldPaused) cabin.update(dt);
+    if (!this._worldPaused) cabin.update(dt, !this.ac.onGround);
     /* Arcade : le chariot se recharge tout seul en passant au galley. */
     if (this.arcade.on && att.z >= maxZ - 0.05 && cabin.cartStock < cabin.cartCapacity) {
       cabin.restockCart();
@@ -2096,6 +2001,7 @@ class Game {
       }
     } else if (near.kind === 'cart') {
       const amount = this.cabin.sellDutyFree();
+      if (!this.arcade.on) { this.tycoon.cash += amount; this.tycoon.save(); }
       if (this.arcade.on) this.arcade.giveCoins(3, { label: 'Vente !' });
       else this.toast(`Vente duty-free : +${amount} EUR`, 1800);
     } else if (near.kind === 'galley') {
@@ -2153,7 +2059,7 @@ class Game {
   /* ITERATION 4 — Gestion de l'aeroport (tycoon)                 */
   /* ========================================================== */
   openTycoonPanel() {
-    if (this.arcade.on) { this.openKidTower(); return; }
+    if (this.arcade.on) { this.hub.open(); return; }
     this.refreshTycoonPanel();
     $('tycoonPanel').classList.remove('hidden');
       this._worldPaused = true;
@@ -2570,7 +2476,9 @@ class Game {
     /* Transmission aux autres modules : la boucle Vol -> Atterrissage ->
        Maintenance -> Gestion -> Nouveau vol se referme ici. */
     this.mechanic.registerFlight(this.ac);
-    this.cabin.registerFlight(this.ac);
+    /* Le duty-free du vol (recette annexe) est verse a la tresorerie. */
+    const cabinRes = this.cabin.registerFlight(this.ac);
+    this.tycoon.cash += cabinRes.sales;
     this.tycoon.reputation = clamp(this.tycoon.reputation + this.terminal.registerFlight(), 0, 100);
     const flightResult = this.tycoon.registerFlight(this.ac, { fpm, offset: off }, this.terminal.consumeBoardedSinceFlight());
 
@@ -2596,7 +2504,7 @@ class Game {
         const faults = (this.flightLog && this.flightLog.faults) || [];
 
         const profitEl = $('repProfit');
-        const net = flightResult.profit + (mission.ok ? mission.reward : 0) - crashBill;
+        const net = flightResult.profit + cabinRes.sales + (mission.ok ? mission.reward : 0) - crashBill;
         profitEl.textContent = `${net >= 0 ? '+' : ''}${Math.round(net).toLocaleString('fr-FR')} EUR`;
         profitEl.className = `rep-tile-val ${net >= 0 ? 'text-emerald-400' : 'text-red-400'}`;
 
@@ -2757,7 +2665,17 @@ class Game {
   }
 
   /* ========================================================== */
+  /* Une erreur dans une image ne doit jamais figer le jeu : la suivante est
+     toujours programmee, et chaque message different n'est note qu'une fois. */
   loop() {
+    try { this._frame(); } catch (err) {
+      this._frameErrs = this._frameErrs || new Set();
+      if (!this._frameErrs.has(err.message)) { this._frameErrs.add(err.message); console.error('Erreur dans la boucle de jeu', err); }
+    }
+    requestAnimationFrame(() => this.loop());
+  }
+
+  _frame() {
     const now = performance.now();
     let dt = (now - this.lastFrame) / 1000;
     this.lastFrame = now;
@@ -2795,7 +2713,7 @@ class Game {
         this.updateEnvChip();
         this.arcade.update(dt);
         /* Les couches « fun » ne doivent jamais figer le jeu : une erreur y est notee une fois. */
-        for (const m of [this.fun, this.sky, this.ground, this.deco, this.openWorld, this.comfort, this.rides]) {
+        for (const m of [this.fun, this.sky, this.ground, this.pet, this.social, this.tug, this.fire, this.bus, this.ambience, this.deco, this.openWorld, this.comfort, this.rides]) {
           try { m.update(dt); } catch (err) {
             if (!m._errLogged) { m._errLogged = true; console.error('Erreur dans ' + m.constructor.name + '.update', err); }
           }
@@ -2868,8 +2786,6 @@ class Game {
     this.r3d.render();
     try { this.fun.afterRender(); } catch (err) { console.error(err); }
     perfHud.tick(this.r3d.renderer, this.r3d.scene);
-
-    requestAnimationFrame(() => this.loop());
   }
 }
 

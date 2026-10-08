@@ -120,7 +120,12 @@ export function collectBodies(game, opts = {}) {
   /* Rencontres au sol : le visiteur et le chien sont de vrais corps (le chien est plus petit). */
   const ev = game.ground && game.ground.ev;
   if (ev && Number.isFinite(ev.x) && Number.isFinite(ev.z)) out.push({ x: ev.x, z: ev.z, r: ev.kind === 'dog' ? 0.3 : PERSON_R, ref: ev });
-  if (opts.player && game.state === 'HUB' && !game.controlled) {
+  /* Spotteurs au bord du taxiway (ambience.js) : on ne les traverse pas, on peut les saluer. */
+  if (game.ambience && game.state === 'HUB') for (const s of game.ambience.spotters) out.push({ x: s.x, z: s.z, r: PERSON_R, ref: s });
+  /* Le vehicule que conduit l'enfant (vehicle.js) : meme boite qu'un vehicule d'ambiance. */
+  const drv = game.driving;
+  if (drv) out.push(drv.body());
+  if (opts.player && game.state === 'HUB' && !game.controlled && !drv) {
     out.push({ x: game.player.pos.x, z: game.player.pos.z, r: PERSON_R, ref: game.player });
   }
   return out;

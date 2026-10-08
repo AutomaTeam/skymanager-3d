@@ -23,8 +23,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791200000';
-import { instanced } from './props.js?v=1791200000';
+import { LAYOUT } from './layout.js?v=1791300000';
+import { instanced } from './props.js?v=1791300000';
 
 const L = LAYOUT;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -93,7 +93,7 @@ function buildTractor(blinkers) {
   return g;
 }
 
-function buildBus() {
+export function buildBus() {
   const g = new THREE.Group();
   add(g, box(2.6, 2.5, 11), mat(0xfacc15, { r: 0.5 }), 0, 1.9, 0);
   add(g, box(2.62, 0.9, 10.2), mat(0x1e2a3a, { m: 0.4, r: 0.2 }), 0, 2.35, 0);        // vitrage
@@ -118,7 +118,7 @@ function buildFuelTruck(blinkers) {
   return g;
 }
 
-function buildFireTruck(blinkers) {
+export function buildFireTruck(blinkers) {
   const g = new THREE.Group();
   add(g, box(2.6, 2.6, 2.6), mat(0xd7261e, { r: 0.4 }), 0, 1.9, -2.9);         // cabine
   add(g, box(2.4, 0.9, 0.05), mat(0x1f2937, { m: 0.3 }), 0, 2.4, -4.23);
@@ -390,11 +390,13 @@ export class AirportLife {
     veh(buildVan(0xf8fafc), R.cargo, { speed: 8, len: 5 }, 'van');
     veh(buildFireTruck(this.blinkers), R.fire, { speed: 9, len: 9, turn: 1.3, startWait: 40 }, 'fire');
     /* Deux camions de pompiers au repos devant la caserne. */
+    this.parkedFire = [];               // le premier se conduit (fireTruck.js)
     for (let i = 0; i < 2; i++) {
       const t = buildFireTruck(this.blinkers);
       t.position.set(L.fireApron.x0 + 22 + i * 18, 0, L.fireApron.z1 - 6);
       t.rotation.y = 0;
       g.add(t);
+      this.parkedFire.push(t);
     }
 
     /* Voitures sur la route cote ville : entrent, se garent un moment, repartent. */
