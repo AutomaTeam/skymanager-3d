@@ -2338,3 +2338,13 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 - `js/voice.js` : une seule file d'attente de lecture vocale (voix francaise si dispo, priorites, 3 phrases au plus en attente). Utilisee par Coco (tuile « Voix de Coco ») et par la barre d'objectif quand la voix est active. Reglages > Vitesse de la voix : lente / normale / rapide.
 - Reglages > 🌙 **Temps par jour** (parents) : 30 / 45 / 60 / 90 min, protege par un petit calcul (ex. 7 x 8). A la limite : « Coco va dormir, a demain ! » (jamais en plein vol ; la partie est sauvegardee) ; un parent peut ajouter 15 min apres le calcul. Le compteur repart a zero chaque jour.
 - Non fait ici : F03 (mode daltonien), F05 (aide en cartes) — voir le Journal du plan.
+
+### Architecture : gros fichiers decoupes, registre de modules (phases 68 a 71)
+
+Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios et le fuzz restent verts.
+
+- `main.js` (2 900 -> ~950 lignes) : classe `Game`, ordre d'initialisation et boucle. Le reste est dans des **mixins** (objets de methodes copies sur `Game.prototype`) : `hudController.js` (HUD, toasts, rapports), `pauseMenu.js` (reglages, pause, panneaux, tour), `hubUpdate.js` (tarmac, terminal, cabine, postes). Constantes partagees : `gameShared.js`.
+- `renderer3d.js` (3 850 -> ~700) : `renderSky`, `renderLights`, `renderGround`, `renderCamera`, `renderAvatar`, `renderCabin`, `renderAircraft`, constantes dans `renderShared.js`.
+- `arcade.js` (2 150 -> ~420) : `arcadeMap`, `arcadeChallenges`, `arcadeFun`, `arcadeFlight`, donnees dans `arcadeData.js` (`SKY_STARS`, `BADGES`, ... toujours reexportees par `arcade.js`).
+- `tools/splitClass.mjs` fait ces decoupes sans erreur de copie (`node tools/splitClass.mjs config.json`, voir l'en-tete) ; `tools/listClass.mjs fichier Classe` liste les methodes.
+- **Registre** (`js/registry.js`) : `this.modules.add('monModule', new MonModule(this))` suffit pour avoir `update(dt)` dans la boucle gardee ; un module peut aussi fournir `bodies(opts)` (corps qui bloquent le joueur), `goal()` (objectif prioritaire) et `tips()` (conseils d'aide). Migres : pet, bus, ambience. Les autres (fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides) peuvent suivre sans risque.

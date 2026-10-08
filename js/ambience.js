@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791467021';
-import { emojiSprite } from './groundFun.js?v=1791467021';
-import { TODAY } from './terminalFlow.js?v=1791467021';
+import { sfx } from './sfx.js?v=1791467097';
+import { emojiSprite } from './groundFun.js?v=1791467097';
+import { TODAY } from './terminalFlow.js?v=1791467097';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [
@@ -270,6 +270,11 @@ export class Ambience {
       this._flapCd = this._flapCd || {};
       if (!(this._flapCd[flushed] > t)) { this._flapCd[flushed] = t + 3; sfx.swoosh(0.5, 1200, 500); }
     }
+  }
+
+  /* Corps pour collectBodies (registre, js/registry.js) : on ne traverse pas les spotteurs, on peut les saluer. */
+  bodies() {
+    return this.g.state === 'HUB' ? this.spotters.map(s => ({ x: s.x, z: s.z, r: 0.35, ref: s })) : [];
   }
 
   update(dt) {

@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791467021';
-import { Vehicle } from './vehicle.js?v=1791467021';
-import { buildFireTruck } from './airportLife.js?v=1791467021';
+import { sfx } from './sfx.js?v=1791467097';
+import { Vehicle } from './vehicle.js?v=1791467097';
+import { buildFireTruck } from './airportLife.js?v=1791467097';
 
 const ENTER_RANGE = 6;
 const SPRAY_RANGE = 14;          // m entre le camion et le feu pour arroser

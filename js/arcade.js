@@ -14,13 +14,13 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791467021';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791467021';
-import { mapMethods } from './arcadeMap.js?v=1791467021';
-import { challengeMethods } from './arcadeChallenges.js?v=1791467021';
-import { funMethods } from './arcadeFun.js?v=1791467021';
-import { flightMethods } from './arcadeFlight.js?v=1791467021';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791467021';
+import { sfx } from './sfx.js?v=1791467097';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791467097';
+import { mapMethods } from './arcadeMap.js?v=1791467097';
+import { challengeMethods } from './arcadeChallenges.js?v=1791467097';
+import { funMethods } from './arcadeFun.js?v=1791467097';
+import { flightMethods } from './arcadeFlight.js?v=1791467097';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791467097';
 
 
 const STORE = 'skymanager.arcade';

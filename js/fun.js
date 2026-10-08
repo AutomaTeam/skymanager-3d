@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791467021';
+import { sfx } from './sfx.js?v=1791467097';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -743,6 +743,7 @@ export class Fun {
     const ast = g.arcade.data.stats;
     if (!(ast.tugTrips > 0)) tips.push('🚜 A l\'aeroport, monte dans le tracteur jaune et livre les valises a l\'avion !');
     if (!(ast.fires > 0)) tips.push('🚒 Quand l\'alarme sonne, cours a la caserne : tu peux conduire le camion de pompiers !');
+    tips.push(...g.modules.tips());                  // conseils fournis par les modules du registre
     if (!tips.length) tips.push("🔁 Refais un vol : bats ton record d'etoiles et d'acrobaties !");
     return tips[Math.floor(Math.random() * tips.length)];
   }

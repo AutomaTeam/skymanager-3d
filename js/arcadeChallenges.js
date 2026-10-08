@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791467021';
-import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791467021';
+import { sfx } from './sfx.js?v=1791467097';
+import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791467097';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -117,6 +117,8 @@ export const challengeMethods = {
       return { icon: '🛬', text: 'Suis la fleche vers la piste et atterris doucement.', target: null };
     }
     if (this.g.state === 'HUB') for (const v of this.g.vehicles || []) { const vg = v.goal(); if (vg) return vg; }
+    const mg = this.g.state === 'HUB' && this.g.modules.goal();      // objectifs des modules du registre
+    if (mg) return mg;
     const ge = this.g.state === 'HUB' && this.g.ground && this.g.ground.goal();
     if (ge) return ge;
     if (this.quest && this.g.state === 'HUB') return { icon: this.quest.ico, text: '⚡ ' + this.quest.text + (this.quest.goal ? ` (${this.quest.prog}/${this.quest.goal})` : ''), target: this.quest.target };
