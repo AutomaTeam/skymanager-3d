@@ -17,9 +17,9 @@
    Etat sauvegarde : localStorage « skymanager.staff ».
    ============================================================ */
 
-import { bestChoice, DEFAULT_CHOICE } from './terminalFlow.js?v=1791467097';
-import { sfx } from './sfx.js?v=1791467097';
-import { collectBodies, PERSON_R } from './bodies.js?v=1791467097';
+import { bestChoice, DEFAULT_CHOICE } from './terminalFlow.js?v=1791467406';
+import { sfx } from './sfx.js?v=1791467406';
+import { collectBodies, PERSON_R } from './bodies.js?v=1791467406';
 
 const STORE = 'skymanager.staff';
 const COIN = 1000;                              // EUR par piece (meme valeur que arcade.js)

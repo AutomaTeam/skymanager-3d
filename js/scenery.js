@@ -22,6 +22,7 @@
    Tout est instancie ou fusionne : quelques dizaines d'appels de dessin.
    ============================================================ */
 import * as THREE from 'three';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791467406';
 
 /* Enceinte de l'aeroport : rien de naturel n'y pousse. */
 const AIRPORT = { x0: -300, x1: 800, z0: -1750, z1: 1900 };
@@ -574,5 +575,6 @@ export function buildAirportDecor({ TEX, pbr, RUNWAY, LAYOUT }) {
     sp.position.set(ent.x - 2, 0.65, 1206);
     g.add(sp);
   }
+  mergeStaticByMaterial(g);      // D02 : decor statique, un appel de dessin par materiau
   return g;
 }

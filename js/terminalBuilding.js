@@ -23,9 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791467097';
-import { SHIRTS } from './terminalFlow.js?v=1791467097';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791467097';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791467406';
+import { LAYOUT } from './layout.js?v=1791467406';
+import { SHIRTS } from './terminalFlow.js?v=1791467406';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791467406';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -320,6 +321,8 @@ export function buildTerminalShell({ TEX, pbr }) {
   }
 
   casters.forEach(o => { o.castShadow = true; o.receiveShadow = true; });
+  /* D02 : coque statique -> une seule fusion par materiau (aucune piece ne bouge ensuite). */
+  mergeStaticByMaterial(g);
   return { group: g, glassMat, bounds: T };
 }
 

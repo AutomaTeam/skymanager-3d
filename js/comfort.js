@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791467097';
-import * as Save from './save.js?v=1791467097';
-import { Music } from './music.js?v=1791467097';
+import { sfx } from './sfx.js?v=1791467406';
+import * as Save from './save.js?v=1791467406';
+import { Music } from './music.js?v=1791467406';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -136,6 +136,13 @@ export class Comfort {
     r3d.resize();
     if (r3d.bloom) r3d.bloom.enabled = level < 2;
     r3d.renderer.shadowMap.autoUpdate = level < 2;
+    /* D04 : carte d'ombre plus petite quand le niveau baisse (1024 -> 768 -> 512). */
+    const ss = [1024, 768, 512][level];
+    if (r3d.sun && r3d.shadowSize !== ss) {
+      r3d.shadowSize = ss;
+      r3d.sun.shadow.mapSize.set(ss, ss);
+      if (r3d.sun.shadow.map) { r3d.sun.shadow.map.dispose(); r3d.sun.shadow.map = null; }
+    }
     this._shadowEvery = level >= 2 ? 3 : 1;
     this.applied = level;
   }

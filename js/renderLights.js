@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LIGHT_GAIN } from './environment.js?v=1791467097';
-import { mixHex, clamp } from './renderShared.js?v=1791467097';
+import { LIGHT_GAIN } from './environment.js?v=1791467406';
+import { mixHex, clamp } from './renderShared.js?v=1791467406';
 
 export const lightMethods = {
   buildLights() {
@@ -125,7 +125,7 @@ export const lightMethods = {
                                        carte d'ombre n'y apporte rien et coute un rendu
                                        complet du decor exterieur. */
                                     const interior = this.cameraMode === 'cabin' || this.cameraMode === 'terminal';
-                                    this.sun.castShadow = this.shadowsEnabled && d.y > 0.06 && !interior;
+                                    this.sun.castShadow = this.shadowsEnabled && d.y > 0.06 && !interior && !(focus.y > 600);   // D04 : pas d'ombres en vol haut
                 }
         if (this.moon) {
           this.moon.intensity = light.moonIntensity;

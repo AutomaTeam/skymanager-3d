@@ -8,7 +8,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { profile } from './rideCourse.js?v=1791467097';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791467406';
+import { profile } from './rideCourse.js?v=1791467406';
 
 const CONCRETE = new THREE.MeshStandardMaterial({ color: 0xb6bcc6, roughness: 0.9 });
 const COPING = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.3, metalness: 0.8 });
@@ -153,5 +154,7 @@ export function buildParkMeshes(course, title = 'SKATEPARK') {
       post.position.set(px, y / 2, pz); post.castShadow = true; g.add(post);
     }
   }
+  /* D02 : le skatepark est statique -> fusion par materiau. */
+  mergeStaticByMaterial(g);
   return g;
 }
