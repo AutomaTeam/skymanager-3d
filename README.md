@@ -2364,3 +2364,12 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - **Coco** (G09) dit une phrase d'accueil selon la situation : premier vol du jour, nuit, pluie, brouillard, orage, nouvel avion, planeur, helicoptere ; 3 a 5 variantes chacune et une **memoire des 10 dernieres phrases** (`Fun.sayKey`). Une phrase « record » apres un record d'acrobaties.
 - **Balade des iles** 🌅 (G08, niveau 1) : l'aide te guide toujours vers toutes les iles, sans temps limite : on regarde le paysage et on prend des photos.
 - **Eclairs** (G05, `js/lightning.js`) : pendant un orage, un flash doux et le tonnerre quelques secondes apres. La manche a air existait deja (`airportLife.js`) ; le balisage lumineux par brouillard aussi (feux de piste).
+
+### Progression : niveaux, album, coffre, sauvegarde fichier, partage d'avion (phases 77 a 81)
+
+- **30 niveaux de pilote** (I02) : une recompense a chaque niveau (objet de peinture surprise, carte, avion offert aux niveaux 6 / 12 / 18 / 24, grosses cagnottes aux niveaux 10 / 20 / 30) et un titre (Apprenti pilote ... Legende du ciel). Le tableau de bord montre le niveau, le titre et la **prochaine recompense**. L'XP vient deja de tout ce qui rapporte des pieces.
+- **Album unifie** (I03) : onglets Avions, Villes, Animaux, Rencontres, Monde (iles + etoiles filantes), Medailles, Stickers, **Trophees**, **Photos**, filtres Tout / A trouver / Trouves, pourcentage global.
+- **Coffre du jour en serie de 7 jours** (I04) : 10 -> 60 pieces, le 7e jour donne aussi un objet de peinture ; **jamais de punition** : un jour rate fait seulement reculer la serie d'un cran.
+- **Sauvegarde dans un fichier** (I07) : Reglages > 💾 / 📂 (toutes les cles `skymanager.*`, via `save.js`).
+- **Partage d'avion** (I06) : Hangar > Nom > 📤 / 📥, code `SKY1.…` court et valide strictement (`tools/livery.test.mjs`) ; ce que le copain n'a pas est remplace par le choix gratuit.
+- Non fait : I05 (editeur de livree v2 : peinture par zones et autocollants poses au doigt) — le hangar garde couleur, accent, 10 motifs, 3 autocollants, nom.

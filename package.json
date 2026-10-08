@@ -14,6 +14,6 @@
     "test:save": "node tools/save.test.mjs",
     "test:stamp": "node tools/stamp.test.mjs",
     "bump": "node tools/bumpStamp.mjs",
-    "test": "node tools/flightAssist.sim.mjs && node tools/fleet.sim.mjs && node tools/data.test.mjs && node tools/terminal.test.mjs && node tools/rides.test.mjs && node tools/economy.sim.mjs && node tools/save.test.mjs && node tools/stamp.test.mjs"
+    "test": "node tools/flightAssist.sim.mjs && node tools/fleet.sim.mjs && node tools/data.test.mjs && node tools/terminal.test.mjs && node tools/rides.test.mjs && node tools/economy.sim.mjs && node tools/save.test.mjs && node tools/livery.test.mjs && node tools/stamp.test.mjs"
   }
 }

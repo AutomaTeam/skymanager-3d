@@ -11,11 +11,11 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791468840';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791468840';
+import { sfx } from './sfx.js?v=1791468897';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791468897';
 import {
-  BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find
-} from './livery.js?v=1791468840';
+  BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
+} from './livery.js?v=1791468897';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
@@ -107,6 +107,27 @@ export class Hangar {
     this.save();
     const nameOf = { body: 'Couleur', accent: 'Accent', pattern: 'Motif', sticker: 'Autocollant' }[pick.kind];
     return { kind: pick.kind, item: pick.it, label: `${nameOf} « ${pick.it.name} » ${pick.it.ico || ''}` };
+  }
+
+  /* I06 : code de partage de la livree de l'avion affiche. */
+  _shareCode() {
+    const code = encodeLivery(this.previewId, this.livery(this.previewId));
+    const done = () => this.g.toast('📤 Code copie ! Envoie-le a un copain.', 3200, 'ok');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => window.prompt('Copie ce code :', code));
+    else window.prompt('Copie ce code :', code);
+  }
+
+  _importCode() {
+    const code = window.prompt('Colle le code de ton copain :');
+    if (code == null) return;
+    const r = decodeLivery(code, (kind, it) => this.isOwned(kind, it));
+    if (!r) { this.g.toast('📥 Ce code ne marche pas.', 3000, 'warn'); return; }
+    const mine = this.livery(this.previewId);
+    this._setLivery(this.previewId, Object.assign(mine, r.livery));
+    this._applyView();
+    this._render();
+    sfx.tada();
+    this.g.toast('📥 Avion copie ! Ce que tu n\'as pas encore est remplace.', 3600, 'ok');
   }
 
   /* ---------------- Ouverture / fermeture ---------------- */
@@ -316,6 +337,7 @@ export class Hangar {
     } else if (this.tab === 'name') {
       html += '<input id="hgName" class="hg-name" maxlength="12" autocomplete="off" placeholder="Ex : ECLAIR" />';
       html += '<p class="hg-hint">Le nom apparait sur le flanc de ton avion.</p>';
+      html += '<div class="hg-share"><button id="hgShare">📤 Partager mon avion</button><button id="hgImport">📥 Copier celui d\'un copain</button></div>';
     } else {
       const kind = this.tab;
       if (kind === 'sticker') {
@@ -342,6 +364,10 @@ export class Hangar {
       const it = find(CATALOG[b.dataset.kind], b.dataset.id);
       this._choose(b.dataset.kind, it);
     }));
+    const sh = body.querySelector('#hgShare');
+    if (sh) sh.addEventListener('click', () => this._shareCode());
+    const im = body.querySelector('#hgImport');
+    if (im) im.addEventListener('click', () => this._importCode());
     /* champ du nom : le recree a chaque rendu, donc on le relie ici */
     const nm = body.querySelector('#hgName');
     if (nm) {

@@ -103,6 +103,37 @@ export const defaultLivery = (planeId) => ({
   name: ''
 });
 
+/* ---------------- Partage d'une livree (I06) ----------------
+   Code court : « SKY1. » + base64 d'un JSON compact { p: avion, b: couleur, a: accent, t: motif, s: [3 autocollants], n: nom }.
+   decodeLivery valide tout (ids connus, nom de 12 lettres) ; ce que le joueur ne possede pas est remplace par le choix gratuit. */
+const b64e = (str) => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const b64d = (str) => decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/'))));
+export function encodeLivery(planeId, lv) {
+  return 'SKY1.' + b64e(JSON.stringify({ p: planeId, b: lv.body, a: lv.accent, t: lv.pattern, s: lv.stickers.slice(0, 3), n: (lv.name || '').slice(0, 12) }));
+}
+/* owned(kind, item) -> bool. Rend { planeId, livery } ou null si le code est invalide. */
+export function decodeLivery(code, owned = () => true) {
+  try {
+    const m = String(code || '').trim().match(/^SKY1\.([A-Za-z0-9_-]{8,600})$/);
+    if (!m) return null;
+    const d = JSON.parse(b64d(m[1]));
+    if (!d || typeof d !== 'object') return null;
+    const pick = (list, kind, id, fallback) => { const it = list.find(x => x.id === id); return it && owned(kind, it) ? it.id : fallback; };
+    const base = defaultLivery(String(d.p || ''));
+    const stickers = Array.isArray(d.s) ? d.s.slice(0, 3) : [];
+    return {
+      planeId: String(d.p || ''),
+      livery: {
+        body: pick(BODY_COLORS, 'body', d.b, base.body),
+        accent: pick(ACCENT_COLORS, 'accent', d.a, base.accent),
+        pattern: pick(PATTERNS, 'pattern', d.t, 'none'),
+        stickers: [0, 1, 2].map(i => pick(STICKERS, 'sticker', stickers[i], 'none')),
+        name: String(d.n || '').toUpperCase().replace(/[^A-Z0-9 !'-]/g, '').slice(0, 12)
+      }
+    };
+  } catch (e) { return null; }
+}
+
 /* ---------------- Textures ---------------- */
 const cache = new Map();
 const hexCss = (h) => '#' + (h & 0xffffff).toString(16).padStart(6, '0');
