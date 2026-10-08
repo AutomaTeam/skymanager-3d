@@ -55,6 +55,8 @@ export const sfx = {
   /* A appeler depuis un vrai geste (clic sur DEMARRER). */
   unlock() { audio(); },
   setHaptics(v) { haptics = !!v; },
+  /* Vario du planeur : un bip d'autant plus aigu que l'on monte vite (v en m/s). */
+  vario(v) { tone(480 + Math.min(v, 5) * 120, 0, 0.09, 'sine', 0.07); },
   /* Mise en veille de l'onglet : l'audio est suspendu (il reprend au prochain son). */
   suspend() { if (ctx && ctx.state === 'running') ctx.suspend().catch(() => {}); },
 

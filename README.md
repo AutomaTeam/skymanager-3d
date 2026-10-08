@@ -2352,3 +2352,9 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 ### Nouvelles missions du ciel (phase 73)
 
 `js/skyMissions.js` : 🌈 **Arc-en-ciel** (4 arches a traverser), 🪁 **Banniere** (l'enfant ecrit 12 lettres, filtre de mots vilains `cleanBanner`, remorquee derriere l'avion, 4 points de passage), 🚁 **Treuillage** (helicoptere seulement : vol stationnaire au-dessus du randonneur de l'ile, retour a l'helipad), ✈️ **Vol en formation** (Capitaine Coco, rond vert a garder ; 3 parcours facile / moyen / difficile selon ta meilleure medaille). Le fantome du meilleur temps de la course (G03) et les missions Show / Zoo / Ballons / Secours existaient deja. Scenario `missions` : les 12 missions demarrent et tournent 20 s sans erreur.
+
+### Planeur Plume et ascendances (phase 74)
+
+- **Plume** (hangar, niveau 3, 130 pieces) : planeur de finesse ~30 (mesuree 34 en air calme). Remorque automatique jusqu'a 520 m, largage, puis vol sans moteur. Le « moteur » du profil est la corde de remorquage (`ac.glider`, `ac.released`) : coupee au largage. Tenue de vitesse par l'assiette, aerofreins pour la pente d'approche (plan calcule avec la finesse sol : tient meme avec 12 m/s de vent de face), rappel automatique en finale si on arrive trop bas (jamais d'atterrissage force dans un champ). Le bouton ATTERRIR replace le planeur a 3,3 km de la piste.
+- `js/thermals.js` (module du registre) : 9 colonnes d'air chaud (champs, aire de stationnement, iles) avec cumulus blanc et oiseaux qui tournent ; vent vertical dans la physique ; **vario** (puce ⬆️ m/s + bips qui montent). Mission 🪂 **Vol a voile** : 3 minutes en l'air apres le largage. Missions du ciel pour le planeur : Vol a voile, Arc-en-ciel, Exploration des iles.
+- Tests : `npm run test:fleet` (tow, largage, finesse, ascendance, approche avec 3 vents), scenario `glider` ; outils `tools/gliderProbe.mjs` et `tools/gliderLand.mjs` pour regler la physique.

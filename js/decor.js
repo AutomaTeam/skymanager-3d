@@ -16,7 +16,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { instanced } from './props.js?v=1791467847';
+import { instanced } from './props.js?v=1791468326';
 
 const N = 'nature/kenney-nature-kit/';
 const F = 'interior/kenney-furniture-kit/';

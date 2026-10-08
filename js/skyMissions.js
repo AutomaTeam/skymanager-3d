@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791467847';
-import { SkyWorld } from './skyWorld.js?v=1791467847';
-import { HELIPAD } from './heliModel.js?v=1791467847';
-import { ISLANDS } from './openWorld.js?v=1791467847';
+import { sfx } from './sfx.js?v=1791468326';
+import { SkyWorld } from './skyWorld.js?v=1791468326';
+import { HELIPAD } from './heliModel.js?v=1791468326';
+import { ISLANDS } from './openWorld.js?v=1791468326';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -712,6 +712,27 @@ class WinchMission extends Mission {
 }
 
 /* ------------------------------------------------------------
+   Planeur : reste 3 minutes en l'air apres le largage (G01)
+   ------------------------------------------------------------ */
+class GlideMission extends Mission {
+  setup() { this.air = 0; this.need = 180; this.limit = 0; }
+  update(dt) {
+    const ac = this.ac;
+    if (ac.released && !ac.onGround) this.air += dt;
+    if (this.air >= this.need) this.done = true;
+  }
+  goal() {
+    if (!this.ac.released) return { icon: '🪂', text: 'Le remorqueur te monte a 500 m…', target: null };
+    return { icon: '🪂', text: `Reste en l'air ! Cherche les ascendances (oiseaux, nuages). ${Math.round(this.air)}/${this.need} s`, target: null };
+  }
+  progressText() { return `🪂 ${Math.round(this.air)}/${this.need} s en vol libre`; }
+  result() {
+    const a = this.air;
+    return { score: Math.round(a), medal: a >= 180 ? 3 : a >= 140 ? 2 : a >= 80 ? 1 : 0, lines: [`🪂 ${Math.round(a)} s en vol libre sur ${this.need}`] };
+  }
+}
+
+/* ------------------------------------------------------------
    Formation : reste a cote de « Capitaine Coco » pour gagner des points (G02)
    3 niveaux de parcours selon ta meilleure medaille.
    ------------------------------------------------------------ */
@@ -787,10 +808,11 @@ export const MISSION_DEFS = [
   { id: 'race',     ico: '🏁', name: 'Course d\'anneaux',  brief: 'Passe tous les anneaux le plus vite possible. Bats ton record !', level: 1, limit: 0, cls: RaceMission },
   { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Eteins les feux de foret avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
   { id: 'parcel',   ico: '🎁', name: 'Livreur de colis',   brief: 'Largue les colis a parachute sur les cibles.', level: 2, limit: 170, cls: ParcelMission },
-  { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission },
+  { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission, glider: true },
   { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
-  { id: 'rainbow',  ico: '🌈', name: 'Arc-en-ciel',        brief: 'Traverse 4 arcs-en-ciel dans le ciel !', level: 2, limit: 150, cls: RainbowMission },
+  { id: 'glide',    ico: '🪂', name: 'Vol a voile',        brief: 'Planeur : reste 3 minutes en l\'air grace aux ascendances.', level: 3, limit: 0, cls: GlideMission, gliderOnly: true, glider: true },
+  { id: 'rainbow',  ico: '🌈', name: 'Arc-en-ciel',        brief: 'Traverse 4 arcs-en-ciel dans le ciel !', level: 2, limit: 150, cls: RainbowMission, glider: true },
   { id: 'banner',   ico: '🪁', name: 'Banniere',           brief: 'Ecris un message et promene-le au-dessus de la foule.', level: 2, limit: 190, cls: BannerMission, needsText: true },
   { id: 'winch',    ico: '🚁', name: 'Treuillage',         brief: 'En helicoptere : sauve un randonneur sur une ile !', level: 2, limit: 260, cls: WinchMission, heliOnly: true },
   { id: 'formation', ico: '✈️', name: 'Vol en formation',  brief: 'Reste a cote du Capitaine Coco, 3 parcours.', level: 3, limit: 66, cls: FormationMission, noHeli: true },
@@ -847,7 +869,8 @@ export class SkyMissions {
   cards() {
     const lvl = this.g.arcade.data.level;
     const heli = this.g.hangar.selected === 'helico';
-    return MISSION_DEFS.filter(d => !(heli && d.noHeli) && !(!heli && d.heliOnly)).map(d => {
+    const gl = !!this.g.ac.glider;
+    return MISSION_DEFS.filter(d => !(heli && d.noHeli) && !(!heli && d.heliOnly) && (gl ? d.glider : !d.gliderOnly)).map(d => {
       const b = this.data.best[d.id] || {};
       return {
         id: d.id, ico: d.ico, name: d.name, brief: d.brief, level: d.level,

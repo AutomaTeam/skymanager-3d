@@ -127,6 +127,34 @@ export const PLANES = {
       speeds: { climb: 115, cruise: 145, boost: 185 }
     },
     gain: { roll: 0.45, pitch: 0.6 }
+  },
+  plume: {
+    id: 'plume', name: 'Plume', ico: '🪂', level: 3, price: 130,
+    blurb: 'Un planeur sans moteur : remorque jusqu\'a 500 m, puis il plane en silence. Cherche les ascendances !',
+    stars: { ease: 3, fun: 4, speed: 1 },
+    seats: 1, income: 0.3, fuel: 10,
+    camScale: 0.5, camMode: 'chase',
+    phys: {
+      glider: true,
+      S: 14, b: 15, c: 1.0, oswald: 0.9,
+      emptyMass: 300, payload: 90, fuelCap: 10,
+      Ipitch: 900, Iyaw: 2600, Iroll: 2300,
+      CL0: 0.30, CLa: 5.6, alphaStall: 0.27, CD0: 0.016,
+      Cm0: 0.03, Cma: -1.3, Cmq: -30, Cme: 0.34,
+      Clda: 0.10, Clp: -0.7, Clb: -0.1,
+      Cnb: 0.12, Cnr: -0.25, Cndr: 0.04, Cnda: -0.01,
+      engines: 1, thrustPerEngine: 1700, sfc: 0,
+      gearK: 3.5e4, gearC: 6500,
+      gear: [
+        { name: 'nose', p: [0, -0.6, -1.9], steer: true },
+        { name: 'left', p: [-0.42, -0.78, 0.0], brake: true },
+        { name: 'right', p: [0.42, -0.78, 0.0], brake: true }
+      ],
+      groundY: 0.8, maxFlap: 2, fixedGear: true, noReverse: true,
+      rateDamping: 3.0, propVmax: 70, vne: 130, flareAgl: 6, stuntMinKt: 9999,
+      speeds: { climb: 56, cruise: 52, boost: 88 }
+    },
+    gain: { roll: 0.6, pitch: 0.6 }
   }
 };
 

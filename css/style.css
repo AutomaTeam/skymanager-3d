@@ -1976,3 +1976,8 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 /* F04 : fondu au noir pendant un retour automatique */
 .veil { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 90; transition: opacity 0.35s ease; }
 .veil.on { opacity: 1; }
+
+/* G01 : vario du planeur */
+.vario-chip { position: absolute; left: max(0.6rem, env(safe-area-inset-left)); top: max(7.2rem, calc(env(safe-area-inset-top) + 7.2rem)); z-index: 27; padding: 0.35rem 0.7rem; border-radius: 999px; font-size: 13px; font-weight: 800; background: rgba(15, 23, 42, 0.82); border: 2px solid #64748b; color: #e2e8f0; pointer-events: none; }
+.vario-chip.good { border-color: #4ade80; color: #bbf7d0; }
+.vario-chip.hidden { display: none; }

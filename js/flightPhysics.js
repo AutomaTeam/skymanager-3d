@@ -6,7 +6,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791467847';
+import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791468326';
 
 export const KTS = 1.94384;      // m/s -> noeuds
 export const FT = 3.28084;       // m -> pieds
@@ -166,6 +166,8 @@ export class Aircraft {
     this.profile = 'liner';
     this.heli = null;           // etat de l'helicoptere (heliModel.js), null pour un avion
     this.isHeli = false;
+    this.glider = false;        // planeur : le « moteur » est la corde de remorquage (coupee au largage)
+    this.released = false;      // planeur largue (plus aucune traction)
     this.gain = { roll: 1, pitch: 1 };     // gains de l'aide au pilotage (flightAssist.js)
     this._base = {};
     for (const k of Aircraft.PROFILE_KEYS) this._base[k] = this[k];
@@ -180,6 +182,7 @@ export class Aircraft {
     this.rateDamping = 3.2; this.propVmax = 0; this.vne = 350; this.flareAgl = 24; this.stuntMinKt = 140;
     this.speeds = { climb: 215, cruise: 235, boost: 305 };
     this.isHeli = false; this.heli = null; this.safeAgl = 0;
+    this.glider = false; this.released = false;
     if (phys) {
       const { gear, ...rest } = phys;
       Object.assign(this, rest);
@@ -243,6 +246,7 @@ export class Aircraft {
     this.gearDown = o.gear || this.fixedGear;
     this.spoilers = false;
     this.reverse = false;
+    this.released = false;
     this.n1 = this.n1Target = 20;
     this.ctl.throttle = 0;
     this.ctl.pitch = this.ctl.roll = this.ctl.yaw = 0;
@@ -350,7 +354,7 @@ export class Aircraft {
     if (this.spoilers) CL *= 0.72;
 
     let CD = this.CD0 + this.flaps.cd
-      + (this.gearDown ? 0.019 : 0)
+      + (this.gearDown && !this.glider ? 0.019 : 0)      // planeur : roue carenee, pas de trainee de train
       + (this.spoilers ? 0.055 : 0)
       + (CL * CL) / (Math.PI * this.AR * this.oswald)
       + sMix * 0.09
@@ -378,6 +382,7 @@ export class Aircraft {
         thrust *= this.faults.thrust * this.thrustBoost;
         if (this.propVmax > 0) thrust *= clamp(1 - 0.78 * (V / this.propVmax) * (V / this.propVmax), 0.18, 1);
         if (this.fuel <= 0) thrust = 0;
+        if (this.glider && this.released) thrust = 0;
     if (this.reverse && !this.noReverse) thrust *= (this.onGround ? -0.42 : 0);
     forces.addScaledVector(this.forward(), thrust);
     this.thrustN = thrust;

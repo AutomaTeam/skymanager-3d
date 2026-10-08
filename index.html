@@ -126,6 +126,7 @@
   <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
   <div id="stuntChip" class="arcade-only hidden stunt-chip"></div>
   <div id="skyChip" class="arcade-only hidden sky-chip"></div>
+  <div id="varioChip" class="hidden vario-chip"></div>
   <div id="starChip" class="arcade-only hidden star-chip">🌠 <span class="arr">▲</span></div>
   <button id="btnAction" class="arcade-only hidden action-btn"></button>
 
@@ -962,7 +963,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791467847').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791468326').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -970,6 +971,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791467847"></script>
+<script type="module" src="js/main.js?v=1791468326"></script>
 </body>
 </html>

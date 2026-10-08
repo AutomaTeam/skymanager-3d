@@ -479,6 +479,105 @@ function buildHeli() {
   };
 }
 
+/* ============================================================
+   PLUME — planeur : fuselage fin, ailes tres longues, empennage en T
+   ============================================================ */
+function buildPlume() {
+  const group = new THREE.Group();
+  const body = mat(0xf8fafc, { rough: 0.25 });
+  const accent = mat(0x2dd4bf, { rough: 0.3 });
+  const dark = mat(0x23272e, { rough: 0.7 });
+  const glass = mat(0x10304f, { rough: 0.04, metal: 0.85, transparent: true, opacity: 0.5, env: 1.4 });
+  const skin = mat(0xe8b896, { rough: 0.7 });
+  const metal = mat(0xc4cbd3, { rough: 0.3, metal: 0.85 });
+
+  const prof = [[0.0, -2.2], [0.2, -2.15], [0.34, -1.95], [0.4, -1.5], [0.4, -0.6], [0.34, 0.4], [0.2, 1.8], [0.12, 3.2], [0.08, 4.5], [0.05, 4.8]];
+  group.add(lathe(prof, body));
+  group.add(lathe([[0.0, -2.26], [0.2, -2.21], [0.35, -2.0], [0.405, -1.65]], accent));
+
+  /* Verriere en goutte et pilote */
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12, 0, Math.PI * 2, 0, Math.PI / 2), glass);
+  canopy.scale.set(0.34, 0.42, 1.3);
+  canopy.position.set(0, 0.28, -0.9);
+  group.add(canopy);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 10, 8), skin);
+  head.position.set(0, 0.4, -0.85);
+  const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.135, 10, 8, 0, Math.PI * 2, 0, Math.PI * 0.55), accent);
+  helmet.position.copy(head.position);
+  head.userData.noShadow = true; helmet.userData.noShadow = true;
+  group.add(head, helmet);
+
+  /* Ailes tres longues et fines (envergure 15 m), bouts colores */
+  const wing = slab([[-7.5, 0.45], [-7.45, 0.0], [-3, -0.35], [0, -0.55], [3, -0.35], [7.45, 0.0], [7.5, 0.45], [3, 0.3], [0, 0.45], [-3, 0.3]], 0.1, body, 0.32);
+  group.add(wing);
+  for (const s of [-1, 1]) {
+    const tip = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.115, 0.5), accent);
+    tip.position.set(s * 7.0, 0.32, 0.22);
+    group.add(tip);
+  }
+  const ailerons = [];
+  for (const s of [-1, 1]) {
+    const p = new THREE.Group();
+    p.position.set(s * 5.2, 0.32, 0.18);
+    const a = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.05, 0.25), accent);
+    a.position.z = 0.125;
+    p.add(a);
+    group.add(p);
+    ailerons.push(p);
+  }
+
+  /* Empennage en T */
+  group.add(fin([[3.4, 0.05], [4.0, 1.25], [4.55, 1.25], [4.75, 0.1]], 0.07, body));
+  group.add(slab([[-1.1, 4.1], [-1.1, 4.55], [0, 4.7], [1.1, 4.55], [1.1, 4.1], [0, 3.95]], 0.05, body, 1.27));
+  const elev = new THREE.Group();
+  elev.position.set(0, 1.27, 4.55);
+  const eb = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.04, 0.28), accent);
+  eb.position.z = 0.14;
+  elev.add(eb);
+  group.add(elev);
+  const rud = new THREE.Group();
+  rud.position.set(0, 0.1, 4.7);
+  const rb = new THREE.Mesh(new THREE.BoxGeometry(0.04, 1.0, 0.3), accent);
+  rb.position.set(0, 0.6, 0.0);
+  rud.add(rb);
+  group.add(rud);
+
+  /* Roue unique carenee + patin de nez */
+  const tireM = mat(0x1d2025, { rough: 0.95 });
+  const wh = wheel(0.2, 0.09, tireM, metal);
+  wh.position.set(0, -0.6, -0.1);
+  group.add(wh);
+  const skid = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.05, 0.9), dark);
+  skid.position.set(0, -0.42, -1.75);
+  group.add(skid);
+
+  const nav = (x, c) => { const m = new THREE.Mesh(new THREE.SphereGeometry(0.06, 6, 5), new THREE.MeshBasicMaterial({ color: c })); m.position.set(x, 0.32, 0.2); m.userData.noShadow = true; group.add(m); return m; };
+  nav(-7.55, 0xff2d2d); nav(7.55, 0x2dff6a);
+
+  shadows(group);
+  const slots = {
+    radius: radiusFrom(prof),
+    band: { z0: -1.2, z1: 2.8, yc: -0.04, h: 0.2 },
+    name: { z0: -0.6, z1: 3.2, yc: 0.12, h: 0.12 },
+    stickers: [
+      { z: -1.4, yc: 0.05, size: 0.3, radius: 0.4 },
+      { z: 2.6, yc: 0.06, size: 0.26, radius: 0.18 },
+      { z: 0.8, yc: -0.03, size: 0.24, radius: 0.36 }
+    ],
+    tailFin: { zc: 4.2, yc: 0.7, size: 0.4, halfThick: 0.04 }
+  };
+  return {
+    id: 'plume', group, body: [body], accent: [accent], slots,
+    update(ac, dt, t) {
+      ailerons[0].rotation.x = -ac.ctl.roll * 0.5;
+      ailerons[1].rotation.x = ac.ctl.roll * 0.5;
+      elev.rotation.x = -ac.ctl.pitch * 0.45;
+      rud.rotation.y = -ac.ctl.yaw * 0.5;
+      if (ac.onGround) wh.rotation.x -= ac.tas / 0.2 * dt;
+    }
+  };
+}
+
 const C0 = (r0, r1, h, m, seg = 12) => new THREE.Mesh(new THREE.CylinderGeometry(r0, r1, h, seg), m);
 const B0 = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
 
@@ -486,7 +585,8 @@ export const MODEL_BUILDERS = {
   helico: buildHeli,
   pioupiou: () => buildPioupiou(),
   hydravion: () => buildPioupiou({ id: 'hydravion', floats: true, bodyColor: 0xfff1a8, accentColor: 0x1e6fe0 }),
-  zebulon: buildZebulon
+  zebulon: buildZebulon,
+  plume: buildPlume
 };
 
 export function buildPlaneModel(id) {

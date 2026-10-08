@@ -17,7 +17,7 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js?v=1791467847';
+import { heliCommand } from './heliModel.js?v=1791468326';
 
 const KTS = 1.94384;
 const FT = 3.28084;
@@ -47,6 +47,11 @@ const LAT_K = 0.06, LAT_G = 3.2;
 
 /* Hors approche, l'appareil ne descend pas sous cette hauteur (m). */
 const SAFE_AGL = 110;
+
+/* Planeur : largage de la remorque a cette hauteur (m) ; sous GLIDER_LOW (m) hors approche,
+   l'aide rappelle le planeur en finale (jamais d'atterrissage force dans un champ). */
+export const GLIDER_RELEASE = 520;
+const GLIDER_LOW = 70;
 
 export class FlightAssist {
   constructor() {
@@ -151,6 +156,11 @@ export class FlightAssist {
 
     /* Train et volets automatiques. */
     this._configure(ac, ias, agl, vs, dt);
+    /* Planeur : largage de la corde de remorquage. */
+    if (ac.glider && !ac.released && agl >= GLIDER_RELEASE) {
+      ac.released = true;
+      if (this.onRelease) this.onRelease();
+    }
 
     /* --- Approche guidee ? (train sorti, cap sud, sur l'axe) --- */
     this.landing = this.finalLike(ac) && ac.gearDown && agl < 900;
@@ -161,6 +171,8 @@ export class FlightAssist {
     let vTarget;
     if (this.landing) {
       vTarget = ac.vRef() * KTS + 8;
+    } else if (ac.glider) {
+      vTarget = ac.released ? ac.speeds.cruise : ac.speeds.climb;
     } else if (agl < 700 && vs > 1) {
       vTarget = ac.speeds.climb;
     } else {
@@ -174,6 +186,7 @@ export class FlightAssist {
     if (this.boost) thrTarget = 1;
     const thrRate = this.boost ? 2.5 : 0.5;
     this.thr += clamp(thrTarget - this.thr, -dt * thrRate, dt * thrRate);
+    if (ac.glider) this.thr = ac.released ? 0 : 1;      // planeur : plein « moteur » = corde tendue, puis rien
     out.throttle = this.thr;
 
     /* --- Roulis --- */
@@ -208,7 +221,10 @@ export class FlightAssist {
       /* Plan de descente de 3 deg visant un point de poser 300 m apres le
          seuil (le seuil nord est a z = -1500, on roule vers +Z). */
       const dist = Math.max(0, Z_TOUCH - ac.pos.z);
-      const hDesired = Math.tan(3 * Math.PI / 180) * dist;
+      let hDesired = Math.tan(3 * Math.PI / 180) * dist;
+      /* Planeur : pas de pente fixe a 3 deg (impossible a tenir face au vent) ; le plan est celui que la
+         finesse SOL du moment permet (vitesse sol / 1,15 m/s de chute), avec 15 % de marge de hauteur. */
+      if (ac.glider) hDesired = dist / clamp(Math.hypot(ac.vel.x, ac.vel.z) / 1.15, 6, 26) * 1.15;
       const e = agl - hDesired;
       /* Pente suivie par rapport au SOL : avec du vent de face, la vitesse air est
          bien plus grande que la vitesse sol et l'avion plongeait trop court. */
@@ -221,10 +237,20 @@ export class FlightAssist {
       } else {
         this.flare = false;
       }
-      this._vsHold(ac, out, vsTarget, pitch);
+      if (ac.glider && !this.flare) {
+        /* Planeur : l'assiette tient la VITESSE (sans moteur on ne peut pas la regler autrement),
+           et ce sont les aerofreins qui ajustent la pente (ouverts si on est trop haut). */
+        const hw = Math.max(0, -ac.wind.z * KTS);            // vent de face (on pose vers le sud) : on vole plus vite pour garder de la finesse sol
+        const vL = ac.vRef() * KTS + 8 + hw * 0.7;
+        const tgt = clamp(1.5 + (ias - vL) * 0.6, -10, 14);
+        out.pitch = clamp((tgt - pitch) * 0.16 * gain.pitch, -0.6, 0.6);
+      } else {
+        this._vsHold(ac, out, vsTarget, pitch);
+      }
+      if (ac.glider) ac.spoilers = !this.flare && (e > 12 || (ac.spoilers && e > 0));
       /* Terme integral sur l'ecart au plan : sans lui, un petit avion s'installe sous la pente
          (il chute a 2 m/s au lieu de 1) et se pose 500 m avant la piste. */
-      if (!this.flare) {
+      if (!this.flare && !ac.glider) {
         this.vsI = clamp(this.vsI - e * dt * 0.002, -0.25, 0.25);
         out.pitch = clamp(out.pitch + this.vsI, -0.6, 0.6);
       }
@@ -253,6 +279,8 @@ export class FlightAssist {
         /* Protection : trop lent -> on baisse le nez. */
         const stallMargin = ias - ac.stallSpeed() * KTS * 1.18;
         let target = this.pitchHold;
+        /* Planeur : on tient la vitesse par l'assiette (plus vite = on cabre, plus lent = on pique). */
+        if (ac.glider) target = clamp(1.5 + (ias - vTarget) * 0.32, -9, 14);
         if (stallMargin < 0) target = Math.min(target, 2 + stallMargin * 0.4);
         out.pitch = clamp((target - pitch) * 0.09 * gain.pitch, -0.6, 0.6);
       }
@@ -263,7 +291,9 @@ export class FlightAssist {
 
     /* Altitude de securite : hors approche, on ne descend pas sous
        SAFE_AGL. Le manche vers l'avant ne fait plus piquer vers le sol. */
-    if (!this.landing && !ac.onGround) {
+    if (ac.glider && !this.landing && !ac.onGround && agl < GLIDER_LOW && ac.released) {
+      if (this.onLowGlider) this.onLowGlider();
+    } else if (!this.landing && !ac.onGround) {
       if (agl < SAFE) {
         const sink = -vs;
         if (sink > -1 && out.pitch < 0.1) out.pitch = Math.max(out.pitch, clamp((3 - pitch) * 0.1, 0, 0.5));

@@ -141,6 +141,25 @@ const SCENARIOS = {
     steps.push('banniere=' + cleanBanner('Salut les amis, Merde!'));
     return results.every(Boolean) && cleanBanner('merde') === '❤ GENTIL ❤' && cleanBanner('Coucou Léa') === 'COUCOU LEA';
   },
+  /* Planeur Plume : remorquage, largage, ascendance, mission Vol a voile (G01). */
+  async glider({ g, frames, steps }) {
+    const { thermalLift, THERMALS } = await import('../js/thermals.js');
+    if (g.state === 'BOOT') g.start();
+    if (g.state !== 'HUB') { g.sky.reset(); g.returnHome(); frames(10); }
+    g.hangar.data.selected = 'plume'; g.arcade.data.level = 9;
+    g.boardAircraft(); frames(30);
+    g.sky.arm('glide');
+    clearTimeout(g.fun._launchTimer); g.launchNow();
+    for (let i = 0; i < 130 && !g.ac.released; i++) frames(30);
+    steps.push('largue=' + g.ac.released + ' alt=' + Math.round(g.ac.pos.y));
+    const t = THERMALS[0];
+    steps.push('lift centre=' + thermalLift(t.x, t.z).toFixed(1));
+    frames(30 * 20);
+    steps.push('mission=' + (g.sky.m ? g.sky.m.air.toFixed(0) + ' s' : 'aucune') + ' vario=' + g.ac.vel.y.toFixed(1));
+    const ok = g.ac.released && g.sky.m && g.sky.m.air > 10 && thermalLift(t.x, t.z) > 2;
+    g.sky.reset(); g.returnHome(); frames(5);
+    return !!ok;
+  },
   /* Le chien : adoption, balle, caresse. */
   async petFetch({ g, frames, steps }) {
     if (g.state === 'BOOT') g.start();

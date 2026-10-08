@@ -92,6 +92,52 @@ function heliTests(id, P) {
     }
   }
 }
+
+/* Planeur : remorquage, largage, finesse, ascendance, approche sans moteur. */
+function gliderTests(id, P) {
+  {
+    const r = sim(id, (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(0, ac.groundY + 0.3, 1380), heading: 0, flaps: 1, gear: true, fuel: P.fuel }); }, 6, idle, [0, 0, 0]);
+    check(r.ac.onGround && Math.abs(r.ac.pos.y - r.ac.groundY) < 0.35, `repose sur ses roues (y=${r.ac.pos.y.toFixed(2)})`);
+  }
+  for (const w of WINDS) {
+    const tag = ` (vent ${w[0]},${w[1]} turb ${w[2]})`;
+    let released = null;
+    let minIas = 999;
+    let r = sim(id, takeoff, 160, idle, w, (ac, as, t) => { if (released == null && ac.released) released = { t, y: ac.pos.y - ac.groundY }; if (t > 10 && !ac.onGround) minIas = Math.min(minIas, ac.ias * KTS); });
+    check(!r.ac.crashed && released && released.y >= 500 && released.t < 150, `remorquage puis largage a ${released ? released.y.toFixed(0) : '?'} m apres ${released ? released.t.toFixed(0) : '?'} s` + tag);
+    check(minIas > r.ac.stallSpeed() * KTS * 1.02, `vitesse jamais critique (mini ${minIas.toFixed(0)} kt)` + tag);
+    r = sim(id, takeoff, 100, (t) => ({ pitch: t > 30 && t < 50 ? 1 : 0, roll: 0, yaw: 0 }), w);
+    check(!r.ac.crashed, 'manche a cabrer a fond 20 s : pas de crash' + tag);
+    r = sim(id, takeoff, 140, (t) => ({ pitch: t > 90 && t < 120 ? -1 : 0, roll: 0, yaw: 0 }), w);
+    check(!r.ac.crashed, 'manche a piquer a fond apres le largage : pas de crash' + tag);
+  }
+  /* Finesse en air calme : distance / hauteur perdue apres le largage. */
+  {
+    let rel = null;
+    const r = sim(id, takeoff, 220, idle, [0, 0, 0], (ac, as, t) => { if (!rel && ac.released) rel = { p: ac.pos.clone(), t }; });
+    const d = Math.hypot(r.ac.pos.x - rel.p.x, r.ac.pos.z - rel.p.z), dh = rel.p.y - r.ac.pos.y;
+    const fin = d / Math.max(1, dh);
+    check(fin > 24 && fin < 40, `finesse ${fin.toFixed(1)} (vise ~30)`);
+  }
+  /* Ascendance de 2,5 m/s : on monte. */
+  {
+    let rel = null;
+    const r = sim(id, takeoff, 200, idle, [0, 0, 0], (ac, as, t) => { if (!rel && ac.released) rel = { y: ac.pos.y, t }; if (rel) ac.wind.y = 2.5; });
+    check(r.ac.pos.y > rel.y + 30, `monte dans une ascendance (+${(r.ac.pos.y - rel.y).toFixed(0)} m)`);
+  }
+  /* Approche sans moteur depuis 1,8 km de la piste et 260 m (comme le bouton ATTERRIR : aerofreins pour la pente). */
+  for (const w of WINDS) {
+    const tag = ` (vent ${w[0]},${w[1]} turb ${w[2]})`;
+    const r = sim(id, (ac, as, P) => { ac.reset({ pos: new THREE.Vector3(60, 260, -3300), heading: 180, speed: 29, flaps: 0, gear: true, fuel: P.fuel }); ac.released = true; as.launched = true; }, 240, idle, w);
+    const td = r.ac.touchdown;
+    check(!!td && !r.ac.crashed, 'atterrissage guide sans moteur' + tag);
+    if (td) {
+      check(Math.abs(td.offset) < 25, `pose sur la piste (ecart ${td.offset.toFixed(0)} m)` + tag);
+      check(td.fpm < 350, `pose douce (${td.fpm.toFixed(0)} fpm)` + tag);
+      check(Math.hypot(r.ac.vel.x, r.ac.vel.z) * KTS < 2 && r.ac.pos.z > -1500, `s'arrete sur la piste (z=${r.ac.pos.z.toFixed(0)})` + tag);
+    }
+  }
+}
 const ids = Object.keys(PLANES).filter(id => id !== 'liner' && (!only || id === only));
 
 for (const id of ids) {
@@ -101,6 +147,7 @@ for (const id of ids) {
   console.log(`masse ${a0.mass.toFixed(0)} kg, decrochage ${(a0.stallSpeed() * KTS).toFixed(0)} kt, Vr ${(a0.vRotate() * KTS).toFixed(0)} kt, Vref ${(a0.vRef() * KTS).toFixed(0)} kt`);
 
   if (P.phys && P.phys.isHeli) { heliTests(id, P); continue; }
+  if (P.phys && P.phys.glider) { gliderTests(id, P); continue; }
 
   /* Repos : l'avion doit tenir sur ses roues sans s'enfoncer ni rebondir. */
   {
