@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791470282';
-import * as Save from './save.js?v=1791470282';
-import { Music } from './music.js?v=1791470282';
+import { sfx } from './sfx.js?v=1791470382';
+import * as Save from './save.js?v=1791470382';
+import { Music } from './music.js?v=1791470382';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -248,6 +248,18 @@ export class Comfort {
       if (g.fun.boosting || g.fun.stunt || (g.sky && g.sky.m) || g.fun.combo.n > 0) I = 2;
     }
     this.music.setIntensity(I);
+    /* J04 : theme musical selon le lieu (le hall, le skatepark, les iles, la nuit) */
+    this._themeT = (this._themeT || 0) - dt;
+    if (this._themeT <= 0) {
+      this._themeT = 1;
+      let th = 'air';
+      const p = g.player.pos, A = g.rides && g.rides.course && g.rides.course.area;
+      if (g.state === 'HUB' && g.inTerminal) th = 'hall';
+      else if (g.state === 'HUB' && A && p.x > A.x0 - 20 && p.x < A.x1 + 20 && p.z > A.z0 - 20 && p.z < A.z1 + 20) th = 'park';
+      else if (g.state === 'PILOT' && !g.ac.onGround && g.ac.pos.z < -3000) th = 'islands';
+      else if (g.env.night > 0.55) th = 'night';
+      this.music.setTheme(th);
+    }
     /* limite de temps par jour (parents) : on ne coupe jamais en plein vol */
     if (this.data.limitMin) {
       if (this.data.usedDay !== today()) { this.data.usedDay = today(); this.data.usedSec = 0; }

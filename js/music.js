@@ -10,7 +10,7 @@
    Intensite : 0 = calme (sol), 1 = vol, 2 = action.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791470282';
+import { sfx } from './sfx.js?v=1791470382';
 
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);          // numero MIDI -> Hz
 /* Progression en do majeur : C  Am  F  G (racines et accords). */
@@ -22,6 +22,17 @@ const CHORDS = [
 ];
 const SCALE = [0, 2, 4, 7, 9];                                   // pentatonique majeure
 
+/* J04 : une couleur de musique par lieu. Chaque theme = progression, gamme de l'arpege, note de depart, tempo (x) et son.
+   `air` est la musique d'origine ; le changement se fait en fondu (la musique baisse un instant puis revient). */
+const mk = (r, t) => ({ root: r, tones: t });
+export const THEMES = {
+  air:     { chords: CHORDS, scale: SCALE, base: 72, bpm: 1, wave: 'triangle' },
+  hall:    { chords: [mk(48, [60, 64, 67, 71]), mk(45, [60, 64, 69, 72]), mk(41, [60, 65, 69, 72]), mk(43, [62, 67, 71, 74])], scale: [0, 2, 4, 7, 9], base: 76, bpm: 0.86, wave: 'sine' },
+  park:    { chords: [mk(50, [62, 66, 69, 73]), mk(47, [62, 66, 71, 74]), mk(43, [62, 67, 71, 74]), mk(45, [61, 64, 69, 73])], scale: [0, 2, 4, 7, 9], base: 74, bpm: 1.22, wave: 'square' },
+  islands: { chords: [mk(41, [57, 60, 65, 69]), mk(43, [58, 62, 67, 70]), mk(46, [58, 62, 65, 70]), mk(41, [57, 60, 65, 72])], scale: [0, 2, 4, 6, 9], base: 69, bpm: 0.9, wave: 'sine' },
+  night:   { chords: [mk(45, [57, 60, 64, 69]), mk(41, [57, 60, 65, 69]), mk(48, [55, 60, 64, 67]), mk(43, [55, 59, 62, 67])], scale: [0, 3, 5, 7, 10], base: 69, bpm: 0.78, wave: 'sine' }
+};
+
 export class Music {
   constructor() {
     this.on = true;
@@ -30,6 +41,7 @@ export class Music {
     this._timer = null;
     this._nextT = 0;
     this._step = 0;
+    this.theme = 'air';
     this.ctx = null;
     this.master = null;
     this.layers = null;
@@ -70,10 +82,20 @@ export class Music {
 
   setIntensity(i) { this.intensity = i; }
 
+  /* Change de theme (lieu) : la musique baisse un instant, puis revient dans la nouvelle couleur. */
+  setTheme(id) {
+    if (!THEMES[id] || id === this.theme) return;
+    this.theme = id;
+    this._swap = true;
+    this._apply();
+    clearTimeout(this._swapT);
+    this._swapT = setTimeout(() => { this._swap = false; this._apply(); }, 650);
+  }
+
   /* J02 : volume de la musique (0 a 1) et baisse automatique quand Coco parle (ducking). */
   setVolume(v) { this.vol = Math.max(0, Math.min(1, v)); this._apply(); }
   duck(on) { this._duck = !!on; this._apply(); }
-  _masterLevel() { return 0.5 * (this.vol == null ? 1 : this.vol) * (this._duck ? 0.3 : 1); }
+  _masterLevel() { return 0.5 * (this.vol == null ? 1 : this.vol) * (this._duck ? 0.3 : 1) * (this._swap ? 0.15 : 1); }
   _apply() { if (this.master && this.ctx) this.master.gain.setTargetAtTime(Math.max(0.0001, this._masterLevel()), this.ctx.currentTime, this._duck ? 0.15 : 0.5); }
 
   _tone(layer, freq, t, dur, type, vol) {
@@ -121,22 +143,23 @@ export class Music {
       this._level[k] += (target[k] - this._level[k]) * 0.18;
       this.layers[k].gain.setTargetAtTime(this._level[k] * 0.16, ctx.currentTime, 0.3);
     }
-    const bpm = I >= 2 ? 144 : I >= 1 ? 112 : 84;
+    const TH = THEMES[this.theme] || THEMES.air;
+    const bpm = (I >= 2 ? 144 : I >= 1 ? 112 : 84) * TH.bpm;
     const eighth = 60 / bpm / 2;
     /* ordonnance les notes des 0,5 prochaines secondes */
     while (this._nextT < ctx.currentTime + 0.5) {
       const t = this._nextT, s = this._step;
-      const chord = CHORDS[Math.floor(s / 8) % CHORDS.length];
+      const chord = TH.chords[Math.floor(s / 8) % TH.chords.length];
       if (s % 8 === 0) {
-        for (const n of chord.tones) this._tone(0, NOTE(n), t, eighth * 8 * 0.95, 'triangle', 0.42);
+        for (const n of chord.tones) this._tone(0, NOTE(n), t, eighth * 8 * 0.95, TH.wave === 'square' ? 'triangle' : TH.wave, 0.42);
         this._tone(1, NOTE(chord.root), t, eighth * 3.6, 'sine', 0.8);
       }
       if (s % 4 === 0 && I >= 1) this._tone(1, NOTE(chord.root + (s % 8 ? 7 : 0)), t, eighth * 1.8, 'sine', 0.7);
       /* arpege : monte et descend sur la gamme pentatonique */
       const up = [0, 1, 2, 3, 4, 3, 2, 1][s % 8];
-      const deg = SCALE[up % 5] + 12 * Math.floor(up / 5);
-      if (I >= 1 || s % 2 === 0) this._tone(2, NOTE(72 + deg + (chord.root % 12 === 9 ? -3 : 0)), t, eighth * 0.9, 'triangle', 0.55);
-      if (I >= 2) this._hat(t, s % 2 ? 0.5 : 0.9);
+      const deg = TH.scale[up % 5] + 12 * Math.floor(up / 5);
+      if (I >= 1 || s % 2 === 0) this._tone(2, NOTE(TH.base + deg + (this.theme === 'air' && chord.root % 12 === 9 ? -3 : 0)), t, eighth * 0.9, TH.wave, TH.wave === 'square' ? 0.3 : 0.55);
+      if (I >= 2 || (this.theme === 'park' && I >= 1)) this._hat(t, s % 2 ? 0.5 : 0.9);
       this._nextT += eighth;
       this._step++;
     }
