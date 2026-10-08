@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791466783';
-import { LAYOUT } from './layout.js?v=1791466783';
+import { sfx } from './sfx.js?v=1791466923';
+import { LAYOUT } from './layout.js?v=1791466923';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

@@ -38,12 +38,18 @@ function idents(node, out = new Set()) {
 
 /* Declarations de tete (hors imports et classe) : nom -> noeud. */
 const topDecls = new Map();
+const exportedNodes = new Set();            // declarations deja precedees de `export`
+const declOf = (n) => (n.type === 'ExportNamedDeclaration' && n.declaration ? n.declaration : n);
 for (const n of ast.body) {
-  if (n.type === 'VariableDeclaration') {
-    if (n.kind !== 'const') throw new Error('declaration non const : ' + src.slice(n.start, n.start + 40));
-    for (const d of n.declarations) if (d.id.type === 'Identifier') topDecls.set(d.id.name, n);
-  } else if (n.type === 'FunctionDeclaration') topDecls.set(n.id.name, n);
+  const d0 = declOf(n);
+  if (d0.type === 'VariableDeclaration') {
+    if (d0.kind !== 'const') throw new Error('declaration non const : ' + src.slice(n.start, n.start + 40));
+    for (const d of d0.declarations) if (d.id.type === 'Identifier') topDecls.set(d.id.name, n);
+  } else if (d0.type === 'FunctionDeclaration') topDecls.set(d0.id.name, n);
+  else continue;
+  if (n !== d0) exportedNodes.add(n);
 }
+const namesOfNode = (n) => { const d0 = declOf(n); return d0.declarations ? d0.declarations.map(d => d.id.name) : [d0.id.name]; };
 
 /* Texte d'un membre avec le commentaire qui le precede. */
 const chunks = members.map((m, i) => {
@@ -71,8 +77,7 @@ const shared = new Set();
 const addDecl = (name) => {
   if (!topDecls.has(name) || shared.has(name)) return;
   const node = topDecls.get(name);
-  const names = node.declarations ? node.declarations.map(d => d.id.name) : [node.id.name];
-  for (const nm of names) shared.add(nm);
+  for (const nm of namesOfNode(node)) shared.add(nm);
   for (const dep of idents(node)) addDecl(dep);
 };
 for (const nm of used) addDecl(nm);
@@ -120,7 +125,7 @@ if (sharedNodes.length) {
   sharedNodes.forEach(n => idents(n, sharedIdents));
   let out = header(`${sharedFile}.js — constantes et petits utilitaires partages`);
   out += importsText(sharedIdents) + '\n\n';
-  for (const n of sharedNodes) out += leadingComment(n).text + 'export ' + src.slice(n.start, n.end) + '\n\n';
+  for (const n of sharedNodes) out += leadingComment(n).text + (exportedNodes.has(n) ? '' : 'export ') + src.slice(n.start, n.end) + '\n\n';
   writeFileSync(join(dir, sharedFile + '.js'), out.replace(/\n{3,}/g, '\n\n'));
 }
 
@@ -154,6 +159,9 @@ const restUsed = new Set();
 idents(restAst, restUsed);
 const sharedUsedHere = [...sharedNames].filter(n => restUsed.has(n));
 let head = importsText(restUsed) + '\n';
+const reexport = sharedNodes.filter(n => exportedNodes.has(n)).flatMap(namesOfNode);
+if (reexport.length) head += `export { ${reexport.join(', ')} } from './${sharedFile}.js?v=${STAMP}';
+`;
 for (const p of parts) head += `import { ${p.name} } from './${p.file}.js?v=${STAMP}';\n`;
 if (sharedUsedHere.length) head += `import { ${sharedUsedHere.join(', ')} } from './${sharedFile}.js?v=${STAMP}';\n`;
 let out = rest.slice(0, topComment.length) + head + rest.slice(topComment.length);
