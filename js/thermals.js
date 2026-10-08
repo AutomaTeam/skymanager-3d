@@ -9,8 +9,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791471104';
-import { ISLANDS } from './openWorld.js?v=1791471104';
+import { sfx } from './sfx.js?v=1791471178';
+import { ISLANDS } from './openWorld.js?v=1791471178';
 
 /* Colonnes fixes : { x, z, r : rayon (m), w : montee au centre (m/s) }. */
 export const THERMALS = [

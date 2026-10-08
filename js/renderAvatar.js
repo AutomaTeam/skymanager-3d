@@ -4,9 +4,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791471104';
-import { spawnModel } from './assetLoader.js?v=1791471104';
-import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791471104';
+import * as TEX from './textures.js?v=1791471178';
+import { spawnModel } from './assetLoader.js?v=1791471178';
+import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791471178';
 
 export const avatarMethods = {
   /* ============================================================
@@ -98,6 +98,8 @@ export const avatarMethods = {
     if (!model || !model.mixer) return;
     model.mixer.update(dt);
     if (!model.actions) return;
+    /* K06 : cadence de marche proportionnelle a l'allure du personnage (1 = normale) */
+    if (model.actions.walk) model.actions.walk.timeScale = Math.max(0.7, Math.min(1.4, entity.gaitScale || 1));
     /* Trois allures : immobile, marche, course (clip « Run » du modele). Un geste impose
        (setAvatarPose : saut, bras) remplace l'allure tant qu'il est actif. */
     const forced = entity.pose && model.actions[entity.pose] ? entity.pose : null;

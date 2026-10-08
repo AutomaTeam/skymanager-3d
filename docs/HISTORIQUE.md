@@ -2432,3 +2432,7 @@ K05 : lever et coucher de soleil plus colores (une cle de plus au crepuscule), 1
 ### Mer animee et son directionnel (phase 99)
 
 K02 : la mer a un relief de vagues (carte de normales calculee en code, sans fichier) qui defile lentement : reflets du soleil sur l'eau. Pas de sillage d'hydravion ni d'ecume animee. J03 (partiel) : le grondement de l'avion de ligne qui decolle vient du cote ou il se trouve (`sfx.jet(vol, pan)`, StereoPanner) ; pas de vrai PannerNode 3D ni de sons de fontaine / foule.
+
+### Allures variees des personnages (phase 101)
+
+K06 (partiel) : chaque PNJ a son allure (0,78 a 1,28 fois la vitesse normale : presse, normal, flaneur) et sa cadence de marche (le clip « Walk » est ralenti ou accelere en meme temps). Les transitions entre clips etaient deja en fondu. Pas de regard vers le joueur.

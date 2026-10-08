@@ -35,7 +35,7 @@ export const MAX_ACTIVE = 24;
 
 /* Au-dela de cette distance du point d'interet, un agent passe a
    5 Hz : il accumule dt et avance d'un coup. */
-import { slideMove } from './bodies.js?v=1791471104';
+import { slideMove } from './bodies.js?v=1791471178';
 
 const SLOW_DIST = 95;
 const SLOW_DIST2 = SLOW_DIST * SLOW_DIST;
@@ -326,7 +326,9 @@ export class AgentSystem {
           /* Cache monde, rafraichi a chaque frame. */
           wx: 0, wz: 0, wy: 0,
           heading: 0,
-          speed: SPEED[group.role] || 1.4,
+          /* K06 : chacun son allure (presse, normal, flaneur) : vitesse et cadence de marche */
+          gait: 0.78 + Math.random() * 0.5,
+          speed: (SPEED[group.role] || 1.4) * 1,
           moving: false,
           phase: Math.random() * 6.283,
           state: group.role === 'pilot' ? 'working' : 'resting',
@@ -684,7 +686,7 @@ export class AgentSystem {
       d = Math.hypot(dx, dz) || 1;
     }
 
-    const step = Math.min(d, a.speed * dt);
+    const step = Math.min(d, a.speed * (a.gait || 1) * dt);
     this._from.x = a.wx;
     this._from.z = a.wz;
     this._to.x = a.wx + (dx / d) * step;
@@ -889,6 +891,7 @@ export class AgentSystem {
     const bob = a.moving ? Math.abs(Math.sin(a.phase)) * 0.05 : 0;
     g.position.set(a.wx, a.wy + bob, a.wz);
     g.rotation.y = a.heading;
+    a.mesh.gaitScale = a.gait || 1;
     if (this.r3d && this.r3d.updateAvatarAnim) this.r3d.updateAvatarAnim(a.mesh, a.moving, dt);
   }
 
