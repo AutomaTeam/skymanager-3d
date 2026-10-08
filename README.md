@@ -2286,3 +2286,7 @@ Le geste 📸 (menu 🎈) prenait seulement un flash au sol. Il prend maintenant
 - `__game.errors` : registre des erreurs attrapees par la boucle gardee (module, message, nombre) ; `__game.errorList()` en donne la liste. Une erreur n'est affichee qu'une fois dans la console mais toujours comptee.
 - `tools/fuzz.js` : test aleatoire (touches + clics sur les boutons visibles, rendu neutralise). Ouvrir le jeu avec `?fuzz=1&secs=25` et lire `window.__fuzzReport` (`{actions, clicks, keys, errors}`). Les boutons qui rechargent la page (mode, remise a zero) sont ignores.
 - `npm run bump` change le tampon `?v=` partout ; `npm test` verifie (`tools/stamp.test.mjs`) qu'un seul tampon existe.
+
+### Etoiles filantes (phase 56)
+
+Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HUD, defis, trophees, album, carte). Le ⭐ reste reserve a la note d'atterrissage. Les cles de sauvegarde ne changent pas.

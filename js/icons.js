@@ -25,7 +25,7 @@ const PLANE = 'M21.5 15.5v-2L13.5 8.7V3.8a1.5 1.5 0 0 0-3 0v4.9l-8 4.8v2l8-2.4v4
 const ICONS = {
   coin:    [[C(12, 12, 10), '#f59e0b'], [C(12, 12, 7.4), '#fbbf24'], [R(10.8, 7.5, 2.4, 9, 1), '#b45309']],
   star:    [[STAR, '#facc15', '#b45309']],
-  /* Etoile doree du ciel (a collectionner) : halo et etincelles, pour ne pas la confondre avec la note ⭐. */
+  /* Etoile filante du ciel (a collectionner) : halo et etincelles, pour ne pas la confondre avec la note ⭐. */
   goldstar:[[C(12, 12, 11), '#fef3c7'], [STAR, '#f59e0b', '#92400e'], ['M20 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7zM3.5 17l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4L1.5 19l1.4-.6z', '#fde047', '#d97706']],
   spark:   [[SPARK, '#fde047', '#d97706']],
   plane:   [[PLANE, '#f1f5f9', '#475569']],
@@ -94,7 +94,7 @@ const ICONS = {
 /* emoji -> nom d'icone */
 const MAP = {};
 const add = (name, list) => list.split(' ').forEach(e => { MAP[e] = name; });
-add('coin', '🪙'); add('star', '⭐ ★'); add('goldstar', '🌟'); add('spark', '✨'); add('plane', '✈ 🛫 🛬'); add('wrench', '🔧 🛠');
+add('coin', '🪙'); add('star', '⭐ ★'); add('goldstar', '🌠 🌟'); add('spark', '✨'); add('plane', '✈ 🛫 🛬'); add('wrench', '🔧 🛠');
 add('gear', '⚙'); add('bag', '🧳 🛄'); add('box', '📦'); add('building', '🏢 🏗'); add('tower', '🗼');
 add('cup', '🥤'); add('fire', '🔥'); add('gift', '🎁'); add('party', '🎉'); add('check', '✅ ✔'); add('bolt', '⚡');
 add('bagshop', '🛍 🛒'); add('money', '💰'); add('target', '🎯'); add('map', '🗺'); add('horn', '📢 📯');

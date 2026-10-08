@@ -4,7 +4,7 @@
    Au-dela de l'aeroport :
      - une MER et six ILES a decouvrir (volcan, chateau, phare,
        parc d'attractions, plage, banquise) ;
-     - 40 ETOILES DOREES cachees dans le ciel ;
+     - 40 ETOILES FILANTES cachees dans le ciel ;
      - des surprises : un OVNI, une baleine, un dragon de nuages ;
      - des evenements du ciel : arc-en-ciel apres la pluie, etoiles
        filantes la nuit, feux d'artifice ;
@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465068';
-import { itemOf } from './deco.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
+import { itemOf } from './deco.js?v=1791465102';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -205,7 +205,7 @@ export class OpenWorld {
     this._buildSkyEvents();
   }
 
-  /* ---------------- Etoiles dorees ---------------- */
+  /* ---------------- Etoiles filantes ---------------- */
   _starPositions() {
     const r = rng(2024), out = [];
     const ring = (n, cx, cz, rad, y0, y1) => { for (let i = 0; i < n; i++) { const a = r() * 6.28, d = rad * (0.25 + 0.75 * Math.sqrt(r())); out.push([cx + Math.cos(a) * d, y0 + r() * (y1 - y0), cz + Math.sin(a) * d]); } };
@@ -382,7 +382,7 @@ export class OpenWorld {
     const arc = this.g.arcade;
     arc.giveCoins(3, { silent: true, xp: 3 });
     sfx.sparkle(); sfx.star(2);
-    arc.popup(`🌟 ${n}/${this.stars.length} +3 🪙`);
+    arc.popup(`🌠 ${n}/${this.stars.length} +3 🪙`);
     arc.event('secret');
     this.g.fun._boostGain(0.15);
     if (n % 10 === 0) {
@@ -390,7 +390,7 @@ export class OpenWorld {
       arc.giveCoins(bonus, { silent: true, xp: 20 });
       arc.confetti(80);
       this.fireworks(s.x, s.y + 40, s.z, 4);
-      this.g.toast(`🌟 ${n} etoiles trouvees ! Bonus +${bonus} 🪙`, 4200, 'ok');
+      this.g.toast(`🌠 ${n} etoiles trouvees ! Bonus +${bonus} 🪙`, 4200, 'ok');
       this.g.fun.say(n >= this.stars.length ? 'TOUTES les etoiles ! Tu es legendaire !' : `${n} etoiles ! Continue, il en reste ${this.stars.length - n} !`, 3);
       if (n >= this.stars.length) this._unlockSticker('crown');
     }
@@ -553,7 +553,7 @@ export class OpenWorld {
     chip.classList.toggle('hidden', !show);
     if (!show) return;
     const rel = this.g.arcade._relativeAngle({ x: n.s.x, z: n.s.z }, true);
-    const txt = `🌟 ${Math.round(n.d)} m`;
+    const txt = `🌠 ${Math.round(n.d)} m`;
     if (chip.firstChild && chip.firstChild.nodeValue !== txt) chip.firstChild.nodeValue = txt;
     const ar = chip.querySelector('.arr');
     if (ar && rel) ar.style.transform = `rotate(${rel.rot.toFixed(3)}rad)`;

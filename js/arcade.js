@@ -14,10 +14,10 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791465068';
-import { LAYOUT } from './layout.js?v=1791465068';
-import { drawIcon, iconify } from './icons.js?v=1791465068';
-import { PARK, buildPark } from './rideCourse.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
+import { LAYOUT } from './layout.js?v=1791465102';
+import { drawIcon, iconify } from './icons.js?v=1791465102';
+import { PARK, buildPark } from './rideCourse.js?v=1791465102';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -109,7 +109,7 @@ const DAILY_POOL = [
   { id: 'buy',    ev: 'buy',        icon: '🛍️', text: () => 'Achete une amelioration a la tour',       min: 1, max: 1,  reward: 25 },
   { id: 'stunt',  ev: 'stunt',      icon: '🌀', text: (n) => `Fais ${n} acrobaties (tonneau ou looping)`, min: 3, max: 6, reward: 30 },
   { id: 'mission', ev: 'mission',   icon: '🎯', text: (n) => `Termine ${n} mission${n > 1 ? 's' : ''} aerienne${n > 1 ? 's' : ''}`, min: 1, max: 2, reward: 35 },
-  { id: 'secret', ev: 'secret',     icon: '🌟', text: (n) => `Trouve ${n} etoiles dorees dans le ciel`, min: 2, max: 4, reward: 30 },
+  { id: 'secret', ev: 'secret',     icon: '🌠', text: (n) => `Trouve ${n} etoiles filantes dans le ciel`, min: 2, max: 4, reward: 30 },
   { id: 'minigame', ev: 'minigame', icon: '🧽', text: (n) => `Joue a ${n} mini-jeux`,                  min: 2, max: 3, reward: 25 },
   { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une photo (carte postale en vol ou selfie 🎈 → 📸)', min: 1, max: 1, reward: 20 },
   { id: 'tug',    ev: 'tugTrip',    icon: '🚜', text: (n) => `Livre ${n} chargement${n > 1 ? 's' : ''} de valises avec le tracteur`, min: 1, max: 3, reward: 25 },
@@ -120,7 +120,7 @@ const DAILY_POOL = [
 
 /* Defis de la semaine : un objectif plus long, qui rapporte gros. */
 const WEEKLY_POOL = [
-  { id: 'wstars',   ev: 'secret',   icon: '🌟', text: (n) => `Trouve ${n} etoiles dorees`,            target: [8, 12],  reward: 120 },
+  { id: 'wstars',   ev: 'secret',   icon: '🌠', text: (n) => `Trouve ${n} etoiles filantes`,            target: [8, 12],  reward: 120 },
   { id: 'wmission', ev: 'mission',  icon: '🏅', text: (n) => `Termine ${n} missions aeriennes`,       target: [5, 8],   reward: 130 },
   { id: 'wstunt',   ev: 'stunt',    icon: '🌀', text: (n) => `Fais ${n} acrobaties`,                  target: [25, 40], reward: 120 },
   { id: 'wstar3',   ev: 'star3',    icon: '💎', text: (n) => `Reussis ${n} atterrissages parfaits`,   target: [3, 5],   reward: 130 },
@@ -358,8 +358,8 @@ export const BADGES = [
   { id: 'mission1', ico: '🎯', name: 'Missionnaire',         desc: 'Termine une mission aerienne.',           test: d => d.stats.mission >= 1 },
   { id: 'mission10', ico: '🏅', name: 'Pro des missions',    desc: 'Termine 10 missions aeriennes.',          test: d => d.stats.mission >= 10 },
   { id: 'gold',     ico: '🥇', name: 'Medaille d\'or',       desc: 'Gagne une medaille d\'or.',                test: d => d.stats.missionGold >= 1 },
-  { id: 'secret10', ico: '🌟', name: 'Chercheur d\'etoiles', desc: 'Trouve 10 etoiles dorees.',               test: d => d.stats.secret >= 10 },
-  { id: 'secret40', ico: '🌌', name: 'Constellation',        desc: 'Trouve les 40 etoiles dorees.',           test: d => d.stats.secret >= 40 },
+  { id: 'secret10', ico: '🌠', name: 'Chercheur d\'etoiles', desc: 'Trouve 10 etoiles filantes.',               test: d => d.stats.secret >= 10 },
+  { id: 'secret40', ico: '🌌', name: 'Constellation',        desc: 'Trouve les 40 etoiles filantes.',           test: d => d.stats.secret >= 40 },
   { id: 'island6',  ico: '🏝️', name: 'Explorateur',          desc: 'Decouvre les 6 iles.',                    test: d => d.stats.island >= 6 },
   { id: 'egg3',     ico: '👽', name: 'Curieux',              desc: 'Trouve 3 surprises cachees dans le ciel.', test: d => d.stats.egg >= 3 },
   { id: 'rainbow',  ico: '🌈', name: 'Au bout de l\'arc-en-ciel', desc: 'Traverse un arc-en-ciel.',        test: d => d.stats.rainbow >= 1 },
@@ -593,7 +593,7 @@ export class Arcade {
     this.save();
   }
 
-  /* Combien reste-t-il a trouver pour un defi de collection ? Les 40 etoiles dorees et
+  /* Combien reste-t-il a trouver pour un defi de collection ? Les 40 etoiles filantes et
      les 6 iles (openWorld.js) ne se trouvent qu'une fois : sans ce test, un defi
      « trouve 3 etoiles » pouvait etre tire alors qu'il n'en restait plus, et bloquer
      l'objectif affiche toute la journee. Infinity pour les autres defis. */

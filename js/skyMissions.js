@@ -20,9 +20,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465068';
-import { SkyWorld } from './skyWorld.js?v=1791465068';
-import { ISLANDS } from './openWorld.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
+import { SkyWorld } from './skyWorld.js?v=1791465102';
+import { ISLANDS } from './openWorld.js?v=1791465102';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);

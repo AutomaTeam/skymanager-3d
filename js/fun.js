@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -740,7 +740,7 @@ export class Fun {
     if (!g.sky.data.done) tips.push('🎯 Essaie une MISSION au tableau de depart : ballons, course, pompier…');
     else if (!Object.values(g.sky.data.best).some(b => b.medal === 3)) tips.push("🥇 Vise une medaille d'OR sur une mission !");
     if (st.rolls + st.loops < 3) tips.push('🌀 En vol, essaie TONNEAU et LOOPING pour gagner des points !');
-    if (g.openWorld.starCount < 8) tips.push('🌟 Des etoiles dorees sont cachees dans le ciel : cherche-les !');
+    if (g.openWorld.starCount < 8) tips.push('🌠 Des etoiles filantes sont cachees dans le ciel : cherche-les !');
     if (!g.openWorld.data.islands.length) tips.push("🏝️ Au nord-est, une mer et six iles t'attendent !");
     const h = g.hangar;
     if (g.arcade.coins >= 25 && !g.arcade.data.stats.hangarVisit) tips.push(`🎨 Tu as ${g.arcade.coins} pieces : passe a Mon hangar pour peindre ton avion !`);

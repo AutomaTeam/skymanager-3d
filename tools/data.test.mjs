@@ -70,7 +70,7 @@ check(ANIMALS.length >= 6 && ANIMALS.every(a => a.say.length >= 2 && (a.mode ===
 check(unique(ISLANDS.map(i => i.id)) && ISLANDS.length === 6, 'iles : 6, identifiants uniques');
 /* Les defis du jour (arcade.js) comptent ce qui reste a trouver : memes totaux que le monde. */
 check(ISLANDS.length === SKY_ISLANDS, "defis : nombre d'iles identique dans arcade.js et openWorld.js");
-check(OpenWorld.prototype._starPositions.call({}).length === SKY_STARS, "defis : nombre d'etoiles dorees identique dans arcade.js et openWorld.js");
+check(OpenWorld.prototype._starPositions.call({}).length === SKY_STARS, "defis : nombre d'etoiles filantes identique dans arcade.js et openWorld.js");
 const SEA = { x: 3300, z: -5200, r: 1950 };
 check(ISLANDS.every(i => Math.hypot(i.x - SEA.x, i.z - SEA.z) + i.r < SEA.r), 'iles : toutes a l\'interieur de la mer');
 let ok = true;

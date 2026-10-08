@@ -7,13 +7,13 @@
    la facon de les obtenir. Le total encourage a « tout avoir ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791465068';
-import { PLANES, PLANE_IDS } from './fleet.js?v=1791465068';
-import { STICKERS } from './livery.js?v=1791465068';
-import { DESTINATIONS } from './arcade.js?v=1791465068';
-import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791465068';
-import { STORIES } from './groundFun.js?v=1791465068';
-import { ISLANDS, EGGS } from './openWorld.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
+import { PLANES, PLANE_IDS } from './fleet.js?v=1791465102';
+import { STICKERS } from './livery.js?v=1791465102';
+import { DESTINATIONS } from './arcade.js?v=1791465102';
+import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791465102';
+import { STORIES } from './groundFun.js?v=1791465102';
+import { ISLANDS, EGGS } from './openWorld.js?v=1791465102';
 
 const $ = (id) => document.getElementById(id);
 
@@ -52,7 +52,7 @@ export class Album {
         const ow = g.openWorld.data;
         const out = ISLANDS.map(i => ({ ico: i.ico, name: i.name, got: ow.islands.includes(i.id), hint: 'Survole cette ile (au nord-est)' }));
         for (const e of EGGS) out.push({ ico: e.ico, name: e.name, got: !!ow.eggs[e.id], hint: 'Une surprise cachee dans le ciel…' });
-        for (const n of [10, 20, 30, 40]) out.push({ ico: '🌟', name: `${n} etoiles dorees`, got: ow.stars.length >= n, hint: `Trouve ${n} etoiles dorees (${ow.stars.length}/40)` });
+        for (const n of [10, 20, 30, 40]) out.push({ ico: '🌠', name: `${n} etoiles filantes`, got: ow.stars.length >= n, hint: `Trouve ${n} etoiles filantes (${ow.stars.length}/40)` });
         return out;
       }
       case 'medals':

@@ -11,11 +11,11 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465068';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791465068';
+import { sfx } from './sfx.js?v=1791465102';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791465102';
 import {
   BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find
-} from './livery.js?v=1791465068';
+} from './livery.js?v=1791465102';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
