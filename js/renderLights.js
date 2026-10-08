@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LIGHT_GAIN } from './environment.js?v=1791470757';
-import { mixHex, clamp } from './renderShared.js?v=1791470757';
+import { LIGHT_GAIN } from './environment.js?v=1791470927';
+import { mixHex, clamp } from './renderShared.js?v=1791470927';
 
 export const lightMethods = {
   buildLights() {
@@ -146,7 +146,7 @@ export const lightMethods = {
 
         /* Etoiles : opacite liee a la nuit, et leger scintillement. */
         if (this.starMat) {
-          this.starMat.opacity = Math.max(0, light.night - 0.25) * 1.3;
+          this.starMat.opacity = Math.max(0, light.night - 0.15) * 1.5;
           this.stars.visible = this.starMat.opacity > 0.02;
         }
 

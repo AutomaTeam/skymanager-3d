@@ -9,8 +9,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791470757';
-import { ISLANDS } from './openWorld.js?v=1791470757';
+import { sfx } from './sfx.js?v=1791470927';
+import { ISLANDS } from './openWorld.js?v=1791470927';
 
 /* Colonnes fixes : { x, z, r : rayon (m), w : montee au centre (m/s) }. */
 export const THERMALS = [
@@ -38,6 +38,8 @@ export class Thermals {
     this.group.name = 'thermals';
     this.group.visible = false;
     this.birds = [];
+    this.clouds = new THREE.Group();            // cumulus : visibles pour tous les avions (repere dans le ciel) sauf en qualite basse
+    this.group.add(this.clouds);
     const cloudM = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.92, fog: true, depthWrite: false });
     const birdM = new THREE.MeshBasicMaterial({ color: 0x1f2937, side: THREE.DoubleSide, fog: true });
     const puff = new THREE.SphereGeometry(1, 12, 9);
@@ -51,7 +53,7 @@ export class Thermals {
         cl.add(m);
       });
       cl.position.set(t.x, 1050, t.z);
-      this.group.add(cl);
+      this.clouds.add(cl);
       /* oiseaux : 4 petits « V » qui montent en spirale dans la colonne */
       for (let i = 0; i < 4; i++) {
         const b = new THREE.Group();
@@ -75,11 +77,15 @@ export class Thermals {
   update(dt) {
     const g = this.g, ac = g.ac;
     const gl = this.active && g.state === 'PILOT';
-    this.group.visible = gl;
+    const inFlight = g.state === 'PILOT' && !g.ac.onGround;
+    this.group.visible = gl || (inFlight && (g.comfort ? g.comfort.applied !== 2 : true));
+    this.clouds.visible = true;
+    for (const b of this.birds) b.b.visible = gl;
     if (!gl) { const c = document.getElementById('varioChip'); if (c) c.classList.add('hidden'); }
     if (!ac.glider) { if (this.lift) { ac.wind.y = 0; this.lift = 0; } return; }
     this.lift = ac.onGround ? 0 : thermalLift(ac.pos.x, ac.pos.z);
     ac.wind.y = this.lift;
+    if (!this.group.visible) return;
     if (!gl) return;
     /* oiseaux */
     const time = g.time;

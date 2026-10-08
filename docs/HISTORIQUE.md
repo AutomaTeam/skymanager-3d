@@ -2424,3 +2424,7 @@ Mission 📦 **Livraison aux iles** (G10, niveau 3) : une commande tiree au sort
 - **Metiers** (H04, `js/jobs.js`) : menu pause > 👷 : Pompier, Bagagiste, Guide, Mecanicien, Controleur ; 3 taches comptees avec les compteurs existants, costume, +15 pieces, 3 metiers dans la journee = +40.
 - **Musique par lieu** (J04) : themes `air`, `hall`, `park`, `islands`, `night` (progression, gamme, tempo, son), changement en fondu (`Music.setTheme`, choisi par `Comfort.update`).
 - **Aide en cartes** (F05) et **couleurs pour tous** (F03) : voir phases precedentes.
+
+### Ciel : couchers de soleil, etoiles, cumulus (phase 98)
+
+K05 : lever et coucher de soleil plus colores (une cle de plus au crepuscule), 1 500 etoiles plus grosses qui apparaissent plus tot. K01 (version legere) : les gros cumulus blancs des ascendances sont visibles pour tous les avions en vol (reperes dans le ciel, on les traverse), sauf en qualite basse ; pas de nuages volumetriques par raymarching.

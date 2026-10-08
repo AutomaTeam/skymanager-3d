@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791470757';
-import { cloudTexture, mixHex } from './renderShared.js?v=1791470757';
+import * as TEX from './textures.js?v=1791470927';
+import { cloudTexture, mixHex } from './renderShared.js?v=1791470927';
 
 export const skyMethods = {
   buildSky() {
@@ -67,7 +67,7 @@ export const skyMethods = {
         this.skyMat = mat;
 
         /* Etoiles : points fixes sur la voute, reveles par la nuit. */
-        const starCount = 900;
+        const starCount = 1500;
         const starPos = new Float32Array(starCount * 3);
         for (let i = 0; i < starCount; i++) {
           /* Repartition uniforme sur la demi-sphere superieure. */
@@ -81,7 +81,7 @@ export const skyMethods = {
         const starGeo = new THREE.BufferGeometry();
         starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
         this.starMat = new THREE.PointsMaterial({
-          color: 0xffffff, size: 90, sizeAttenuation: true,
+          color: 0xffffff, size: 120, sizeAttenuation: true,
           map: TEX.starSprite().map, alphaTest: 0.02,
           transparent: true, opacity: 0, depthWrite: false
         });

@@ -39,12 +39,13 @@ const WEATHER_BLEND = 25;
 const SKY_KEYS = [
   { h: 0.0,  top: 0x050a1a, mid: 0x0a1430, bot: 0x101c38, fog: 0x0a1430 },
   { h: 4.5,  top: 0x081026, mid: 0x14204a, bot: 0x1c2a4e, fog: 0x14204a },
-  { h: 6.0,  top: 0x1a3a72, mid: 0x8a5a6a, bot: 0xd08a5a, fog: 0x8a6a6a },
+  { h: 6.0,  top: 0x1c3e7c, mid: 0xb8607a, bot: 0xffa060, fog: 0x9a6a78 },
   { h: 7.5,  top: 0x2c6bb5, mid: 0x9fc0e0, bot: 0xe8d8c0, fog: 0xb8c8d8 },
   { h: 12.0, top: 0x1f6fd0, mid: 0x8fc3ee, bot: 0xdceaf5, fog: 0x9fcbee },
   { h: 16.5, top: 0x2c6bb5, mid: 0x9fc8ea, bot: 0xe8dcc8, fog: 0xa8c8e0 },
-  { h: 18.5, top: 0x1e3a6a, mid: 0xd07a4a, bot: 0xf2a860, fog: 0xc08a70 },
-  { h: 20.0, top: 0x0e1a3a, mid: 0x3a3a66, bot: 0x6a4a5a, fog: 0x3a3a5a },
+  { h: 18.5, top: 0x2a3a7a, mid: 0xf06a3a, bot: 0xffb050, fog: 0xd8805a },
+  { h: 19.3, top: 0x1c2a5c, mid: 0xb0507a, bot: 0xe08a58, fog: 0x9a6a7a },
+  { h: 20.2, top: 0x0e1a3a, mid: 0x3a3a66, bot: 0x6a4a5a, fog: 0x3a3a5a },
   { h: 21.5, top: 0x050a1a, mid: 0x0a1430, bot: 0x101c38, fog: 0x0a1430 },
   { h: 24.0, top: 0x050a1a, mid: 0x0a1430, bot: 0x101c38, fog: 0x0a1430 }
 ];
