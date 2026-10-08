@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791471013';
-import { emojiSprite } from './groundFun.js?v=1791471013';
-import { TODAY } from './terminalFlow.js?v=1791471013';
+import { sfx } from './sfx.js?v=1791471104';
+import { emojiSprite } from './groundFun.js?v=1791471104';
+import { TODAY } from './terminalFlow.js?v=1791471104';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [
@@ -144,7 +144,10 @@ export class Ambience {
     if (air && air.state !== this._airState) {
       if (air.state === 'TAKEOFF' && air.g.visible) {
         const p = g.player.pos, d = Math.hypot(air.x - p.x, air.z - p.z);
-        sfx.jet(Math.max(0.15, 1 - d / 1600));
+        /* J03 : le grondement vient du cote ou se trouve l'avion (pan selon le vecteur « droite » de la camera) */
+        const cam = g.r3d.camera, e = cam.matrixWorld.elements;
+        const dx = air.x - cam.position.x, dz = air.z - cam.position.z, dl = Math.hypot(dx, dz) || 1;
+        sfx.jet(Math.max(0.15, 1 - d / 1600), (dx * e[0] + dz * e[2]) / dl);
       }
       this._airState = air.state;
     }

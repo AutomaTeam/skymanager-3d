@@ -161,7 +161,8 @@ export const sfx = {
     src.start(t0);
   },
   /* Avion qui decolle au loin : grondement sourd qui enfle puis s'eloigne (vol = 0..1). */
-  jet(vol = 0.5) {
+  /* J03 : `pan` de -1 (gauche) a 1 (droite) : la source est a droite ou a gauche de la camera (StereoPanner). */
+  jet(vol = 0.5, pan = 0) {
     const a = audio();
     if (!a) return;
     const t0 = a.currentTime, dur = 6;
@@ -179,7 +180,8 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.16 * vol, t0 + 2.2);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    src.connect(lp).connect(g).connect(dest(a));
+    if (a.createStereoPanner) { const p = a.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan)); src.connect(lp).connect(g).connect(p).connect(dest(a)); }
+    else src.connect(lp).connect(g).connect(dest(a));
     src.start(t0);
   },
   /* Carillon d'annonce du terminal : ding-dang-dong. */

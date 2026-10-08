@@ -2428,3 +2428,7 @@ Mission 📦 **Livraison aux iles** (G10, niveau 3) : une commande tiree au sort
 ### Ciel : couchers de soleil, etoiles, cumulus (phase 98)
 
 K05 : lever et coucher de soleil plus colores (une cle de plus au crepuscule), 1 500 etoiles plus grosses qui apparaissent plus tot. K01 (version legere) : les gros cumulus blancs des ascendances sont visibles pour tous les avions en vol (reperes dans le ciel, on les traverse), sauf en qualite basse ; pas de nuages volumetriques par raymarching.
+
+### Mer animee et son directionnel (phase 99)
+
+K02 : la mer a un relief de vagues (carte de normales calculee en code, sans fichier) qui defile lentement : reflets du soleil sur l'eau. Pas de sillage d'hydravion ni d'ecume animee. J03 (partiel) : le grondement de l'avion de ligne qui decolle vient du cote ou il se trouve (`sfx.jet(vol, pan)`, StereoPanner) ; pas de vrai PannerNode 3D ni de sons de fontaine / foule.
