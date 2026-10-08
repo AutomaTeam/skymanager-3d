@@ -2380,3 +2380,8 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - **6 klaxons synthetises** (J05) a debloquer avec le niveau (classique, canard 3, clown 6, train 9, camion 12, trompette 15) ; Reglages > 📯. Tous les vehicules et le geste « klaxon » utilisent le klaxon choisi.
 - **Audit** (J01) : `tools/audio.audit.mjs` (dans `npm test`) echoue si le code appelle un `sfx.xxx()` qui n'existe pas (41 sons, tous utilises). Non verifie a l'oreille : l'equilibre des volumes, le deblocage de l'audio sur un vrai iPad.
 - Non fait : J03 (sons spatialises) et J04 (musiques par lieu).
+
+### Atterrissage spectaculaire et ecran titre vivant (phase 83)
+
+- **K04** : fumee blanche des pneus au toucher (reutilise le systeme de particules de la traînee) et petite secousse de camera, plus forte pour un atterrissage 3 ⭐ (le ralenti existait deja).
+- **K07** : derriere les gros boutons de l'ecran titre, l'aeroport est visible et la camera tourne tres lentement autour de l'avion (`renderCamera.updateTitleCamera`) ; voile degrade pour garder le texte lisible.

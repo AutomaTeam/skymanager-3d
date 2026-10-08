@@ -1999,3 +1999,7 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 .set-vol { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; }
 .set-vol label { display: flex; align-items: center; gap: 0.35rem; font-size: 18px; }
 .set-vol input[type=range] { width: 7.5rem; height: 48px; accent-color: #facc15; }
+
+/* K07 : l'ecran titre laisse voir l'aeroport vivant derriere (voile degrade pour garder le texte lisible) */
+#boot { background: radial-gradient(ellipse at center, rgba(5, 9, 18, 0.42) 0%, rgba(5, 9, 18, 0.7) 70%, rgba(5, 9, 18, 0.9) 100%); transition: opacity 0.3s; }
+#boot > div { text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7); }

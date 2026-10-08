@@ -29,7 +29,7 @@
 <div id="veil" class="veil" aria-hidden="true"></div>
 
 <!-- ============ ECRAN DE CHARGEMENT / MENU ============ -->
-<div id="boot" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050912]">
+<div id="boot" class="fixed inset-0 z-50 flex flex-col items-center justify-center">
   <div class="text-center px-8">
     <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-sky-400">SKYMANAGER <span class="text-white">3D</span></h1>
     <p class="mt-2 text-xs sm:text-sm uppercase tracking-[0.3em] text-slate-400">Ultimate Aviation Experience</p>
@@ -972,7 +972,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791469136').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469216').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -980,6 +980,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791469136"></script>
+<script type="module" src="js/main.js?v=1791469216"></script>
 </body>
 </html>

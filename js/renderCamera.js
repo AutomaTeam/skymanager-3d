@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { COCKPIT_EYE } from './cockpit.js?v=1791469136';
-import { clamp, clamp01s } from './renderShared.js?v=1791469136';
+import { COCKPIT_EYE } from './cockpit.js?v=1791469216';
+import { clamp, clamp01s } from './renderShared.js?v=1791469216';
 
 export const cameraMethods = {
   /* ---------------------------------------------------------- */
@@ -173,6 +173,19 @@ export const cameraMethods = {
   /* Camera troisieme personne suivant l'hotesse/le steward dans l'allee.
      Positions calculees dans le repere cabine puis ramenees au monde par
      la matrice de l'avion : la cabine suit desormais l'appareil. */
+  /* K07 : ecran titre vivant. La camera tourne tres lentement autour de l'avion, l'aeroport vit derriere. */
+  updateTitleCamera(ac, dt) {
+    this._titleA = (this._titleA || 0) + dt * 0.07;
+    const a = this._titleA, c = ac.pos;
+    const cam = this.camera;
+    cam.position.set(c.x + Math.cos(a) * 48, c.y + 11 + Math.sin(a * 1.7) * 3, c.z + Math.sin(a) * 48);
+    cam.up.set(0, 1, 0);
+    cam.lookAt(c.x, c.y + 3.2, c.z);
+    cam.fov = 50;
+    cam.updateProjectionMatrix();
+    this._shadowFocus = c;
+  },
+
   updateCabinCamera(attendant, dt) {
     const cam = this.camera;
     this._pilotCamActive = false;
