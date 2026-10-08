@@ -481,7 +481,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | H06, H07, H08, H09 | ✅/🟡 | cache-cache hebdomadaire ; Halloween + Noël (pas d'anniversaire, pas de neige) ; dormir ; photo de groupe |
 | I01 | ✅ | `KID_AIRCRAFT` 350 → 300 |
 | I02, I03, I04, I06, I07 | ✅ | 30 niveaux, album unifié, coffre en série de 7 jours, code d'avion, fichier de sauvegarde |
-| I05 | ⏭ | éditeur de livrée v2 (zones, autocollants au doigt) pas fait |
+| I05 | 🟡 | phase 106 : 33 autocollants (+8) ; peinture par zones et placement au doigt pas faits |
 | J01, J02, J05 | ✅ | audit statique, 3 volumes + ducking, 6 klaxons ; équilibre à l'oreille non vérifié |
 | J03 | 🟡 | pan stéréo du grondement de l'avion de ligne seulement |
 | J04 | ✅ | thèmes hall / skatepark / îles / nuit |

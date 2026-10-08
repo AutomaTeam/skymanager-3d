@@ -23,8 +23,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791477567';
-import { instanced } from './props.js?v=1791477567';
+import { LAYOUT } from './layout.js?v=1791477622';
+import { instanced } from './props.js?v=1791477622';
 
 const L = LAYOUT;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

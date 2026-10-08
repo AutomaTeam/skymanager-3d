@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791477567';
-import { emojiSprite } from './groundFun.js?v=1791477567';
-import { TODAY } from './terminalFlow.js?v=1791477567';
+import { sfx } from './sfx.js?v=1791477622';
+import { emojiSprite } from './groundFun.js?v=1791477622';
+import { TODAY } from './terminalFlow.js?v=1791477622';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [

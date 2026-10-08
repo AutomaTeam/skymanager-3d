@@ -2452,3 +2452,7 @@ Deux postes aux vitres cote piste du terminal (`BINOC_SPOTS` dans `social.js`) :
 ## Phase 105 - clients au cafe, regards (H05, K06)
 
 Des clients assis aux tables du cafe du terminal (`terminalBuilding.js`) ; les agents a l'arret se tournent vers le joueur a moins de 6 m (`a.gaze` dans `agents.js`, visuel seulement).
+
+## Phase 106 - 8 autocollants de plus (I05 partiel)
+
+Tortue, pingouin, papillon, fleur, glace, ballon, pieuvre, guitare (`STICKERS` dans `livery.js`) : 33 autocollants.
