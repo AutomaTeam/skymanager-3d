@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { COCKPIT_EYE } from './cockpit.js?v=1791477358';
-import { clamp, clamp01s } from './renderShared.js?v=1791477358';
+import { COCKPIT_EYE } from './cockpit.js?v=1791477435';
+import { clamp, clamp01s } from './renderShared.js?v=1791477435';
 
 export const cameraMethods = {
   /* ---------------------------------------------------------- */
@@ -164,6 +164,14 @@ export const cameraMethods = {
     cam.fov = this._hubFovOn && Math.abs(cam.fov - wantFov) < 30 ? cam.fov + (wantFov - cam.fov) * Math.min(1, dt * 5) : wantFov;
     this._hubFovOn = true;
     cam.updateProjectionMatrix();
+    /* H05 : jumelles, vue zoomee vers la piste qui balaie lentement. */
+    if (this.binocOn) {
+      const yaw = Math.PI + Math.sin((this.binocT || 0) * 0.35) * 0.7;
+      cam.position.set(player.pos.x, py + 1.7, player.pos.z);
+      cam.lookAt(player.pos.x + Math.sin(yaw) * 200, py + 1.7 + 6, player.pos.z + Math.cos(yaw) * 200);
+      cam.fov = 14;
+      cam.updateProjectionMatrix();
+    }
         /* En vue pietonne on veut voir loin, mais la meteo doit rester
            sensible : on derive la portee de la base de l'environnement. */
         const base = this._fogBase || { near: 2500, far: 24000 };

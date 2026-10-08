@@ -2444,3 +2444,7 @@ L'Ile aux Palmiers et l'Ile des Manèges sont aplaties (sol physique a y=0) et o
 ## Phase 103 - souvenir de la boutique (H05 partiel)
 
 Au comptoir boutique du terminal (mode Arcade, sans file), le bouton « Acheter un souvenir » propose l'objet de hangar le moins cher non possede ; un 2e appui l'achete (`shopSouvenir` dans `hubUpdate.js`, `shopOffer`/`buyOffer` dans `hangar.js`).
+
+## Phase 104 - jumelles de spotting (H05)
+
+Deux postes aux vitres cote piste du terminal (`BINOC_SPOTS` dans `social.js`) : bouton « Jumelles », camera zoomee (fov 14) qui balaie la piste (`renderCamera.js`), +2 pieces par jour. Marcher repose les jumelles.

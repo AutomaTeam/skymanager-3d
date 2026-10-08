@@ -10,12 +10,15 @@
    Pres de Biscuit (pet.js), le meme bouton sert a le caresser.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791477358';
-import { collectBodies } from './bodies.js?v=1791477358';
-import { emojiSprite } from './groundFun.js?v=1791477358';
+import { sfx } from './sfx.js?v=1791477435';
+import { collectBodies } from './bodies.js?v=1791477435';
+import { emojiSprite } from './groundFun.js?v=1791477435';
 
 const RANGE = 2.8;               // m pour saluer quelqu'un
 const COINS_PER_DAY = 12;
+/* H05 : jumelles aux grandes vitres cote piste du terminal (z0 = 1195). */
+const BINOC_SPOTS = [{ x: 262, z: 1198.5 }, { x: 458, z: 1198.5 }];
+const BINOC_RANGE = 3.2;
 const EMOJIS = ['😄', '👋', '😊', '🤩', '😁', '🙌', '😎', '🥰'];
 const LINES = {
   passenger: [
@@ -91,6 +94,11 @@ export class Social {
     const g = this.g;
     this._near = null;
     if (!g.arcade.on || g.state !== 'HUB' || g.controlled || g.rides.active || g.nearCounter) return null;
+    if (this.binoc) return (this._near = { kind: 'binoc', label: '🔭 POSER LES JUMELLES' });
+    {
+      const q = g.player.pos;
+      if (BINOC_SPOTS.some(b => Math.hypot(b.x - q.x, b.z - q.z) < BINOC_RANGE)) return (this._near = { kind: 'binoc', label: '🔭 JUMELLES' });
+    }
     /* Priorites : un vehicule a prendre, puis les gens, puis le chien. Le chien suit le joueur
        a 2 m : s'il passait en premier, il prenait le bouton devant chaque personne ou vehicule. */
     for (const v of g.vehicles || []) {
@@ -114,6 +122,7 @@ export class Social {
     if (n.kind === 'vehExit') { n.veh.exit(); return; }
     if (n.kind === 'vehAction') { n.veh.doAction(); return; }
     if (n.kind === 'pet') { this.g.pet.pet(); return; }
+    if (n.kind === 'binoc') { this.binoc ? this.stopBinoc() : this.startBinoc(); return; }
     const g = this.g, b = n.body, kind = this._kind(b.ref);
     sfx.hello();
     this._bubble(b.x, b.z, pick(EMOJIS));
@@ -139,7 +148,32 @@ export class Social {
     this.fx.push({ spr, t: 0 });
   }
 
+  startBinoc() {
+    const p = this.g.player.pos;
+    this.binoc = { x: p.x, z: p.z, t: 0 };
+    this.g.r3d.binocOn = true;
+    sfx.click();
+    const A = this.g.arcade, day = todayKey();
+    if (A.data.binocDay !== day) {
+      A.data.binocDay = day;
+      A.giveCoins(2, { silent: true, label: 'Spotteur !' });
+      A.save();
+      this.g.toast('🔭 Tu repères les avions ! +2 🪙', 3000, 'ok');
+    } else this.g.toast('🔭 Regarde les avions ! Marche pour poser les jumelles.', 2600);
+  }
+
+  stopBinoc() {
+    this.binoc = null;
+    this.g.r3d.binocOn = false;
+  }
+
   update(dt) {
+    if (this.binoc) {
+      const b = this.binoc, p = this.g.player.pos;
+      b.t += dt;
+      this.g.r3d.binocT = b.t;
+      if (this.g.state !== 'HUB' || Math.hypot(p.x - b.x, p.z - b.z) > 0.6) this.stopBinoc();
+    }
     for (const f of this.fx) {
       f.t += dt;
       f.spr.position.y += dt * 0.6;

@@ -477,7 +477,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | H01 | ✅ | 6 modules satellites + projecteurs de nuit |
 | H02, H03 | ✅ | astuces du chien + trésor quotidien (le chien ne monte pas dans le bus) ; 3 véhicules |
 | H04 | ✅ | métiers à la journée |
-| H05 | 🟡 | phase 103 : la boutique du terminal vend un vrai souvenir (2 appuis, objet du hangar) ; tapis à bagages et café existaient déjà ; jumelles et PNJ assis au café pas faits |
+| H05 | 🟡 | phase 103 : la boutique du terminal vend un vrai souvenir (2 appuis, objet du hangar) ; tapis à bagages et café existaient déjà ; jumelles ajoutées (phase 104, aux 2 vitres côté piste, vue zoomée qui balaie, +2 🪙/jour ; rendu non vu à l'écran, panneau caché) ; PNJ assis au café pas fait |
 | H06, H07, H08, H09 | ✅/🟡 | cache-cache hebdomadaire ; Halloween + Noël (pas d'anniversaire, pas de neige) ; dormir ; photo de groupe |
 | I01 | ✅ | `KID_AIRCRAFT` 350 → 300 |
 | I02, I03, I04, I06, I07 | ✅ | 30 niveaux, album unifié, coffre en série de 7 jours, code d'avion, fichier de sauvegarde |
