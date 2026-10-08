@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791469289';
-import { CabinService } from './cabinService.js?v=1791469289';
-import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791469289';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791469289';
-import { TerminalSystem } from './terminalSystem.js?v=1791469289';
-import { MissionSystem } from './missions.js?v=1791469289';
-import { Staff } from './staff.js?v=1791469289';
-import { History } from './history.js?v=1791469289';
-import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791469289';
-import { sfx } from './sfx.js?v=1791469289';
-import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791469289';
+import * as Save from './save.js?v=1791469365';
+import { CabinService } from './cabinService.js?v=1791469365';
+import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791469365';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791469365';
+import { TerminalSystem } from './terminalSystem.js?v=1791469365';
+import { MissionSystem } from './missions.js?v=1791469365';
+import { Staff } from './staff.js?v=1791469365';
+import { History } from './history.js?v=1791469365';
+import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791469365';
+import { sfx } from './sfx.js?v=1791469365';
+import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791469365';
 
 export const pauseMethods = {
   /* ========================================================== */
@@ -333,6 +333,18 @@ export const pauseMethods = {
       } else {
         this.lastFrame = performance.now();
       }
+    });
+    /* H08 : dormir jusqu'au matin (fondu, l'heure de jeu saute a 7 h). Jamais en plein vol. */
+    $('pauseSleep').addEventListener('click', () => {
+      if (this.state === 'PILOT' && !this.ac.onGround) { this.toast('😴 On ne dort pas en vol ! Atterris d\'abord.', 2600, 'warn'); return; }
+      sfx.click(); this.closePause();
+      const veil = $('veil');
+      veil.classList.add('on');
+      this.toast('😴 Bonne nuit… zzz', 1800);
+      setTimeout(() => {
+        try { this.env.setHour(7); this.updateEnvChip(); this.fun.say('Bonjour ! Il est 7 heures, une belle journee commence !', 2, 4200); } catch (e) { this._noteError('dormir', e); }
+        setTimeout(() => veil.classList.remove('on'), 500);
+      }, 1700);
     });
     $('pauseLost').addEventListener('click', () => { sfx.click(); this.closePause(); this.goHomeSafe(); });
     $('pauseHelp').addEventListener('click', () => { sfx.click(); $('helpPanel').classList.remove('hidden'); });

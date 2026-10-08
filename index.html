@@ -393,6 +393,7 @@
         <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Reglages</b><small>musique, confort</small></button>
         <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupee</small></button>
         <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
+        <button id="pauseSleep" class="kp-tile"><span class="kp-ico">😴</span><b>Dormir</b><small>jusqu'au matin</small></button>
         <button id="pauseLost" class="kp-tile"><span class="kp-ico">🧭</span><b>Je suis perdu</b><small>retour a l'aeroport</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
@@ -972,7 +973,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791469289').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469365').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -980,6 +981,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791469289"></script>
+<script type="module" src="js/main.js?v=1791469365"></script>
 </body>
 </html>
