@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791469997';
-import { SkyWorld } from './skyWorld.js?v=1791469997';
-import { HELIPAD } from './heliModel.js?v=1791469997';
-import { ISLANDS } from './openWorld.js?v=1791469997';
+import { sfx } from './sfx.js?v=1791470094';
+import { SkyWorld } from './skyWorld.js?v=1791470094';
+import { HELIPAD } from './heliModel.js?v=1791470094';
+import { ISLANDS } from './openWorld.js?v=1791470094';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -989,6 +989,7 @@ export class SkyMissions {
       if (this.m || this.armed) this.reset();
       return;
     }
+    if (g._worldPaused) return;       // menu ouvert : la mission attend aussi
     if (this.armed && !ac.onGround && ac.pos.y - ac.groundY > 14) this._begin();
     if (!this.m) { this._renderHud(); return; }
     /* Fin de vol : la mission s'arrete a l'atterrissage. */

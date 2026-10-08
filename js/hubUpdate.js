@@ -3,14 +3,14 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791469997';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791470094';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791469997';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791469997';
-import { COUNTERS } from './terminalSystem.js?v=1791469997';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791469997';
-import { sfx } from './sfx.js?v=1791469997';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791469997';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791470094';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791470094';
+import { COUNTERS } from './terminalSystem.js?v=1791470094';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791470094';
+import { sfx } from './sfx.js?v=1791470094';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791470094';
 
 export const hubMethods = {
   updateHub(dt) {
