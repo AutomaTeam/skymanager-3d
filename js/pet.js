@@ -13,8 +13,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465305';
-import { buildDog, emojiSprite } from './groundFun.js?v=1791465305';
+import * as Save from './save.js?v=1791465405';
+import { sfx } from './sfx.js?v=1791465405';
+import { buildDog, emojiSprite } from './groundFun.js?v=1791465405';
 
 const STORE = 'skymanager.pet';
 const SNIFF_RANGE = 30;          // m autour du joueur ou Biscuit sent une piece
@@ -173,10 +174,9 @@ export class Pet {
 
   _load() {
     const def = { adopted: false, name: 'Biscuit', pets: 0, petDay: '', fur: 0xc58a4a };
-    try { const d = JSON.parse(localStorage.getItem(STORE) || 'null'); if (d) return Object.assign(def, d); } catch (e) { /* ignore */ }
-    return def;
+    return Save.load(STORE, def);
   }
-  save() { try { localStorage.setItem(STORE, JSON.stringify(this.data)); } catch (e) { /* ignore */ } }
+  save() { Save.write(STORE, this.data); }
 
   get adopted() { return !!this.data.adopted; }
 

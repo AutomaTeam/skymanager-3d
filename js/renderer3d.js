@@ -4,20 +4,20 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791465305';
-import { spawnModel, preload } from './assetLoader.js?v=1791465305';
-import { LIGHT_GAIN } from './environment.js?v=1791465305';
-import { LAYOUT } from './layout.js?v=1791465305';
-import { buildDecor } from './decor.js?v=1791465305';
-import { buildSkyLife } from './skylife.js?v=1791465305';
-import { REQUEST_ICONS } from './cabinService.js?v=1791465305';
-import { AirportLife } from './airportLife.js?v=1791465305';
-import { buildCockpit, COCKPIT_EYE } from './cockpit.js?v=1791465305';
-import * as AF from './airframe.js?v=1791465305';
-import { LiveryRig } from './livery.js?v=1791465305';
-import { buildPlaneModel } from './planeModels.js?v=1791465305';
-import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791465305';
-import { buildTerminalShell, buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791465305';
+import * as TEX from './textures.js?v=1791465405';
+import { spawnModel, preload } from './assetLoader.js?v=1791465405';
+import { LIGHT_GAIN } from './environment.js?v=1791465405';
+import { LAYOUT } from './layout.js?v=1791465405';
+import { buildDecor } from './decor.js?v=1791465405';
+import { buildSkyLife } from './skylife.js?v=1791465405';
+import { REQUEST_ICONS } from './cabinService.js?v=1791465405';
+import { AirportLife } from './airportLife.js?v=1791465405';
+import { buildCockpit, COCKPIT_EYE } from './cockpit.js?v=1791465405';
+import * as AF from './airframe.js?v=1791465405';
+import { LiveryRig } from './livery.js?v=1791465405';
+import { buildPlaneModel } from './planeModels.js?v=1791465405';
+import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791465405';
+import { buildTerminalShell, buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791465405';
 
 /* Modeles externes (CC0/CC-BY, voir assets/models/CREDITS.md). Le
    fuselage/gouvernes de l'avion jouable restent procedurales (elles sont

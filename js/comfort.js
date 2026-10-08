@@ -11,8 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791465305';
-import { Music } from './music.js?v=1791465305';
+import { sfx } from './sfx.js?v=1791465405';
+import * as Save from './save.js?v=1791465405';
+import { Music } from './music.js?v=1791465405';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -38,10 +39,9 @@ export class Comfort {
 
   _load() {
     const def = { quality: 'auto', lefty: false, bigText: false, music: true, breakMin: 0 };
-    try { const d = JSON.parse(localStorage.getItem(STORE) || 'null'); if (d) return Object.assign(def, d); } catch (e) { /* ignore */ }
-    return def;
+    return Save.load(STORE, def);
   }
-  save() { try { localStorage.setItem(STORE, JSON.stringify(this.data)); } catch (e) { /* ignore */ } }
+  save() { Save.write(STORE, this.data); }
 
   _bind() {
     const t = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };

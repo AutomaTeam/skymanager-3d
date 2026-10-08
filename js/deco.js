@@ -12,7 +12,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791465305';
+import * as Save from './save.js?v=1791465405';
+import { sfx } from './sfx.js?v=1791465405';
 
 const STORE = 'skymanager.deco';
 const $ = (id) => document.getElementById(id);
@@ -235,10 +236,11 @@ export class Deco {
 
   _load() {
     const def = { items: [], earned: 0 };
-    try { const d = JSON.parse(localStorage.getItem(STORE) || 'null'); if (d) return Object.assign(def, d, { items: d.items || [] }); } catch (e) { /* ignore */ }
-    return def;
+    const d = Save.load(STORE, def);
+    if (!Array.isArray(d.items)) d.items = [];
+    return d;
   }
-  save() { try { localStorage.setItem(STORE, JSON.stringify(this.data)); } catch (e) { /* ignore */ } }
+  save() { Save.write(STORE, this.data); }
 
   get charm() { return this.data.items.reduce((s, r) => s + (itemOf(r.id) ? itemOf(r.id).charm : 0), 0); }
   /* Plafonne : sans limite, quelques grandes roues rapportaient plus que voler, sans rien faire. */

@@ -8,50 +8,51 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791465305';
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465305';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791465405';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465405';
 import * as THREE from 'three';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465305';
-import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465305';
-import { TouchControls } from './touchControls.js?v=1791465305';
-import { WalkJoystick } from './mechanicControls.js?v=1791465305';
-import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465305';
-import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465305';
-import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465305';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465305';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465305';
-import { Navigation } from './navigation.js?v=1791465305';
-import { AgentSystem } from './agents.js?v=1791465305';
-import { Environment } from './environment.js?v=1791465305';
-import { MissionSystem } from './missions.js?v=1791465305';
-import { Staff } from './staff.js?v=1791465305';
-import { History } from './history.js?v=1791465305';
-import { Hub } from './hub.js?v=1791465305';
-import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465305';
-import { FlightAssist } from './flightAssist.js?v=1791465305';
-import { Fun } from './fun.js?v=1791465305';
-import { Hangar } from './hangar.js?v=1791465305';
-import { SkyMissions } from './skyMissions.js?v=1791465305';
-import { MiniGames } from './minigames.js?v=1791465305';
-import { GroundFun } from './groundFun.js?v=1791465305';
-import { Pet } from './pet.js?v=1791465305';
-import { Social } from './social.js?v=1791465305';
-import { Tug } from './tug.js?v=1791465305';
-import { FireTruck } from './fireTruck.js?v=1791465305';
-import { Ambience } from './ambience.js?v=1791465305';
-import { Bus } from './bus.js?v=1791465305';
-import { Look } from './look.js?v=1791465305';
-import { Deco } from './deco.js?v=1791465305';
-import { Album } from './album.js?v=1791465305';
-import { OpenWorld } from './openWorld.js?v=1791465305';
-import { Comfort } from './comfort.js?v=1791465305';
-import { Rides } from './rides.js?v=1791465305';
-import { planeOf } from './fleet.js?v=1791465305';
-import { HELIPAD } from './heliModel.js?v=1791465305';
-import { sfx } from './sfx.js?v=1791465305';
-import { perfHud } from './perfHud.js?v=1791465305';
-import { iconify } from './icons.js?v=1791465305';
-import { drawPFD } from './cockpit.js?v=1791465305';
+import * as Save from './save.js?v=1791465405';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465405';
+import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465405';
+import { TouchControls } from './touchControls.js?v=1791465405';
+import { WalkJoystick } from './mechanicControls.js?v=1791465405';
+import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465405';
+import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465405';
+import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465405';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465405';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465405';
+import { Navigation } from './navigation.js?v=1791465405';
+import { AgentSystem } from './agents.js?v=1791465405';
+import { Environment } from './environment.js?v=1791465405';
+import { MissionSystem } from './missions.js?v=1791465405';
+import { Staff } from './staff.js?v=1791465405';
+import { History } from './history.js?v=1791465405';
+import { Hub } from './hub.js?v=1791465405';
+import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465405';
+import { FlightAssist } from './flightAssist.js?v=1791465405';
+import { Fun } from './fun.js?v=1791465405';
+import { Hangar } from './hangar.js?v=1791465405';
+import { SkyMissions } from './skyMissions.js?v=1791465405';
+import { MiniGames } from './minigames.js?v=1791465405';
+import { GroundFun } from './groundFun.js?v=1791465405';
+import { Pet } from './pet.js?v=1791465405';
+import { Social } from './social.js?v=1791465405';
+import { Tug } from './tug.js?v=1791465405';
+import { FireTruck } from './fireTruck.js?v=1791465405';
+import { Ambience } from './ambience.js?v=1791465405';
+import { Bus } from './bus.js?v=1791465405';
+import { Look } from './look.js?v=1791465405';
+import { Deco } from './deco.js?v=1791465405';
+import { Album } from './album.js?v=1791465405';
+import { OpenWorld } from './openWorld.js?v=1791465405';
+import { Comfort } from './comfort.js?v=1791465405';
+import { Rides } from './rides.js?v=1791465405';
+import { planeOf } from './fleet.js?v=1791465405';
+import { HELIPAD } from './heliModel.js?v=1791465405';
+import { sfx } from './sfx.js?v=1791465405';
+import { perfHud } from './perfHud.js?v=1791465405';
+import { iconify } from './icons.js?v=1791465405';
+import { drawPFD } from './cockpit.js?v=1791465405';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -367,12 +368,7 @@ class Game {
           /* Toutes les autres sauvegardes du jeu (hangar, etoiles et iles, missions du ciel,
              mini-jeux, ma place, montures...) : sans elles la remise a zero n'etait que
              partielle. Seuls les reglages (confort, son) sont conserves. */
-          try {
-            const keep = ['skymanager.comfort', 'skymanager.sfx'];
-            const keys = [];
-            for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
-            for (const k of keys) if (k && k.startsWith('skymanager.') && !keep.includes(k)) localStorage.removeItem(k);
-          } catch (e) { /* ignore */ }
+          Save.resetAll({ keep: ['comfort', 'sfx'] });
           window.location.reload();
         });
 

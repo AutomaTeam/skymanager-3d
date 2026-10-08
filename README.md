@@ -2295,3 +2295,7 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 
 - Bouton **Passer ⏭** dans la barre d'objectif a chaque etape du tutoriel (`Arcade.skipStep()`).
 - Tour de controle (Arcade) : la pastille affiche « N veulent partir · M montent » ; M est exactement le nombre credite au vol suivant.
+
+### Sauvegardes centralisees (phase 58)
+
+`js/save.js` : `load(cle, defauts, version, migrate)`, `write(cle, data, version)`, `resetAll({keep})`, `exportAll()` / `importAll()`. Un contenu corrompu (JSON invalide, mauvais type) est ignore, le stockage indisponible (Safari prive) ne leve jamais d'exception. Migres : pet, deco, comfort et la remise a zero du menu pause ; les autres modules gardent leur propre lecture (deja tolerante, verifiee avec `{`, `null`, `5`). Test : `npm run test:save`.
