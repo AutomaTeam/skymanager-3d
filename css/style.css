@@ -1843,6 +1843,11 @@ body.lefty .mascot { left: auto; right: 0.75rem; flex-direction: row-reverse; }
 body.bigtext .obj-text, body.bigtext .panel-sub, body.bigtext .m-bub, body.bigtext .st-mid p, body.bigtext .hg-sub,
 body.bigtext .kp-tile small, body.bigtext .al-card b, body.bigtext .hg-item small, body.bigtext .sky-chip, body.bigtext .mg-help { font-size: 118%; }
 body.bigtext .fun-btn small, body.bigtext .action-btn small { font-size: 11px; }
+/* F02 : « Tres grand » (136 %) */
+body.hugetext .obj-text, body.hugetext .panel-sub, body.hugetext .m-bub, body.hugetext .st-mid p, body.hugetext .hg-sub,
+body.hugetext .kp-tile small, body.hugetext .al-card b, body.hugetext .hg-item small, body.hugetext .sky-chip, body.hugetext .mg-help,
+body.hugetext .toast, body.hugetext .panel-note, body.hugetext .set-row small { font-size: 136%; }
+body.hugetext .fun-btn small, body.hugetext .action-btn small { font-size: 13px; }
 
 /* Vague 7 : helicoptere */
 .fun-btn.hidden { display: none; }
@@ -1967,3 +1972,7 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 .look-sw { width: 3rem; height: 3rem; }
 .look-sws { gap: 0.6rem; }
 #btnMenu, #btnMenu2, #btnMenu3, #btnView, #btnPhoto, #btnTrail { display: inline-flex; align-items: center; justify-content: center; }
+
+/* F04 : fondu au noir pendant un retour automatique */
+.veil { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 90; transition: opacity 0.35s ease; }
+.veil.on { opacity: 1; }

@@ -2327,3 +2327,8 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 
 - **Pilotage par inclinaison** (Reglages > 📱, desactive par defaut) : `DeviceOrientationEvent` (permission iOS demandee par le bouton), bouton « Calibrer », zone morte 4°, plage 25°. Teste avec de faux angles (`controls.injectOrientation(beta, gamma)`) ; **non teste sur un vrai iPad** (les signes selon l'orientation de l'ecran sont a verifier).
 - **Manette** (`js/gamepadInput.js`) : stick gauche = manche / deplacement, stick droit = palonnier, RT / LT = gaz, X = frein, A = bouton d'action, B = retour, Start = pause. Teste avec une fausse manette (`navigator.getGamepads`) ; pas avec une vraie.
+
+### Texte 3 tailles, « Je suis perdu » (phase 66)
+
+- Reglages > Taille du texte : Normal / Grand / Tres grand (`body.bigtext`, `body.hugetext`) ; l'ancien reglage oui/non est converti.
+- Menu pause > 🧭 **Je suis perdu** : fondu au noir puis retour pres de l'avion (a pied), sortie de la cabine, ou atterrissage assiste si on est en l'air. Descend aussi du vehicule / de la monture.
