@@ -2396,3 +2396,8 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - **Vehicules** (H03, `js/groundVehicles.js`, modules du registre) : 🚚 **Camion citerne** (anneau orange pres de l'aile, 4 s immobile = plein), 🧹 **Balayeuse** (8 debris a ramasser en 70 s), 🪜 **Escalier mobile** (a la porte de l'avion, 2 s immobile = passagers descendus). Meme conduite que le tracteur et le bus ; bouton CONDUIRE, objectif, corps qui bloquent les gens.
 - **Cache-cache** (H06, `js/hunt.js`) : 10 Coco 🦜 se cachent chaque semaine (30 cachettes, tirage fixe par semaine) ; puce « chaud / froid » quand on est dans le coin, le chien flaire 👃 ; 10 trouves = +50 pieces et 1 ⭐. Test : `tools/hunt.test.mjs`.
 - **Dormir** (H08) : menu pause > 😴, fondu puis 7 h du matin. **Photo de groupe** (H09) : au selfie, les personnes a moins de 10 m se tournent vers le groupe avec une bulle joyeuse.
+
+### Aide en cartes et couleurs pour tous (phase 91)
+
+- **Aide en cartes** (F05) : le menu ❓ commence par 8 cartes illustrees (icone + une phrase + **Montre-moi 👉**) : la fleche d'objectif pointe l'endroit pendant 25 s (poste de reparation, terminal, tour, avion, cadeau), ou le bouton du HUD se met a briller (monture, balle du chien). Les anciens textes restent dessous.
+- **Couleurs pour tous** (F03, Reglages > 🎨) : vert -> bleu, rouge -> orange sur les verdicts, quiz, mini-jeux, anneaux et jauges ; une icone ✔ / ✖ accompagne desormais la couleur dans les verdicts du terminal, les reponses de quiz et les mini-jeux.

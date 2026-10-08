@@ -2020,3 +2020,22 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 .help-more { margin-top: 0.4rem; }
 .pulse-help { animation: helpPulse 0.7s ease-in-out 6; }
 @keyframes helpPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(250, 204, 21, 0.5); } }
+
+/* F03 : « Couleurs pour tous » (daltonisme) : le vert devient bleu, le rouge devient orange, et une icone
+   accompagne la couleur (✔ / ✖) la ou elle seule disait bon / mauvais. */
+body.cb #toast.t-ok { border-color: rgba(56, 189, 248, 0.7); color: #bae6fd; }
+body.cb #toast.t-err { border-color: rgba(251, 146, 60, 0.75); color: #fed7aa; }
+body.cb .obj-arrow.near { fill: #38bdf8; filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.9)); }
+body.cb .big-btn.launch, body.cb .chk-btn.ok, body.cb .fun-btn.jump, body.cb .fun-btn.hover.on { background: linear-gradient(135deg, #7dd3fc, #0ea5e9); color: #082f49; }
+body.cb .chk-verdict.ok { background: rgba(12, 74, 110, 0.6); border-color: #38bdf8; color: #e0f2fe; }
+body.cb .quiz-a.good { background: rgba(3, 105, 161, 0.55); border-color: #38bdf8; color: #f0f9ff; }
+body.cb .mg-cell.good { border-color: #38bdf8; background: rgba(12, 74, 110, 0.7); }
+body.cb .mg-band { background: rgba(56, 189, 248, 0.5); border-top-color: #0ea5e9; }
+body.cb .vario-chip.good, body.cb .pet-tricks button.learned { border-color: #38bdf8; }
+body.cb .flight-steps span.done b::after { color: #38bdf8; }
+body.cb .hb.g i { background: linear-gradient(90deg, #0ea5e9, #7dd3fc); }
+body.cb .kid-chest.opened { background: linear-gradient(135deg, #bae6fd, #38bdf8); }
+.chk-verdict.ok::before, .quiz-a.good::before, .mg-cell.good::before { content: '✔ '; }
+.chk-verdict.ko::before, .quiz-a.bad::before, .quiz-a.wrong::before { content: '✖ '; }
+.mg-cell.bad::before { content: '✖ '; }
+body.cb .chk-verdict.ko, body.cb .quiz-a.bad, body.cb .mg-cell.bad { background: rgba(124, 45, 18, 0.6); border-color: #fb923c; color: #ffedd5; }

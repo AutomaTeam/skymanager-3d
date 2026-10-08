@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469794';
-import * as Save from './save.js?v=1791469794';
-import { Music } from './music.js?v=1791469794';
+import { sfx } from './sfx.js?v=1791469860';
+import * as Save from './save.js?v=1791469860';
+import { Music } from './music.js?v=1791469860';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -55,7 +55,7 @@ export class Comfort {
   }
 
   _load() {
-    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, voiceRate: 1, breakMin: 0, limitMin: 0, usedDay: '', usedSec: 0, vMusic: 1, vFx: 1, vVoice: 1, horn: 'classic' };
+    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, voiceRate: 1, breakMin: 0, limitMin: 0, usedDay: '', usedSec: 0, vMusic: 1, vFx: 1, vVoice: 1, horn: 'classic', cb: false };
     const d = Save.load(STORE, def);
     if (d.bigText) { d.textSize = Math.max(1, d.textSize | 0); }        // ancien reglage booleen
     delete d.bigText;
@@ -78,6 +78,7 @@ export class Comfort {
       if (el) el.addEventListener('input', () => { this.data[key] = +el.value; this.save(); this.apply(); });
       if (el) el.addEventListener('change', () => { if (key === 'vFx') sfx.coin(); else if (key === 'vVoice') this.g.voice.speak('Coucou, c\'est moi !', { prio: 3 }); });
     }
+    t('setCb', () => { this.data.cb = !this.data.cb; this._changed(); });
     t('setHorn', () => {
       const lvl = this.g.arcade.data.level;
       const open = HORNS.filter(h => h.level <= lvl);
@@ -171,6 +172,7 @@ export class Comfort {
     const hn = HORNS.find(h => h.id === d.horn) || HORNS[0];
     const nextH = HORNS.find(h => h.level > this.g.arcade.data.level);
     set('setHorn', `${hn.ico} ${hn.name}${nextH ? ` · prochain au niveau ${nextH.level}` : ''}`, hn.id !== 'classic');
+    set('setCb', d.cb ? 'Bleu / orange' : 'Normales', d.cb);
     set('setBreak', d.breakMin ? `Toutes les ${d.breakMin} min` : 'Pas de rappel', !!d.breakMin);
   }
 
@@ -178,6 +180,7 @@ export class Comfort {
   apply() {
     const d = this.data;
     document.body.classList.toggle('lefty', d.lefty);
+    document.body.classList.toggle('cb', !!d.cb);
     document.body.classList.toggle('bigtext', d.textSize === 1);
     document.body.classList.toggle('hugetext', d.textSize === 2);
     this.music.setOn(d.music && !sfx.muted);

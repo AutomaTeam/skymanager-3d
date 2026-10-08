@@ -72,7 +72,7 @@ export class SkyWorld {
       group, x, y, z, radius, state: 'next', color,
       setState(s) {
         this.state = s;
-        const col = s === 'next' ? 0xffd23f : s === 'later' ? 0xcfe8ff : 0x4ade80;
+        const col = s === 'next' ? 0xffd23f : s === 'later' ? 0xcfe8ff : (document.body.classList.contains('cb') ? 0x38bdf8 : 0x4ade80);
         ring.material.color.setHex(col); halo.material.color.setHex(col); disc.material.color.setHex(col);
         group.visible = s !== 'hidden';
         const k = s === 'next' ? 1 : s === 'later' ? 0.75 : 0.9;

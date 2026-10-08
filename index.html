@@ -835,6 +835,7 @@
         <label>🎵 <input id="volMusic" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume de la musique"></label>
         <label>🔊 <input id="volFx" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume des effets"></label>
         <label>🗣️ <input id="volVoice" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume des voix"></label></div>
+      <button id="setCb" class="set-row"><span class="set-ico">🎨</span><b>Couleurs pour tous</b><small>Normales</small></button>
       <button id="setHorn" class="set-row"><span class="set-ico">📯</span><b>Klaxon</b><small>Classique</small></button>
       <button id="setHaptic" class="set-row"><span class="set-ico">📳</span><b>Vibrations</b><small>Active</small></button>
       <button id="setTilt" class="set-row"><span class="set-ico">📱</span><b>Pilotage par inclinaison</b><small>Coupe</small></button>
@@ -981,7 +982,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791469794').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469860').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -989,6 +990,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791469794"></script>
+<script type="module" src="js/main.js?v=1791469860"></script>
 </body>
 </html>

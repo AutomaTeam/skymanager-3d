@@ -3,11 +3,11 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469794';
-import { LAYOUT } from './layout.js?v=1791469794';
-import { drawIcon } from './icons.js?v=1791469794';
-import { PARK, buildPark } from './rideCourse.js?v=1791469794';
-import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791469794';
+import { sfx } from './sfx.js?v=1791469860';
+import { LAYOUT } from './layout.js?v=1791469860';
+import { drawIcon } from './icons.js?v=1791469860';
+import { PARK, buildPark } from './rideCourse.js?v=1791469860';
+import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791469860';
 
 export const mapMethods = {
   _mapToPx(x, z, w, h) {
