@@ -472,7 +472,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | G02, G03 | ✅ | formation (3 parcours) ; le fantôme de la course existait déjà |
 | G04 | ✅ | arc-en-ciel, bannière, treuillage ; show / zoo / ballons / secours existaient déjà |
 | G05 | 🟡 | éclairs, manche à air, balisage de brouillard existaient déjà ; rien d'ajouté |
-| G06 | 🟡 | phase 102 : pistes de 340 m sur l'Ile aux Palmiers et l'Ile des Manèges (îles aplaties, `_flattenIsland`), cadeau 1×/jour au poser ; pas d'aide à l'atterrissage sur île, pas d'hydravion ; scénarios navigateur non relancés (panneau caché) |
+| G06 | 🟡 | phase 102 : pistes de 340 m sur l'Ile aux Palmiers et l'Ile des Manèges (îles aplaties, `_flattenIsland`), cadeau 1×/jour au poser ; pas d'aide à l'atterrissage sur île ; amerrissage de l'hydravion : éclaboussures + cadeau du jour (phase 107, non testé à l'écran) ; scénarios navigateur non relancés (panneau caché) |
 | G07, G08, G09, G10 | ✅ | rejeu, balade, copilote vivant, livraison (sans lien avec le tracteur) |
 | H01 | ✅ | 6 modules satellites + projecteurs de nuit |
 | H02, H03 | ✅ | astuces du chien + trésor quotidien (le chien ne monte pas dans le bus) ; 3 véhicules |

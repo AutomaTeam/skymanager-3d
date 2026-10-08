@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791477622';
-import { itemOf } from './deco.js?v=1791477622';
+import { sfx } from './sfx.js?v=1791477663';
+import { itemOf } from './deco.js?v=1791477663';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -260,6 +260,13 @@ export class OpenWorld {
     const ac = this.g.ac, td = ac.touchdown;
     if (!td || td === this._lastTd || !ac.onGround) return;
     this._lastTd = td;
+    /* G06 : l'hydravion amerrit sur la mer ou le lac : grosses eclaboussures + cadeau du jour */
+    if (this.g.r3d.activePlane === 'hydravion' && this.isWater(ac.pos.x, ac.pos.z) && !ac.crashed) {
+      const tr = this.g.fun.trail, f = ac.forward();
+      if (tr) for (let i = 0; i < 24; i++) tr.emit(ac.pos.x + (Math.random() - 0.5) * 10 - f.x * 4, 1, ac.pos.z + (Math.random() - 0.5) * 10 - f.z * 4, 0xe8f6ff, 4 + Math.random() * 4, 1.2 + Math.random());
+      this._egg('splash', '💦', 'Amerrissage reussi ! Splash !', 15);
+      return;
+    }
     for (const { isl } of this.islands) {
       const st = isl.strip;
       if (!st) continue;

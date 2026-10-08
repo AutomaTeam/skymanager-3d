@@ -2456,3 +2456,7 @@ Des clients assis aux tables du cafe du terminal (`terminalBuilding.js`) ; les a
 ## Phase 106 - 8 autocollants de plus (I05 partiel)
 
 Tortue, pingouin, papillon, fleur, glace, ballon, pieuvre, guitare (`STICKERS` dans `livery.js`) : 33 autocollants.
+
+## Phase 107 - amerrissage (G06)
+
+L'hydravion qui se pose sur l'eau (mer, lac) souleve de grosses eclaboussures et gagne 15 pieces une fois par jour (`_updateStripLanding`, openWorld.js).
