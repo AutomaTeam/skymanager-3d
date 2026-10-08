@@ -2358,3 +2358,9 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - **Plume** (hangar, niveau 3, 130 pieces) : planeur de finesse ~30 (mesuree 34 en air calme). Remorque automatique jusqu'a 520 m, largage, puis vol sans moteur. Le « moteur » du profil est la corde de remorquage (`ac.glider`, `ac.released`) : coupee au largage. Tenue de vitesse par l'assiette, aerofreins pour la pente d'approche (plan calcule avec la finesse sol : tient meme avec 12 m/s de vent de face), rappel automatique en finale si on arrive trop bas (jamais d'atterrissage force dans un champ). Le bouton ATTERRIR replace le planeur a 3,3 km de la piste.
 - `js/thermals.js` (module du registre) : 9 colonnes d'air chaud (champs, aire de stationnement, iles) avec cumulus blanc et oiseaux qui tournent ; vent vertical dans la physique ; **vario** (puce ⬆️ m/s + bips qui montent). Mission 🪂 **Vol a voile** : 3 minutes en l'air apres le largage. Missions du ciel pour le planeur : Vol a voile, Arc-en-ciel, Exploration des iles.
 - Tests : `npm run test:fleet` (tow, largage, finesse, ascendance, approche avec 3 vents), scenario `glider` ; outils `tools/gliderProbe.mjs` et `tools/gliderLand.mjs` pour regler la physique.
+
+### Copilote vivant, balade, eclairs (phase 75)
+
+- **Coco** (G09) dit une phrase d'accueil selon la situation : premier vol du jour, nuit, pluie, brouillard, orage, nouvel avion, planeur, helicoptere ; 3 a 5 variantes chacune et une **memoire des 10 dernieres phrases** (`Fun.sayKey`). Une phrase « record » apres un record d'acrobaties.
+- **Balade des iles** 🌅 (G08, niveau 1) : l'aide te guide toujours vers toutes les iles, sans temps limite : on regarde le paysage et on prend des photos.
+- **Eclairs** (G05, `js/lightning.js`) : pendant un orage, un flash doux et le tonnerre quelques secondes apres. La manche a air existait deja (`airportLife.js`) ; le balisage lumineux par brouillard aussi (feux de piste).

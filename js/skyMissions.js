@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791468476';
-import { SkyWorld } from './skyWorld.js?v=1791468476';
-import { HELIPAD } from './heliModel.js?v=1791468476';
-import { ISLANDS } from './openWorld.js?v=1791468476';
+import { sfx } from './sfx.js?v=1791468586';
+import { SkyWorld } from './skyWorld.js?v=1791468586';
+import { HELIPAD } from './heliModel.js?v=1791468586';
+import { ISLANDS } from './openWorld.js?v=1791468586';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -800,6 +800,34 @@ class FormationMission extends Mission {
   }
 }
 
+/* ------------------------------------------------------------
+   Balade : l'avion te promene tout seul au-dessus de toutes les iles (G08).
+   Aucune pression : pas de temps limite, l'aide te guide toujours ; reprends la main quand tu veux.
+   ------------------------------------------------------------ */
+class TourMission extends IslandMission {
+  setup() {
+    const order = [];
+    let cur = { x: 0, z: 1380 };
+    const left = ISLANDS.slice();
+    while (left.length) {
+      left.sort((a, b) => Math.hypot(a.x - cur.x, a.z - cur.z) - Math.hypot(b.x - cur.x, b.z - cur.z));
+      const n = left.shift(); order.push(n); cur = n;
+    }
+    this.targets = order;
+    this.hoops = order.map(i => this.world.hoop({ x: i.x, y: 190, z: i.z, yaw: 0, radius: 170 }));
+    this.idx = 0; this.limit = 0;
+    this.hoops.forEach((h, i) => h.setState(i === 0 ? 'next' : 'later'));
+    this.sky.say('Balade ! Je te guide. Appuie sur l\'appareil photo pour prendre de belles photos !', 2, 4500);
+  }
+  guide() { const i = this.targets[this.idx]; return i ? { x: i.x, y: 190, z: i.z } : null; }
+  goal() { const i = this.targets[this.idx]; return { icon: '🌅', text: i ? `Balade : cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Balade terminee, bravo !', target: this.target() }; }
+  progressText() { return `🌅 ${this.idx}/${this.targets.length} iles`; }
+  result() {
+    const s = this.idx, n = this.targets.length;
+    return { score: s, medal: s >= n ? 3 : s >= n - 2 ? 2 : s >= 2 ? 1 : 0, lines: [`🌅 ${s} ile${s > 1 ? 's' : ''} visitee${s > 1 ? 's' : ''} sur ${n}`] };
+  }
+}
+
 /* ============================================================
    Catalogue
    ============================================================ */
@@ -808,6 +836,7 @@ export const MISSION_DEFS = [
   { id: 'race',     ico: '🏁', name: 'Course d\'anneaux',  brief: 'Passe tous les anneaux le plus vite possible. Bats ton record !', level: 1, limit: 0, cls: RaceMission },
   { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Eteins les feux de foret avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
   { id: 'parcel',   ico: '🎁', name: 'Livreur de colis',   brief: 'Largue les colis a parachute sur les cibles.', level: 2, limit: 170, cls: ParcelMission },
+  { id: 'tour',     ico: '🌅', name: 'Balade des iles',    brief: 'L\'avion te promene au-dessus de toutes les iles. Zen et photos !', level: 1, limit: 0, cls: TourMission, always: true },
   { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission, glider: true },
   { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
@@ -937,7 +966,7 @@ export class SkyMissions {
     this.m.t += dt;
     this.m.update(dt);
     /* l'aide au pilotage s'oriente vers la cible */
-    if (g.assist) g.assist.guide = (g.fun.diff.magnet || this.m.def.id === 'show') ? this.m.guide() : null;
+    if (g.assist) g.assist.guide = (g.fun.diff.magnet || this.m.def.id === 'show' || this.m.def.always) ? this.m.guide() : null;
     if (this.m.limit && this.m.t >= this.m.limit) this.m.done = true;
     if (this.m.done) { this.finish(false); return; }
     this._updateReticle();

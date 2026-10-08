@@ -14,11 +14,11 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791468476';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextUnlock } from './arcade.js?v=1791468476';
-import { UPGRADES } from './airportTycoon.js?v=1791468476';
-import { planeOf } from './fleet.js?v=1791468476';
-import { sfx } from './sfx.js?v=1791468476';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791468586';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextUnlock } from './arcade.js?v=1791468586';
+import { UPGRADES } from './airportTycoon.js?v=1791468586';
+import { planeOf } from './fleet.js?v=1791468586';
+import { sfx } from './sfx.js?v=1791468586';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

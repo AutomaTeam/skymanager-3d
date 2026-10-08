@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468476';
-import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791468476';
+import { sfx } from './sfx.js?v=1791468586';
+import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791468586';
 
 export const flightMethods = {
   /* ---------------- Anneaux de vol ---------------- */
