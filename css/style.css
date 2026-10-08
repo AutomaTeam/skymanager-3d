@@ -2036,3 +2036,9 @@ body.cb .kid-chest.opened { background: linear-gradient(135deg, #bae6fd, #38bdf8
 .chk-verdict.ko::before, .quiz-a.bad::before, .quiz-a.wrong::before { content: '✖ '; }
 .mg-cell.bad::before { content: '✖ '; }
 body.cb .chk-verdict.ko, body.cb .quiz-a.bad, body.cb .mg-cell.bad { background: rgba(124, 45, 18, 0.6); border-color: #fb923c; color: #ffedd5; }
+
+/* G07 : rejeu */
+.replay-btn, .replay-stop { position: fixed; left: 50%; transform: translateX(-50%); z-index: 80; min-height: 56px; padding: 0 1.2rem; border-radius: 999px; border: 3px solid #fff; font-weight: 900; font-size: 15px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5); }
+.replay-btn { bottom: max(1rem, calc(env(safe-area-inset-bottom) + 1rem)); background: linear-gradient(135deg, #a78bfa, #6366f1); color: #fff; }
+.replay-stop { top: max(4.2rem, calc(env(safe-area-inset-top) + 4.2rem)); background: rgba(15, 23, 42, 0.9); color: #fde68a; border-color: #facc15; }
+.replay-btn.hidden, .replay-stop.hidden { display: none; }

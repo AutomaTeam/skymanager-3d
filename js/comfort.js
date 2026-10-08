@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791470094';
-import * as Save from './save.js?v=1791470094';
-import { Music } from './music.js?v=1791470094';
+import { sfx } from './sfx.js?v=1791470179';
+import * as Save from './save.js?v=1791470179';
+import { Music } from './music.js?v=1791470179';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);

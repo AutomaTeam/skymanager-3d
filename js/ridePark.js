@@ -8,8 +8,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791470094';
-import { profile } from './rideCourse.js?v=1791470094';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791470179';
+import { profile } from './rideCourse.js?v=1791470179';
 
 const CONCRETE = new THREE.MeshStandardMaterial({ color: 0xb6bcc6, roughness: 0.9 });
 const COPING = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.3, metalness: 0.8 });

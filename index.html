@@ -777,6 +777,8 @@
 </div>
 
 <!-- ============ RAPPORT DE VOL (mode Arcade) ============ -->
+<button id="replayBtn" class="hidden replay-btn" type="button">🎬 Revoir mon vol</button>
+<button id="replayStop" class="hidden replay-stop" type="button">⏹ Fin du rejeu</button>
 <div id="kidReport" class="hidden panel-overlay">
   <div class="panel-card center kid">
     <div id="kidStarsRow" class="kid-stars"><span>★</span><span>★</span><span>★</span></div>
@@ -982,7 +984,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791470094').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791470179').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -990,6 +992,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791470094"></script>
+<script type="module" src="js/main.js?v=1791470179"></script>
 </body>
 </html>
