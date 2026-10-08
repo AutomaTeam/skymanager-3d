@@ -22,7 +22,7 @@
    Tout est instancie ou fusionne : quelques dizaines d'appels de dessin.
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791470488';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791470757';
 
 /* Enceinte de l'aeroport : rien de naturel n'y pousse. */
 const AIRPORT = { x0: -300, x1: 800, z0: -1750, z1: 1900 };

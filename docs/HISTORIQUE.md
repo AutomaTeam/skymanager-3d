@@ -2411,3 +2411,16 @@ Mission 📦 **Livraison aux iles** (G10, niveau 3) : une commande tiree au sort
 ### Documentation (phase 93)
 
 `README.md` est maintenant un guide court (lancer, installer, deployer, architecture, tests, debogage) ; tout l'historique est dans `docs/HISTORIQUE.md`, la carte des modules est generee dans `docs/MODULES.md` (`npm run modules`), les anciens plans sont dans `docs/plans/`.
+
+### Rampes satellites et projecteurs du skatepark (phase 97)
+
+- **H01** : 6 petits modules (tremplins, quart de pipe, fun box, pyramide, 1 rail) sur l'aire entre le skatepark et le terminal (`PARK.sats`, `PARK.satRails` dans `rideCourse.js` ; sol praticable verifie ; moins de 1,2 m ; hors de la zone du parc). Test : `tools/rides.test.mjs` (satellites dans les limites, pas de chevauchement).
+- **Projecteurs de nuit** : 5 mats avec lampe et grande flaque de lumiere, **sans vraie lumiere** (regle perf de la phase 47) ; ils ne s'allument que quand les feux de l'aeroport sont allumes.
+
+### Fixes, rejeu, metiers, musique par lieu, aide en cartes (phases 94 a 96)
+
+- **Correctif** : le menu pause fige maintenant vraiment l'avion et la mission en vol (avant, l'avion continuait de voler derriere le menu).
+- **Rejeu** (G07, `js/replay.js`) : 20 s d'enregistrement a 15 Hz, bouton « 🎬 Revoir mon vol » sur le rapport d'atterrissage ; monde fige, avion repose image par image, camera automatique toutes les 4 s, bouton photo utilisable ; test `tools/replay.test.mjs`.
+- **Metiers** (H04, `js/jobs.js`) : menu pause > 👷 : Pompier, Bagagiste, Guide, Mecanicien, Controleur ; 3 taches comptees avec les compteurs existants, costume, +15 pieces, 3 metiers dans la journee = +40.
+- **Musique par lieu** (J04) : themes `air`, `hall`, `park`, `islands`, `night` (progression, gamme, tempo, son), changement en fondu (`Music.setTheme`, choisi par `Comfort.update`).
+- **Aide en cartes** (F05) et **couleurs pour tous** (F03) : voir phases precedentes.

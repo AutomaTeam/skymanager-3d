@@ -171,8 +171,22 @@ export const PARK = {
   ]
 };
 
+/* H01 : petits modules « satellites » sur l'aire entre le skatepark et le terminal (sol praticable verifie,
+   hors de la zone du skatepark). Ils ne sont pas comptes dans `area` (la carte et l'aide gardent le parc seul). */
+PARK.sats = [
+  { id: 'sK1', type: 'kicker',  x: 312, z: 1062, a: E, w: 5, l: 6, h: 0.8, color: 0xfb923c },
+  { id: 'sQ1', type: 'quarter', x: 334, z: 1092, a: W, w: 8, R: 1.15, color: 0x38bdf8 },
+  { id: 'sB1', type: 'box',     x: 316, z: 1122, a: E, w: 5, e: 2.6, t: 6, h: 0.7, color: 0xa78bfa },
+  { id: 'sK2', type: 'kicker',  x: 360, z: 1108, a: N, w: 5, l: 5.5, h: 0.9, color: 0xfacc15 },
+  { id: 'sP1', type: 'pyramid', x: 402, z: 1088, a: S, w: 8, l: 8, h: 0.75, rl: 3, color: 0xf472b6 },
+  { id: 'sK3', type: 'kicker',  x: 414, z: 1136, a: W, w: 5, l: 6, h: 0.85, color: 0x4ade80 }
+];
+PARK.satRails = [
+  { id: 'sR1', x0: 330, z0: 1140, x1: 346, z1: 1140, y0: 0.75 }
+];
+
 export function buildPark() {
-  return new Course(PARK.prims, PARK.rails, PARK.area);
+  return new Course([...PARK.prims, ...PARK.sats], [...PARK.rails, ...PARK.satRails], PARK.area);
 }
 
 /* Rectangles au sol occupes par la structure (affichage carte, tests de chevauchement). */

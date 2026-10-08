@@ -197,7 +197,12 @@ for (const id of RIDE_IDS) {
 /* ---- Le skatepark ---- */
 {
   const a = PARK.area;
-  check(park.prims.every(p => p.box.x0 >= a.x0 && p.box.x1 <= a.x1 && p.box.z0 >= a.z0 && p.box.z1 <= a.z1), 'park : toutes les rampes sont dans la zone');
+  const inZone = (p) => p.box.x0 >= a.x0 && p.box.x1 <= a.x1 && p.box.z0 >= a.z0 && p.box.z1 <= a.z1;
+  check(park.prims.filter(p => !p.id.startsWith('s')).every(inZone), 'park : toutes les rampes du parc sont dans la zone');
+  const sats = park.prims.filter(p => p.id.startsWith('s') && p.id !== 'spine');
+  check(sats.length === PARK.sats.length && sats.length >= 4, `park : ${sats.length} modules satellites`);
+  check(sats.every(p => !(p.box.x0 < a.x1 + 6 && p.box.x1 > a.x0 - 6 && p.box.z0 < a.z1 + 6 && p.box.z1 > a.z0 - 6)), 'park : les satellites sont hors de la zone du skatepark');
+  check(sats.every(p => park.heightAt(p.x + p._s * p._L * 0.98, p.z + p._c * p._L * 0.98) < 1.2), 'park : satellites petits (moins de 1,2 m)');
   for (const r of PARK.rails) check(r.x0 >= a.x0 && r.x1 <= a.x1 && r.z0 >= a.z0 && r.z1 <= a.z1, `park : rail ${r.id} dans la zone`);
   let overlaps = [];
   const P = park.prims;

@@ -8,8 +8,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791470488';
-import { profile } from './rideCourse.js?v=1791470488';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791470757';
+import { profile } from './rideCourse.js?v=1791470757';
 
 const COPING = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.3, metalness: 0.8 });
 const RAIL_M = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.3, metalness: 0.6 });
@@ -153,6 +153,27 @@ export function buildParkMeshes(course, title = 'SKATEPARK') {
       post.position.set(px, y / 2, pz); post.castShadow = true; g.add(post);
     }
   }
+  /* H01 : projecteurs du skatepark la nuit. Pas de vraie lumiere (regle perf de la phase 47 : les lumieres
+     coutent cher) : des mats avec une lampe et une grande flaque de lumiere qui ne s'allument qu'a la nuit. */
+  const lamps = [];
+  if (A) {
+    const poleM = new THREE.MeshStandardMaterial({ color: 0x374151, roughness: 0.7 });
+    for (const [lx, lz] of [[A.x0 + 6, A.z0 + 6], [A.x1 - 6, A.z0 + 6], [A.x0 + 6, A.z1 - 6], [A.x1 - 6, A.z1 - 6], [(A.x0 + A.x1) / 2, (A.z0 + A.z1) / 2]]) {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 7.5, 8), poleM);
+      pole.position.set(lx, 3.75, lz); pole.castShadow = true; g.add(pole);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), new THREE.MeshBasicMaterial({ color: 0x4b5563 }));
+      head.position.set(lx, 7.7, lz); head.userData.noMerge = true; g.add(head);
+      const pool = new THREE.Mesh(new THREE.CircleGeometry(19, 28), new THREE.MeshBasicMaterial({ color: 0xfff1b8, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5 }));
+      pool.rotation.x = -Math.PI / 2; pool.position.set(lx, 0.05, lz); pool.userData.noMerge = true; pool.visible = false; g.add(pool);
+      lamps.push({ head, pool });
+    }
+  }
+  g.userData.setNight = (on) => {
+    for (const l of lamps) {
+      l.head.material.color.setHex(on ? 0xfff3c4 : 0x4b5563);
+      l.pool.visible = on; l.pool.material.opacity = on ? 0.32 : 0;
+    }
+  };
   /* D02 : le skatepark est statique -> fusion par materiau. */
   mergeStaticByMaterial(g);
   return g;

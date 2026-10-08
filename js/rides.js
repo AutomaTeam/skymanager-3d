@@ -19,13 +19,13 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791470488';
-import { buildPark, PARK } from './rideCourse.js?v=1791470488';
-import { buildParkMeshes } from './ridePark.js?v=1791470488';
-import { buildRide } from './rideModels.js?v=1791470488';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791470488';
-import { slideMove, collectBodies } from './bodies.js?v=1791470488';
-import { sfx } from './sfx.js?v=1791470488';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791470757';
+import { buildPark, PARK } from './rideCourse.js?v=1791470757';
+import { buildParkMeshes } from './ridePark.js?v=1791470757';
+import { buildRide } from './rideModels.js?v=1791470757';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791470757';
+import { slideMove, collectBodies } from './bodies.js?v=1791470757';
+import { sfx } from './sfx.js?v=1791470757';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -151,7 +151,8 @@ export class Rides {
       const r3d = game.r3d;
       this.group = new THREE.Group(); this.group.name = 'rides';
       r3d.airport.add(this.group);
-      this.group.add(buildParkMeshes(this.course, 'SKATEPARK'));
+      this.parkMesh = buildParkMeshes(this.course, 'SKATEPARK');
+      this.group.add(this.parkMesh);
       this.group.add(this.rig);
       this.fx = new FX(this.group);
     } catch (e) { console.error('[rides] scene', e); }
@@ -365,6 +366,11 @@ export class Rides {
     const g = this.g;
     this.t += dt;
     if (this.fx) this.fx.update(dt);
+    /* H01 : projecteurs allumes la nuit seulement (on ne change qu'au besoin). */
+    if (this.parkMesh && this.parkMesh.userData.setNight) {
+      const night = g.r3d._lightsOn === true;
+      if (night !== this._parkNight) { this._parkNight = night; this.parkMesh.userData.setNight(night); }
+    }
     if (this.parked) {
       this.parked.t -= dt;
       if (this.parked.t <= 0) { this.parked = null; if (!this.active) this.rig.visible = false; }
