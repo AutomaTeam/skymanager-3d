@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468897';
-import * as Save from './save.js?v=1791468897';
-import { Music } from './music.js?v=1791468897';
+import { sfx } from './sfx.js?v=1791469066';
+import * as Save from './save.js?v=1791469066';
+import { Music } from './music.js?v=1791469066';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -21,6 +21,15 @@ const $ = (id) => document.getElementById(id);
 const QUALITY = ['auto', 'high', 'low'];
 const QUALITY_LABEL = { auto: 'Auto', high: 'Haute', low: 'Basse' };
 const BREAKS = [0, 20, 30, 45, 60];
+/* J05 : klaxons a debloquer avec le niveau de pilote. */
+export const HORNS = [
+  { id: 'classic', name: 'Classique', ico: '📯', level: 1 },
+  { id: 'duck', name: 'Canard', ico: '🦆', level: 3 },
+  { id: 'clown', name: 'Clown', ico: '🤡', level: 6 },
+  { id: 'train', name: 'Train', ico: '🚂', level: 9 },
+  { id: 'truck', name: 'Camion', ico: '🚛', level: 12 },
+  { id: 'trumpet', name: 'Trompette', ico: '🎺', level: 15 }
+];
 const LIMITS = [0, 30, 45, 60, 90];
 /* Petit calcul pour les reglages parentaux (un enfant de 12 ans ne le fait pas par hasard). */
 function parentGate() {
@@ -46,7 +55,7 @@ export class Comfort {
   }
 
   _load() {
-    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, voiceRate: 1, breakMin: 0, limitMin: 0, usedDay: '', usedSec: 0 };
+    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, voiceRate: 1, breakMin: 0, limitMin: 0, usedDay: '', usedSec: 0, vMusic: 1, vFx: 1, vVoice: 1, horn: 'classic' };
     const d = Save.load(STORE, def);
     if (d.bigText) { d.textSize = Math.max(1, d.textSize | 0); }        // ancien reglage booleen
     delete d.bigText;
@@ -64,6 +73,18 @@ export class Comfort {
     t('setBig', () => { this.data.textSize = (this.data.textSize + 1) % 3; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
     t('setVoiceRate', () => { const R = [0.8, 1, 1.2]; this.data.voiceRate = R[(R.indexOf(this.data.voiceRate) + 1) % R.length]; this._changed(); this.g.voice.speak('Voila ma voix !', { prio: 3 }); });
+    for (const [id, key] of [['volMusic', 'vMusic'], ['volFx', 'vFx'], ['volVoice', 'vVoice']]) {
+      const el = $(id);
+      if (el) el.addEventListener('input', () => { this.data[key] = +el.value; this.save(); this.apply(); });
+      if (el) el.addEventListener('change', () => { if (key === 'vFx') sfx.coin(); else if (key === 'vVoice') this.g.voice.speak('Coucou, c\'est moi !', { prio: 3 }); });
+    }
+    t('setHorn', () => {
+      const lvl = this.g.arcade.data.level;
+      const open = HORNS.filter(h => h.level <= lvl);
+      const i = open.findIndex(h => h.id === this.data.horn);
+      this.data.horn = open[(i + 1) % open.length].id;
+      this._changed(); sfx.honk();
+    });
     t('setExport', () => this.exportFile());
     t('setImport', () => $('setImportFile').click());
     const fi = $('setImportFile');
@@ -146,6 +167,10 @@ export class Comfort {
     set('setVoiceRate', { 0.8: 'Lente', 1: 'Normale', 1.2: 'Rapide' }[d.voiceRate] || 'Normale', d.voiceRate !== 1);
     set('setHaptic', d.haptics ? 'Active' : 'Coupee', d.haptics);
     set('setLimit', d.limitMin ? `${d.limitMin} min par jour` : 'Pas de limite', !!d.limitMin);
+    for (const [id, key] of [['volMusic', 'vMusic'], ['volFx', 'vFx'], ['volVoice', 'vVoice']]) { const el = $(id); if (el) el.value = d[key]; }
+    const hn = HORNS.find(h => h.id === d.horn) || HORNS[0];
+    const nextH = HORNS.find(h => h.level > this.g.arcade.data.level);
+    set('setHorn', `${hn.ico} ${hn.name}${nextH ? ` · prochain au niveau ${nextH.level}` : ''}`, hn.id !== 'classic');
     set('setBreak', d.breakMin ? `Toutes les ${d.breakMin} min` : 'Pas de rappel', !!d.breakMin);
   }
 
@@ -157,6 +182,12 @@ export class Comfort {
     document.body.classList.toggle('hugetext', d.textSize === 2);
     this.music.setOn(d.music && !sfx.muted);
     sfx.setHaptics(d.haptics);
+    /* J02 : trois volumes (musique / effets / voix) et ducking de la musique pendant que Coco parle */
+    sfx.setFxVolume(d.vFx);
+    sfx.setHorn(d.horn);
+    this.music.setVolume(d.vMusic);
+    this.g.voice.volume = 0.9 * d.vVoice;
+    this.g.voice.onSpeak = (on) => this.music.duck(on);
     this.g.voice.setRate(d.voiceRate);
     this._applyQuality(d.quality === 'high' ? 0 : d.quality === 'low' ? 2 : this.level);
   }

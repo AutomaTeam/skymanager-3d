@@ -14,7 +14,17 @@ try { muted = localStorage.getItem(STORE) === 'off'; } catch (e) { /* ignore */ 
 
 /* E06 : retour haptique (Android ; l'iPad ignore navigator.vibrate). Desactivable dans les reglages. */
 let haptics = true;
+let horn = 'classic';
+const HORN_IDS = ['classic', 'duck', 'clown', 'train', 'truck', 'trumpet'];
 function vib(p) { if (haptics && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) { /* ignore */ } } }
+
+/* J02 : sortie commune des effets (volume « effets » reglable). Les effets passent par ce gain, pas par destination. */
+let fxGain = null;
+let fxVolume = 1;
+function dest(a) {
+  if (!fxGain || fxGain.context !== a) { fxGain = a.createGain(); fxGain.gain.value = fxVolume; fxGain.connect(dest(a)); }
+  return fxGain;
+}
 
 function audio() {
   if (muted) return null;
@@ -39,7 +49,7 @@ function tone(freq, at, dur, type = 'triangle', vol = 0.12) {
   g.gain.setValueAtTime(0.0001, t0);
   g.gain.exponentialRampToValueAtTime(vol, t0 + 0.015);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g).connect(a.destination);
+  o.connect(g).connect(dest(a));
   o.start(t0);
   o.stop(t0 + dur + 0.05);
 }
@@ -55,6 +65,9 @@ export const sfx = {
   /* A appeler depuis un vrai geste (clic sur DEMARRER). */
   unlock() { audio(); },
   setHaptics(v) { haptics = !!v; },
+  /* Volume des effets (0 a 1) ; `dest(a)` sert aussi aux sons faits ailleurs (rides.js). */
+  setFxVolume(v) { fxVolume = Math.max(0, Math.min(1, v)); if (fxGain) fxGain.gain.value = fxVolume; },
+  dest(a) { return dest(a); },
   /* Vario du planeur : un bip d'autant plus aigu que l'on monte vite (v en m/s). */
   vario(v) { tone(480 + Math.min(v, 5) * 120, 0, 0.09, 'sine', 0.07); },
   /* Mise en veille de l'onglet : l'audio est suspendu (il reprend au prochain son). */
@@ -75,7 +88,30 @@ export const sfx = {
   oops()  { vib(40);  tone(220, 0, 0.18, 'sawtooth', 0.07); tone(165, 0.14, 0.25, 'sawtooth', 0.07); },
   click() { tone(520, 0, 0.05, 'square', 0.04); },
   /* Petits sons rigolos (menu Fun) */
-  honk()  { tone(311, 0, 0.16, 'square', 0.07); tone(392, 0, 0.16, 'square', 0.07); tone(311, 0.2, 0.26, 'square', 0.07); tone(392, 0.2, 0.26, 'square', 0.07); },
+  /* J05 : 6 klaxons synthetises (aucun fichier). honk() joue celui que le joueur a choisi (setHorn). */
+  honk()  { this.horn(horn); },
+  setHorn(id) { if (HORN_IDS.includes(id)) horn = id; },
+  horn(id = 'classic') {
+    switch (id) {
+      case 'duck':
+        for (const t of [0, 0.22]) { tone(420, t, 0.14, 'sawtooth', 0.07); tone(330, t + 0.07, 0.12, 'sawtooth', 0.06); }
+        break;
+      case 'clown':
+        [520, 700, 520, 880].forEach((f, i) => tone(f, i * 0.09, 0.1, 'square', 0.06));
+        break;
+      case 'train':
+        tone(196, 0, 0.7, 'triangle', 0.1); tone(247, 0, 0.7, 'triangle', 0.1); tone(196, 0.85, 0.55, 'triangle', 0.1); tone(247, 0.85, 0.55, 'triangle', 0.1);
+        break;
+      case 'truck':
+        for (const f of [110, 165, 220]) tone(f, 0, 0.75, 'sawtooth', 0.06);
+        break;
+      case 'trumpet':
+        [392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.12, i === 3 ? 0.45 : 0.14, 'triangle', 0.1));
+        break;
+      default:
+        tone(311, 0, 0.16, 'square', 0.07); tone(392, 0, 0.16, 'square', 0.07); tone(311, 0.2, 0.26, 'square', 0.07); tone(392, 0.2, 0.26, 'square', 0.07);
+    }
+  },
   shutter() { tone(2400, 0, 0.03, 'square', 0.05); tone(1500, 0.05, 0.05, 'square', 0.05); },
   pop()   { tone(400, 0, 0.05, 'sine', 0.12); tone(800, 0.03, 0.08, 'sine', 0.1); },
   tada()  { vib([20, 30, 20, 30, 40]);  [392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.07, 0.12, 'triangle', 0.11)); tone(1047, 0.32, 0.4, 'triangle', 0.13); },
@@ -98,7 +134,7 @@ export const sfx = {
       g.gain.setValueAtTime(0.0001, t0);
       g.gain.exponentialRampToValueAtTime(0.08, t0 + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.14);
-      o.connect(g).connect(a.destination);
+      o.connect(g).connect(dest(a));
       o.start(t0); o.stop(t0 + 0.18);
     }
   },
@@ -121,7 +157,7 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.5 * power, t0 + 0.12);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    src.connect(lp).connect(g).connect(a.destination);
+    src.connect(lp).connect(g).connect(dest(a));
     src.start(t0);
   },
   /* Avion qui decolle au loin : grondement sourd qui enfle puis s'eloigne (vol = 0..1). */
@@ -143,7 +179,7 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.16 * vol, t0 + 2.2);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    src.connect(lp).connect(g).connect(a.destination);
+    src.connect(lp).connect(g).connect(dest(a));
     src.start(t0);
   },
   /* Carillon d'annonce du terminal : ding-dang-dong. */
@@ -167,7 +203,7 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.22, t0 + dur * 0.25);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-    src.connect(bp).connect(g).connect(a.destination);
+    src.connect(bp).connect(g).connect(dest(a));
     src.start(t0);
   },
   /* Turbo : grondement qui monte */
@@ -183,7 +219,7 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.09, t0 + 0.15);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.8);
-    o.connect(g).connect(a.destination);
+    o.connect(g).connect(dest(a));
     o.start(t0);
     o.stop(t0 + 0.85);
     this.swoosh(0.7, 500, 3500);
@@ -213,7 +249,7 @@ export const sfx = {
     g.gain.setValueAtTime(0.0001, t0);
     g.gain.exponentialRampToValueAtTime(0.06, t0 + 0.1);
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.55);
-    o.connect(g).connect(a.destination);
+    o.connect(g).connect(dest(a));
     o.start(t0);
     o.stop(t0 + 0.6);
   }

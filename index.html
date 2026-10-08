@@ -822,6 +822,11 @@
       <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons a droite</small></button>
       <button id="setBig" class="set-row"><span class="set-ico">🔠</span><b>Taille du texte</b><small>Normal</small></button>
       <button id="setVoiceRate" class="set-row"><span class="set-ico">🗣️</span><b>Vitesse de la voix</b><small>Normale</small></button>
+      <div class="set-row set-vol"><span class="set-ico">🎚️</span><b>Volumes</b>
+        <label>🎵 <input id="volMusic" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume de la musique"></label>
+        <label>🔊 <input id="volFx" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume des effets"></label>
+        <label>🗣️ <input id="volVoice" type="range" min="0" max="1" step="0.1" value="1" aria-label="Volume des voix"></label></div>
+      <button id="setHorn" class="set-row"><span class="set-ico">📯</span><b>Klaxon</b><small>Classique</small></button>
       <button id="setHaptic" class="set-row"><span class="set-ico">📳</span><b>Vibrations</b><small>Active</small></button>
       <button id="setTilt" class="set-row"><span class="set-ico">📱</span><b>Pilotage par inclinaison</b><small>Coupe</small></button>
       <button id="setTiltCal" class="set-row hidden"><span class="set-ico">🎯</span><b>Calibrer</b><small>Tiens l'iPad comme tu veux, puis touche</small></button>
@@ -967,7 +972,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791468897').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469066').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -975,6 +980,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791468897"></script>
+<script type="module" src="js/main.js?v=1791469066"></script>
 </body>
 </html>

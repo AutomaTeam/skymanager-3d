@@ -2373,3 +2373,10 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - **Sauvegarde dans un fichier** (I07) : Reglages > 💾 / 📂 (toutes les cles `skymanager.*`, via `save.js`).
 - **Partage d'avion** (I06) : Hangar > Nom > 📤 / 📥, code `SKY1.…` court et valide strictement (`tools/livery.test.mjs`) ; ce que le copain n'a pas est remplace par le choix gratuit.
 - Non fait : I05 (editeur de livree v2 : peinture par zones et autocollants poses au doigt) — le hangar garde couleur, accent, 10 motifs, 3 autocollants, nom.
+
+### Son : mixage, ducking, klaxons, audit (phase 82)
+
+- **Trois volumes** dans les Reglages (🎵 musique, 🔊 effets, 🗣️ voix) : les effets passent par un gain commun (`sfx.dest`, `sfx.setFxVolume`), la musique par `Music.setVolume`, les voix par `Voice.volume`. **Ducking** : la musique baisse automatiquement pendant que Coco parle.
+- **6 klaxons synthetises** (J05) a debloquer avec le niveau (classique, canard 3, clown 6, train 9, camion 12, trompette 15) ; Reglages > 📯. Tous les vehicules et le geste « klaxon » utilisent le klaxon choisi.
+- **Audit** (J01) : `tools/audio.audit.mjs` (dans `npm test`) echoue si le code appelle un `sfx.xxx()` qui n'existe pas (41 sons, tous utilises). Non verifie a l'oreille : l'equilibre des volumes, le deblocage de l'audio sur un vrai iPad.
+- Non fait : J03 (sons spatialises) et J04 (musiques par lieu).

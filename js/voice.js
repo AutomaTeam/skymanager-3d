@@ -16,6 +16,8 @@ export class Voice {
     this.queue = [];
     this.current = null;      // { prio }
     this._voice = null;
+    this.volume = 0.9;         // J02 : volume des voix
+    this.onSpeak = null;       // appele (true/false) au debut et a la fin d'une phrase : le jeu baisse la musique
     if (this.synth && this.synth.addEventListener) this.synth.addEventListener('voiceschanged', () => { this._voice = null; });
   }
 
@@ -46,7 +48,7 @@ export class Voice {
 
   stop() { this.queue.length = 0; this._cancel(); }
 
-  _cancel() { try { this.synth.cancel(); } catch (e) { /* ignore */ } this.current = null; }
+  _cancel() { try { this.synth.cancel(); } catch (e) { /* ignore */ } this.current = null; if (this.onSpeak) this.onSpeak(false); }
 
   _say(item) {
     try {
@@ -54,12 +56,14 @@ export class Voice {
       const v = this._pickVoice();
       if (v) u.voice = v;
       u.lang = (v && v.lang) || 'fr-FR';
-      u.pitch = item.pitch; u.rate = this.rate; u.volume = 0.9;
+      u.pitch = item.pitch; u.rate = this.rate; u.volume = this.volume;
       this.current = { prio: item.prio };
+      if (this.onSpeak) this.onSpeak(true);
       const next = () => {
         this.current = null;
         const n = this.queue.shift();
         if (n) this._say(n);
+        else if (this.onSpeak) this.onSpeak(false);
       };
       u.onend = next; u.onerror = next;
       this.synth.speak(u);

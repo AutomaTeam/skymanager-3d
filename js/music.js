@@ -10,7 +10,7 @@
    Intensite : 0 = calme (sol), 1 = vol, 2 = action.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468897';
+import { sfx } from './sfx.js?v=1791469066';
 
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);          // numero MIDI -> Hz
 /* Progression en do majeur : C  Am  F  G (racines et accords). */
@@ -49,10 +49,11 @@ export class Music {
     this.master = ctx.createGain();
     this.master.gain.value = 0.0001;
     this.master.connect(ctx.destination);
+    this._duck = false;
     this.layers = [0, 1, 2, 3].map(() => { const g = ctx.createGain(); g.gain.value = 0; g.connect(this.master); return g; });
     this._nextT = ctx.currentTime + 0.2;
     this._step = 0;
-    this.master.gain.setTargetAtTime(0.5, ctx.currentTime, 1.2);
+    this.master.gain.setTargetAtTime(this._masterLevel(), ctx.currentTime, 1.2);
     this._timer = setInterval(() => this._tick(), 120);
   }
 
@@ -68,6 +69,12 @@ export class Music {
   }
 
   setIntensity(i) { this.intensity = i; }
+
+  /* J02 : volume de la musique (0 a 1) et baisse automatique quand Coco parle (ducking). */
+  setVolume(v) { this.vol = Math.max(0, Math.min(1, v)); this._apply(); }
+  duck(on) { this._duck = !!on; this._apply(); }
+  _masterLevel() { return 0.5 * (this.vol == null ? 1 : this.vol) * (this._duck ? 0.3 : 1); }
+  _apply() { if (this.master && this.ctx) this.master.gain.setTargetAtTime(Math.max(0.0001, this._masterLevel()), this.ctx.currentTime, this._duck ? 0.15 : 0.5); }
 
   _tone(layer, freq, t, dur, type, vol) {
     const ctx = this.ctx;
