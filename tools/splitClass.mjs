@@ -43,7 +43,7 @@ const declOf = (n) => (n.type === 'ExportNamedDeclaration' && n.declaration ? n.
 for (const n of ast.body) {
   const d0 = declOf(n);
   if (d0.type === 'VariableDeclaration') {
-    if (d0.kind !== 'const') throw new Error('declaration non const : ' + src.slice(n.start, n.start + 40));
+    /* `let` : accepte, mais seul le module partage pourra l'assigner (verifie par la regle no-import-assign). */
     for (const d of d0.declarations) if (d.id.type === 'Identifier') topDecls.set(d.id.name, n);
   } else if (d0.type === 'FunctionDeclaration') topDecls.set(d0.id.name, n);
   else continue;

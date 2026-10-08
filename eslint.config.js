@@ -7,6 +7,7 @@ export default [
     languageOptions: { ecmaVersion: 2022, sourceType: 'module', globals: { ...globals.browser } },
     rules: {
       'no-undef': 'error',
+      'no-import-assign': 'error',
       'no-dupe-keys': 'error',
       'no-dupe-class-members': 'error',
       'no-redeclare': 'error',
