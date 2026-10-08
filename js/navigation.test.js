@@ -17,9 +17,9 @@
 import * as THREE from 'three';
 import { Navigation, ZONES, PORTALS, BLOCKERS } from './navigation.js';
 import { LAYOUT } from './layout.js';
-import { slideMove, pushOut, depenetrate } from './bodies.js?v=1791300000';
-import { bounceOffScenery, obstacleHeight } from './sceneryCollision.js?v=1791300000';
-import { buildDecor } from './decor.js?v=1791300000';
+import { slideMove, pushOut, depenetrate } from './bodies.js?v=1791465068';
+import { bounceOffScenery, obstacleHeight } from './sceneryCollision.js?v=1791465068';
+import { buildDecor } from './decor.js?v=1791465068';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);

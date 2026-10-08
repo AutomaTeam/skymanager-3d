@@ -12,7 +12,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791465068';
 
 const STORE = 'skymanager.deco';
 const $ = (id) => document.getElementById(id);

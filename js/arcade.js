@@ -14,10 +14,10 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791300000';
-import { LAYOUT } from './layout.js?v=1791300000';
-import { drawIcon, iconify } from './icons.js?v=1791300000';
-import { PARK, buildPark } from './rideCourse.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791465068';
+import { LAYOUT } from './layout.js?v=1791465068';
+import { drawIcon, iconify } from './icons.js?v=1791465068';
+import { PARK, buildPark } from './rideCourse.js?v=1791465068';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece

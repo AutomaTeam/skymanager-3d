@@ -15,9 +15,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791300000';
-import { LAYOUT } from './layout.js?v=1791300000';
-import { Vehicle } from './vehicle.js?v=1791300000';
+import { sfx } from './sfx.js?v=1791465068';
+import { LAYOUT } from './layout.js?v=1791465068';
+import { Vehicle } from './vehicle.js?v=1791465068';
 
 const ENTER_RANGE = 4;           // m pour monter dans le tracteur
 const CART_LEN = 2.9;            // distance d'attelage entre deux elements

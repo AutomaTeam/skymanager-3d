@@ -2280,3 +2280,9 @@ Nouvelle surprise au sol (`groundFun.js`, `kind: 'lost'`) : un petit enfant pleu
 ### Vrai selfie au sol (phase 54)
 
 Le geste 📸 (menu 🎈) prenait seulement un flash au sol. Il prend maintenant un vrai selfie (`fun.selfie`) : la camera se retourne face au personnage, un peu de cote pour cadrer le chien, puis la photo part en carte postale (filtres, enregistrement, album « Mes photos ») ; la camera revient ensuite derriere le joueur. Pas de selfie au volant, a roulettes ou en cabine (flash seul). Le defi du jour « photo » accepte aussi les selfies.
+
+### Filet de securite : erreurs, fuzz, tampon (phase 55)
+
+- `__game.errors` : registre des erreurs attrapees par la boucle gardee (module, message, nombre) ; `__game.errorList()` en donne la liste. Une erreur n'est affichee qu'une fois dans la console mais toujours comptee.
+- `tools/fuzz.js` : test aleatoire (touches + clics sur les boutons visibles, rendu neutralise). Ouvrir le jeu avec `?fuzz=1&secs=25` et lire `window.__fuzzReport` (`{actions, clicks, keys, errors}`). Les boutons qui rechargent la page (mode, remise a zero) sont ignores.
+- `npm run bump` change le tampon `?v=` partout ; `npm test` verifie (`tools/stamp.test.mjs`) qu'un seul tampon existe.
