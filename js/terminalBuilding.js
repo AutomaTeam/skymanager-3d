@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791468762';
-import { LAYOUT } from './layout.js?v=1791468762';
-import { SHIRTS } from './terminalFlow.js?v=1791468762';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791468762';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791468807';
+import { LAYOUT } from './layout.js?v=1791468807';
+import { SHIRTS } from './terminalFlow.js?v=1791468807';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791468807';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;

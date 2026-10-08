@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468762';
-import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791468762';
+import { sfx } from './sfx.js?v=1791468807';
+import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791468807';
 
 export const funMethods = {
   /* Un « boost » d'ambiance : satisfaction de la cabine ou ambiance du hall. */
@@ -95,18 +95,25 @@ export const funMethods = {
   },
   /* ---------------- Cadeau du jour ---------------- */
   giftReady() { return !this.data.gift || this.data.gift.day !== todayKey(); },
+  /* I04 : coffre du jour, serie de 1 a 7 jours. Sans punition : si on rate un jour, la serie recule
+     d'UN cran (jamais retour a zero). Le 7e jour donne aussi un objet de peinture. */
   openGift() {
     if (!this.giftReady()) return null;
-    const gf = this.data.gift || { day: '', streak: 0, last: '' };
-    const y = new Date(Date.now() - 864e5);
-    const yKey = `${y.getFullYear()}-${y.getMonth() + 1}-${y.getDate()}`;
-    const streak = gf.day === yKey ? gf.streak + 1 : 1;
-    const coins = 8 + Math.min(streak, 7) * 3 + Math.floor(Math.random() * 5);
-    this.data.gift = { day: todayKey(), streak };
+    const gf = this.data.gift || { day: '', streak: 0, num: 0 };
+    const num = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 864e5);   // numero du jour local
+    const gap = gf.num ? num - gf.num : 1;
+    const prev = gf.streak || 0;
+    let streak = gap <= 1 ? Math.min(7, prev + 1) : Math.max(1, prev);          // jour rate : on reste sur le meme cran (recule d'un)
+    if (gap > 1 && prev > 1) streak = Math.max(1, prev - 1);
+    const DAYS = [10, 14, 18, 24, 30, 38, 60];
+    const coins = DAYS[streak - 1] + Math.floor(Math.random() * 5);
+    this.data.gift = { day: todayKey(), streak, num };
     this.giveCoins(coins, { silent: true, xp: 5 });
-    sfx.tada(); this.confetti(80);
+    let bonus = '';
+    if (streak === 7) { const u = this.g.hangar.randomUnlock(); if (u) bonus = u.label; }
+    sfx.tada(); this.confetti(80 + streak * 8);
     this.save();
-    return { coins, streak };
+    return { coins, streak, bonus };
   },
   /* Le dock de gestes s'adapte au lieu : tarmac, terminal ou cabine. */
   _updateDock() {
