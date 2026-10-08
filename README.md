@@ -2311,3 +2311,9 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 ### Economie mesuree (phase 61)
 
 `tools/economy.sim.mjs` (dans `npm test`) simule 4 h de jeu Arcade (1 vol / 3,5 min, achat du moins cher possible) et verifie : premier avion entre 15 et 30 min, tour complete entre 2 et 4 h. Reglage : `KID_AIRCRAFT` 350 -> 300 pieces (premier avion ~25 min, tour complete ~3 h 30 au lieu de ~4 h). Les hypotheses sont en tete du fichier ; a recaler avec des mesures de vraies parties.
+
+### Installation sur iPad et hors ligne (phase 62)
+
+- `manifest.webmanifest` + icones `assets/icons/` (generees par `node tools/makeIcons.mjs`, sans telechargement) : « Ajouter a l'ecran d'accueil » donne une appli plein ecran, paysage.
+- `sw.js` (service worker) : le jeu se recharge sans reseau apres un premier chargement. Page et CSS : reseau d'abord ; fichiers `?v=`, three.js (CDN), modeles : cache d'abord. Le nom du cache porte le tampon : `npm run bump` purge l'ancien cache. Ajouter `?nosw` a l'URL pour ne pas l'enregistrer.
+- Verifie : service worker actif, coquille + three.js + 54 modules en cache. Non teste : coupure reelle du reseau et installation sur un vrai iPad.
