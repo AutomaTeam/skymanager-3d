@@ -1,3 +1,6 @@
+> **Statut (2026-10-08) : FAIT en grande partie : personnage colore, terminal, parking, nuit/meteo, carte zoomable, icones SVG. Voir README (phase 32).**
+> Ce plan est archive ici ; le plan en cours est `PLAN_AMELIORATION_SONNET.md` a la racine.
+
 # État des lieux et plan — Visuel, graphismes et carte
 
 *Écrit le 2026-10-01 après lecture du code, du README, de `PLAN_GRAPHISME_PHYSIQUE.md` et une session de jeu (mode Arcade) dans le navigateur intégré.*

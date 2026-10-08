@@ -1,3 +1,6 @@
+> **Statut (2026-10-08) : FAIT : les 7 vagues sont realisees (voir README, phases 36 a 52). Reste utile pour les regles d'or de texte et de design enfant.**
+> Ce plan est archive ici ; le plan en cours est `PLAN_AMELIORATION_SONNET.md` a la racine.
+
 # Plan d'amélioration — « Que ce soit FUN pour un enfant de 12 ans »
 
 *Écrit le 2026-10-02 après lecture du README, du mode Arcade (`js/arcade.js`) et des plans précédents.*

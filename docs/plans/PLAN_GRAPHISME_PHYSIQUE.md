@@ -1,3 +1,6 @@
+> **Statut (2026-10-08) : PARTIEL : decor, modeles, physique du personnage et ciel sont faits ; reste en bas de la section « Avancement » (hangars, hublots, hauteur de marche...).**
+> Ce plan est archive ici ; le plan en cours est `PLAN_AMELIORATION_SONNET.md` a la racine.
+
 # Plan — Design, décor, modèles 3D et physique (à lancer à la prochaine session)
 
 ## Avancement
