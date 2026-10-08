@@ -114,6 +114,33 @@ const SCENARIOS = {
     }
     return ok;
   },
+  /* Chaque mission du ciel : choisie au tableau, decollage, 25 s de jeu, fin sans erreur (G04). */
+  async missions({ g, frames, steps }) {
+    const { MISSION_DEFS, cleanBanner } = await import('../js/skyMissions.js');
+    if (g.state === 'BOOT') g.start();
+    if (g.state !== 'HUB') g.goToHub();
+    window.prompt = () => 'SALUT LES AMIS';
+    const results = [];
+    for (const def of MISSION_DEFS) {
+      const heli = !!def.heliOnly;
+      const plane = heli ? 'helico' : 'liner';
+      g.hangar.data.selected = plane; g.setFlightPlane(plane);
+      g.arcade.data.level = 9;                        // tout est debloque
+      if (g.state !== 'HUB') { g.sky.reset(); g.returnHome(); frames(10); }
+      g.boardAircraft(); frames(30);
+      g.sky.arm(def.id);
+      clearTimeout(g.fun._launchTimer); g.launchNow(); frames(60);
+      for (let i = 0; i < 60 && !g.sky.m; i++) frames(30);          // jusqu'au decollage (la mission demarre a 14 m)
+      frames(30 * 20);
+      const started = !!g.sky.m || !!g.sky.lastResult;
+      steps.push(def.id + ':' + (started ? 'demarree' : 'non demarree'));
+      if (g.sky.m) g.sky.finish(true);
+      results.push(started);
+      g.sky.reset();
+    }
+    steps.push('banniere=' + cleanBanner('Salut les amis, Merde!'));
+    return results.every(Boolean) && cleanBanner('merde') === '❤ GENTIL ❤' && cleanBanner('Coucou Léa') === 'COUCOU LEA';
+  },
   /* Le chien : adoption, balle, caresse. */
   async petFetch({ g, frames, steps }) {
     if (g.state === 'BOOT') g.start();

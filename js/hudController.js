@@ -3,12 +3,12 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { KTS, FT, FPM } from './flightPhysics.js?v=1791467406';
-import { COIN } from './arcade.js?v=1791467406';
-import { planeOf } from './fleet.js?v=1791467406';
-import { sfx } from './sfx.js?v=1791467406';
-import { drawPFD } from './cockpit.js?v=1791467406';
-import { $, clamp } from './gameShared.js?v=1791467406';
+import { KTS, FT, FPM } from './flightPhysics.js?v=1791467847';
+import { COIN } from './arcade.js?v=1791467847';
+import { planeOf } from './fleet.js?v=1791467847';
+import { sfx } from './sfx.js?v=1791467847';
+import { drawPFD } from './cockpit.js?v=1791467847';
+import { $, clamp } from './gameShared.js?v=1791467847';
 
 export const hudMethods = {
   updateHUD() {

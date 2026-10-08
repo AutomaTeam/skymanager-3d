@@ -244,6 +244,64 @@ export class SkyWorld {
     return this.add({ group, vel: new THREE.Vector3(vx, vy, vz), kind: 'parcel', alive: true });
   }
 
+  /* ---------------- Arc-en-ciel a traverser (G04) ----------------
+     Le centre de detection (x, y, z) est au milieu de l'arche ; `radius` = zone de passage. */
+  rainbow({ x, y, z, yaw = 0, radius = 90 } = {}) {
+    const group = new THREE.Group();
+    const cols = [0xef4444, 0xf97316, 0xfacc15, 0x4ade80, 0x38bdf8, 0x6366f1, 0xa855f7];
+    const R = radius * 1.35;
+    cols.forEach((c, i) => {
+      const arc = new THREE.Mesh(new THREE.TorusGeometry(R - i * R * 0.07, R * 0.035, 6, 36, Math.PI), basic(c, { opacity: 0.85, depthWrite: false }));
+      group.add(arc);
+    });
+    group.position.set(x, y - R * 0.5, z);
+    group.rotation.y = yaw;
+    const o = {
+      group, x, y, z, radius, state: 'next',
+      setState(s) { this.state = s; group.visible = s !== 'hidden'; group.children.forEach(a => { a.material.opacity = s === 'next' ? 0.9 : s === 'done' ? 0.25 : 0.55; }); },
+      update(t) { if (this.state === 'next') group.scale.setScalar(1 + Math.sin(t * 4) * 0.015); }
+    };
+    return this.add(o);
+  }
+
+  /* ---------------- Banniere remorquee (G04) : texte lisible des deux cotes ---------------- */
+  banner(text) {
+    const group = new THREE.Group();
+    const cv = document.createElement('canvas');
+    cv.width = 512; cv.height = 96;
+    const c = cv.getContext('2d');
+    c.fillStyle = '#fef3c7'; c.fillRect(0, 0, 512, 96);
+    c.strokeStyle = '#dc2626'; c.lineWidth = 8; c.strokeRect(4, 4, 504, 88);
+    c.fillStyle = '#7f1d1d'; c.font = '900 56px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(text, 256, 52, 480);
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.FrontSide, fog: false });
+    const g = geo('bannerPlane', () => new THREE.PlaneGeometry(1, 1));
+    const a = new THREE.Mesh(g, mat); a.scale.set(28, 5.4, 1);
+    const b = new THREE.Mesh(g, mat); b.scale.set(28, 5.4, 1); b.rotation.y = Math.PI;
+    const rope = new THREE.Mesh(geo('bannerRope', () => new THREE.CylinderGeometry(0.1, 0.1, 1, 4)), basic(0xffffff));
+    rope.rotation.z = Math.PI / 2; rope.scale.y = 10; rope.position.x = 19;
+    group.add(a, b, rope);
+    return this.add({ group, tex, mat, dispose() { tex.dispose(); mat.dispose(); } });
+  }
+
+  /* ---------------- Randonneur a treuiller (G04) ---------------- */
+  hiker({ x, z, y = 0 } = {}) {
+    const group = new THREE.Group();
+    const body = new THREE.Mesh(geo('hikerBody', () => new THREE.CylinderGeometry(0.7, 0.9, 3.2, 8)), basic(0xef4444));
+    body.position.y = 1.6;
+    const head = new THREE.Mesh(geo('hikerHead', () => new THREE.SphereGeometry(0.75, 10, 8)), basic(0xf1c9a5));
+    head.position.y = 4;
+    const flag = new THREE.Mesh(geo('hikerFlag', () => new THREE.PlaneGeometry(1, 1)), basic(0xfacc15, { side: THREE.DoubleSide }));
+    flag.scale.set(4, 2.4, 1); flag.position.set(2.2, 6, 0);
+    const pole = new THREE.Mesh(geo('hikerPole', () => new THREE.CylinderGeometry(0.08, 0.08, 1, 4)), basic(0xffffff));
+    pole.scale.y = 7; pole.position.set(0.2, 3.5, 0);
+    group.add(body, head, pole, flag);
+    group.position.set(x, y, z);
+    return this.add({ group, x, y, z, update(t) { flag.rotation.y = Math.sin(t * 5) * 0.4; head.position.y = 4 + Math.abs(Math.sin(t * 3)) * 0.4; } });
+  }
+
   /* ---------------- Fantome de course : silhouette d'avion translucide ---------------- */
   ghost() {
     const group = new THREE.Group();

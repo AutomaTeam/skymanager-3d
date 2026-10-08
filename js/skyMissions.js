@@ -20,9 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791467406';
-import { SkyWorld } from './skyWorld.js?v=1791467406';
-import { ISLANDS } from './openWorld.js?v=1791467406';
+import { sfx } from './sfx.js?v=1791467847';
+import { SkyWorld } from './skyWorld.js?v=1791467847';
+import { HELIPAD } from './heliModel.js?v=1791467847';
+import { ISLANDS } from './openWorld.js?v=1791467847';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -30,6 +31,15 @@ const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const KTS = 1.94384;
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const wrap = (a) => ((a + 540) % 360) - 180;
+
+/* Mots interdits dans la banniere (remplaces par un coeur) : un message sur le fuselage doit rester gentil. */
+const BAD_WORDS = ['merde', 'con', 'conne', 'connard', 'salope', 'pute', 'putain', 'cul', 'bite', 'zob', 'nul', 'debile', 'idiot', 'stupide', 'nazi', 'sexe', 'fdp', 'ntm', 'tg', 'chier', 'crotte'];
+export function cleanBanner(raw) {
+  const t = String(raw || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 !'-]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!t) return 'COUCOU !';
+  const bad = t.split(/[^a-z0-9]+/).some(w => w && BAD_WORDS.includes(w)) || BAD_WORDS.some(w => w.length > 4 && t.replace(/[^a-z]/g, '').includes(w));
+  return bad ? '❤ GENTIL ❤' : t.toUpperCase().slice(0, 12);
+}
 
 /* Recompense par medaille : [aucune, bronze, argent, or] (pieces). */
 const MEDAL_COINS = [4, 14, 28, 50];
@@ -561,6 +571,214 @@ class IslandMission extends Mission {
   }
 }
 
+/* ------------------------------------------------------------
+   Arc-en-ciel : traverse 4 arches colorees dans le ciel (G04)
+   ------------------------------------------------------------ */
+class RainbowMission extends Mission {
+  setup() {
+    const ac = this.ac, f = ac.forward();
+    const h = Math.hypot(f.x, f.z) || 1;
+    const dx = f.x / h, dz = f.z / h;
+    this.arches = [];
+    let px = ac.pos.x, pz = ac.pos.z, ang = Math.atan2(dx, dz);
+    for (let i = 0; i < 4; i++) {
+      ang += (i === 0 ? 0 : (i % 2 ? 0.55 : -0.5));
+      const d = 520 + i * 60;
+      px += Math.sin(ang) * d; pz += Math.cos(ang) * d;
+      const y = clamp(ac.pos.y + 60 + i * 10, ac.groundY + 120, 450);
+      this.arches.push(this.world.rainbow({ x: px, y, z: pz, yaw: ang, radius: 95 }));
+    }
+    this.idx = 0; this.limit = 150;
+    this._refresh();
+  }
+  _refresh() { this.arches.forEach((a, i) => a.setState(i < this.idx ? 'done' : i === this.idx ? 'next' : i === this.idx + 1 ? 'later' : 'hidden')); }
+  update(dt) {
+    const a = this.arches[this.idx], ac = this.ac;
+    if (!a) { this.done = true; return; }
+    if (Math.hypot(ac.pos.x - a.x, ac.pos.y - a.y, ac.pos.z - a.z) < a.radius) {
+      sfx.tada(); this.g.arcade.confetti(30);
+      this.sky.reward(5, `🌈 ${this.idx + 1}/${this.arches.length}`);
+      this.idx++;
+      this._refresh();
+      if (this.idx >= this.arches.length) this.done = true;
+    }
+  }
+  target() { const a = this.arches[this.idx]; return a ? { x: a.x, z: a.z } : null; }
+  guide() { const a = this.arches[this.idx]; return a ? { x: a.x, y: a.y, z: a.z } : null; }
+  goal() { return { icon: '🌈', text: `Traverse l'arc-en-ciel ! (${this.idx}/${this.arches.length})`, target: this.target() }; }
+  progressText() { return `🌈 ${this.idx}/${this.arches.length}`; }
+  dispose() { this.arches.forEach(a => this.world.remove(a)); }
+  result() {
+    const s = this.idx;
+    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 1 ? 1 : 0, lines: [`🌈 ${s} arc${s > 1 ? 's' : ''}-en-ciel traverse${s > 1 ? 's' : ''} sur ${this.arches.length}`] };
+  }
+}
+
+/* ------------------------------------------------------------
+   Banniere : un message ecrit par l'enfant, remorque derriere l'avion (G04)
+   ------------------------------------------------------------ */
+const BANNER_PTS = [[0, 150, -700], [520, 175, -1300], [900, 150, -350], [330, 135, 560]];
+class BannerMission extends Mission {
+  setup() {
+    this.text = cleanBanner(this.sky.data.banner);
+    this.banner = this.world.banner(this.text);
+    this.hoops = BANNER_PTS.map((p, i) => {
+      const n = BANNER_PTS[(i + 1) % BANNER_PTS.length];
+      return this.world.hoop({ x: p[0], y: p[1], z: p[2], yaw: Math.atan2(n[0] - p[0] || 0.001, n[2] - p[2]), radius: 120 });
+    });
+    this.idx = 0; this.limit = 190;
+    this._refresh();
+  }
+  _refresh() { this.hoops.forEach((h, i) => h.setState(i < this.idx ? 'hidden' : i === this.idx ? 'next' : 'later')); }
+  update(dt) {
+    const ac = this.ac, f = ac.forward();
+    const h = Math.hypot(f.x, f.z) || 1;
+    /* la banniere flotte derriere l'avion (entre l'avion et la camera de poursuite, a 42 m), alignee sur le cap :
+       lisible de cote (vues cote, orbite, photo), fine de dos pour ne pas cacher l'ecran. */
+    this.banner.group.position.set(ac.pos.x - f.x / h * 26, ac.pos.y - 1.6, ac.pos.z - f.z / h * 26);
+    this.banner.group.rotation.y = Math.atan2(f.x, f.z) - Math.PI / 2;
+    const t = this.hoops[this.idx];
+    if (!t) { this.done = true; return; }
+    if (Math.hypot(ac.pos.x - t.x, ac.pos.y - t.y, ac.pos.z - t.z) < t.radius) {
+      sfx.ring(); this.g.arcade.confetti(20);
+      this.sky.reward(5, `🪁 ${this.idx + 1}/${this.hoops.length}`);
+      this.idx++; this._refresh();
+      if (this.idx >= this.hoops.length) this.done = true;
+    }
+  }
+  target() { const t = this.hoops[this.idx]; return t ? { x: t.x, z: t.z } : null; }
+  guide() { const t = this.hoops[this.idx]; return t ? { x: t.x, y: t.y, z: t.z } : null; }
+  goal() { return { icon: '🪁', text: `Montre ton message a la foule ! (${this.idx}/${this.hoops.length})`, target: this.target() }; }
+  progressText() { return `🪁 ${this.text} · ${this.idx}/${this.hoops.length}`; }
+  dispose() { this.world.remove(this.banner); this.hoops.forEach(h => this.world.remove(h)); }
+  result() {
+    const s = this.idx;
+    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 1 ? 1 : 0, lines: [`🪁 Ton message « ${this.text} » a ete vu ${s} fois sur ${this.hoops.length}`] };
+  }
+}
+
+/* ------------------------------------------------------------
+   Sauvetage en helicoptere : treuille un randonneur sur une ile et ramene-le a l'helipad (G04)
+   ------------------------------------------------------------ */
+class WinchMission extends Mission {
+  setup() {
+    const pool = ISLANDS.slice().sort((a, b) => Math.hypot(a.x - HELIPAD.x, a.z - HELIPAD.z) - Math.hypot(b.x - HELIPAD.x, b.z - HELIPAD.z));
+    this.isle = pool[Math.min(1, pool.length - 1)];
+    this.spot = { x: this.isle.x + 40, z: this.isle.z };
+    const gy = this.g.r3d.groundHeight ? this.g.r3d.groundHeight(this.spot.x, this.spot.z) : 0;
+    this.hikerObj = this.world.hiker({ x: this.spot.x, z: this.spot.z, y: gy });
+    this.mark = this.world.beacon({ x: this.spot.x, z: this.spot.z, radius: 38, color: 0xfacc15, height: 300 });
+    this.pad = null;
+    this.phase = 'find';       // find -> home
+    this.hold = 0; this.need = 4;
+    this.limit = 260;
+  }
+  _speed() { return this.ac.vel.length(); }
+  _hovering(x, z, maxAgl, maxSpeed) {
+    const ac = this.ac;
+    return Math.hypot(ac.pos.x - x, ac.pos.z - z) < 42 && this.agl < maxAgl && this._speed() < maxSpeed;
+  }
+  update(dt) {
+    if (this.phase === 'find') {
+      if (this._hovering(this.spot.x, this.spot.z, 90, 14)) {
+        this.hold += dt;
+        if (this.hold >= this.need) {
+          this.phase = 'home';
+          this.world.remove(this.hikerObj); this.world.remove(this.mark);
+          this.pad = this.world.beacon({ x: HELIPAD.x, z: HELIPAD.z, radius: 30, color: 0x4ade80, height: 300 });
+          sfx.tada(); this.g.arcade.confetti(40);
+          this.sky.reward(10, '🚁 Randonneur a bord !');
+          this.hold = 0;
+        }
+      } else this.hold = Math.max(0, this.hold - dt * 2);
+    } else if (this._hovering(HELIPAD.x, HELIPAD.z, 35, 10)) {
+      this.hold += dt;
+      if (this.hold >= 2) { this.arrived = true; this.done = true; }
+    } else this.hold = Math.max(0, this.hold - dt * 2);
+  }
+  target() { return this.phase === 'home' ? { x: HELIPAD.x, z: HELIPAD.z } : { x: this.spot.x, z: this.spot.z }; }
+  guide() { const t = this.target(); return { x: t.x, y: this.ac.groundY + 60, z: t.z }; }
+  goal() {
+    if (this.phase === 'find') return { icon: '🚁', text: this.hold > 0.2 ? `Reste immobile… ${Math.round(this.hold / this.need * 100)} %` : 'Vole vers le randonneur (colonne jaune), puis reste en vol stationnaire !', target: this.target() };
+    return { icon: '🏥', text: this.hold > 0.2 ? 'Pose-toi doucement…' : 'Ramene le randonneur a l\'helipad (colonne verte) !', target: this.target() };
+  }
+  progressText() { return this.phase === 'find' ? '🚁 cherche le randonneur' : '🚁 retour a l\'helipad'; }
+  dispose() { [this.hikerObj, this.mark, this.pad].forEach(o => o && this.world.remove(o)); }
+  result() {
+    if (!this.arrived) return { score: 0, medal: this.phase === 'home' ? 1 : 0, lines: [this.phase === 'home' ? '🚁 Randonneur treuille, mais le retour n\'est pas fini' : '🚁 Le randonneur attend toujours…'] };
+    const r = this.t / this.limit;
+    return { score: Math.round(this.t), medal: r < 0.45 ? 3 : r < 0.7 ? 2 : 1, lines: [`🚁 Randonneur sauve en ${Math.round(this.t)} s !`] };
+  }
+}
+
+/* ------------------------------------------------------------
+   Formation : reste a cote de « Capitaine Coco » pour gagner des points (G02)
+   3 niveaux de parcours selon ta meilleure medaille.
+   ------------------------------------------------------------ */
+const FORMATION_LEVELS = [
+  { name: 'facile', turn: 0, wave: 0 },
+  { name: 'moyen', turn: 3.2, wave: 0 },
+  { name: 'difficile', turn: 6, wave: 14 }
+];
+class FormationMission extends Mission {
+  setup() {
+    const b = this.sky.data.best.formation;
+    this.lvl = FORMATION_LEVELS[Math.min(2, (b && b.medal) || 0)];
+    const ac = this.ac, f = ac.forward();
+    this.hd = Math.atan2(f.x, f.z);                    // cap du chef (rad, 0 = +Z)
+    this.speed = Math.max(40, ac.speeds.cruise / KTS * 0.82);
+    this.baseY = clamp(ac.pos.y + 80, ac.groundY + 150, 420);
+    this.leader = this.world.ghost();
+    this.leader.group.children.forEach(m => { if (m.material) { m.material = m.material.clone(); m.material.color.setHex(0xfacc15); m.material.opacity = 0.9; } });
+    this.leader.group.scale.setScalar(2.6);
+    this.lx = ac.pos.x + Math.sin(this.hd) * 260; this.lz = ac.pos.z + Math.cos(this.hd) * 260; this.ly = ac.pos.y + 40;
+    this.slot = this.world.hoop({ x: this.lx, y: this.ly, z: this.lz, radius: 34, color: 0x4ade80 });
+    this.slot.setState('next');
+    this.inside = 0; this.total = 60; this.limit = this.total + 6;
+    this.turnDir = 1; this.phaseT = 0;
+    this.tol = 52;
+  }
+  _slotPos() {
+    /* 75 m derriere et 38 m a gauche du chef, un peu plus bas */
+    const back = 75, side = 38;
+    const fx = Math.sin(this.hd), fz = Math.cos(this.hd);
+    return { x: this.lx - fx * back - fz * side, y: this.ly - 6, z: this.lz - fz * back + fx * side };
+  }
+  update(dt) {
+    /* parcours du chef */
+    this.phaseT += dt;
+    if (this.phaseT > 9) { this.phaseT = 0; this.turnDir *= -1; }
+    this.hd += (this.lvl.turn * Math.PI / 180) * this.turnDir * dt;
+    this.lx += Math.sin(this.hd) * this.speed * dt; this.lz += Math.cos(this.hd) * this.speed * dt;
+    const targetY = this.baseY + Math.sin(this.t * 0.4) * this.lvl.wave;
+    this.ly += clamp(targetY - this.ly, -14 * dt, 14 * dt);
+    this.leader.group.position.set(this.lx, this.ly, this.lz);
+    this.leader.group.rotation.y = this.hd + Math.PI;
+    const s = this._slotPos();
+    this.slot.group.position.set(s.x, s.y, s.z);
+    this.slot.x = s.x; this.slot.y = s.y; this.slot.z = s.z;
+    const ac = this.ac;
+    const d = Math.hypot(ac.pos.x - s.x, ac.pos.y - s.y, ac.pos.z - s.z);
+    const ok = d < this.tol;
+    this.slot.setState(ok ? 'done' : 'next');
+    if (ok) {
+      const before = Math.floor(this.inside / 5);
+      this.inside += dt;
+      if (Math.floor(this.inside / 5) > before) { sfx.ding(); this.sky.reward(2, '✈️ En formation !'); }
+    }
+    if (this.t >= this.total) this.done = true;
+  }
+  target() { return { x: this.lx, z: this.lz }; }
+  guide() { const s = this._slotPos(); return { x: s.x, y: s.y, z: s.z }; }
+  goal() { return { icon: '✈️', text: `Reste dans le rond vert, a cote du Capitaine Coco ! (${Math.round(this.inside)}/${this.total} s)`, target: this.target() }; }
+  progressText() { return `✈️ ${Math.round(this.inside)} s · parcours ${this.lvl.name}`; }
+  dispose() { this.world.remove(this.leader); this.world.remove(this.slot); }
+  result() {
+    const r = this.inside / this.total;
+    return { score: Math.round(this.inside), medal: r >= 0.7 ? 3 : r >= 0.5 ? 2 : r >= 0.25 ? 1 : 0, lines: [`✈️ ${Math.round(this.inside)} s en formation sur ${this.total} (parcours ${this.lvl.name})`] };
+  }
+}
+
 /* ============================================================
    Catalogue
    ============================================================ */
@@ -572,6 +790,10 @@ export const MISSION_DEFS = [
   { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission },
   { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
   { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
+  { id: 'rainbow',  ico: '🌈', name: 'Arc-en-ciel',        brief: 'Traverse 4 arcs-en-ciel dans le ciel !', level: 2, limit: 150, cls: RainbowMission },
+  { id: 'banner',   ico: '🪁', name: 'Banniere',           brief: 'Ecris un message et promene-le au-dessus de la foule.', level: 2, limit: 190, cls: BannerMission, needsText: true },
+  { id: 'winch',    ico: '🚁', name: 'Treuillage',         brief: 'En helicoptere : sauve un randonneur sur une ile !', level: 2, limit: 260, cls: WinchMission, heliOnly: true },
+  { id: 'formation', ico: '✈️', name: 'Vol en formation',  brief: 'Reste a cote du Capitaine Coco, 3 parcours.', level: 3, limit: 66, cls: FormationMission, noHeli: true },
   { id: 'zoo',      ico: '🐧', name: 'Transport d\'animaux', brief: 'Amene un animal au zoo. Chacun a ses gouts !', level: 4, limit: 200, cls: CarryMission }
 ];
 export const defOf = (id) => MISSION_DEFS.find(d => d.id === id);
@@ -625,7 +847,7 @@ export class SkyMissions {
   cards() {
     const lvl = this.g.arcade.data.level;
     const heli = this.g.hangar.selected === 'helico';
-    return MISSION_DEFS.filter(d => !(heli && d.noHeli)).map(d => {
+    return MISSION_DEFS.filter(d => !(heli && d.noHeli) && !(!heli && d.heliOnly)).map(d => {
       const b = this.data.best[d.id] || {};
       return {
         id: d.id, ico: d.ico, name: d.name, brief: d.brief, level: d.level,
@@ -637,6 +859,13 @@ export class SkyMissions {
   arm(id) {
     this.reset();
     this.armed = defOf(id) || null;
+    /* Banniere : l'enfant ecrit son message avant de decoller (12 lettres, mots vilains remplaces). */
+    if (this.armed && this.armed.needsText) {
+      let t = null;
+      try { t = window.prompt('Ecris ton message (12 lettres) :', this.data.banner || 'COUCOU !'); } catch (e) { /* pas de prompt */ }
+      this.data.banner = cleanBanner(t === null ? this.data.banner : t);
+      this.save();
+    }
     if (this.armed) {
       this.g.fun.say(`${this.armed.ico} Mission « ${this.armed.name} » ! Decolle et c'est parti !`, 3, 4200);
       /* Depart express : si l'avion est deja pret, il decolle tout seul. */

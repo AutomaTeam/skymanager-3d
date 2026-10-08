@@ -2348,3 +2348,7 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 - `arcade.js` (2 150 -> ~420) : `arcadeMap`, `arcadeChallenges`, `arcadeFun`, `arcadeFlight`, donnees dans `arcadeData.js` (`SKY_STARS`, `BADGES`, ... toujours reexportees par `arcade.js`).
 - `tools/splitClass.mjs` fait ces decoupes sans erreur de copie (`node tools/splitClass.mjs config.json`, voir l'en-tete) ; `tools/listClass.mjs fichier Classe` liste les methodes.
 - **Registre** (`js/registry.js`) : `this.modules.add('monModule', new MonModule(this))` suffit pour avoir `update(dt)` dans la boucle gardee ; un module peut aussi fournir `bodies(opts)` (corps qui bloquent le joueur), `goal()` (objectif prioritaire) et `tips()` (conseils d'aide). Migres : pet, bus, ambience. Les autres (fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides) peuvent suivre sans risque.
+
+### Nouvelles missions du ciel (phase 73)
+
+`js/skyMissions.js` : 🌈 **Arc-en-ciel** (4 arches a traverser), 🪁 **Banniere** (l'enfant ecrit 12 lettres, filtre de mots vilains `cleanBanner`, remorquee derriere l'avion, 4 points de passage), 🚁 **Treuillage** (helicoptere seulement : vol stationnaire au-dessus du randonneur de l'ile, retour a l'helipad), ✈️ **Vol en formation** (Capitaine Coco, rond vert a garder ; 3 parcours facile / moyen / difficile selon ta meilleure medaille). Le fantome du meilleur temps de la course (G03) et les missions Show / Zoo / Ballons / Secours existaient deja. Scenario `missions` : les 12 missions demarrent et tournent 20 s sans erreur.
