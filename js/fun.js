@@ -580,6 +580,30 @@ export class Fun {
   }
 
   /* ---------------- Photo / carte postale ---------------- */
+  /* Selfie au sol : la camera se retourne face a l'avatar (et au chien), puis la photo part
+     dans l'album comme une carte postale. Rend false si impossible (au volant, en cabine...). */
+  selfie() {
+    const g = this.g;
+    if (!this.active || this._selfie || g.state !== 'HUB' || g.driving || g.controlled || g.rides.active) return false;
+    const P = g.player;
+    this._selfie = { t: 0, prev: P.rideCam, prevH: P.camHeading };
+    /* Camera devant le personnage, legerement de cote pour avoir le chien dans le cadre. */
+    P.rideCam = { look: 1.25, ahead: 0, height: 1.7, dist: 4.4, follow: 9, fov: 52 };
+    P.camHeading = P.heading + Math.PI + 0.35;
+    return true;
+  }
+
+  _updateSelfie(dt) {
+    const s = this._selfie;
+    if (!s) return;
+    const g = this.g, P = g.player;
+    s.t += dt;
+    if (g.state !== 'HUB') { this._selfie = null; P.rideCam = s.prev; P.camHeading = s.prevH; return; }
+    P.camHeading = P.heading + Math.PI + 0.35;
+    if (s.t > 0.9 && !s.shot) { s.shot = true; this.requestPhoto(); }
+    if (s.t > 1.3) { this._selfie = null; P.rideCam = s.prev; P.camHeading = s.prevH; }
+  }
+
   requestPhoto() {
     if (!this.active || this._photoReq) return;
     this._photoReq = true;
@@ -765,6 +789,7 @@ export class Fun {
   /* ---------------- Boucle ---------------- */
   update(dt) {
     const g = this.g;
+    this._updateSelfie(dt);
     /* Mascotte : repos. */
     if (this.active && g.state === 'PILOT') {
       this._idleT -= dt;

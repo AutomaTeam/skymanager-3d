@@ -2272,3 +2272,11 @@ Le hall n'est plus dessine ni anime au-dela de ~53 m (272 appels de dessin au li
 
 - **Parapluies** (`ambience.js`) : quand il pleut, toutes les personnes dehors (joueur, PNJ du tarmac, employes, voyageurs du parking, visiteurs, spotteurs) sortent un parapluie colore ; jamais dans le terminal ni quand l'avatar est masque (au volant, a roulettes). Geometries et materiaux partages, fabriques a la premiere pluie seulement.
 - **Pelage du chien** : une fois le chien adopte, le panneau « Mon perso » propose aussi sa couleur (6 pelages) ; `pet.setFur` le reconstruit sur place.
+
+### Le doudou perdu (phase 53)
+
+Nouvelle surprise au sol (`groundFun.js`, `kind: 'lost'`) : un petit enfant pleure dans le hall (bulle 😢), son lapin en peluche est tombe dehors (bulle 🐰 et faisceau). On le ramasse en passant dessus (il passe dans les bras de l'avatar), on le rapporte a l'enfant : il saute de joie (😄) et repart avec ses parents ; +15 pieces, autocollant coeur, trophee « Ami des enfants ». Sinon, un agent le retrouve au bout de 200 s.
+
+### Vrai selfie au sol (phase 54)
+
+Le geste 📸 (menu 🎈) prenait seulement un flash au sol. Il prend maintenant un vrai selfie (`fun.selfie`) : la camera se retourne face au personnage, un peu de cote pour cadrer le chien, puis la photo part en carte postale (filtres, enregistrement, album « Mes photos ») ; la camera revient ensuite derriere le joueur. Pas de selfie au volant, a roulettes ou en cabine (flash seul). Le defi du jour « photo » accepte aussi les selfies.

@@ -111,7 +111,7 @@ const DAILY_POOL = [
   { id: 'mission', ev: 'mission',   icon: '🎯', text: (n) => `Termine ${n} mission${n > 1 ? 's' : ''} aerienne${n > 1 ? 's' : ''}`, min: 1, max: 2, reward: 35 },
   { id: 'secret', ev: 'secret',     icon: '🌟', text: (n) => `Trouve ${n} etoiles dorees dans le ciel`, min: 2, max: 4, reward: 30 },
   { id: 'minigame', ev: 'minigame', icon: '🧽', text: (n) => `Joue a ${n} mini-jeux`,                  min: 2, max: 3, reward: 25 },
-  { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une carte postale pendant un vol', min: 1, max: 1, reward: 20 },
+  { id: 'photo',  ev: 'photo',      icon: '📸', text: () => 'Prends une photo (carte postale en vol ou selfie 🎈 → 📸)', min: 1, max: 1, reward: 20 },
   { id: 'tug',    ev: 'tugTrip',    icon: '🚜', text: (n) => `Livre ${n} chargement${n > 1 ? 's' : ''} de valises avec le tracteur`, min: 1, max: 3, reward: 25 },
   { id: 'bus',    ev: 'busTrip',    icon: '🚌', text: (n) => `Conduis ${n} fois les passagers en bus jusqu'a l'avion`, min: 1, max: 2, reward: 25 },
   { id: 'greet',  ev: 'greet',      icon: '👋', text: (n) => `Dis bonjour a ${n} personnes de l'aeroport`, min: 4, max: 8, reward: 15 },
@@ -125,6 +125,9 @@ const WEEKLY_POOL = [
   { id: 'wstunt',   ev: 'stunt',    icon: '🌀', text: (n) => `Fais ${n} acrobaties`,                  target: [25, 40], reward: 120 },
   { id: 'wstar3',   ev: 'star3',    icon: '💎', text: (n) => `Reussis ${n} atterrissages parfaits`,   target: [3, 5],   reward: 130 },
   { id: 'wmini',    ev: 'minigame', icon: '🎮', text: (n) => `Joue a ${n} mini-jeux`,                 target: [10, 15], reward: 100 },
+  { id: 'wfire',    ev: 'fire',     icon: '🚒', text: (n) => `Eteins ${n} feux avec le camion de pompiers`, target: [2, 3], reward: 110 },
+  { id: 'wdoudou',  ev: 'doudou',   icon: '🐰', text: (n) => `Rapporte ${n} doudous perdus`,         target: [2, 3],   reward: 100 },
+  { id: 'wgreet',   ev: 'greet',    icon: '👋', text: (n) => `Dis bonjour a ${n} personnes`,          target: [20, 30], reward: 90 },
   { id: 'wisland',  ev: 'island',   icon: '🏝️', text: (n) => `Decouvre ${n} nouvelle${n > 1 ? 's' : ''} ile${n > 1 ? 's' : ''}`, target: [2, 3], reward: 110 }
 ];
 const weekKey = () => {
@@ -345,6 +348,7 @@ export const BADGES = [
   { id: 'friendly', ico: '👋', name: 'Ami de tous',          desc: 'Dis bonjour a 25 personnes de l\'aeroport.', test: d => (d.stats.greet || 0) >= 25 },
   { id: 'petlove',  ico: '🐶', name: 'Meilleur ami',         desc: 'Caresse ton chien 10 fois.',              test: d => (d.stats.pets || 0) >= 10 },
   { id: 'fireman',  ico: '🚒', name: 'Pompier courageux',    desc: 'Eteins 3 feux avec le camion de pompiers.', test: d => (d.stats.fires || 0) >= 3 },
+  { id: 'doudou',   ico: '🐰', name: 'Ami des enfants',      desc: 'Rapporte 3 doudous perdus.',              test: d => (d.stats.doudous || 0) >= 3 },
   { id: 'guide',    ico: '🧭', name: 'Guide de l\'aeroport', desc: 'Accompagne 3 visiteurs jusqu\'a leur avion.', test: d => (d.stats.escorts || 0) >= 3 },
   { id: 'bus',      ico: '🚌', name: 'Chauffeur de bus',     desc: "Conduis 5 fois les passagers jusqu'a l'avion.", test: d => (d.stats.busTrips || 0) >= 5 },
   { id: 'tug',      ico: '🚜', name: 'Chauffeur de piste',   desc: 'Livre 10 chargements de valises avec le tracteur.', test: d => (d.stats.tugTrips || 0) >= 10 },
@@ -1440,7 +1444,8 @@ export class Arcade {
       hello:  { ico: '👋', txt: 'Salut !',       snd: () => sfx.hello() },
       party:  { ico: '🎉', txt: 'Fete !',        snd: () => { sfx.tada(); this.confetti(60); } },
       dance:  { ico: '💃', txt: 'On danse !',    snd: () => { sfx.pop(); this._danceT = 2.2; } },
-      selfie: { ico: '📸', txt: 'Cheese !',      snd: () => { sfx.shutter(); this._flash(); } }
+      /* Au sol, un vrai selfie qui part dans l'album (fun.selfie) ; ailleurs, juste le flash. */
+      selfie: { ico: '📸', txt: 'Cheese !',      snd: () => { if (!(g.fun && g.fun.selfie())) { sfx.shutter(); this._flash(); } } }
     }[kind];
     if (!E) return;
     E.snd();

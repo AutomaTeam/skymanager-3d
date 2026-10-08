@@ -150,6 +150,7 @@ export class GroundFun {
     e.t -= dt;
     if (e.kind === 'dog') this._updateDog(dt);
     else if (e.kind === 'balloons') this._updateBalloons(dt);
+    else if (e.kind === 'lost') this._updateLost(dt);
     else if (e.phase === 'follow') this._updateEscort(dt);
     else this._updateVisitor(dt);
     /* Temps ecoule : rate, sauf les ballons deja attrapes qui comptent quand meme. */
@@ -164,7 +165,8 @@ export class GroundFun {
     if (!spots.length) { this.cd = 30; return; }
     const [x, z] = pick(spots);
     const r = Math.random();
-    if (r < 0.34) this._startDog(x, z); else if (r < 0.67) this._startVisitor(); else this._startBalloons(x, z);
+    if (r < 0.27) this._startDog(x, z); else if (r < 0.54) this._startVisitor();
+    else if (r < 0.77) this._startBalloons(x, z); else this._startLost(x, z);
   }
 
   /* ---------------- Le chien ---------------- */
@@ -218,6 +220,69 @@ export class GroundFun {
     const run = speed > 4 ? 1 : 0.35;
     d.legs.forEach((l, i) => { l.rotation.x = Math.sin(t * 16 * run + (i % 2 ? Math.PI : 0)) * 0.7 * run; });
     e.mark.position.y = 2.9 + Math.sin(t * 5) * 0.12;
+  }
+
+  /* ---------------- Le doudou perdu ---------------- */
+  /* Un petit enfant pleure dans le hall : son lapin en peluche est tombe dehors. On le retrouve
+     (la fleche aide), on le ramasse en passant dessus, et on le lui rapporte. */
+  _startLost(x, z) {
+    const g = this.g;
+    const c = g.nav.nearestWalkable(318 + Math.random() * 90, 1212);
+    const child = g.r3d.buildTechnician(pick([0xf472b6, 0x60a5fa, 0xfacc15, 0x4ade80]), 0xffffff, false);
+    child.group.scale.setScalar(0.6);
+    child.group.position.set(c.x, 0, c.z);
+    g.r3d.airport.add(child.group);
+    const mark = emojiSprite('😢', 1.4 / 0.6);
+    mark.position.set(0, 3.0, 0);
+    child.group.add(mark);
+    /* Le doudou : un petit lapin blanc, avec une bulle pour le reperer de loin. */
+    const plush = new THREE.Group();
+    const fur = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.95 });
+    const pink = new THREE.MeshStandardMaterial({ color: 0xf9a8d4, roughness: 0.9 });
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 10), fur); body.position.y = 0.22;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 10), fur); head.position.y = 0.5;
+    plush.add(body, head);
+    for (const sd of [-1, 1]) {
+      const ear = new THREE.Mesh(new THREE.CapsuleGeometry(0.04, 0.2, 4, 8), fur); ear.position.set(sd * 0.06, 0.74, 0); ear.rotation.z = sd * 0.2;
+      const inner = new THREE.Mesh(new THREE.CapsuleGeometry(0.02, 0.15, 4, 6), pink); inner.position.set(sd * 0.06, 0.74, 0.03); inner.rotation.z = sd * 0.2;
+      plush.add(ear, inner);
+    }
+    plush.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    const pm = emojiSprite('🐰', 1.2);
+    pm.position.set(0, 1.6, 0);
+    plush.add(pm);
+    plush.position.set(x, 0, z);
+    g.r3d.airport.add(plush);
+    this.ev = { kind: 'lost', t: 200, total: 200, phase: 'find', child, mark, plush, pm, x: c.x, z: c.z, h: 0, px: x, pz: z };
+    sfx.chime();
+    g.toast('📢 Un petit enfant a perdu son doudou lapin ! Aide-le a le retrouver.', 4600, 'ok');
+    g.fun.say('Oh, un enfant pleure dans le terminal… son doudou est tombe quelque part dehors !', 3, 4200);
+  }
+
+  _updateLost(dt) {
+    const g = this.g, e = this.ev, p = g.player.pos, t = g.time;
+    e.mark.position.y = 3.0 + Math.sin(t * 3) * 0.12;
+    e.child.group.rotation.y = Math.atan2(p.x - e.x, p.z - e.z);
+    g.r3d.updateAvatarAnim(e.child, false, dt);
+    if (e.phase === 'find') {
+      e.plush.rotation.y = t * 0.8;
+      e.pm.position.y = 1.6 + Math.sin(t * 4) * 0.15;
+      if (Math.hypot(e.px - p.x, e.pz - p.z) < 2) {
+        /* Ramasse : le doudou part dans les bras du joueur. */
+        e.phase = 'bring';
+        e.plush.remove(e.pm);
+        g.r3d.airport.remove(e.plush);
+        e.plush.position.set(0.28, 0.85, 0.25);
+        e.plush.rotation.set(0, 0, 0);
+        e.plush.scale.setScalar(0.8);
+        if (g.r3d.player) g.r3d.player.group.add(e.plush);
+        sfx.pop();
+        g.arcade.popup('🐰 Doudou trouve ! Rapporte-le a l\'enfant.');
+      }
+    } else if (Math.hypot(e.x - p.x, e.z - p.z) < 2.6) {
+      e.done = true;
+      this._end(true);
+    }
   }
 
   /* ---------------- Les ballons envoles ---------------- */
@@ -451,6 +516,14 @@ export class GroundFun {
     this.cd = 80 + Math.random() * 50;
     if (e.kind === 'dog') { g.r3d.airport.remove(e.dog.group); }
     else if (e.kind === 'balloons') { for (const b of e.balloons) g.r3d.airport.remove(b.grp); }
+    else if (e.kind === 'lost') {
+      if (e.plush.parent) e.plush.parent.remove(e.plush);
+      e.mark.visible = false;
+      /* L'enfant saute de joie, puis repart vers la sortie cote ville avec ses parents. */
+      if (ok) { const b = emojiSprite('😄', 1.4 / 0.6); b.position.set(0, 3.0, 0); e.child.group.add(b); }
+      e.child.pose = ok ? 'jump' : null;
+      this.leaving.push({ ent: e.child, x: e.x, z: e.z, h: e.h, door: { x: e.x, z: 1262 }, byeT: ok ? 2 : 0, t: 0 });
+    }
     else {
       /* Le visiteur ne disparait pas : il fait au revoir (si la rencontre a eu lieu) et repart. */
       e.ent.pose = ok ? 'jump' : null;
@@ -460,11 +533,19 @@ export class GroundFun {
     if (!ok) {
       g.toast(e.kind === 'dog' ? '🐕 Le chien s\'est enfui… il reviendra peut-etre !'
         : e.kind === 'balloons' ? '🎈 Les ballons sont partis dans le ciel… une autre fois !'
+        : e.kind === 'lost' ? '🐰 Un agent a retrouve le doudou. La prochaine fois, ce sera toi !'
         : `${e.story.ico} ${e.story.name} est reparti(e).`, 3200);
       return;
     }
     sfx.tada(); g.arcade.confetti(60);
-    if (e.kind === 'balloons') {
+    if (e.kind === 'lost') {
+      g.arcade.giveCoins(15, { silent: true, xp: 10 });
+      g.arcade.data.stats.doudous = (g.arcade.data.stats.doudous || 0) + 1;
+      g.arcade.event('doudou');
+      const got = this._giveSticker('heart');
+      g.toast(`🐰 L'enfant a retrouve son doudou ! Merci ! +15 🪙${got ? ' et un autocollant coeur !' : ''}`, 4400, 'ok');
+      g.fun.say('Tu as rendu un enfant tout heureux !', 3, 3200);
+    } else if (e.kind === 'balloons') {
       const all = e.n === 6;
       if (all) g.arcade.giveCoins(8, { silent: true, xp: 8 });
       g.toast(all ? '🎈 Les 6 ballons ! La fete est sauvee ! +8 🪙 de bonus' : `🎈 ${e.n} ballon${e.n > 1 ? 's' : ''} rattrape${e.n > 1 ? 's' : ''} ! Bien joue !`, 4000, 'ok');
@@ -501,6 +582,11 @@ export class GroundFun {
       const t = this._escortTarget();
       return { icon: e.story.ico, text: `Accompagne ${e.story.name} jusqu'a la porte de l'avion !`, target: t ? { x: t.x, z: t.z } : null };
     }
+    if (e.kind === 'lost') {
+      return e.phase === 'find'
+        ? { icon: '🐰', text: 'Un enfant a perdu son doudou lapin ! Retrouve-le dehors (suis la fleche).', target: { x: e.px, z: e.pz } }
+        : { icon: '🐰', text: 'Rapporte le doudou a l\'enfant qui pleure dans le terminal !', target: { x: e.x, z: e.z } };
+    }
     if (e.kind === 'balloons') {
       const p = this.g.player.pos;
       let best = null, bd = Infinity;
@@ -518,7 +604,7 @@ export class GroundFun {
     chip.classList.toggle('hidden', !show);
     if (show) {
       const t = Math.max(0, Math.ceil(e.t));
-      const txt = `${e.kind === 'dog' ? '🐕' : e.kind === 'balloons' ? '🎈' : e.story.ico} ⏱ ${t} s`;
+      const txt = `${e.kind === 'dog' ? '🐕' : e.kind === 'balloons' ? '🎈' : e.kind === 'lost' ? '🐰' : e.story.ico} ⏱ ${t} s`;
       if (chip.textContent !== txt) chip.textContent = txt;
       chip.classList.toggle('late', t < 15);
     }
