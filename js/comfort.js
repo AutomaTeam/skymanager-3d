@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791466307';
-import * as Save from './save.js?v=1791466307';
-import { Music } from './music.js?v=1791466307';
+import { sfx } from './sfx.js?v=1791466423';
+import * as Save from './save.js?v=1791466423';
+import { Music } from './music.js?v=1791466423';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -21,6 +21,14 @@ const $ = (id) => document.getElementById(id);
 const QUALITY = ['auto', 'high', 'low'];
 const QUALITY_LABEL = { auto: 'Auto', high: 'Haute', low: 'Basse' };
 const BREAKS = [0, 20, 30, 45, 60];
+const LIMITS = [0, 30, 45, 60, 90];
+/* Petit calcul pour les reglages parentaux (un enfant de 12 ans ne le fait pas par hasard). */
+function parentGate() {
+  const a = 6 + Math.floor(Math.random() * 4), b = 7 + Math.floor(Math.random() * 3);
+  const r = window.prompt(`Reglage pour les parents : combien font ${a} x ${b} ?`);
+  return r !== null && parseInt(r, 10) === a * b;
+}
+const today = () => new Date().toISOString().slice(0, 10);
 
 export class Comfort {
   constructor(game) {
@@ -38,7 +46,7 @@ export class Comfort {
   }
 
   _load() {
-    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, breakMin: 0 };
+    const def = { quality: 'auto', lefty: false, textSize: 0, music: true, haptics: true, voiceRate: 1, breakMin: 0, limitMin: 0, usedDay: '', usedSec: 0 };
     const d = Save.load(STORE, def);
     if (d.bigText) { d.textSize = Math.max(1, d.textSize | 0); }        // ancien reglage booleen
     delete d.bigText;
@@ -55,6 +63,7 @@ export class Comfort {
     t('setLefty', () => { this.data.lefty = !this.data.lefty; this._changed(); });
     t('setBig', () => { this.data.textSize = (this.data.textSize + 1) % 3; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
+    t('setVoiceRate', () => { const R = [0.8, 1, 1.2]; this.data.voiceRate = R[(R.indexOf(this.data.voiceRate) + 1) % R.length]; this._changed(); this.g.voice.speak('Voila ma voix !', { prio: 3 }); });
     t('setHaptic', () => { this.data.haptics = !this.data.haptics; this._changed(); });
     t('setTilt', async () => {
       const c = this.g.controls, on = !c.tilt.on;
@@ -64,6 +73,15 @@ export class Comfort {
       sfx.click(); this.render();
     });
     t('setTiltCal', () => { this.g.controls.calibrateTilt(); this.g.toast('🎯 C\'est ta nouvelle position neutre.', 1800, 'ok'); sfx.click(); });
+    t('setLimit', () => {
+      if (!parentGate()) { this.g.toast('🌙 Ce reglage est pour les parents.', 2200, 'warn'); return; }
+      this.data.limitMin = LIMITS[(LIMITS.indexOf(this.data.limitMin) + 1) % LIMITS.length]; this._changed();
+    });
+    t('limitParent', () => {
+      if (!parentGate()) return;
+      this.data.usedSec = Math.max(0, this.data.limitMin * 60 - 15 * 60);
+      this.save(); $('limitPanel').classList.add('hidden'); this.g._worldPaused = false; this._limitShown = false; sfx.click();
+    });
     t('setBreak', () => { this.data.breakMin = BREAKS[(BREAKS.indexOf(this.data.breakMin) + 1) % BREAKS.length]; this._playT = 0; this._changed(); });
     t('breakOk', () => { $('breakPanel').classList.add('hidden'); this.g._worldPaused = false; this._playT = 0; sfx.click(); });
   }
@@ -90,7 +108,9 @@ export class Comfort {
     const tl = this.g.controls && this.g.controls.tilt;
     set('setTilt', tl && tl.on ? 'Active' : 'Coupe', !!(tl && tl.on));
     const cal = $('setTiltCal'); if (cal) cal.classList.toggle('hidden', !(tl && tl.on));
+    set('setVoiceRate', { 0.8: 'Lente', 1: 'Normale', 1.2: 'Rapide' }[d.voiceRate] || 'Normale', d.voiceRate !== 1);
     set('setHaptic', d.haptics ? 'Active' : 'Coupee', d.haptics);
+    set('setLimit', d.limitMin ? `${d.limitMin} min par jour` : 'Pas de limite', !!d.limitMin);
     set('setBreak', d.breakMin ? `Toutes les ${d.breakMin} min` : 'Pas de rappel', !!d.breakMin);
   }
 
@@ -102,6 +122,7 @@ export class Comfort {
     document.body.classList.toggle('hugetext', d.textSize === 2);
     this.music.setOn(d.music && !sfx.muted);
     sfx.setHaptics(d.haptics);
+    this.g.voice.setRate(d.voiceRate);
     this._applyQuality(d.quality === 'high' ? 0 : d.quality === 'low' ? 2 : this.level);
   }
 
@@ -151,6 +172,20 @@ export class Comfort {
       if (g.fun.boosting || g.fun.stunt || (g.sky && g.sky.m) || g.fun.combo.n > 0) I = 2;
     }
     this.music.setIntensity(I);
+    /* limite de temps par jour (parents) : on ne coupe jamais en plein vol */
+    if (this.data.limitMin) {
+      if (this.data.usedDay !== today()) { this.data.usedDay = today(); this.data.usedSec = 0; }
+      if (!g._worldPaused) {
+        this.data.usedSec += dt;
+        this._limitSave = (this._limitSave || 0) + dt;
+        if (this._limitSave > 20) { this._limitSave = 0; this.save(); }
+      }
+      if (this.data.usedSec >= this.data.limitMin * 60 && !this._limitShown && !(g.state === 'PILOT' && !g.ac.onGround)) {
+        this._limitShown = true; g._worldPaused = true; this.save();
+        $('limitPanel').classList.remove('hidden');
+        sfx.chime();
+      }
+    }
     /* rappel de pause */
     if (this.data.breakMin && !g._worldPaused) {
       this._playT += dt;

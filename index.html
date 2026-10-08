@@ -820,13 +820,23 @@
       <button id="setMusic" class="set-row"><span class="set-ico">🎵</span><b>Musique</b><small>Activee</small></button>
       <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons a droite</small></button>
       <button id="setBig" class="set-row"><span class="set-ico">🔠</span><b>Taille du texte</b><small>Normal</small></button>
+      <button id="setVoiceRate" class="set-row"><span class="set-ico">🗣️</span><b>Vitesse de la voix</b><small>Normale</small></button>
       <button id="setHaptic" class="set-row"><span class="set-ico">📳</span><b>Vibrations</b><small>Active</small></button>
       <button id="setTilt" class="set-row"><span class="set-ico">📱</span><b>Pilotage par inclinaison</b><small>Coupe</small></button>
       <button id="setTiltCal" class="set-row hidden"><span class="set-ico">🎯</span><b>Calibrer</b><small>Tiens l'iPad comme tu veux, puis touche</small></button>
+      <button id="setLimit" class="set-row"><span class="set-ico">🌙</span><b>Temps par jour</b><small>Pas de limite</small></button>
       <button id="setBreak" class="set-row"><span class="set-ico">⏰</span><b>Rappel de pause</b><small>Pas de rappel</small></button>
     </div>
     <p class="panel-note">Le son global se coupe aussi dans le menu (tuile « Son »).</p>
     <button id="setClose" class="panel-btn primary mt-2">Termine</button>
+  </div>
+</div>
+<div id="limitPanel" class="hidden panel-overlay">
+  <div class="panel-card center kid">
+    <div class="quiz-ico">🌙</div>
+    <h2 class="panel-title">Coco va dormir, a demain !</h2>
+    <p class="panel-sub">Ta partie est bien sauvegardee. Tu retrouveras ton aeroport demain.</p>
+    <button id="limitParent" class="panel-btn mt-2">Un parent veut jouer 15 min de plus</button>
   </div>
 </div>
 <div id="breakPanel" class="hidden panel-overlay">
@@ -952,7 +962,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791466307').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791466423').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -960,6 +970,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791466307"></script>
+<script type="module" src="js/main.js?v=1791466423"></script>
 </body>
 </html>

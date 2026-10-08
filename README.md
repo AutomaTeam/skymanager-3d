@@ -2332,3 +2332,9 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 
 - Reglages > Taille du texte : Normal / Grand / Tres grand (`body.bigtext`, `body.hugetext`) ; l'ancien reglage oui/non est converti.
 - Menu pause > 🧭 **Je suis perdu** : fondu au noir puis retour pres de l'avion (a pied), sortie de la cabine, ou atterrissage assiste si on est en l'air. Descend aussi du vehicule / de la monture.
+
+### Voix, limite de temps (phase 67)
+
+- `js/voice.js` : une seule file d'attente de lecture vocale (voix francaise si dispo, priorites, 3 phrases au plus en attente). Utilisee par Coco (tuile « Voix de Coco ») et par la barre d'objectif quand la voix est active. Reglages > Vitesse de la voix : lente / normale / rapide.
+- Reglages > 🌙 **Temps par jour** (parents) : 30 / 45 / 60 / 90 min, protege par un petit calcul (ex. 7 x 8). A la limite : « Coco va dormir, a demain ! » (jamais en plein vol ; la partie est sauvegardee) ; un parent peut ajouter 15 min apres le calcul. Le compteur repart a zero chaque jour.
+- Non fait ici : F03 (mode daltonien), F05 (aide en cartes) — voir le Journal du plan.

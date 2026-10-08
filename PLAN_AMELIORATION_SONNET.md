@@ -444,3 +444,11 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | 2026-10-08 | T00 | fait | commit 9d50235 |
 | 2026-10-08 | A08, A07, C02 | fait | fuzz 20 s : 0 erreur (1 passe seulement, pas 5) |
 | 2026-10-08 | A01 | fait | libelle du badge 'Chercheur d'etoiles' garde |
+| 2026-10-08 | A02, A04 (skip), B05, C01, C03, C04, C05, I01 (partiel) | fait | A04 : tuto passe via Passer, pas joue a la main ; I01 : KID_AIRCRAFT 350->300 |
+| 2026-10-08 | A03 | NON FAIT | bug cosmetique non reproduit sans rendu |
+| 2026-10-08 | A05, A06 | fait (scenarios cabin/panels) | audio/cabine reelle non ecoutes |
+| 2026-10-08 | E01 | fait | hors ligne reel (reseau coupe) et iPad non testes ; le pane a perdu la capacite d'enregistrer un SW apres un unregister (probleme du navigateur de test, pas du code) |
+| 2026-10-08 | E02, E03, E07 | fait | E03 deja en place |
+| 2026-10-08 | E04, E05, E06 | fait | inclinaison/manette/vibration testes avec de fausses donnees, pas sur appareil |
+| 2026-10-08 | F01, F02, F04, F06 | fait | contraste WCAG non mesure |
+| 2026-10-08 | F03, F05 | A FAIRE | |

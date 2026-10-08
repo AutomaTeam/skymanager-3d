@@ -14,10 +14,10 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791466307';
-import { LAYOUT } from './layout.js?v=1791466307';
-import { drawIcon, iconify } from './icons.js?v=1791466307';
-import { PARK, buildPark } from './rideCourse.js?v=1791466307';
+import { sfx } from './sfx.js?v=1791466423';
+import { LAYOUT } from './layout.js?v=1791466423';
+import { drawIcon, iconify } from './icons.js?v=1791466423';
+import { PARK, buildPark } from './rideCourse.js?v=1791466423';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -1818,6 +1818,7 @@ export class Arcade {
       this._lastText = goal.text;
       $('objIcon').textContent = goal.icon;
       $('objText').textContent = goal.text;
+      if (g.fun && g.fun.data.voice) g.voice.speak(goal.text, { prio: 0 });     // F01 : l'objectif est lu a voix haute
       bar.classList.remove('pulse'); void bar.offsetWidth; bar.classList.add('pulse');
     }
     /* Tutoriel : on peut toujours passer l'etape (jamais bloque). */

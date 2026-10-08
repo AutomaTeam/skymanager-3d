@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791466307';
+import { sfx } from './sfx.js?v=1791466423';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -296,14 +296,7 @@ export class Fun {
     sfx.chirp();
     clearTimeout(this._hideT);
     this._hideT = setTimeout(() => el.classList.add('hidden'), ms);
-    if (this.data.voice && window.speechSynthesis) {
-      try {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text.replace(/[^\p{L}\p{N}\s.,!?'-]/gu, ''));
-        u.lang = 'fr-FR'; u.pitch = 1.6; u.rate = 1.05; u.volume = 0.9;
-        window.speechSynthesis.speak(u);
-      } catch (e) { /* voix indisponible */ }
-    }
+    if (this.data.voice) this.g.voice.speak(text, { prio, pitch: 1.6 });
   }
   sayKey(key, prio = 1, ms = 3600) { this.say(pick(LINES[key] || ['']), prio, ms); }
 
