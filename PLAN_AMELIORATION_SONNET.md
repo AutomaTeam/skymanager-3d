@@ -489,7 +489,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | K02 | 🟡 | vagues + reflets ; pas de sillage ni d'écume |
 | K03 | ⏭ | système de particules unifié : pas fait (gain invisible, risque de régression) |
 | K04, K05, K07 | ✅ | fumée des pneus + secousse, couchers de soleil et étoiles, écran titre vivant |
-| K06 | 🟡 | allures variées (101) + les PNJ à l'arrêt tournent le corps vers le joueur à moins de 6 m (105, non vu à l'écran) ; transitions de clips pas faites |
+| K06 | 🟡 | allures variées (101) + les PNJ à l'arrêt tournent le corps vers le joueur à moins de 6 m (105, non vu à l'écran) ; transitions de clips douces (phase 109, `updateAvatarAnim` : fondu 0,12–0,3 s selon le cas, marche/course synchronisées, 0,18 s mini entre deux changements ; vérifié sur les poids, pas à l'oeil) |
 | M01–M03 | ✅ | README court + `docs/HISTORIQUE.md`, `docs/MODULES.md` généré, anciens plans archivés |
 
 Bug trouvé et corrigé en route : le menu pause ne figeait pas l'avion en vol.

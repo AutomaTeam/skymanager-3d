@@ -4,9 +4,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791479130';
-import { spawnModel } from './assetLoader.js?v=1791479130';
-import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791479130';
+import * as TEX from './textures.js?v=1791483315';
+import { spawnModel } from './assetLoader.js?v=1791483315';
+import { pbr, MODEL, paintHuman } from './renderShared.js?v=1791483315';
 
 export const avatarMethods = {
   /* ============================================================
@@ -104,12 +104,22 @@ export const avatarMethods = {
        (setAvatarPose : saut, bras) remplace l'allure tant qu'il est actif. */
     const forced = entity.pose && model.actions[entity.pose] ? entity.pose : null;
     const want = forced || (!moving ? 'idle' : (running && model.actions.run ? 'run' : 'walk'));
-    if ((model._gait || 'idle') !== want) {
-      const prev = model.actions[model._gait || 'idle'];
+    /* K06 : transitions douces. Fondu selon le type de changement (immobile <-> marche plus long,
+       marche <-> course synchronisees pour ne pas « patiner »), et au moins 0,18 s entre deux
+       changements : un joueur qui tapote le joystick ne fait plus clignoter les clips. */
+    model._gaitT = (model._gaitT || 0) + dt;
+    const cur = model._gait || 'idle';
+    if (cur !== want && (model._gaitT > 0.18 || forced)) {
+      const prev = model.actions[cur], next = model.actions[want];
+      const loops = (n) => n === 'idle' || n === 'walk' || n === 'run';
+      const both = loops(cur) && loops(want);
+      const dur = forced || cur === forced ? 0.12 : both && cur !== 'idle' && want !== 'idle' ? 0.3 : 0.25;
       model._gait = want;
-      const next = model.actions[want];
-      if (prev) prev.fadeOut(0.2);
-      if (next) next.reset().fadeIn(0.2).play();
+      model._gaitT = 0;
+      if (next) next.reset().play();
+      if (prev && next) prev.crossFadeTo(next, dur, both);
+      else if (prev) prev.fadeOut(dur);
+      if (next && !prev) next.fadeIn(dur);
     }
   },
     /* Masque l'avatar du joueur sans eteindre sa lampe. Le groupe porte

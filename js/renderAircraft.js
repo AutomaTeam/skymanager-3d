@@ -4,13 +4,13 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791479130';
-import { LIGHT_GAIN } from './environment.js?v=1791479130';
-import { buildCockpit } from './cockpit.js?v=1791479130';
-import * as AF from './airframe.js?v=1791479130';
-import { LiveryRig } from './livery.js?v=1791479130';
-import { buildPlaneModel } from './planeModels.js?v=1791479130';
-import { pbr } from './renderShared.js?v=1791479130';
+import * as TEX from './textures.js?v=1791483315';
+import { LIGHT_GAIN } from './environment.js?v=1791483315';
+import { buildCockpit } from './cockpit.js?v=1791483315';
+import * as AF from './airframe.js?v=1791483315';
+import { LiveryRig } from './livery.js?v=1791483315';
+import { buildPlaneModel } from './planeModels.js?v=1791483315';
+import { pbr } from './renderShared.js?v=1791483315';
 
 export const aircraftMethods = {
   /* Silhouette d'appareil simplifiee (non pilotable) pour peupler les

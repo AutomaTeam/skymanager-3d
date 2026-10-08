@@ -2464,3 +2464,7 @@ L'hydravion qui se pose sur l'eau (mer, lac) souleve de grosses eclaboussures et
 ## Phase 108 - aide a l'atterrissage sur les pistes d'ile (G06)
 
 `FlightAssist.strips` (rempli par `openWorld.build`) : en finale cap sud dans un couloir de ±100 m devant une piste d'ile, l'aide guide comme sur la piste principale (`tx`, `zTouch`). Test dans `tools/fleet.sim.mjs`.
+
+## Phase 109 - transitions d'animation (K06)
+
+`updateAvatarAnim` (renderAvatar.js) : fondus de 0,12 s (gestes), 0,25 s (immobile <-> marche) ou 0,3 s (marche <-> course, phases synchronisees), et 0,18 s minimum entre deux changements de clip.
