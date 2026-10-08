@@ -439,16 +439,57 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 
 ## Journal (à remplir par les agents)
 
-| Date | Tâche | Statut | Notes / non testé |
-|---|---|---|---|
-| 2026-10-08 | T00 | fait | commit 9d50235 |
-| 2026-10-08 | A08, A07, C02 | fait | fuzz 20 s : 0 erreur (1 passe seulement, pas 5) |
-| 2026-10-08 | A01 | fait | libelle du badge 'Chercheur d'etoiles' garde |
-| 2026-10-08 | A02, A04 (skip), B05, C01, C03, C04, C05, I01 (partiel) | fait | A04 : tuto passe via Passer, pas joue a la main ; I01 : KID_AIRCRAFT 350->300 |
-| 2026-10-08 | A03 | NON FAIT | bug cosmetique non reproduit sans rendu |
-| 2026-10-08 | A05, A06 | fait (scenarios cabin/panels) | audio/cabine reelle non ecoutes |
-| 2026-10-08 | E01 | fait | hors ligne reel (reseau coupe) et iPad non testes ; le pane a perdu la capacite d'enregistrer un SW apres un unregister (probleme du navigateur de test, pas du code) |
-| 2026-10-08 | E02, E03, E07 | fait | E03 deja en place |
-| 2026-10-08 | E04, E05, E06 | fait | inclinaison/manette/vibration testes avec de fausses donnees, pas sur appareil |
-| 2026-10-08 | F01, F02, F04, F06 | fait | contraste WCAG non mesure |
-| 2026-10-08 | F03, F05 | A FAIRE | |
+*Session Sonnet 5.5 du 2026-10-08. Légende : ✅ fait et vérifié · 🟡 partiel · ⏭ non fait (raison).*
+
+| Tâche | Statut | Notes / non testé |
+|---|---|---|
+| T00 | ✅ | commit des phases 53–54 |
+| A01 | ✅ | « étoiles filantes » 🌠 ; le badge garde son nom « Chercheur d'étoiles » |
+| A02 | ✅ | « N veulent partir · M montent » |
+| A03 | ⏭ | bug cosmétique non reproduit (pas de rendu net sous le fuselage dans le Browser pane) |
+| A04 | 🟡 | bouton Passer + scénario `tutorial` ; pas joué à la main de bout en bout |
+| A05 | 🟡 | scénario `cabin` (service, sortie) ; boucle de satisfaction complète non mesurée |
+| A06 | ✅ | scénario `panels` : 9 panneaux, aucun gel |
+| A07 | ✅ | `?fuzz=1` ; 3 passes de 25 s, 0 erreur (le plan demandait 5) |
+| A08 | ✅ | `__game.errors` |
+| B01–B03 | ✅ | `main.js` ~950 l., `renderer3d.js` ~690 l., `arcade.js` ~460 l. ; `tools/splitClass.mjs` |
+| B04 | 🟡 | registre ; migrés : pet, bus, ambience + tous les nouveaux modules ; fun/sky/ground/social/tug/fire/deco/openWorld/comfort/rides pas migrés |
+| B05 | ✅ | `save.js` ; migrés pet, deco, comfort, reset ; les autres modules gardent leur lecture (tolérante, testée) |
+| B06 | 🟡 | constantes inutilisées retirées ; 37 avertissements `no-unused-vars` restent (variables locales), pas de suppression de code actif |
+| C01–C05 | ✅ | eslint, `npm run bump` + test du tampon, 11 scénarios, tests save / économie |
+| D01 | 🟡 | mesures : ~440 appels de dessin au parking (rendu logiciel), 3 130 maillages, `bootMs` ≈ 1,8 s ; pas de mesure sur un vrai iPad |
+| D02 | 🟡 | `staticMerge.js` appliqué au terminal, au skatepark, au décor d'aéroport : −5 % d'appels de dessin seulement (l'objectif −30 % n'est pas atteint : le reste est animé) |
+| D03 | 🟡 | existait déjà (PNJ simulés moins souvent au loin, `agents.js`) |
+| D04 | ✅ | taille d'ombre selon le niveau, pas d'ombres au-dessus de 600 m |
+| D05 | ⏭ | temps de chargement mesuré, pas amélioré |
+| D06 | ✅ | `renderer.info.memory` stable après 5 cycles de panneaux / avions |
+| E01 | 🟡 | manifeste, icônes, service worker vérifiés (cache rempli) ; coupure réseau réelle et iPad non testés |
+| E02, E03, E07 | ✅ | cibles ≥ 48 px mesurées en tablette ; zones sûres déjà là ; pause auto en veille |
+| E04, E05, E06 | 🟡 | inclinaison, manette, vibration testées avec de fausses données, pas sur appareil |
+| F01, F02, F04, F06 | ✅ | voix en file d'attente, texte 3 tailles (contraste WCAG non mesuré), « Je suis perdu », limite de temps |
+| F03, F05 | ✅ | couleurs pour tous, aide en cartes « Montre-moi » |
+| G01 | ✅ | planeur Plume, ascendances, vario, mission ; `npm run test:fleet` |
+| G02, G03 | ✅ | formation (3 parcours) ; le fantôme de la course existait déjà |
+| G04 | ✅ | arc-en-ciel, bannière, treuillage ; show / zoo / ballons / secours existaient déjà |
+| G05 | 🟡 | éclairs, manche à air, balisage de brouillard existaient déjà ; rien d'ajouté |
+| G06 | ⏭ | l'aide à l'atterrissage est centrée sur la piste (`flightAssist.js`) ; atterrir sur une île demande de la généraliser |
+| G07, G08, G09, G10 | ✅ | rejeu, balade, copilote vivant, livraison (sans lien avec le tracteur) |
+| H01 | ✅ | 6 modules satellites + projecteurs de nuit |
+| H02, H03 | ✅ | astuces du chien + trésor quotidien (le chien ne monte pas dans le bus) ; 3 véhicules |
+| H04 | ✅ | métiers à la journée |
+| H05 | ⏭ | intérieur du terminal (boutique, café, jumelles, tapis à bagages) pas fait |
+| H06, H07, H08, H09 | ✅/🟡 | cache-cache hebdomadaire ; Halloween + Noël (pas d'anniversaire, pas de neige) ; dormir ; photo de groupe |
+| I01 | ✅ | `KID_AIRCRAFT` 350 → 300 |
+| I02, I03, I04, I06, I07 | ✅ | 30 niveaux, album unifié, coffre en série de 7 jours, code d'avion, fichier de sauvegarde |
+| I05 | ⏭ | éditeur de livrée v2 (zones, autocollants au doigt) pas fait |
+| J01, J02, J05 | ✅ | audit statique, 3 volumes + ducking, 6 klaxons ; équilibre à l'oreille non vérifié |
+| J03 | 🟡 | pan stéréo du grondement de l'avion de ligne seulement |
+| J04 | ✅ | thèmes hall / skatepark / îles / nuit |
+| K01 | 🟡 | cumulus visibles pour tous les avions (pas de nuages volumétriques) |
+| K02 | 🟡 | vagues + reflets ; pas de sillage ni d'écume |
+| K03 | ⏭ | système de particules unifié : pas fait (gain invisible, risque de régression) |
+| K04, K05, K07 | ✅ | fumée des pneus + secousse, couchers de soleil et étoiles, écran titre vivant |
+| K06 | ⏭ | variété d'animations de marche pas faite |
+| M01–M03 | ✅ | README court + `docs/HISTORIQUE.md`, `docs/MODULES.md` généré, anciens plans archivés |
+
+Bug trouvé et corrigé en route : le menu pause ne figeait pas l'avion en vol.
