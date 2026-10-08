@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791471178';
-import { itemOf } from './deco.js?v=1791471178';
+import { sfx } from './sfx.js?v=1791474820';
+import { itemOf } from './deco.js?v=1791474820';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -51,8 +51,10 @@ function waterNormal() {
 
 export const ISLANDS = [
   { id: 'lighthouse', ico: '🗼', name: 'Ile du Phare',         x: 3200, z: -4300, r: 210, hint: 'Le phare veille sur la mer' },
-  { id: 'palm',       ico: '🏝️', name: 'Ile aux Palmiers',     x: 2250, z: -4900, r: 270, hint: 'Sable chaud et cocotiers' },
-  { id: 'fun',        ico: '🎡', name: 'Ile des Manèges',      x: 4350, z: -4550, r: 320, hint: 'Un parc d\'attractions geant' },
+  { id: 'palm',       ico: '🏝️', name: 'Ile aux Palmiers',     x: 2250, z: -4900, r: 270, hint: 'Sable chaud et cocotiers',
+    strip: { x: -120, len: 340, w: 26, ico: '🍦', text: 'Le marchand de glaces te sert une glace !', coins: 15 } },
+  { id: 'fun',        ico: '🎡', name: 'Ile des Manèges',      x: 4350, z: -4550, r: 320, hint: 'Un parc d\'attractions geant',
+    strip: { x: -190, len: 340, w: 26, ico: '🎟️', text: 'Un billet gratuit pour le grand huit !', coins: 15 } },
   { id: 'castle',     ico: '🏰', name: 'Ile du Chateau',       x: 2400, z: -6150, r: 310, hint: 'Chevaliers et dragons ?' },
   { id: 'volcano',    ico: '🌋', name: 'Ile du Volcan',        x: 3950, z: -6050, r: 390, hint: 'Attention, il fume !' },
   { id: 'ice',        ico: '🧊', name: 'Banquise des Pingouins', x: 3250, z: -6700, r: 300, hint: 'Brrr ! Il fait froid ici' }
@@ -76,6 +78,7 @@ function baseIsland(r, grass = 0x4fb35a, sand = 0xf0dfa0) {
   const g = new THREE.Group();
   const beach = C(r, r * 1.08, 1.6, M(sand, { r: 0.95 }), 40); beach.position.y = 0.2;
   const top = C(r * 0.82, r * 0.9, 2.2, M(grass, { r: 0.95 }), 40); top.position.y = 0.9;
+  beach.userData.base = top.userData.base = true;
   g.add(beach, top);
   return g;
 }
@@ -108,7 +111,7 @@ const BUILDERS = {
   palm(isl) {
     const g = baseIsland(isl.r);
     const rnd = rng(11);
-    for (let i = 0; i < 22; i++) { const a = rnd() * 6.28, r = 40 + rnd() * (isl.r * 0.62); const p = palm(10 + rnd() * 8); p.position.set(Math.cos(a) * r, 1.5, Math.sin(a) * r); p.rotation.y = rnd() * 6; g.add(p); }
+    for (let i = 0; i < 22; i++) { const a = rnd() * 6.28, r = 40 + rnd() * (isl.r * 0.62); const p = palm(10 + rnd() * 8); p.position.set(Math.cos(a) * r, 1.5, Math.sin(a) * r); p.rotation.y = rnd() * 6; if (Math.abs(p.position.x - isl.strip.x) > 28) g.add(p); }
     const hut = new THREE.Group();
     const wall = C(9, 9, 6, M(0xd9a15b), 8); wall.position.y = 3; const roof = new THREE.Mesh(new THREE.ConeGeometry(12, 7, 8), M(0xb45309)); roof.position.y = 9.4;
     hut.add(wall, roof); hut.position.set(20, 1.5, -15); g.add(hut);
@@ -221,6 +224,7 @@ export class OpenWorld {
     for (const isl of ISLANDS) {
       const o = BUILDERS[isl.id](isl);
       o.group.position.set(isl.x, 0, isl.z);
+      if (isl.strip) this._flattenIsland(isl, o.group);
       o.group.traverse(m => { if (m.isMesh) m.castShadow = false; });
       this.root.add(o.group);
       this.islands.push({ isl, obj: o });
@@ -228,6 +232,41 @@ export class OpenWorld {
     this._buildStars();
     this._buildEggs();
     this._buildSkyEvents();
+  }
+
+  /* G06 : ile plate (le sol physique est a y=0) avec une petite piste */
+  _flattenIsland(isl, grp) {
+    const [beach, top] = grp.children.filter(c => c.userData.base);
+    beach.scale.y = 0.06; beach.position.y = 0.03;
+    top.scale.y = 0.05; top.position.y = 0.065;
+    for (const c of grp.children) if (!c.userData.base) c.position.y -= 1.9;
+    const st = isl.strip;
+    const asphalt = new THREE.Mesh(new THREE.PlaneGeometry(st.w, st.len), M(0x3a3d44, { r: 0.95 }));
+    asphalt.rotation.x = -Math.PI / 2; asphalt.position.set(st.x, 0.16, 0);
+    grp.add(asphalt);
+    const dash = M(0xffffff, { r: 0.9 });
+    for (let z = -st.len / 2 + 20; z < st.len / 2 - 10; z += 24) {
+      const d = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 10), dash);
+      d.rotation.x = -Math.PI / 2; d.position.set(st.x, 0.17, z); grp.add(d);
+    }
+    for (const sz of [-1, 1]) {
+      const bar = new THREE.Mesh(new THREE.PlaneGeometry(st.w - 4, 3), dash);
+      bar.rotation.x = -Math.PI / 2; bar.position.set(st.x, 0.17, sz * (st.len / 2 - 4)); grp.add(bar);
+    }
+  }
+
+  /* Poser sur une piste d'ile : petit cadeau, une fois par jour et par ile */
+  _updateStripLanding() {
+    const ac = this.g.ac, td = ac.touchdown;
+    if (!td || td === this._lastTd || !ac.onGround) return;
+    this._lastTd = td;
+    for (const { isl } of this.islands) {
+      const st = isl.strip;
+      if (!st) continue;
+      if (Math.abs(ac.pos.x - (isl.x + st.x)) > st.w || Math.abs(ac.pos.z - isl.z) > st.len / 2 + 20) continue;
+      this._egg('strip_' + isl.id, st.ico, st.text, st.coins);
+      return;
+    }
   }
 
   /* ---------------- Etoiles filantes ---------------- */
@@ -353,6 +392,7 @@ export class OpenWorld {
     this._updateFx(dt);
     const ac = g.ac;
     const flying = g.state === 'PILOT' && !ac.onGround && !g.reportShown;
+    if (g.state === 'PILOT') this._updateStripLanding();
     if (flying) {
       this._updateStars(dt, t);
       this._updateIslands();

@@ -2436,3 +2436,7 @@ K02 : la mer a un relief de vagues (carte de normales calculee en code, sans fic
 ### Allures variees des personnages (phase 101)
 
 K06 (partiel) : chaque PNJ a son allure (0,78 a 1,28 fois la vitesse normale : presse, normal, flaneur) et sa cadence de marche (le clip « Walk » est ralenti ou accelere en meme temps). Les transitions entre clips etaient deja en fondu. Pas de regard vers le joueur.
+
+## Phase 102 - pistes sur les iles (G06 partiel)
+
+L'Ile aux Palmiers et l'Ile des Manèges sont aplaties (sol physique a y=0) et ont une piste de 340 m (`strip` dans `ISLANDS`). Se poser dessus donne un cadeau une fois par jour (marchand de glaces, billet de grand huit). Pas d'aide a l'atterrissage guidee sur ces pistes.
