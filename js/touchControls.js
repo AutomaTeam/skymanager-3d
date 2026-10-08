@@ -26,6 +26,9 @@ export class TouchControls {
     this.radius = 62;
     this.keys = new Set();
 
+    /* E04 : pilotage par inclinaison (option, desactive par defaut). */
+    this.pad = { pitch: 0, roll: 0, yaw: 0, thr: 0, brake: 0 };   // manette (gamepadInput.js)
+    this.tilt = { on: false, base: null, raw: null, range: 25, dead: 4, invert: false };
     this.bindStick();
     this.bindThrottle();
     this.bindRudder();
@@ -161,6 +164,49 @@ export class TouchControls {
     window.addEventListener('keyup', e => this.keys.delete(e.code));
   }
 
+  /* ---------------- Inclinaison (E04) ---------------- */
+  /* Active/desactive. Sur iOS, la permission doit etre demandee depuis un geste (le bouton du reglage).
+     Rend une promesse { ok, why }. */
+  async setTilt(on) {
+    if (!on) { this.tilt.on = false; this.tilt.base = null; window.removeEventListener('deviceorientation', this._onOrient); return { ok: true }; }
+    if (typeof DeviceOrientationEvent === 'undefined') return { ok: false, why: 'Cet appareil n\'a pas de capteur.' };
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      try { if (await DeviceOrientationEvent.requestPermission() !== 'granted') return { ok: false, why: 'Permission refusee.' }; }
+      catch (e) { return { ok: false, why: 'Permission impossible.' }; }
+    }
+    this._onOrient = this._onOrient || ((e) => this.injectOrientation(e.beta, e.gamma));
+    window.removeEventListener('deviceorientation', this._onOrient);
+    window.addEventListener('deviceorientation', this._onOrient);
+    this.tilt.on = true; this.tilt.base = null;       // calibrage a la premiere mesure
+    return { ok: true };
+  }
+
+  /* « Tiens l'iPad comme tu veux, puis touche OK » : la position actuelle devient le neutre. */
+  calibrateTilt() { this.tilt.base = this.tilt.raw ? { ...this.tilt.raw } : null; }
+
+  /* Mesure du capteur (aussi utilisable en console pour simuler : controls.injectOrientation(beta, gamma)). */
+  injectOrientation(beta, gamma) {
+    if (typeof beta !== 'number' || typeof gamma !== 'number') return;
+    const ang = (window.screen && screen.orientation && screen.orientation.angle) || 0;
+    /* Axes de l'ecran : x = vers la droite, y = vers le haut de l'ecran, selon l'orientation. */
+    let roll, pitch;
+    if (ang === 90) { roll = beta; pitch = -gamma; }
+    else if (ang === 270) { roll = -beta; pitch = gamma; }
+    else if (ang === 180) { roll = -gamma; pitch = -beta; }
+    else { roll = gamma; pitch = beta; }
+    this.tilt.raw = { roll, pitch };
+    if (!this.tilt.base) this.tilt.base = { roll, pitch };
+  }
+
+  _tiltAxes() {
+    const t = this.tilt;
+    if (!t.on || !t.raw || !t.base) return { p: 0, r: 0 };
+    const f = (d) => { const a = Math.abs(d); if (a < t.dead) return 0; return Math.sign(d) * clamp((a - t.dead) / (t.range - t.dead), 0, 1); };
+    const s = t.invert ? -1 : 1;
+    /* Pencher a droite = rouler a droite ; incliner le haut de l'ecran vers soi = cabrer. */
+    return { r: s * f(t.raw.roll - t.base.roll), p: s * f(t.raw.pitch - t.base.pitch) };
+  }
+
   /* ---------------- Lecture par frame ---------------- */
   update(dt) {
     const k = this.keys;
@@ -186,12 +232,14 @@ export class TouchControls {
     this.axes.yaw += clamp(yawTarget - this.axes.yaw, -dt * 3.5, dt * 3.5);
     if (Math.abs(this.axes.yaw) < 0.01) this.axes.yaw = 0;
 
-    this.brake = (this.brakeHold || k.has('Space')) ? 1 : 0;
+    this.brake = (this.brakeHold || k.has('Space') || this.pad.brake) ? 1 : 0;
 
+    if (this.pad.thr) this.setThrottle(this.throttle + this.pad.thr * dt * 0.8);
+    const ti = this._tiltAxes();
     return {
-      pitch: clamp(this.axes.pitch + kp, -1, 1),
-      roll: clamp(this.axes.roll + kr, -1, 1),
-      yaw: this.axes.yaw,
+      pitch: clamp(this.axes.pitch + kp + ti.p + this.pad.pitch, -1, 1),
+      roll: clamp(this.axes.roll + kr + ti.r + this.pad.roll, -1, 1),
+      yaw: clamp(this.axes.yaw + this.pad.yaw, -1, 1),
       throttle: this.throttle,
       brake: this.brake
     };

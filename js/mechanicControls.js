@@ -16,6 +16,7 @@ export class WalkJoystick {
     this.radius = 58;
     this.axes = { x: 0, y: 0 };
     this.keys = new Set();
+    this.gp = { x: 0, y: 0 };       // manette (gamepadInput.js)
     this.bind();
   }
 
@@ -92,6 +93,7 @@ export class WalkJoystick {
     if (this.keys.has('ArrowRight') || this.keys.has('KeyD')) x += 1;
     if (this.keys.has('ArrowUp') || this.keys.has('KeyW')) y -= 1;
     if (this.keys.has('ArrowDown') || this.keys.has('KeyS')) y += 1;
+    x += this.gp.x; y += this.gp.y;
     x = clamp(x, -1, 1); y = clamp(y, -1, 1);
     const len = Math.hypot(x, y);
     if (len > 1) { x /= len; y /= len; }

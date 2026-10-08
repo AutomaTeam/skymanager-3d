@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791465988';
-import * as Save from './save.js?v=1791465988';
-import { Music } from './music.js?v=1791465988';
+import { sfx } from './sfx.js?v=1791466218';
+import * as Save from './save.js?v=1791466218';
+import { Music } from './music.js?v=1791466218';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -51,6 +51,14 @@ export class Comfort {
     t('setLefty', () => { this.data.lefty = !this.data.lefty; this._changed(); });
     t('setBig', () => { this.data.bigText = !this.data.bigText; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
+    t('setTilt', async () => {
+      const c = this.g.controls, on = !c.tilt.on;
+      const r = await c.setTilt(on);
+      if (!r.ok) { this.g.toast('📱 ' + r.why, 2600, 'warn'); return; }
+      if (on) { c.tilt.base = null; this.g.toast('📱 Incline l\'iPad pour piloter ! Touche « Calibrer » pour changer le neutre.', 3600, 'ok'); }
+      sfx.click(); this.render();
+    });
+    t('setTiltCal', () => { this.g.controls.calibrateTilt(); this.g.toast('🎯 C\'est ta nouvelle position neutre.', 1800, 'ok'); sfx.click(); });
     t('setBreak', () => { this.data.breakMin = BREAKS[(BREAKS.indexOf(this.data.breakMin) + 1) % BREAKS.length]; this._playT = 0; this._changed(); });
     t('breakOk', () => { $('breakPanel').classList.add('hidden'); this.g._worldPaused = false; this._playT = 0; sfx.click(); });
   }
@@ -74,6 +82,9 @@ export class Comfort {
     set('setLefty', d.lefty ? 'Boutons a gauche' : 'Boutons a droite', d.lefty);
     set('setBig', d.bigText ? 'Gros' : 'Normal', d.bigText);
     set('setMusic', d.music ? 'Activee' : 'Coupee', d.music);
+    const tl = this.g.controls && this.g.controls.tilt;
+    set('setTilt', tl && tl.on ? 'Active' : 'Coupe', !!(tl && tl.on));
+    const cal = $('setTiltCal'); if (cal) cal.classList.toggle('hidden', !(tl && tl.on));
     set('setBreak', d.breakMin ? `Toutes les ${d.breakMin} min` : 'Pas de rappel', !!d.breakMin);
   }
 

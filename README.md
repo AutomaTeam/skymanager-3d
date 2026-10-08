@@ -2322,3 +2322,8 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 
 - Audit tablette (768 x 1024) de l'ecran d'accueil, du tarmac, de la cabine, du pilotage et de 9 panneaux : tous les boutons mesures font maintenant au moins 48 px (regles en fin de `css/style.css`). Zones sures (`env(safe-area-inset-*)`) deja presentes (58 regles), `viewport-fit=cover` aussi.
 - Onglet cache / iPad qui se met en veille : le jeu passe en pause douce et suspend l'audio ; au retour, le temps ne saute pas (`visibilitychange`).
+
+### Inclinaison et manette (phase 64)
+
+- **Pilotage par inclinaison** (Reglages > 📱, desactive par defaut) : `DeviceOrientationEvent` (permission iOS demandee par le bouton), bouton « Calibrer », zone morte 4°, plage 25°. Teste avec de faux angles (`controls.injectOrientation(beta, gamma)`) ; **non teste sur un vrai iPad** (les signes selon l'orientation de l'ecran sont a verifier).
+- **Manette** (`js/gamepadInput.js`) : stick gauche = manche / deplacement, stick droit = palonnier, RT / LT = gaz, X = frein, A = bouton d'action, B = retour, Start = pause. Teste avec une fausse manette (`navigator.getGamepads`) ; pas avec une vraie.
