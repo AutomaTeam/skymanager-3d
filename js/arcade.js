@@ -14,10 +14,10 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791465102';
-import { LAYOUT } from './layout.js?v=1791465102';
-import { drawIcon, iconify } from './icons.js?v=1791465102';
-import { PARK, buildPark } from './rideCourse.js?v=1791465102';
+import { sfx } from './sfx.js?v=1791465305';
+import { LAYOUT } from './layout.js?v=1791465305';
+import { drawIcon, iconify } from './icons.js?v=1791465305';
+import { PARK, buildPark } from './rideCourse.js?v=1791465305';
 
 const STORE = 'skymanager.arcade';
 export const COIN = 1000;                        // EUR par piece
@@ -816,6 +816,17 @@ export class Arcade {
       this._ensureDaily();
       this._ensureWeekly();
     }
+  }
+
+  /* Passer l'etape en cours sans recompense. */
+  skipStep() {
+    if (!this.step) return;
+    this.data.step++;
+    this._stepStats = { repair: 0, serve: 0, tower: 0, takeoff: 0, ring: 0, landing: 0 };
+    this._moved = 0;
+    if (this.data.step >= STEPS.length) this.data.tutorialDone = true;
+    this._lastText = null;
+    this.save();
   }
 
   _completeStep(st) {
@@ -1808,6 +1819,12 @@ export class Arcade {
       $('objIcon').textContent = goal.icon;
       $('objText').textContent = goal.text;
       bar.classList.remove('pulse'); void bar.offsetWidth; bar.classList.add('pulse');
+    }
+    /* Tutoriel : on peut toujours passer l'etape (jamais bloque). */
+    const sk = $('objSkip');
+    if (sk) {
+      sk.classList.toggle('hidden', !this.step || g.state === 'BOOT');
+      if (!sk._bound) { sk._bound = true; sk.addEventListener('click', () => this.skipStep()); }
     }
     const arrow = $('objArrow');
     const dist = $('objDist');

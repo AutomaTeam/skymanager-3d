@@ -2290,3 +2290,8 @@ Le geste 📸 (menu 🎈) prenait seulement un flash au sol. Il prend maintenant
 ### Etoiles filantes (phase 56)
 
 Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HUD, defis, trophees, album, carte). Le ⭐ reste reserve a la note d'atterrissage. Les cles de sauvegarde ne changent pas.
+
+### Tutoriel sans blocage, prix de la tour honnete (phase 57)
+
+- Bouton **Passer ⏭** dans la barre d'objectif a chaque etape du tutoriel (`Arcade.skipStep()`).
+- Tour de controle (Arcade) : la pastille affiche « N veulent partir · M montent » ; M est exactement le nombre credite au vol suivant.

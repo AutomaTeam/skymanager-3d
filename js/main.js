@@ -8,50 +8,50 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791465102';
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465102';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791465305';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465305';
 import * as THREE from 'three';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465102';
-import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465102';
-import { TouchControls } from './touchControls.js?v=1791465102';
-import { WalkJoystick } from './mechanicControls.js?v=1791465102';
-import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465102';
-import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465102';
-import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465102';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465102';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465102';
-import { Navigation } from './navigation.js?v=1791465102';
-import { AgentSystem } from './agents.js?v=1791465102';
-import { Environment } from './environment.js?v=1791465102';
-import { MissionSystem } from './missions.js?v=1791465102';
-import { Staff } from './staff.js?v=1791465102';
-import { History } from './history.js?v=1791465102';
-import { Hub } from './hub.js?v=1791465102';
-import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465102';
-import { FlightAssist } from './flightAssist.js?v=1791465102';
-import { Fun } from './fun.js?v=1791465102';
-import { Hangar } from './hangar.js?v=1791465102';
-import { SkyMissions } from './skyMissions.js?v=1791465102';
-import { MiniGames } from './minigames.js?v=1791465102';
-import { GroundFun } from './groundFun.js?v=1791465102';
-import { Pet } from './pet.js?v=1791465102';
-import { Social } from './social.js?v=1791465102';
-import { Tug } from './tug.js?v=1791465102';
-import { FireTruck } from './fireTruck.js?v=1791465102';
-import { Ambience } from './ambience.js?v=1791465102';
-import { Bus } from './bus.js?v=1791465102';
-import { Look } from './look.js?v=1791465102';
-import { Deco } from './deco.js?v=1791465102';
-import { Album } from './album.js?v=1791465102';
-import { OpenWorld } from './openWorld.js?v=1791465102';
-import { Comfort } from './comfort.js?v=1791465102';
-import { Rides } from './rides.js?v=1791465102';
-import { planeOf } from './fleet.js?v=1791465102';
-import { HELIPAD } from './heliModel.js?v=1791465102';
-import { sfx } from './sfx.js?v=1791465102';
-import { perfHud } from './perfHud.js?v=1791465102';
-import { iconify } from './icons.js?v=1791465102';
-import { drawPFD } from './cockpit.js?v=1791465102';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465305';
+import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465305';
+import { TouchControls } from './touchControls.js?v=1791465305';
+import { WalkJoystick } from './mechanicControls.js?v=1791465305';
+import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465305';
+import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465305';
+import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465305';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465305';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465305';
+import { Navigation } from './navigation.js?v=1791465305';
+import { AgentSystem } from './agents.js?v=1791465305';
+import { Environment } from './environment.js?v=1791465305';
+import { MissionSystem } from './missions.js?v=1791465305';
+import { Staff } from './staff.js?v=1791465305';
+import { History } from './history.js?v=1791465305';
+import { Hub } from './hub.js?v=1791465305';
+import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465305';
+import { FlightAssist } from './flightAssist.js?v=1791465305';
+import { Fun } from './fun.js?v=1791465305';
+import { Hangar } from './hangar.js?v=1791465305';
+import { SkyMissions } from './skyMissions.js?v=1791465305';
+import { MiniGames } from './minigames.js?v=1791465305';
+import { GroundFun } from './groundFun.js?v=1791465305';
+import { Pet } from './pet.js?v=1791465305';
+import { Social } from './social.js?v=1791465305';
+import { Tug } from './tug.js?v=1791465305';
+import { FireTruck } from './fireTruck.js?v=1791465305';
+import { Ambience } from './ambience.js?v=1791465305';
+import { Bus } from './bus.js?v=1791465305';
+import { Look } from './look.js?v=1791465305';
+import { Deco } from './deco.js?v=1791465305';
+import { Album } from './album.js?v=1791465305';
+import { OpenWorld } from './openWorld.js?v=1791465305';
+import { Comfort } from './comfort.js?v=1791465305';
+import { Rides } from './rides.js?v=1791465305';
+import { planeOf } from './fleet.js?v=1791465305';
+import { HELIPAD } from './heliModel.js?v=1791465305';
+import { sfx } from './sfx.js?v=1791465305';
+import { perfHud } from './perfHud.js?v=1791465305';
+import { iconify } from './icons.js?v=1791465305';
+import { drawPFD } from './cockpit.js?v=1791465305';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -2075,10 +2075,14 @@ class Game {
     $('tyFlights').textContent = ty.flightsCompleted;
 
     $('tyPrice').textContent = ty.ticketPrice + ' EUR';
-    $('tyPax').textContent = `≈ ${ty.paxPerFlight} passagers / vol`;
+    /* Arcade : on affiche ce qui monte VRAIMENT au prochain vol (meme formule que le credit). */
+    const realPax = ty.arcade ? ty._flightPax(ty.paxPerFlight, this.terminal.boardedSinceFlight) : ty.paxPerFlight;
+    $('tyPax').textContent = ty.arcade
+      ? `${ty.paxPerFlight} veulent partir · ${realPax} montent`
+      : `≈ ${ty.paxPerFlight} passagers / vol`;
     /* Jauge de demande : repere visuel du volume de passagers attire par
        le prix et la reputation actuels, sur une echelle nominale large. */
-    const paxPct = clamp(ty.paxPerFlight / 300, 0, 1);
+    const paxPct = clamp((ty.arcade ? realPax : ty.paxPerFlight) / 300, 0, 1);
     $('tyPaxFill').style.width = `${Math.round(paxPct * 100)}%`;
     $('tyPaxFill').className = 'h-full ' + (paxPct >= 0.55 ? 'bg-emerald-500' : paxPct >= 0.3 ? 'bg-amber-500' : 'bg-red-500');
 
