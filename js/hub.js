@@ -14,11 +14,11 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791468586';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextUnlock } from './arcade.js?v=1791468586';
-import { UPGRADES } from './airportTycoon.js?v=1791468586';
-import { planeOf } from './fleet.js?v=1791468586';
-import { sfx } from './sfx.js?v=1791468586';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791468713';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791468713';
+import { UPGRADES } from './airportTycoon.js?v=1791468713';
+import { planeOf } from './fleet.js?v=1791468713';
+import { sfx } from './sfx.js?v=1791468713';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -191,7 +191,7 @@ export class Hub {
     const sat = cab.satisfaction, face = sat >= 88 ? '😍' : sat >= 70 ? '😀' : sat >= 50 ? '🙂' : sat >= 30 ? '😕' : '😠';
     const mood = term.mood, moodFace = mood >= 80 ? '😄' : mood >= 55 ? '🙂' : mood >= 30 ? '😐' : '😟';
     const machines = ['shop', 'cafe', 'vending'].map(id => term.counters[id]);
-    const nextU = nextUnlock(arc.data.level);
+    const nextRw = nextReward(arc.data.level);
     const hiredIcons = ROLES.flatMap(r => Array(g.staff.count(r.id)).fill(r.ico)).join(' ') || '<span class="hub-dim">Personne pour l\'instant</span>';
     const tile = (cls, act, inner) => `<div class="hub-tile ${cls}" ${act ? `data-act="${act}"` : ''}>${inner}</div>`;
 
@@ -199,10 +199,10 @@ export class Hub {
       ${tile('gold', 'tab:shop', `
         <div class="ht-h"><span>💰</span>Tresor</div>
         <div class="ht-big">${fmt(arc.coins)} <small>🪙</small></div>
-        <div class="ht-row">⭐ ${arc.data.stars} · Niveau <b>${arc.data.level}</b></div>
+        <div class="ht-row">⭐ ${arc.data.stars} · Niveau <b>${arc.data.level}</b>/${MAX_LEVEL} · ${titleOf(arc.data.level)}</div>
         <div class="xp-bar big"><span class="xp-fill" style="width:${Math.round(arc.xpProgress() * 100)}%"></span></div>
         <div class="ht-note">Prochain vol : environ <b>+${Math.max(0, Math.round(est.profit / COIN))} 🪙</b></div>
-        ${nextU ? `<div class="ht-note">🎁 Niveau ${nextU.level} : carte « ${MAP_THEMES[nextU.theme].name} »</div>` : ''}`)}
+        ${nextRw ? `<div class="ht-note">🎁 Niveau ${nextRw.level} : ${nextRw.ico} ${nextRw.text}</div>` : '<div class="ht-note">👑 Niveau maximum atteint !</div>'}`)}
       ${tile('', 'tab:goals', `
         <div class="ht-h"><span>⚡</span>Objectif</div>
         <div class="ht-goal"><span>${goal.icon}</span><p>${goal.text}</p></div>

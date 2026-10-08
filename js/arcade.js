@@ -14,13 +14,14 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468586';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791468586';
-import { mapMethods } from './arcadeMap.js?v=1791468586';
-import { challengeMethods } from './arcadeChallenges.js?v=1791468586';
-import { funMethods } from './arcadeFun.js?v=1791468586';
-import { flightMethods } from './arcadeFlight.js?v=1791468586';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791468586';
+import { planeOf } from './fleet.js?v=1791468713';
+import { sfx } from './sfx.js?v=1791468713';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791468713';
+import { mapMethods } from './arcadeMap.js?v=1791468713';
+import { challengeMethods } from './arcadeChallenges.js?v=1791468713';
+import { funMethods } from './arcadeFun.js?v=1791468713';
+import { flightMethods } from './arcadeFlight.js?v=1791468713';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791468713';
 
 
 const STORE = 'skymanager.arcade';
@@ -101,6 +102,29 @@ export const MAP_SIZE = { mini: [480, 462], big: [960, 924] };
 /* Cadeaux de niveau : styles de carte offerts. */
 const LEVEL_UNLOCKS = { 3: 'nuit', 5: 'neige', 8: 'bonbon' };
 export const nextUnlock = (lvl) => { const k = Object.keys(LEVEL_UNLOCKS).map(Number).find(n => n > lvl); return k ? { level: k, theme: LEVEL_UNLOCKS[k] } : null; };
+
+/* I02 : 30 niveaux, une recompense visible a chaque niveau.
+   'livery' = un objet de peinture au hasard (couleur, motif, autocollant) ; 'plane' = un avion offert ;
+   'theme' = un style de carte ; 'coins' = pieces en plus des 100 habituelles. Chaque niveau a aussi
+   un titre de pilote (TITLES). */
+export const MAX_LEVEL = 30;
+const PLANE_GIFTS = { 6: 'hydravion', 12: 'zebulon', 18: 'helico', 24: 'plume' };
+const BIG_COINS = { 10: 300, 20: 300, 30: 500 };
+export const TITLES = [[1, 'Apprenti pilote'], [5, 'Pilote junior'], [10, 'Pilote confirme'], [15, 'As des airs'], [20, 'Capitaine'], [25, 'Commandant'], [30, 'Legende du ciel']];
+export const titleOf = (lvl) => TITLES.filter(t => t[0] <= lvl).pop()[1];
+export function rewardKind(lvl) {
+  if (lvl > MAX_LEVEL) return null;
+  if (LEVEL_UNLOCKS[lvl]) return { kind: 'theme', ico: '🗺️', text: `Carte « ${LEVEL_UNLOCKS[lvl]} »` };
+  if (PLANE_GIFTS[lvl]) return { kind: 'plane', ico: '✈️', text: `Un avion offert : ${PLANE_GIFTS[lvl]}` };
+  if (BIG_COINS[lvl]) return { kind: 'coins', ico: '💰', text: `${BIG_COINS[lvl]} pieces en plus` };
+  return { kind: 'livery', ico: '🎨', text: 'Un objet de peinture surprise' };
+}
+/* Prochaine recompense apres le niveau `lvl`. */
+export function nextReward(lvl) {
+  const n = lvl + 1;
+  const r = rewardKind(n);
+  return r ? Object.assign({ level: n }, r) : null;
+}
 
 
                  
@@ -278,18 +302,34 @@ export class Arcade {
   }
 
   _levelUp(lvl) {
-    const t = this.g.tycoon;
+    const g = this.g, t = g.tycoon;
     t.cash += 100 * COIN;
-    t.save();
     sfx.levelUp();
     this.confetti(70);
-    const th = LEVEL_UNLOCKS[lvl];
-    if (th && !this.data.themes.includes(th)) {
-      this.data.themes.push(th);
-      this.g.toast(`🎉 NIVEAU ${lvl} ! +100 🪙 et carte « ${MAP_THEMES[th].name} » debloquee !`, 5200, 'ok');
-    } else {
-      this.g.toast(`🎉 NIVEAU ${lvl} ! Ton aeroport grandit — +100 🪙`, 4500, 'ok');
+    const r = rewardKind(lvl);
+    let line = '';
+    if (r) {
+      if (r.kind === 'theme') {
+        const th = LEVEL_UNLOCKS[lvl];
+        if (!this.data.themes.includes(th)) this.data.themes.push(th);
+        line = `carte « ${MAP_THEMES[th].name} » debloquee !`;
+      } else if (r.kind === 'plane') {
+        const id = PLANE_GIFTS[lvl];
+        if (!g.hangar.data.planes.includes(id)) { g.hangar.data.planes.push(id); g.hangar.save(); }
+        line = `avion « ${planeOf(id).name} » offert ${planeOf(id).ico} !`;
+      } else if (r.kind === 'coins') {
+        t.cash += BIG_COINS[lvl] * COIN;
+        line = `${BIG_COINS[lvl]} pieces en plus !`;
+      } else {
+        const u = g.hangar.randomUnlock();
+        if (u) line = `${u.label} debloque !`;
+        else { t.cash += 50 * COIN; line = '+50 pieces (tu as deja toute la peinture !)'; }
+      }
     }
+    t.save();
+    const title = TITLES.find(x => x[0] === lvl);
+    g.toast(`🎉 NIVEAU ${lvl} ! +100 🪙${line ? ' et ' + line : ''}${title ? ` Nouveau titre : ${title[1]} !` : ''}`, 5600, 'ok');
+    this.save();
   }
 
   xpProgress() {
