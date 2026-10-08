@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791469645';
-import { CabinService } from './cabinService.js?v=1791469645';
-import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791469645';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791469645';
-import { TerminalSystem } from './terminalSystem.js?v=1791469645';
-import { MissionSystem } from './missions.js?v=1791469645';
-import { Staff } from './staff.js?v=1791469645';
-import { History } from './history.js?v=1791469645';
-import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791469645';
-import { sfx } from './sfx.js?v=1791469645';
-import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791469645';
+import * as Save from './save.js?v=1791469794';
+import { CabinService } from './cabinService.js?v=1791469794';
+import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791469794';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791469794';
+import { TerminalSystem } from './terminalSystem.js?v=1791469794';
+import { MissionSystem } from './missions.js?v=1791469794';
+import { Staff } from './staff.js?v=1791469794';
+import { History } from './history.js?v=1791469794';
+import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791469794';
+import { sfx } from './sfx.js?v=1791469794';
+import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791469794';
 
 export const pauseMethods = {
   /* ========================================================== */
@@ -349,6 +349,7 @@ export const pauseMethods = {
     $('pauseLost').addEventListener('click', () => { sfx.click(); this.closePause(); this.goHomeSafe(); });
     $('pauseHelp').addEventListener('click', () => { sfx.click(); $('helpPanel').classList.remove('hidden'); });
     $('helpClose').addEventListener('click', () => $('helpPanel').classList.add('hidden'));
+    this.renderHelpCards();
     $('pauseTuto').addEventListener('click', () => {
       if (!window.confirm('Refaire le tutoriel depuis le debut ? (tes pieces et trophees restent)')) return;
       this.arcade.restartTutorial();
@@ -408,6 +409,40 @@ export const pauseMethods = {
       this.startArcadeFlight();
     });
   },
+  /* F05 : aide en cartes illustrees (icone + une phrase + « Montre-moi »). */
+  renderHelpCards() {
+    const A = this.arcade;
+    const cards = [
+      { ico: '🔧', text: 'Repare l\'avion : va sur un point colore.', go: () => A.showMe({ icon: '🔧', text: 'Voila le poste a reparer !', target: A.stationTarget() }) },
+      { ico: '🏢', text: 'Accueille les passagers au terminal.', go: () => A.showMe({ icon: '🏢', text: 'Voila le terminal !', target: A.markerPos('terminal') }) },
+      { ico: '🗼', text: 'La tour : cadeau du jour et boutique.', go: () => A.showMe({ icon: '🗼', text: 'Voila la tour de controle !', target: A.markerPos('tower') }) },
+      { ico: '✈️', text: 'Monte dans l\'avion et vole !', go: () => A.showMe({ icon: '✈️', text: 'Voila l\'avion !', target: A.markerPos('cockpit') }) },
+      { ico: '🛹', text: 'Roule en skate, BMX, rollers…', go: () => this._pulse('rideBtn') },
+      { ico: '🎾', text: 'Joue a la balle avec ton chien.', go: () => this._pulse('petBall') },
+      { ico: '🗺️', text: 'Ouvre la grande carte du monde.', go: () => this.openMapBig() },
+      { ico: '🎁', text: 'Ton cadeau du jour t\'attend a la tour.', go: () => A.showMe({ icon: '🎁', text: 'Ton cadeau est dans la tour !', target: A.markerPos('tower') }) }
+    ];
+    const host = $('helpCards');
+    if (!host) return;
+    host.innerHTML = cards.map((c, i) => `<div class="help-card"><span class="hc-ico">${c.ico}</span><p>${c.text}</p><button data-hc="${i}">Montre-moi 👉</button></div>`).join('');
+    host.querySelectorAll('[data-hc]').forEach(b => b.addEventListener('click', () => {
+      sfx.click();
+      $('helpPanel').classList.add('hidden');
+      this.closePause();
+      if (this.state !== 'HUB' && cards[+b.dataset.hc].ico !== '🗺️') { this.toast('👉 Reviens a pied pour que je te montre !', 2600); return; }
+      cards[+b.dataset.hc].go();
+    }));
+  },
+
+  /* Fait pulser un bouton du HUD pour dire « c'est ici ». */
+  _pulse(id) {
+    const el = $(id);
+    if (!el) return;
+    el.classList.remove('pulse-help'); void el.offsetWidth; el.classList.add('pulse-help');
+    setTimeout(() => el.classList.remove('pulse-help'), 4600);
+    this.toast('👉 Le bouton qui brille est celui-la !', 2800);
+  },
+
   openPause() {
       this._worldPaused = true;
       $('pauseExit').classList.toggle('hidden', this.state === 'HUB');

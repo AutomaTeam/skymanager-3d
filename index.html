@@ -695,8 +695,10 @@
       <div><h2 class="panel-title">❓ Comment jouer ?</h2><p class="panel-sub !mb-0">Touche un titre pour lire l'astuce.</p></div>
       <button id="helpClose" class="panel-btn sm !w-auto px-3">Fermer</button>
     </div>
+    <div id="helpCards" class="help-cards"></div>
+    <p class="panel-sub help-more">Plus d'explications :</p>
     <div class="help-list">
-      <details open><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Pousse a fond (ou Shift) pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
+      <details><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Pousse a fond (ou Shift) pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
       <details><summary>🔧 Reparer l'avion</summary><p>Va sur un point colore autour de l'avion et appuie sur le gros bouton. Plus la piece est usee, plus tu gagnes de pieces.</p></details>
       <details><summary>🏢 Le terminal</summary><p>Place-toi devant un comptoir et lis le dossier du passager : un billet, un bagage, un plateau... Si tout est bon, valide. Sinon refuse ou fais payer. Recharge les machines avec des caisses de la reserve.</p></details>
       <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DECOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dores</b> et ramasse les pieces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
@@ -979,7 +981,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791469645').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791469794').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -987,6 +989,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791469645"></script>
+<script type="module" src="js/main.js?v=1791469794"></script>
 </body>
 </html>

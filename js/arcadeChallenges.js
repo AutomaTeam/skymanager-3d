@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469645';
-import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791469645';
+import { sfx } from './sfx.js?v=1791469794';
+import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791469794';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -103,7 +103,13 @@ export const challengeMethods = {
     this.save();
   },
   /* Objectif a afficher : etape du tutoriel, sinon premier defi non fait. */
+  /* F05 : « Montre-moi » (aide en cartes) : une fleche vers l'endroit demande pendant `secs` secondes. */
+  showMe(goal, secs = 25) {
+    this._showMe = Object.assign({}, goal, { until: this.g.time + secs });
+    this._lastText = null;
+  },
   currentGoal() {
+    if (this._showMe && this.g.state === 'HUB' && this.g.time < this._showMe.until) return this._showMe;
     /* Aux commandes : le but est toujours celui du vol en cours. */
     if (this.g.state === 'PILOT') {
       const ac = this.g.ac;
