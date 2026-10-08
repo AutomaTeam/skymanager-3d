@@ -2302,7 +2302,7 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 
 ### Lint (phase 59)
 
-`npm install eslint@9 globals --no-save` une fois, puis `npm run lint` (config `eslint.config.js` : `no-undef`, `no-dupe-keys`, `no-redeclare`... en erreur, `no-unused-vars` en avertissement). 0 erreur actuellement.
+`npm install three@0.169.0 eslint@9 globals --no-save` une fois (en une seule commande : un `--no-save` efface les paquets installes avant), puis `npm run lint` (config `eslint.config.js` : `no-undef`, `no-dupe-keys`, `no-redeclare`... en erreur, `no-unused-vars` en avertissement). 0 erreur actuellement.
 
 ### Scenarios navigateur (phase 60)
 
