@@ -877,6 +877,7 @@
     <p class="text-center text-xs text-slate-300">Cartes trouvees : <b id="albumTotal">0 / 0</b></p>
     <div class="al-bar"><span id="albumBar"></span></div>
     <div id="albumTabs" class="al-tabs"></div>
+    <div id="albumFilters" class="al-filters"></div>
     <div id="albumGrid" class="al-grid"></div>
     <button id="albumClose" class="panel-btn mt-3">Fermer</button>
   </div>
@@ -963,7 +964,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791468713').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791468762').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -971,6 +972,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791468713"></script>
+<script type="module" src="js/main.js?v=1791468762"></script>
 </body>
 </html>

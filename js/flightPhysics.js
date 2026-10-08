@@ -6,7 +6,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791468713';
+import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791468762';
 
 export const KTS = 1.94384;      // m/s -> noeuds
 export const FT = 3.28084;       // m -> pieds

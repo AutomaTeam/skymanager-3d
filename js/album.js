@@ -7,13 +7,13 @@
    la facon de les obtenir. Le total encourage a « tout avoir ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468713';
-import { PLANES, PLANE_IDS } from './fleet.js?v=1791468713';
-import { STICKERS } from './livery.js?v=1791468713';
-import { DESTINATIONS } from './arcade.js?v=1791468713';
-import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791468713';
-import { STORIES } from './groundFun.js?v=1791468713';
-import { ISLANDS, EGGS } from './openWorld.js?v=1791468713';
+import { sfx } from './sfx.js?v=1791468762';
+import { PLANES, PLANE_IDS } from './fleet.js?v=1791468762';
+import { STICKERS } from './livery.js?v=1791468762';
+import { DESTINATIONS, BADGES } from './arcade.js?v=1791468762';
+import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791468762';
+import { STORIES } from './groundFun.js?v=1791468762';
+import { ISLANDS, EGGS } from './openWorld.js?v=1791468762';
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,14 +24,18 @@ const TABS = [
   { id: 'people',   ico: '🎭', label: 'Rencontres' },
   { id: 'world',    ico: '🏝️', label: 'Monde' },
   { id: 'medals',   ico: '🏅', label: 'Medailles' },
-  { id: 'stickers', ico: '⭐', label: 'Stickers' }
+  { id: 'stickers', ico: '🎨', label: 'Stickers' },
+  { id: 'trophies', ico: '🏆', label: 'Trophees' },
+  { id: 'photos',   ico: '📸', label: 'Photos' }
 ];
+const FILTERS = [['all', 'Tout'], ['todo', 'A trouver'], ['done', 'Trouves']];
 const MEDALS = ['', '🥉', '🥈', '🥇'];
 
 export class Album {
   constructor(game) {
     this.g = game;
     this.tab = 'planes';
+    this.filter = 'all';
     $('pauseCollec').addEventListener('click', () => { this.g.closePause(); this.open(); });
     $('albumClose').addEventListener('click', () => { sfx.click(); $('albumPanel').classList.add('hidden'); });
   }
@@ -41,7 +45,7 @@ export class Album {
     const g = this.g;
     switch (tab) {
       case 'planes':
-        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: id === 'zebulon' ? 'Niveau 3 + 150 pieces' : id === 'hydravion' ? 'Niveau 2 + 120 pieces' : id === 'helico' ? 'Niveau 4 + 200 pieces' : 'Dans ton hangar' }));
+        return PLANE_IDS.map(id => ({ ico: PLANES[id].ico, name: PLANES[id].name, got: g.hangar.planeOwned(id), hint: PLANES[id].price ? `Niveau ${PLANES[id].level} + ${PLANES[id].price} pieces (ou cadeau de niveau)` : 'Dans ton hangar' }));
       case 'cities':
         return DESTINATIONS.map(d => ({ ico: d.flag, name: d.city, got: (g.arcade.data.visited || []).includes(d.city), hint: 'Vole vers cette ville (plan de vol)' }));
       case 'animals':
@@ -62,6 +66,12 @@ export class Album {
         });
       case 'stickers':
         return STICKERS.filter(s => s.id !== 'none').map(s => ({ ico: s.ico, name: s.name, got: !s.price || g.hangar.data.owned.sticker.includes(s.id), hint: s.price ? 'Boutique du hangar ou coffre surprise' : '' }));
+      case 'trophies':
+        return BADGES.map(b => ({ ico: b.ico, name: b.name, got: !!g.arcade.data.badges[b.id], hint: b.desc }));
+      case 'photos': {
+        const n = (g.fun.data.photos || []).length;
+        return Array.from({ length: 12 }, (_, i) => ({ ico: '📸', name: `Photo ${i + 1}`, got: i < n, hint: 'Appuie sur l\'appareil photo en vol' }));
+      }
       default: return [];
     }
   }
@@ -87,9 +97,16 @@ export class Album {
       return `<button data-atab="${t.id}" class="${t.id === this.tab ? 'on' : ''}">${t.ico}<small>${t.label}</small><em>${it.filter(i => i.got).length}/${it.length}</em></button>`;
     }).join('');
     $('albumTabs').querySelectorAll('[data-atab]').forEach(b => b.addEventListener('click', () => { this.tab = b.dataset.atab; sfx.click(); this.render(); }));
-    $('albumGrid').innerHTML = this.items(this.tab).map(i =>
+    /* Filtres : tout / a trouver / trouves */
+    const fl = $('albumFilters');
+    if (fl) {
+      fl.innerHTML = FILTERS.map(([id, label]) => `<button data-afil="${id}" class="${id === this.filter ? 'on' : ''}">${label}</button>`).join('');
+      fl.querySelectorAll('[data-afil]').forEach(b => b.addEventListener('click', () => { this.filter = b.dataset.afil; sfx.click(); this.render(); }));
+    }
+    const shown = this.items(this.tab).filter(i => this.filter === 'all' || (this.filter === 'done' ? i.got : !i.got));
+    $('albumGrid').innerHTML = shown.length ? shown.map(i =>
       `<div class="al-card${i.got ? ' got' : ''}" title="${i.got ? i.name : i.hint}">` +
       `<span class="al-ico">${i.got ? i.ico : '❔'}</span><b>${i.got ? i.name : '???'}</b>` +
-      `${i.badge ? `<span class="al-badge">${i.badge}</span>` : ''}${i.got ? '' : `<small>${i.hint}</small>`}</div>`).join('');
+      `${i.badge ? `<span class="al-badge">${i.badge}</span>` : ''}${i.got ? '' : `<small>${i.hint}</small>`}</div>`).join('') : '<p class="al-empty">Rien ici pour le moment ✨</p>';
   }
 }

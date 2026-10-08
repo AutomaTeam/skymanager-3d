@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791468713';
-import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791468713';
+import { sfx } from './sfx.js?v=1791468762';
+import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791468762';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
