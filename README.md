@@ -2389,3 +2389,10 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 ### Evenements saisonniers (phase 85)
 
 `js/seasonal.js` (module du registre) : selon la date reelle, **Halloween** (15 octobre au 2 novembre : 10 citrouilles 🎃 a ramasser a pied, fantomes et chauves-souris qui flottent) ou **Noel** (1er decembre au 5 janvier : 10 cadeaux 🎁, sapins et bonhommes de neige). Chaque objet = +4 pieces, les 10 = +40 pieces et un objet de peinture. Progression gardee par annee (`skymanager.season`). `?season=halloween|noel` force la saison, `?season=off` la coupe. Test de dates : `tools/season.test.mjs`. Non fait : anniversaire du pilote (la date n'est pas demandee dans le profil), neige legere et mission « livraison de cadeaux » de Noel.
+
+### Chien malin, vehicules en plus, Coco caches (phases 85 a 90)
+
+- **Chien** (H02) : barre d'astuces (⬇️ Assis, 🛌 Couche, 🔄 Tourne, ✋ Haut-la) quand on est pres de lui ; 3 repetitions = astuce apprise (+8 pieces, toutes apprises = 1 ⭐). Une fois par jour, a l'arret, il **creuse et deterre un tresor rare** (+20 pieces, parfois un objet de peinture).
+- **Vehicules** (H03, `js/groundVehicles.js`, modules du registre) : 🚚 **Camion citerne** (anneau orange pres de l'aile, 4 s immobile = plein), 🧹 **Balayeuse** (8 debris a ramasser en 70 s), 🪜 **Escalier mobile** (a la porte de l'avion, 2 s immobile = passagers descendus). Meme conduite que le tracteur et le bus ; bouton CONDUIRE, objectif, corps qui bloquent les gens.
+- **Cache-cache** (H06, `js/hunt.js`) : 10 Coco 🦜 se cachent chaque semaine (30 cachettes, tirage fixe par semaine) ; puce « chaud / froid » quand on est dans le coin, le chien flaire 👃 ; 10 trouves = +50 pieces et 1 ⭐. Test : `tools/hunt.test.mjs`.
+- **Dormir** (H08) : menu pause > 😴, fondu puis 7 h du matin. **Photo de groupe** (H09) : au selfie, les personnes a moins de 10 m se tournent vers le groupe avec une bulle joyeuse.
