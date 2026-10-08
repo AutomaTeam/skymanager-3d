@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { loadGltf } from './assetLoader.js?v=1791477663';
-import { SOFT, RECOLOR } from './palette.js?v=1791477663';
+import { loadGltf } from './assetLoader.js?v=1791479130';
+import { SOFT, RECOLOR } from './palette.js?v=1791479130';
 
 export const MODELS = 'assets/models/';
 

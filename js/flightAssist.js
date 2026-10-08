@@ -17,7 +17,7 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js?v=1791477663';
+import { heliCommand } from './heliModel.js?v=1791479130';
 
 const KTS = 1.94384;
 
@@ -56,6 +56,8 @@ export class FlightAssist {
   }
 
   reset() {
+    this.tx = 0;                // axe d'approche (x) : piste principale ou piste d'ile
+    this.zTouch = Z_TOUCH;      // point de poser vise (z)
     this.pitchHold = null;      // assiette tenue quand le manche est relache
     this.hdgHold = null;        // cap tenu quand le manche est relache
     this.guide = null;          // { x, y, z } : anneau vers lequel l'avion se laisse attirer
@@ -197,7 +199,7 @@ export class FlightAssist {
       bankTarget = clamp(inp.roll * 32, -32, 32);
       this.hdgHold = null;
     } else if (this.landing) {
-      const want = 180 + clamp(ac.pos.x * LAT_K, -18, 18);
+      const want = 180 + clamp((ac.pos.x - this.tx) * LAT_K, -18, 18);
       bankTarget = clamp(wrap180(want - trk) * LAT_G, -22, 22);
       this.hdgHold = null;
     } else {
@@ -217,7 +219,7 @@ export class FlightAssist {
     if (this.landing && !stickPitch) {
       /* Plan de descente de 3 deg visant un point de poser 300 m apres le
          seuil (le seuil nord est a z = -1500, on roule vers +Z). */
-      const dist = Math.max(0, Z_TOUCH - ac.pos.z);
+      const dist = Math.max(0, this.zTouch - ac.pos.z);
       let hDesired = Math.tan(3 * Math.PI / 180) * dist;
       /* Planeur : pas de pente fixe a 3 deg (impossible a tenir face au vent) ; le plan est celui que la
          finesse SOL du moment permet (vitesse sol / 1,15 m/s de chute), avec 15 % de marge de hauteur. */
@@ -322,13 +324,24 @@ export class FlightAssist {
     const okHdg = Math.abs(wrap180(180 - hdg)) < 50;
     const okX = Math.abs(ac.pos.x) < 900;
     const okZ = ac.pos.z < RWY.zStart - 300 && ac.pos.z > RWY.zEnd - 9000;
-    return okHdg && okX && okZ;
+    if (okHdg && okX && okZ) { this.tx = 0; this.zTouch = Z_TOUCH; return true; }
+    /* G06 : pistes d'ile. Couloir etroit (±100 m) pour ne pas detourner un vol qui passe par la. */
+    if (okHdg && this.strips) {
+      for (const st of this.strips) {
+        const zt = st.zN + 20;
+        if (Math.abs(ac.pos.x - st.x) < 100 && ac.pos.z < zt + 700 && ac.pos.z > zt - 3600) {
+          this.tx = st.x; this.zTouch = zt;
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   /* Maintien de l'axe de piste au roulage. */
   _steerToCenterline(ac, out, rwyHdg, ias) {
     const sign = rwyHdg === 0 ? -1 : 1;
-    const targetHdg = rwyHdg + sign * clamp(ac.pos.x * 0.06, -8, 8);
+    const targetHdg = rwyHdg + sign * clamp((ac.pos.x - this.tx) * 0.06, -8, 8);
     const err = wrap180(targetHdg - ac.heading);
     out.yaw = clamp(err * 0.08, -0.6, 0.6);
     if (ias > 60) out.yaw *= 0.5;

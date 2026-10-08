@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791477663';
-import { SkyWorld } from './skyWorld.js?v=1791477663';
-import { HELIPAD } from './heliModel.js?v=1791477663';
-import { ISLANDS } from './openWorld.js?v=1791477663';
+import { sfx } from './sfx.js?v=1791479130';
+import { SkyWorld } from './skyWorld.js?v=1791479130';
+import { HELIPAD } from './heliModel.js?v=1791479130';
+import { ISLANDS } from './openWorld.js?v=1791479130';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);

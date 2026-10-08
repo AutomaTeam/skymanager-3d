@@ -184,6 +184,18 @@ for (const id of ids) {
     }
   }
 
+  /* G06 : piste d'ile de 340 m (seuil nord z=-5070, axe x=2130) : les avions a train fixe s'y posent et s'y arretent. */
+  {
+    const strip = { x: 2130, zN: -5070 };
+    let tdZ = null;
+    const r = sim(id, (ac, as, P) => { final(2150, 180, 135, strip.zN - 2300)(ac, as, P); as.strips = [strip]; }, 200, idle, [0, 0, 0.3], (ac) => { if (ac.touchdown && tdZ === null) tdZ = ac.pos.z; });
+    check(!!r.ac.touchdown && !r.ac.crashed, `piste d'ile : pose guidee`);
+    if (r.ac.touchdown) {
+      check(Math.abs(r.ac.touchdown.offset - strip.x) < 14, `piste d'ile : dans l'axe (ecart ${(r.ac.touchdown.offset - strip.x).toFixed(0)} m)`);
+      check(r.ac.pos.z < strip.zN + 340 + 250, `piste d'ile : s'arrete a moins de 250 m apres la fin (z=${r.ac.pos.z.toFixed(0)}, fin ${strip.zN + 340})`);
+    }
+  }
+
   /* Maniabilite : taux de roulis au plein manche, sans aide. */
   {
     const { ac } = make(id);

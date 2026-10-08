@@ -2460,3 +2460,7 @@ Tortue, pingouin, papillon, fleur, glace, ballon, pieuvre, guitare (`STICKERS` d
 ## Phase 107 - amerrissage (G06)
 
 L'hydravion qui se pose sur l'eau (mer, lac) souleve de grosses eclaboussures et gagne 15 pieces une fois par jour (`_updateStripLanding`, openWorld.js).
+
+## Phase 108 - aide a l'atterrissage sur les pistes d'ile (G06)
+
+`FlightAssist.strips` (rempli par `openWorld.build`) : en finale cap sud dans un couloir de ±100 m devant une piste d'ile, l'aide guide comme sur la piste principale (`tx`, `zTouch`). Test dans `tools/fleet.sim.mjs`.

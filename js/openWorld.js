@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791477663';
-import { itemOf } from './deco.js?v=1791477663';
+import { sfx } from './sfx.js?v=1791479130';
+import { itemOf } from './deco.js?v=1791479130';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -229,6 +229,8 @@ export class OpenWorld {
       this.root.add(o.group);
       this.islands.push({ isl, obj: o });
     }
+    /* G06 : l'aide a l'atterrissage sait aussi viser ces pistes (approche vers le sud) */
+    this.g.assist.strips = ISLANDS.filter(i => i.strip).map(i => ({ x: i.x + i.strip.x, zN: i.z - i.strip.len / 2 }));
     this._buildStars();
     this._buildEggs();
     this._buildSkyEvents();
