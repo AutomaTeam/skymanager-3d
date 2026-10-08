@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791469216';
-import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791469216';
+import { sfx } from './sfx.js?v=1791469289';
+import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791469289';
 
 export const funMethods = {
   /* Un « boost » d'ambiance : satisfaction de la cabine ou ambiance du hall. */
