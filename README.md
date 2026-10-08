@@ -2363,7 +2363,7 @@ Aucun changement de comportement ; `npm run lint`, `npm test`, les 9 scenarios e
 
 - **Coco** (G09) dit une phrase d'accueil selon la situation : premier vol du jour, nuit, pluie, brouillard, orage, nouvel avion, planeur, helicoptere ; 3 a 5 variantes chacune et une **memoire des 10 dernieres phrases** (`Fun.sayKey`). Une phrase « record » apres un record d'acrobaties.
 - **Balade des iles** 🌅 (G08, niveau 1) : l'aide te guide toujours vers toutes les iles, sans temps limite : on regarde le paysage et on prend des photos.
-- **Eclairs** (G05, `js/lightning.js`) : pendant un orage, un flash doux et le tonnerre quelques secondes apres. La manche a air existait deja (`airportLife.js`) ; le balisage lumineux par brouillard aussi (feux de piste).
+- **Orage** (G05) : les eclairs (flash de lumiere, trait de foudre, tonnerre retarde) existaient deja dans `skylife.js` ; la manche a air (`airportLife.js`) et le balisage lumineux par brouillard aussi. Rien a ajouter : un doublon ecrit par erreur a ete retire.
 
 ### Progression : niveaux, album, coffre, sauvegarde fichier, partage d'avion (phases 77 a 81)
 

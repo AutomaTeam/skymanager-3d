@@ -1982,9 +1982,6 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 .vario-chip.good { border-color: #4ade80; color: #bbf7d0; }
 .vario-chip.hidden { display: none; }
 
-/* G05 : flash d'eclair */
-.lightning-flash { position: fixed; inset: 0; background: #eaf2ff; opacity: 0; pointer-events: none; z-index: 60; transition: opacity 0.12s ease-out; }
-
 /* I03 : filtres de l'album */
 .al-filters { display: flex; gap: 0.4rem; justify-content: center; margin: 0.4rem 0; }
 .al-filters button { min-height: 48px; padding: 0 0.9rem; border-radius: 999px; border: 2px solid #475569; background: rgba(30, 41, 59, 0.9); color: #e2e8f0; font-weight: 800; font-size: 13px; }

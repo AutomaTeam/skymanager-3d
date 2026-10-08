@@ -17,8 +17,8 @@
    dans les vues exterieures.
    ============================================================ */
 import * as THREE from 'three';
-import { KTS, FT, FPM } from './flightPhysics.js?v=1791469860';
-import { LIGHT_GAIN } from './environment.js?v=1791469860';
+import { KTS, FT, FPM } from './flightPhysics.js?v=1791469887';
+import { LIGHT_GAIN } from './environment.js?v=1791469887';
 
 /* Position des yeux du pilote (siege gauche), repere avion. */
 export const COCKPIT_EYE = new THREE.Vector3(-0.42, 1.22, -14.2);
