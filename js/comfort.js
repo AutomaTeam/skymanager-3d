@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791466218';
-import * as Save from './save.js?v=1791466218';
-import { Music } from './music.js?v=1791466218';
+import { sfx } from './sfx.js?v=1791466260';
+import * as Save from './save.js?v=1791466260';
+import { Music } from './music.js?v=1791466260';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -38,7 +38,7 @@ export class Comfort {
   }
 
   _load() {
-    const def = { quality: 'auto', lefty: false, bigText: false, music: true, breakMin: 0 };
+    const def = { quality: 'auto', lefty: false, bigText: false, music: true, haptics: true, breakMin: 0 };
     return Save.load(STORE, def);
   }
   save() { Save.write(STORE, this.data); }
@@ -51,6 +51,7 @@ export class Comfort {
     t('setLefty', () => { this.data.lefty = !this.data.lefty; this._changed(); });
     t('setBig', () => { this.data.bigText = !this.data.bigText; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
+    t('setHaptic', () => { this.data.haptics = !this.data.haptics; this._changed(); });
     t('setTilt', async () => {
       const c = this.g.controls, on = !c.tilt.on;
       const r = await c.setTilt(on);
@@ -85,6 +86,7 @@ export class Comfort {
     const tl = this.g.controls && this.g.controls.tilt;
     set('setTilt', tl && tl.on ? 'Active' : 'Coupe', !!(tl && tl.on));
     const cal = $('setTiltCal'); if (cal) cal.classList.toggle('hidden', !(tl && tl.on));
+    set('setHaptic', d.haptics ? 'Active' : 'Coupee', d.haptics);
     set('setBreak', d.breakMin ? `Toutes les ${d.breakMin} min` : 'Pas de rappel', !!d.breakMin);
   }
 
@@ -94,6 +96,7 @@ export class Comfort {
     document.body.classList.toggle('lefty', d.lefty);
     document.body.classList.toggle('bigtext', d.bigText);
     this.music.setOn(d.music && !sfx.muted);
+    sfx.setHaptics(d.haptics);
     this._applyQuality(d.quality === 'high' ? 0 : d.quality === 'low' ? 2 : this.level);
   }
 

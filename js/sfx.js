@@ -12,6 +12,10 @@ let ctx = null;
 let muted = false;
 try { muted = localStorage.getItem(STORE) === 'off'; } catch (e) { /* ignore */ }
 
+/* E06 : retour haptique (Android ; l'iPad ignore navigator.vibrate). Desactivable dans les reglages. */
+let haptics = true;
+function vib(p) { if (haptics && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) { /* ignore */ } } }
+
 function audio() {
   if (muted) return null;
   if (!ctx) {
@@ -50,28 +54,29 @@ export const sfx = {
 
   /* A appeler depuis un vrai geste (clic sur DEMARRER). */
   unlock() { audio(); },
+  setHaptics(v) { haptics = !!v; },
   /* Mise en veille de l'onglet : l'audio est suspendu (il reprend au prochain son). */
   suspend() { if (ctx && ctx.state === 'running') ctx.suspend().catch(() => {}); },
 
   /* Contexte audio partage (musique) ; null si le son est coupe. */
   context() { return audio(); },
 
-  coin()  { tone(988, 0, 0.09, 'square', 0.06); tone(1319, 0.08, 0.16, 'square', 0.06); },
-  ding()  { tone(880, 0, 0.14, 'triangle', 0.12); tone(1175, 0.1, 0.2, 'triangle', 0.1); },
+  coin()  { vib(8);  tone(988, 0, 0.09, 'square', 0.06); tone(1319, 0.08, 0.16, 'square', 0.06); },
+  ding()  { vib(15);  tone(880, 0, 0.14, 'triangle', 0.12); tone(1175, 0.1, 0.2, 'triangle', 0.1); },
   ring()  { tone(660, 0, 0.1, 'triangle', 0.13); tone(880, 0.07, 0.1, 'triangle', 0.13); tone(1320, 0.14, 0.22, 'triangle', 0.13); },
   star(n = 1) {
     for (let i = 0; i < n; i++) tone(784 * Math.pow(1.26, i), i * 0.16, 0.28, 'triangle', 0.14);
   },
-  levelUp() {
+  levelUp() { vib([20, 40, 20]); 
     [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.3, 'triangle', 0.14));
   },
-  oops()  { tone(220, 0, 0.18, 'sawtooth', 0.07); tone(165, 0.14, 0.25, 'sawtooth', 0.07); },
+  oops()  { vib(40);  tone(220, 0, 0.18, 'sawtooth', 0.07); tone(165, 0.14, 0.25, 'sawtooth', 0.07); },
   click() { tone(520, 0, 0.05, 'square', 0.04); },
   /* Petits sons rigolos (menu Fun) */
   honk()  { tone(311, 0, 0.16, 'square', 0.07); tone(392, 0, 0.16, 'square', 0.07); tone(311, 0.2, 0.26, 'square', 0.07); tone(392, 0.2, 0.26, 'square', 0.07); },
   shutter() { tone(2400, 0, 0.03, 'square', 0.05); tone(1500, 0.05, 0.05, 'square', 0.05); },
   pop()   { tone(400, 0, 0.05, 'sine', 0.12); tone(800, 0.03, 0.08, 'sine', 0.1); },
-  tada()  { [392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.07, 0.12, 'triangle', 0.11)); tone(1047, 0.32, 0.4, 'triangle', 0.13); },
+  tada()  { vib([20, 30, 20, 30, 40]);  [392, 523, 659, 784].forEach((f, i) => tone(f, i * 0.07, 0.12, 'triangle', 0.11)); tone(1047, 0.32, 0.4, 'triangle', 0.13); },
   jingle() { [523, 659, 784, 659, 523, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.22, 'triangle', 0.1)); },
   hello() { tone(660, 0, 0.09, 'sine', 0.1); tone(880, 0.1, 0.14, 'sine', 0.1); },
   /* Sirene de pompiers : pin-pon, pin-pon. */
@@ -189,11 +194,11 @@ export const sfx = {
   chest() { [262, 330, 392, 523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.07, 0.2, 'triangle', 0.12)); },
   /* Montures et skatepark (phase 40) */
   ollie() { this.swoosh(0.12, 900, 2600); tone(280, 0, 0.07, 'square', 0.05); },
-  land(k = 1) { tone(130, 0, 0.12, 'sine', 0.15 * k); tone(72, 0.02, 0.18, 'sine', 0.13 * k); this.swoosh(0.1, 500, 200); },
+  land(k = 1) { vib(Math.round(30 + 40 * k)); tone(130, 0, 0.12, 'sine', 0.15 * k); tone(72, 0.02, 0.18, 'sine', 0.13 * k); this.swoosh(0.1, 500, 200); },
   trick(n = 1) { const f = 660 * Math.pow(1.0595, Math.min(n, 12) * 2); tone(f, 0, 0.08, 'triangle', 0.1); tone(f * 1.5, 0.06, 0.13, 'triangle', 0.09); },
   grindOn() { this.swoosh(0.25, 1500, 4200); tone(1800, 0, 0.1, 'square', 0.03); },
-  bump(v = 5) { const k = Math.min(1, v / 12); tone(150, 0, 0.08, 'square', 0.05 + 0.05 * k); tone(100, 0.04, 0.12, 'square', 0.04 + 0.04 * k); },
-  crash() { tone(300, 0, 0.15, 'sawtooth', 0.08); tone(180, 0.12, 0.2, 'sawtooth', 0.08); tone(110, 0.26, 0.3, 'sawtooth', 0.07); },
+  bump(v = 5) { vib(Math.round(15 + Math.min(1, v / 12) * 30)); const k = Math.min(1, v / 12); tone(150, 0, 0.08, 'square', 0.05 + 0.05 * k); tone(100, 0.04, 0.12, 'square', 0.04 + 0.04 * k); },
+  crash() { vib([70, 40, 70]);  tone(300, 0, 0.15, 'sawtooth', 0.08); tone(180, 0.12, 0.2, 'sawtooth', 0.08); tone(110, 0.26, 0.3, 'sawtooth', 0.07); },
   whoosh() {
     const a = audio();
     if (!a) return;

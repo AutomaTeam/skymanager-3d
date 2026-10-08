@@ -818,6 +818,7 @@
       <button id="setMusic" class="set-row"><span class="set-ico">🎵</span><b>Musique</b><small>Activee</small></button>
       <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons a droite</small></button>
       <button id="setBig" class="set-row"><span class="set-ico">🔠</span><b>Taille du texte</b><small>Normal</small></button>
+      <button id="setHaptic" class="set-row"><span class="set-ico">📳</span><b>Vibrations</b><small>Active</small></button>
       <button id="setTilt" class="set-row"><span class="set-ico">📱</span><b>Pilotage par inclinaison</b><small>Coupe</small></button>
       <button id="setTiltCal" class="set-row hidden"><span class="set-ico">🎯</span><b>Calibrer</b><small>Tiens l'iPad comme tu veux, puis touche</small></button>
       <button id="setBreak" class="set-row"><span class="set-ico">⏰</span><b>Rappel de pause</b><small>Pas de rappel</small></button>
@@ -949,7 +950,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791466218').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791466260').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -957,6 +958,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791466218"></script>
+<script type="module" src="js/main.js?v=1791466260"></script>
 </body>
 </html>

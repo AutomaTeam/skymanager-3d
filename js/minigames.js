@@ -11,8 +11,8 @@
    Donnees : localStorage 'skymanager.mini'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791466218';
-import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791466218';
+import { sfx } from './sfx.js?v=1791466260';
+import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791466260';
 
 const STORE = 'skymanager.mini';
 const $ = (id) => document.getElementById(id);
