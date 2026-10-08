@@ -13,7 +13,7 @@
 - Gros fichiers : `renderer3d.js` (3 845 l.), `main.js` (2 816 l.), `arcade.js` (2 156 l.), `textures.js` (1 238 l.).
 - Chaque fonctionnalité « fun » vit dans **son propre module** et est appelée depuis la boucle gardée de `main.js` : `for (const m of [this.fun, ...]) try { m.update(dt) } catch …`.
 - Les sauvegardes sont des clés `localStorage` `skymanager.*` (arcade, world, sky, hangar, fun, pet, look, rides, deco, mini, meet, staff, tycoon, cabin, mechanic, terminal, missions, history, environment, comfort, sfx).
-- L'historique complet des phases est dans `README.md` (une section par phase, la dernière est « phase 54 »).
+- L'historique complet des phases est dans `docs/HISTORIQUE.md` (une section par phase) ; le `README.md` est un guide court.
 
 ### Règles de travail
 1. **Une tâche = un commit** (message en français, comme l'historique : `Phase NN : <résumé>`). Ne pas pousser sans accord de l'utilisateur.
@@ -29,7 +29,7 @@
    - La console garde les vieilles erreurs après un rechargement : vérifier la ligne avant d'y croire.
 6. **Textes du jeu** : français simple, phrases courtes, émojis/icônes plutôt que paragraphes (règles d'or de `docs/plans/PLAN_FUN_ENFANT.md`). Dans le code et le README, rester cohérent avec l'existant (README sans accents).
 7. **Jamais d'échec frustrant** pour l'enfant : pas de perte d'argent, pas de blocage, toujours une sortie en 1 bouton.
-8. **Documenter** : ajouter une courte section `### <Titre> (phase NN)` en fin de `README.md` pour chaque tâche visible par le joueur.
+8. **Documenter** : ajouter une courte section `### <Titre> (phase NN)` en fin de `docs/HISTORIQUE.md` (le README est maintenant un guide court) pour chaque tâche visible par le joueur.
 9. Ne pas toucher aux modèles `.glb` ni aux crédits sans raison ; ne rien télécharger d'internet sans accord.
 10. Si une tâche s'avère plus grosse que prévu : faire la partie sûre, committer, noter le reste dans la section « Journal » en bas de ce fichier.
 
