@@ -2303,3 +2303,7 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 ### Lint (phase 59)
 
 `npm install eslint@9 globals --no-save` une fois, puis `npm run lint` (config `eslint.config.js` : `no-undef`, `no-dupe-keys`, `no-redeclare`... en erreur, `no-unused-vars` en avertissement). 0 erreur actuellement.
+
+### Scenarios navigateur (phase 60)
+
+`tools/scenarios.js` : `?scenario=firstFlight` (ou `all`) dans l'URL, ou en console `const S = await import('/tools/scenarios.js'); await S.run('allRides')`. Scenarios : `firstFlight`, `tutorial`, `allPlanes`, `allRides`, `allVehicles`, `petFetch`, `nightRain`, `cabin`, `panels` (ouvre/ferme chaque panneau par Echap, verifie que le monde n'est jamais gele). Rendu neutralise ; chaque scenario renvoie `{name, ok, steps, errors}` (resultat dans `window.__scenarioReport` avec `?scenario=`). Tous `ok:true`.
