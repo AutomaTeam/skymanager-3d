@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791468326';
+import { sfx } from './sfx.js?v=1791468476';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -67,7 +67,17 @@ const LINES = {
   oops: ['Oups ! On a rebondi… Pas grave, on repart !', 'Boing ! Rigolo, mais on réessaie ?'],
   photo: ['Souris ! Cheese !', 'Quelle belle carte postale !'],
   chest: ['Un coffre ! Ouvre-le vite !'],
-  idle: ['Le ciel est magnifique aujourd\'hui, non ?', 'Tu veux faire un tonneau ?', 'Regarde les anneaux dorés !']
+  idle: ['Le ciel est magnifique aujourd\'hui, non ?', 'Tu veux faire un tonneau ?', 'Regarde les anneaux dorés !'],
+  /* G09 : Coco commente selon la situation (5 variantes chacune, jamais deux fois la même de suite) */
+  firstDay: ['Premier vol de la journée ! On est en forme !', 'Bonjour {n} ! Nouvelle journée, nouvelles aventures !', 'Déjà de retour ? J\'adore ça, {n} !', 'Ça sent bon la journée de vol !', 'Les nuages nous attendaient, {n} !'],
+  night: ['Oh, il fait nuit ! Regarde toutes les étoiles !', 'Un vol de nuit… c\'est magique, {n} !', 'Les lumières de la piste sont jolies, non ?', 'Chut… tout le monde dort en bas.', 'La lune nous éclaire, {n} !'],
+  rain: ['Il pleut ! Les gouttes font plic ploc sur les ailes.', 'Un vol sous la pluie, quelle aventure, {n} !', 'Pas de panique, l\'avion adore la pluie.', 'Regarde les gouttes qui glissent !', 'Après la pluie, il y aura peut-être un arc-en-ciel…'],
+  fog: ['Du brouillard ! Suis bien les lumières de la piste.', 'On voit à peine le bout de l\'aile, rigolo !', 'Le brouillard, c\'est comme voler dans un nuage !'],
+  storm: ['Ça gronde un peu… mais je suis avec toi, {n} !', 'Les gros nuages sombres, on les contourne gentiment.', 'Éclairs au loin : spectacle garanti !'],
+  newPlane: ['Un nouvel avion ! Il est magnifique, {n} !', 'Premier vol avec lui : on fait connaissance !', 'Waouh, ça se pilote comment celui-là ? On va voir !', 'Bienvenue à bord de ton nouvel avion !', 'Nouvel avion, nouvelles sensations !'],
+  glider: ['Un planeur ! Chut… on n\'entend que le vent.', 'Cherche les oiseaux qui tournent, ils connaissent les ascendances !', 'Doucement, {n} : un planeur aime les grands virages.', 'On plane comme un vrai oiseau !', 'Un nuage blanc devant ? Dessous, l\'air monte !'],
+  heli: ['Un hélico ! On peut rester sur place, regarde !', 'Les pales tournent, {n} ! Vroum vroum !', 'Avec lui, on se pose partout !', 'Hélico : bouton STOP pour rester en l\'air !', 'Prêt pour un petit sauvetage ?'],
+  record: ['Un record ! Je n\'en crois pas mes plumes !', 'Nouveau record, {n} ! Tu es trop fort !', 'Personne n\'a jamais fait mieux que toi !', 'Record battu ! Je te dois une graine !', 'Bravo champion, on le fête !']
 };
 
 const GIFTS = [
@@ -298,7 +308,39 @@ export class Fun {
     this._hideT = setTimeout(() => el.classList.add('hidden'), ms);
     if (this.data.voice) this.g.voice.speak(text, { prio, pitch: 1.6 });
   }
-  sayKey(key, prio = 1, ms = 3600) { this.say(pick(LINES[key] || ['']), prio, ms); }
+  /* Une phrase de la liste, en evitant les 10 dernieres dites (memoire), pour ne pas se repeter. */
+  sayKey(key, prio = 1, ms = 3600) {
+    const all = LINES[key] || [''];
+    this._recent = this._recent || [];
+    const fresh = all.filter(t => !this._recent.includes(t));
+    const t = pick(fresh.length ? fresh : all);
+    this._recent.push(t);
+    if (this._recent.length > 10) this._recent.shift();
+    this.say(t, prio, ms);
+  }
+
+  /* G09 : la phrase d'accueil depend de la situation (premier vol du jour, nuit, meteo, nouvel avion...). */
+  _contextKey() {
+    const g = this.g, d = this.data;
+    const today = new Date().toISOString().slice(0, 10);
+    d.planesFlown = d.planesFlown || [];
+    const id = g.ac.profile;
+    let key = null;
+    if (!d.planesFlown.includes(id) && id !== 'liner' && id !== 'pioupiou') key = 'newPlane';
+    else if (g.ac.glider) key = 'glider';
+    else if (g.ac.heli) key = 'heli';
+    else if (d.lastDay !== today) key = 'firstDay';
+    else {
+      const h = g.env.hour, w = g.env.weather || (g.env.params && g.env.params.weather);
+      if (h >= 20.5 || h < 5.5) key = 'night';
+      else if (w === 'storm') key = 'storm';
+      else if (w === 'rain') key = 'rain';
+      else if (w === 'fog') key = 'fog';
+    }
+    if (!d.planesFlown.includes(id)) d.planesFlown.push(id);
+    d.lastDay = today;
+    return key;
+  }
 
   /* ---------------- Interface ---------------- */
   _bindUI() {
@@ -403,7 +445,7 @@ export class Fun {
     this.save();
     if (this.trail) this.trail.clear();
     if (!this.data.pilot.name) this.say('Salut ! Je suis Coco, ton copilote !', 2);
-    else this.sayKey('hello', 2);
+    else this.sayKey(this._contextKey() || 'hello', 2);
   }
 
   /* Decollage automatique apres un petit compte a rebours. */
@@ -775,7 +817,7 @@ export class Fun {
     }
     const line = [];
     if (this.stuntCount) line.push(`✨ ${this.stuntCount} acrobatie${this.stuntCount > 1 ? 's' : ''} : ${this.stuntScore} points (+${this.stuntCoins} 🪙)`);
-    if (this.data.stats.bestStunt && this.stuntScore >= this.data.stats.bestStunt && this.stuntScore > 0) line.push('🏆 Nouveau record d\'acrobaties !');
+    if (this.data.stats.bestStunt && this.stuntScore >= this.data.stats.bestStunt && this.stuntScore > 0) { this.sayKey('record', 3, 4200); line.push('🏆 Nouveau record d\'acrobaties !'); }
     line.push('👉 ' + this.nextTip());
     return line;
   }
