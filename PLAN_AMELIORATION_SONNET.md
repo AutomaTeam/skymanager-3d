@@ -27,7 +27,7 @@
    - L'avatar est invisible sur une seule image (compilation de shaders) : rendre plusieurs images avant la capture.
    - `javascript_tool` coupe à 45 s : garder chaque script de test sous ~30 s.
    - La console garde les vieilles erreurs après un rechargement : vérifier la ligne avant d'y croire.
-6. **Textes du jeu** : français simple, phrases courtes, émojis/icônes plutôt que paragraphes (règles d'or de `PLAN_FUN_ENFANT.md`). Dans le code et le README, rester cohérent avec l'existant (README sans accents).
+6. **Textes du jeu** : français simple, phrases courtes, émojis/icônes plutôt que paragraphes (règles d'or de `docs/plans/PLAN_FUN_ENFANT.md`). Dans le code et le README, rester cohérent avec l'existant (README sans accents).
 7. **Jamais d'échec frustrant** pour l'enfant : pas de perte d'argent, pas de blocage, toujours une sortie en 1 bouton.
 8. **Documenter** : ajouter une courte section `### <Titre> (phase NN)` en fin de `README.md` pour chaque tâche visible par le joueur.
 9. Ne pas toucher aux modèles `.glb` ni aux crédits sans raison ; ne rien télécharger d'internet sans accord.
@@ -409,7 +409,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 - *Étapes* : `docs/MODULES.md` : un tableau (module, rôle, clé de sauvegarde, qui l'appelle). Généré en partie par un script `tools/modules.mjs` qui lit les imports.
 
 ### M03 — Archiver les vieux plans · S · ★
-- *Étapes* : déplacer `PLAN_FUN_ENFANT.md`, `PLAN_GRAPHISME_PHYSIQUE.md`, `PLAN_VISUEL_CARTE.md` dans `docs/plans/` avec un statut en tête (fait / partiel / abandonné).
+- *Étapes* : déplacer `docs/plans/PLAN_FUN_ENFANT.md`, `docs/plans/PLAN_GRAPHISME_PHYSIQUE.md`, `docs/plans/PLAN_VISUEL_CARTE.md` dans `docs/plans/` avec un statut en tête (fait / partiel / abandonné).
 
 ---
 

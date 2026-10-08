@@ -1977,7 +1977,7 @@ Trophees : Hotesse de l'air, Cerveau volant, Voix de la cabine.
 - **Compteur de performance** : ouvrir `index.html?debug` affiche FPS, draw calls, triangles, objets, ombres, lumieres, textures,
   shaders (`js/perfHud.js`) ; `window.__perf()` renvoie les memes valeurs.
 - Mesure avant (tarmac, page fraiche) : 415 calls, 360 k triangles, 2 708 objets, 622 ombres, 17 lumieres, 115 shaders.
-- Plan complet : `PLAN_GRAPHISME_PHYSIQUE.md`.
+- Plan complet : `docs/plans/PLAN_GRAPHISME_PHYSIQUE.md`.
 - **Etape 1 (vague 1)** : 7 packs Kenney CC0 (`assets/models/{vehicles,city,nature,interior}/kenney-*`) : voitures, batiments,
   routes, industriel, nature, mobilier. Inventaire `assets/models/INDEX.json` (`node tools/indexModels.mjs`) ; credits dans
   `assets/models/CREDITS.md`. Pas encore utilises dans le jeu (etape 2 : chaine d'import et palette).
@@ -2033,7 +2033,7 @@ dessus (`Renderer3D.setStaffBadges`). Sauvegarde : `skymanager.staff`. Trophee �
 
 ## Phase 32 — Refonte visuelle : personnage, terminal, parking, nuit, carte, icones
 
-Suivi detaille : `PLAN_VISUEL_CARTE.md` (etat des lieux, plan, avancement). Controle git : le dossier est versionne depuis cette phase.
+Suivi detaille : `docs/plans/PLAN_VISUEL_CARTE.md` (etat des lieux, plan, avancement). Controle git : le dossier est versionne depuis cette phase.
 
 - **Personnage** (`renderer3d.js`, `paintHuman`) : le modele glTF n'a aucune texture ; il est colore par os (peau, haut aux couleurs du role — orange pour le joueur —, pantalon, chaussures), materiau mat (plus de halo blanc du bloom).
 - **Sols** (`textures.js`, `terminalBuilding.js`, `renderer3d.js`) : tarmac plus clair (joints et taches adoucis), moquette du salon plus fine, herbe moins saturee.
@@ -2048,7 +2048,7 @@ Suivi detaille : `PLAN_VISUEL_CARTE.md` (etat des lieux, plan, avancement). Cont
 
 ## Phases 33 a 39 — Plan « fun pour un enfant de 12 ans »
 
-Suivi du plan : `PLAN_FUN_ENFANT.md`. Tout est en mode Arcade (rien ne change en mode Pilote). Chaque couche est un module independant, ajoute a la boucle de `main.js` dans un `try/catch` : une erreur dans une couche « fun » est notee une fois dans la console et ne fige jamais le jeu.
+Suivi du plan : `docs/plans/PLAN_FUN_ENFANT.md`. Tout est en mode Arcade (rien ne change en mode Pilote). Chaque couche est un module independant, ajoute a la boucle de `main.js` dans un `try/catch` : une erreur dans une couche « fun » est notee une fois dans la console et ne fige jamais le jeu.
 
 | Phase | Contenu | Modules |
 |---|---|---|
