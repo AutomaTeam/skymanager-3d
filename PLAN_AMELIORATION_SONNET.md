@@ -441,4 +441,6 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 
 | Date | Tâche | Statut | Notes / non testé |
 |---|---|---|---|
-| | | | |
+| 2026-10-08 | T00 | fait | commit 9d50235 |
+| 2026-10-08 | A08, A07, C02 | fait | fuzz 20 s : 0 erreur (1 passe seulement, pas 5) |
+| 2026-10-08 | A01 | fait | libelle du badge 'Chercheur d'etoiles' garde |
