@@ -14,11 +14,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791470382';
-import { LAYOUT } from './layout.js?v=1791470382';
+import { sfx } from './sfx.js?v=1791470488';
+import { LAYOUT } from './layout.js?v=1791470488';
 
 const $ = (id) => document.getElementById(id);
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const STORE = 'skymanager.meet';
 

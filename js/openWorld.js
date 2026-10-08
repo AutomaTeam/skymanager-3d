@@ -15,12 +15,11 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791470382';
-import { itemOf } from './deco.js?v=1791470382';
+import { sfx } from './sfx.js?v=1791470488';
+import { itemOf } from './deco.js?v=1791470488';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
 /* PRNG deterministe : les etoiles sont toujours aux memes endroits. */
 const rng = (seed) => () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };

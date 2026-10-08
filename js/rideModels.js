@@ -16,7 +16,6 @@ import * as THREE from 'three';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const lerp = (a, b, t) => a + (b - a) * t;
-const TAU = Math.PI * 2;
 
 const matCache = new Map();
 function mat(color, { rough = 0.55, metal = 0.1, emissive = 0, ei = 1, flat = false } = {}) {
@@ -182,7 +181,6 @@ function buildHover(color, hover) {
 /* ---------------------------------------------------------- */
 /* Poses de l'avatar                                           */
 /* ---------------------------------------------------------- */
-const wave = (t, f) => Math.sin(t * f);
 
 /* Les poses rendent des positions dans le repere de la monture (rig), sauf `avHands` : repere de l'avatar. */
 function baseSkate(s, hover = 0) {

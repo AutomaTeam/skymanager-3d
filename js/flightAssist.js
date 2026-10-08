@@ -17,10 +17,9 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js?v=1791470382';
+import { heliCommand } from './heliModel.js?v=1791470488';
 
 const KTS = 1.94384;
-const FT = 3.28084;
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const wrap180 = (a) => ((a + 540) % 360) - 180;
@@ -31,14 +30,12 @@ export const GROUND_Y = 3.14;
 export const RWY = { x: 0, zStart: 1500, zEnd: -1500 };
 
 /* Vitesses cibles (kt IAS) selon la phase. */
-const SPEED = { climb: 215, cruise: 235 };
 
 /* Plafond de jeu : au-dela, l'appareil se met en palier (m). */
 const CEILING_AGL = 1300;
 
 /* Point de poser vise (m, repere monde) et hauteur de debut d'arrondi. */
 const Z_TOUCH = -1200;
-const FLARE_AGL = 24;
 
 /* Guidage lateral en finale : pente vers l'axe (deg/m) et gain de roulis.
    Regles par balayage (tools/flightAssist.sim.mjs) : ecart max au poser
