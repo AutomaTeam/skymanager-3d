@@ -39,7 +39,7 @@ const ARCADE_COSTS = 1500;
 /* Mode Arcade : prix en pieces (1 piece = 1000 EUR) a la portee d'un enfant. Avant, la tour
    reprenait les prix du mode Pilote (un avion a 9 500 pieces pour ~60 pieces par vol). */
 const KID_COST = { runways: 260, gates: 70, terminals: 380, shops: 40, vipLounge: 180 };
-const KID_AIRCRAFT = 350;
+const KID_AIRCRAFT = 300;        // phase 61 : 350 -> 300 (tools/economy.sim.mjs : tour complete en ~3 h 30)
 /* Chaque avion en plus vole tout seul et rapporte des pieces chaque minute (main.js). */
 export const KID_FLEET_PER_MIN = 2;
 

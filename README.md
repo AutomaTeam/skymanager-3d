@@ -2307,3 +2307,7 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 ### Scenarios navigateur (phase 60)
 
 `tools/scenarios.js` : `?scenario=firstFlight` (ou `all`) dans l'URL, ou en console `const S = await import('/tools/scenarios.js'); await S.run('allRides')`. Scenarios : `firstFlight`, `tutorial`, `allPlanes`, `allRides`, `allVehicles`, `petFetch`, `nightRain`, `cabin`, `panels` (ouvre/ferme chaque panneau par Echap, verifie que le monde n'est jamais gele). Rendu neutralise ; chaque scenario renvoie `{name, ok, steps, errors}` (resultat dans `window.__scenarioReport` avec `?scenario=`). Tous `ok:true`.
+
+### Economie mesuree (phase 61)
+
+`tools/economy.sim.mjs` (dans `npm test`) simule 4 h de jeu Arcade (1 vol / 3,5 min, achat du moins cher possible) et verifie : premier avion entre 15 et 30 min, tour complete entre 2 et 4 h. Reglage : `KID_AIRCRAFT` 350 -> 300 pieces (premier avion ~25 min, tour complete ~3 h 30 au lieu de ~4 h). Les hypotheses sont en tete du fichier ; a recaler avec des mesures de vraies parties.
