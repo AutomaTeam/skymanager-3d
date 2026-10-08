@@ -17,7 +17,7 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js?v=1791483315';
+import { heliCommand } from './heliModel.js?v=1791485856';
 
 const KTS = 1.94384;
 

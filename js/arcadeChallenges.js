@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791483315';
-import { seeded, COMBO_EVENTS, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791483315';
+import { sfx } from './sfx.js?v=1791485856';
+import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791485856';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -13,7 +13,7 @@ export const challengeMethods = {
   event(type, n = 1) {
     if (!this.on) return;
     if (type in this._stepStats) this._stepStats[type] += n;
-    if (COMBO_EVENTS.includes(type)) this._bumpCombo();
+    if (COMBO_EVENTS.includes(type)) this._bumpCombo(COMBO_SLOW[type]);
     const s = this.data.stats;
     if (type === 'serve') s.serve += n;
     if (type === 'repair') s.repair += n;
@@ -80,6 +80,7 @@ export const challengeMethods = {
     const items = [];
     while (items.length < 3 && pool.length) {
       const d = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
+      if (d.need && !d.need(this.g)) continue;     // ex. l'hydravion n'est pas encore achete
       const left = this._left(d.ev);
       const n = Math.min(left, d.min + Math.floor(rnd() * (d.max - d.min + 1)));
       if (n < d.min) continue;                       // plus rien a trouver : on tire un autre defi

@@ -493,3 +493,5 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | M01–M03 | ✅ | README court + `docs/HISTORIQUE.md`, `docs/MODULES.md` généré, anciens plans archivés |
 
 Bug trouvé et corrigé en route : le menu pause ne figeait pas l'avion en vol.
+
+*Phase 110 (passe de gameplay) : bonus par étoile et « Tour des îles » sur les pistes d'île, combo étendu (atterrissage, île, amerrissage, souvenir, jumelles), 4 défis du jour. Logique vérifiée dans le jeu, pas jouée à la main.*

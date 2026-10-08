@@ -27,7 +27,7 @@
 
 import {
   makePassenger, evaluate, DEFAULT_CHOICE, overweightFee, bestChoice, hasDanger
-} from './terminalFlow.js?v=1791483315';
+} from './terminalFlow.js?v=1791485856';
 
 const STORE = 'skymanager.terminal';
 const STORE_VERSION = 2;

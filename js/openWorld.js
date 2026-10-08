@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791483315';
-import { itemOf } from './deco.js?v=1791483315';
+import { sfx } from './sfx.js?v=1791485856';
+import { itemOf } from './deco.js?v=1791485856';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -267,6 +267,7 @@ export class OpenWorld {
       const tr = this.g.fun.trail, f = ac.forward();
       if (tr) for (let i = 0; i < 24; i++) tr.emit(ac.pos.x + (Math.random() - 0.5) * 10 - f.x * 4, 1, ac.pos.z + (Math.random() - 0.5) * 10 - f.z * 4, 0xe8f6ff, 4 + Math.random() * 4, 1.2 + Math.random());
       this._egg('splash', '💦', 'Amerrissage reussi ! Splash !', 15);
+      this.g.arcade.event('splash');
       return;
     }
     for (const { isl } of this.islands) {
@@ -274,6 +275,24 @@ export class OpenWorld {
       if (!st) continue;
       if (Math.abs(ac.pos.x - (isl.x + st.x)) > st.w || Math.abs(ac.pos.z - isl.z) > st.len / 2 + 20) continue;
       this._egg('strip_' + isl.id, st.ico, st.text, st.coins);
+      if (ac.crashed) return;
+      /* Chaque pose reussie compte (defi, combo) et rapporte selon la douceur : +2 par etoile. */
+      const A = this.g.arcade, stars = A.rateLanding(td, false).stars;
+      A.giveCoins(stars * 2, { silent: true });
+      A.popup(`🏝️ Pose sur ${isl.name} ! +${stars * 2} 🪙`);
+      A.event('stripLanding');
+      /* Tour des iles : les deux pistes dans la meme journee. */
+      const day = new Date().toDateString();
+      if (!this.data.stripDay || this.data.stripDay.day !== day) this.data.stripDay = { day, ids: [], paid: false };
+      const sd = this.data.stripDay;
+      if (!sd.ids.includes(isl.id)) sd.ids.push(isl.id);
+      if (!sd.paid && ISLANDS.filter(i => i.strip).every(i => sd.ids.includes(i.id))) {
+        sd.paid = true;
+        A.giveCoins(30, { silent: true, xp: 20 });
+        A.confetti(80); sfx.levelUp();
+        this.g.toast('🏝️🏝️ Tour des iles reussi ! +30 🪙', 4200, 'ok');
+      }
+      this.save();
       return;
     }
   }

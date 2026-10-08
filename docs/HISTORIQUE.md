@@ -2468,3 +2468,9 @@ L'hydravion qui se pose sur l'eau (mer, lac) souleve de grosses eclaboussures et
 ## Phase 109 - transitions d'animation (K06)
 
 `updateAvatarAnim` (renderAvatar.js) : fondus de 0,12 s (gestes), 0,25 s (immobile <-> marche) ou 0,3 s (marche <-> course, phases synchronisees), et 0,18 s minimum entre deux changements de clip.
+
+## Phase 110 - passe de gameplay (iles, combo, defis)
+
+- Poser sur une piste d'ile : +2 pieces par etoile, evenement `stripLanding`, « Tour des iles » (+30 le meme jour sur les 2 pistes).
+- Combo : `landing`, `stripLanding`, `splash`, `souvenir`, `spot` comptent ; ces actions rares laissent 20-40 s au combo (`COMBO_SLOW` dans arcadeData.js).
+- 4 nouveaux defis du jour : piste d'ile, amerrissage (seulement si l'hydravion est achete, champ `need`), souvenir, jumelles.

@@ -10,9 +10,9 @@
    Pres de Biscuit (pet.js), le meme bouton sert a le caresser.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791483315';
-import { collectBodies } from './bodies.js?v=1791483315';
-import { emojiSprite } from './groundFun.js?v=1791483315';
+import { sfx } from './sfx.js?v=1791485856';
+import { collectBodies } from './bodies.js?v=1791485856';
+import { emojiSprite } from './groundFun.js?v=1791485856';
 
 const RANGE = 2.8;               // m pour saluer quelqu'un
 const COINS_PER_DAY = 12;
@@ -157,6 +157,7 @@ export class Social {
     if (A.data.binocDay !== day) {
       A.data.binocDay = day;
       A.giveCoins(2, { silent: true, label: 'Spotteur !' });
+      A.event('spot');
       A.save();
       this.g.toast('🔭 Tu repères les avions ! +2 🪙', 3000, 'ok');
     } else this.g.toast('🔭 Regarde les avions ! Marche pour poser les jumelles.', 2600);

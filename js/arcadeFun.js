@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791483315';
-import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791483315';
+import { sfx } from './sfx.js?v=1791485856';
+import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791485856';
 
 export const funMethods = {
   /* Un « boost » d'ambiance : satisfaction de la cabine ou ambiance du hall. */
@@ -178,10 +178,10 @@ export const funMethods = {
     try { this.g.r3d.cabinReact(req.row, req.side, R[1]); } catch (e) { /* cabine non construite */ }
     this.event('cabinServe');
   },
-  _bumpCombo() {
+  _bumpCombo(time = COMBO_TIME) {
     const c = this.combo;
     const before = this.comboMult;
-    c.n++; c.t = COMBO_TIME;
+    c.n++; c.t = Math.max(c.t, time);
     const m = this.comboMult;
     this.data.stats.bestCombo = Math.max(this.data.stats.bestCombo || 0, m);
     if (m > 1) {

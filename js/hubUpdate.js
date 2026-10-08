@@ -3,14 +3,14 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791483315';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791485856';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791483315';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791483315';
-import { COUNTERS } from './terminalSystem.js?v=1791483315';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791483315';
-import { sfx } from './sfx.js?v=1791483315';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791483315';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791485856';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791485856';
+import { COUNTERS } from './terminalSystem.js?v=1791485856';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791485856';
+import { sfx } from './sfx.js?v=1791485856';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791485856';
 
 export const hubMethods = {
   updateHub(dt) {
@@ -334,7 +334,7 @@ export const hubMethods = {
           return;
         }
         this._souvenir = null;
-        if (h.buyOffer(o)) { sfx.tada(); this.arcade.confetti(30); this.toast(`🎉 ${o.it.ico || ''} ${o.it.name} est dans ton hangar !`, 3600, 'ok'); }
+        if (h.buyOffer(o)) { sfx.tada(); this.arcade.confetti(30); this.arcade.event('souvenir'); this.toast(`🎉 ${o.it.ico || ''} ${o.it.name} est dans ton hangar !`, 3600, 'ok'); }
         else { sfx.oops(); this.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); }
       },
       /* ---------- Panneau de verification ---------- */
