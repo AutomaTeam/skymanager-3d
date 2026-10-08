@@ -3,14 +3,14 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791474820';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791477358';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791474820';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791474820';
-import { COUNTERS } from './terminalSystem.js?v=1791474820';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791474820';
-import { sfx } from './sfx.js?v=1791474820';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791474820';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791477358';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791477358';
+import { COUNTERS } from './terminalSystem.js?v=1791477358';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791477358';
+import { sfx } from './sfx.js?v=1791477358';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791477358';
 
 export const hubMethods = {
   updateHub(dt) {
@@ -240,6 +240,7 @@ export const hubMethods = {
     if (nearest) {
       let lbl = this.terminal.actionLabel(nearest.id);
       if (this.arcade.on && lbl === 'FERMER LE POSTE') lbl = '⏳ EN ATTENTE DE CLIENTS';
+      if (this.arcade.on && nearest.kind === 'shop' && this.terminal.actionKind(nearest.id) === 'info') lbl = '🎁 ACHETER UN SOUVENIR';
       $('btnCounterLabel').textContent = lbl;
     }
 
@@ -315,8 +316,26 @@ export const hubMethods = {
             else { t.toggleCounter(c.id); this.toast(`${c.label} ferme.`, 1600); }
             break;
           default:
-            this.toast(t.actionLabel(c.id), 1800);
+            if (c.kind === 'shop' && A.on) this.shopSouvenir();
+            else this.toast(t.actionLabel(c.id), 1800);
         }
+      },
+      /* H05 : on achete vraiment un souvenir (autocollant, couleur...) pour le hangar.
+         1er appui : on propose ; 2e appui dans les 8 s : on achete. */
+      shopSouvenir() {
+        const h = this.hangar, o = h.shopOffer();
+        if (!o) { this.toast('🛍️ Tu as deja tout achete ici, bravo !', 2600); return; }
+        const now = performance.now();
+        const same = this._souvenir && this._souvenir.id === o.it.id && now - this._souvenir.t < 8000;
+        if (!same) {
+          this._souvenir = { id: o.it.id, t: now };
+          this.toast(`🎁 ${o.it.ico || ''} ${o.it.name} : ${o.it.price} 🪙. Appuie encore pour l'acheter !`, 4200);
+          sfx.click();
+          return;
+        }
+        this._souvenir = null;
+        if (h.buyOffer(o)) { sfx.tada(); this.arcade.confetti(30); this.toast(`🎉 ${o.it.ico || ''} ${o.it.name} est dans ton hangar !`, 3600, 'ok'); }
+        else { sfx.oops(); this.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); }
       },
       /* ---------- Panneau de verification ---------- */
       openCheckPanel(c) {

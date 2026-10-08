@@ -2440,3 +2440,7 @@ K06 (partiel) : chaque PNJ a son allure (0,78 a 1,28 fois la vitesse normale : p
 ## Phase 102 - pistes sur les iles (G06 partiel)
 
 L'Ile aux Palmiers et l'Ile des Manèges sont aplaties (sol physique a y=0) et ont une piste de 340 m (`strip` dans `ISLANDS`). Se poser dessus donne un cadeau une fois par jour (marchand de glaces, billet de grand huit). Pas d'aide a l'atterrissage guidee sur ces pistes.
+
+## Phase 103 - souvenir de la boutique (H05 partiel)
+
+Au comptoir boutique du terminal (mode Arcade, sans file), le bouton « Acheter un souvenir » propose l'objet de hangar le moins cher non possede ; un 2e appui l'achete (`shopSouvenir` dans `hubUpdate.js`, `shopOffer`/`buyOffer` dans `hangar.js`).

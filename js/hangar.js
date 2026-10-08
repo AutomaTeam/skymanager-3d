@@ -11,11 +11,11 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791474820';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791474820';
+import { sfx } from './sfx.js?v=1791477358';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791477358';
 import {
   BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791474820';
+} from './livery.js?v=1791477358';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
@@ -107,6 +107,23 @@ export class Hangar {
     this.save();
     const nameOf = { body: 'Couleur', accent: 'Accent', pattern: 'Motif', sticker: 'Autocollant' }[pick.kind];
     return { kind: pick.kind, item: pick.it, label: `${nameOf} « ${pick.it.name} » ${pick.it.ico || ''}` };
+  }
+
+  /* H05 : souvenir de la boutique du terminal. Rend l'objet propose du moment
+     (le moins cher non possede, hors rares) ou null. */
+  shopOffer() {
+    let best = null;
+    for (const kind of Object.keys(CATALOG)) for (const it of CATALOG[kind]) {
+      if (it.price && !it.rare && !this.isOwned(kind, it) && (!best || it.price < best.it.price)) best = { kind, it };
+    }
+    return best;
+  }
+  buyOffer(o) {
+    if (!o || this.isOwned(o.kind, o.it)) return false;
+    if (!this._spend(o.it.price)) return false;
+    this.data.owned[o.kind].push(o.it.id);
+    this.save();
+    return true;
   }
 
   /* I06 : code de partage de la livree de l'avion affiche. */
