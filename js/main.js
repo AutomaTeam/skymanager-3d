@@ -8,51 +8,51 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791465865';
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465865';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791465988';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791465988';
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791465865';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465865';
-import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465865';
-import { TouchControls } from './touchControls.js?v=1791465865';
-import { WalkJoystick } from './mechanicControls.js?v=1791465865';
-import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465865';
-import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465865';
-import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465865';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465865';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465865';
-import { Navigation } from './navigation.js?v=1791465865';
-import { AgentSystem } from './agents.js?v=1791465865';
-import { Environment } from './environment.js?v=1791465865';
-import { MissionSystem } from './missions.js?v=1791465865';
-import { Staff } from './staff.js?v=1791465865';
-import { History } from './history.js?v=1791465865';
-import { Hub } from './hub.js?v=1791465865';
-import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465865';
-import { FlightAssist } from './flightAssist.js?v=1791465865';
-import { Fun } from './fun.js?v=1791465865';
-import { Hangar } from './hangar.js?v=1791465865';
-import { SkyMissions } from './skyMissions.js?v=1791465865';
-import { MiniGames } from './minigames.js?v=1791465865';
-import { GroundFun } from './groundFun.js?v=1791465865';
-import { Pet } from './pet.js?v=1791465865';
-import { Social } from './social.js?v=1791465865';
-import { Tug } from './tug.js?v=1791465865';
-import { FireTruck } from './fireTruck.js?v=1791465865';
-import { Ambience } from './ambience.js?v=1791465865';
-import { Bus } from './bus.js?v=1791465865';
-import { Look } from './look.js?v=1791465865';
-import { Deco } from './deco.js?v=1791465865';
-import { Album } from './album.js?v=1791465865';
-import { OpenWorld } from './openWorld.js?v=1791465865';
-import { Comfort } from './comfort.js?v=1791465865';
-import { Rides } from './rides.js?v=1791465865';
-import { planeOf } from './fleet.js?v=1791465865';
-import { HELIPAD } from './heliModel.js?v=1791465865';
-import { sfx } from './sfx.js?v=1791465865';
-import { perfHud } from './perfHud.js?v=1791465865';
-import { iconify } from './icons.js?v=1791465865';
-import { drawPFD } from './cockpit.js?v=1791465865';
+import * as Save from './save.js?v=1791465988';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791465988';
+import { Aircraft, KTS, FT, FPM } from './flightPhysics.js?v=1791465988';
+import { TouchControls } from './touchControls.js?v=1791465988';
+import { WalkJoystick } from './mechanicControls.js?v=1791465988';
+import { CabinService, REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791465988';
+import { MechanicSystem, STATIONS, PARTS, FAILURES } from './mechanicSystem.js?v=1791465988';
+import { AirportTycoon, UPGRADES, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791465988';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791465988';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791465988';
+import { Navigation } from './navigation.js?v=1791465988';
+import { AgentSystem } from './agents.js?v=1791465988';
+import { Environment } from './environment.js?v=1791465988';
+import { MissionSystem } from './missions.js?v=1791465988';
+import { Staff } from './staff.js?v=1791465988';
+import { History } from './history.js?v=1791465988';
+import { Hub } from './hub.js?v=1791465988';
+import { Arcade, COIN, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791465988';
+import { FlightAssist } from './flightAssist.js?v=1791465988';
+import { Fun } from './fun.js?v=1791465988';
+import { Hangar } from './hangar.js?v=1791465988';
+import { SkyMissions } from './skyMissions.js?v=1791465988';
+import { MiniGames } from './minigames.js?v=1791465988';
+import { GroundFun } from './groundFun.js?v=1791465988';
+import { Pet } from './pet.js?v=1791465988';
+import { Social } from './social.js?v=1791465988';
+import { Tug } from './tug.js?v=1791465988';
+import { FireTruck } from './fireTruck.js?v=1791465988';
+import { Ambience } from './ambience.js?v=1791465988';
+import { Bus } from './bus.js?v=1791465988';
+import { Look } from './look.js?v=1791465988';
+import { Deco } from './deco.js?v=1791465988';
+import { Album } from './album.js?v=1791465988';
+import { OpenWorld } from './openWorld.js?v=1791465988';
+import { Comfort } from './comfort.js?v=1791465988';
+import { Rides } from './rides.js?v=1791465988';
+import { planeOf } from './fleet.js?v=1791465988';
+import { HELIPAD } from './heliModel.js?v=1791465988';
+import { sfx } from './sfx.js?v=1791465988';
+import { perfHud } from './perfHud.js?v=1791465988';
+import { iconify } from './icons.js?v=1791465988';
+import { drawPFD } from './cockpit.js?v=1791465988';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -617,6 +617,16 @@ class Game {
       if (e.code !== 'KeyH' || !this.arcade.on || this.state === 'BOOT') return;
       if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
       this.hub.toggle();
+    });
+    /* E07 : onglet cache ou iPad en veille -> pause douce ; au retour, pas de saut de temps. */
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        sfx.suspend();
+        const busy = this.state === 'BOOT' || !$('pauseMenu').classList.contains('hidden') || !$('mg2').classList.contains('hidden');
+        if (!busy) { try { this.openPause(); } catch (e) { this._noteError('pause auto', e); } }
+      } else {
+        this.lastFrame = performance.now();
+      }
     });
     $('pauseHelp').addEventListener('click', () => { sfx.click(); $('helpPanel').classList.remove('hidden'); });
     $('helpClose').addEventListener('click', () => $('helpPanel').classList.add('hidden'));

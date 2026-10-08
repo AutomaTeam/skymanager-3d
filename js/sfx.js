@@ -50,6 +50,8 @@ export const sfx = {
 
   /* A appeler depuis un vrai geste (clic sur DEMARRER). */
   unlock() { audio(); },
+  /* Mise en veille de l'onglet : l'audio est suspendu (il reprend au prochain son). */
+  suspend() { if (ctx && ctx.state === 'running') ctx.suspend().catch(() => {}); },
 
   /* Contexte audio partage (musique) ; null si le son est coupe. */
   context() { return audio(); },

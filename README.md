@@ -2317,3 +2317,8 @@ Les 40 collectibles du ciel s'appellent maintenant **etoiles filantes** 🌠 (HU
 - `manifest.webmanifest` + icones `assets/icons/` (generees par `node tools/makeIcons.mjs`, sans telechargement) : « Ajouter a l'ecran d'accueil » donne une appli plein ecran, paysage.
 - `sw.js` (service worker) : le jeu se recharge sans reseau apres un premier chargement. Page et CSS : reseau d'abord ; fichiers `?v=`, three.js (CDN), modeles : cache d'abord. Le nom du cache porte le tampon : `npm run bump` purge l'ancien cache. Ajouter `?nosw` a l'URL pour ne pas l'enregistrer.
 - Verifie : service worker actif, coquille + three.js + 54 modules en cache. Non teste : coupure reelle du reseau et installation sur un vrai iPad.
+
+### Tactile : grosses cibles, veille propre (phase 63)
+
+- Audit tablette (768 x 1024) de l'ecran d'accueil, du tarmac, de la cabine, du pilotage et de 9 panneaux : tous les boutons mesures font maintenant au moins 48 px (regles en fin de `css/style.css`). Zones sures (`env(safe-area-inset-*)`) deja presentes (58 regles), `viewport-fit=cover` aussi.
+- Onglet cache / iPad qui se met en veille : le jeu passe en pause douce et suspend l'audio ; au retour, le temps ne saute pas (`visibilitychange`).

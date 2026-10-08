@@ -1958,3 +1958,12 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 .look-sws { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .look-sw { width: 2.3rem; height: 2.3rem; border-radius: 999px; border: 3px solid rgba(255, 255, 255, 0.25); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.18); }
 .look-sw.on { border-color: #fde047; transform: scale(1.12); box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.35); }
+
+/* ---- E02 : cibles tactiles >= 48 px (audit tablette, phase 63) ---- */
+#btnMenu, #btnMenu2, #btnMenu3, #rideBtn, #petBall, #funToggle, #btnPhoto, #btnTrail, #btnView,
+#hubClose, #kidAlbumClose, #mapBigClose, #rideClose, #decoClose, #hgBack, #lookClose, #lookRandom,
+#mapModeBtn, #mapZoomIn, #mapZoomOut, #mapZoomReset, #pauseResume, #pauseResetProgress, #planSkip,
+.hub-tab, .plan-tabs > * { min-width: 48px; min-height: 48px; }
+.look-sw { width: 3rem; height: 3rem; }
+.look-sws { gap: 0.6rem; }
+#btnMenu, #btnMenu2, #btnMenu3, #btnView, #btnPhoto, #btnTrail { display: inline-flex; align-items: center; justify-content: center; }
