@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LIGHT_GAIN } from './environment.js?v=1791554199';
-import { mixHex, clamp } from './renderShared.js?v=1791554199';
+import { LIGHT_GAIN } from './environment.js?v=1791554305';
+import { mixHex, clamp } from './renderShared.js?v=1791554305';
 
 export const lightMethods = {
   buildLights() {
@@ -157,6 +157,7 @@ export const lightMethods = {
           this.cloudMat.color.setHex(mixHex(0xffffff, 0x8a94a4, clamp(p.cloud * 0.9, 0, 1)));
           this.clouds.visible = p.cloud > 0.05;
         }
+        if (this.cloudPuffs) this.cloudPuffs.update(dt || 0, this.camera.position, p.cloud, this.cloudMat ? this.cloudMat.color.getHex() : 0xffffff);
 
         this.updateRain(dt || 0, p.rain);
         if (this.skyLife) this.skyLife.update(dt || 0, env, this.camera.position);

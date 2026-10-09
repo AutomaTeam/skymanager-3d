@@ -4,8 +4,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791554199';
-import { cloudTexture, mixHex } from './renderShared.js?v=1791554199';
+import * as TEX from './textures.js?v=1791554305';
+import { CloudPuffs } from './cloudPuffs.js?v=1791554305';
+import { cloudTexture, mixHex } from './renderShared.js?v=1791554305';
 
 export const skyMethods = {
   buildSky() {
@@ -110,6 +111,8 @@ export const skyMethods = {
     }
     this.skyGroup.add(this.clouds);
     this.scene.add(this.skyGroup);
+    /* K01 : bouffees qu'on traverse (js/cloudPuffs.js) */
+    this.cloudPuffs = new CloudPuffs(this.scene, cloudTexture());
   },
       /* ----------------------------------------------------------
          Carte d'environnement (IBL).

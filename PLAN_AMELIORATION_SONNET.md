@@ -453,7 +453,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | A07 | ✅ | `?fuzz=1` ; 3 passes de 25 s, 0 erreur (le plan demandait 5) |
 | A08 | ✅ | `__game.errors` |
 | B01–B03 | ✅ | `main.js` ~950 l., `renderer3d.js` ~690 l., `arcade.js` ~460 l. ; `tools/splitClass.mjs` |
-| B04 | 🟡 | registre ; migrés : pet, bus, ambience + tous les nouveaux modules ; fun/sky/ground/social/tug/fire/deco/openWorld/comfort/rides pas migrés |
+| B04 | ✅ | registre ; tous les modules y sont (phase 111 : `order: -1, hooks: false` pour les couches « fun ») |
 | B05 | ✅ | `save.js` ; migrés pet, deco, comfort, reset ; les autres modules gardent leur lecture (tolérante, testée) |
 | B06 | 🟡 | constantes inutilisées retirées ; 37 avertissements `no-unused-vars` restent (variables locales), pas de suppression de code actif |
 | C01–C05 | ✅ | eslint, `npm run bump` + test du tampon, 11 scénarios, tests save / économie |
@@ -483,15 +483,15 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | I02, I03, I04, I06, I07 | ✅ | 30 niveaux, album unifié, coffre en série de 7 jours, code d'avion, fichier de sauvegarde |
 | I05 | 🟡 | phase 106 : 33 autocollants (+8) ; peinture par zones et placement au doigt pas faits |
 | J01, J02, J05 | ✅ | audit statique, 3 volumes + ducking, 6 klaxons ; équilibre à l'oreille non vérifié |
-| J03 | 🟡 | pan stéréo du grondement de l'avion de ligne seulement |
+| J03 | 🟡 | pan stéréo du grondement de l'avion de ligne + phase 113 : fontaines, oiseaux, murmure du hall (distance + pan) ; pas écouté à l'oreille |
 | J04 | ✅ | thèmes hall / skatepark / îles / nuit |
-| K01 | 🟡 | cumulus visibles pour tous les avions (pas de nuages volumétriques) |
-| K02 | 🟡 | vagues + reflets ; pas de sillage ni d'écume |
+| K01 | 🟡 | cumulus des ascendances + phase 114 : 64 bouffees en sprites (`cloudPuffs.js`) qu'on traverse (fondu), selon la couverture, coupées en qualité basse ; pas vu à l'écran (panneau caché) |
+| K02 | 🟡 | vagues + reflets + sillage d'écume de l'hydravion (phase 112) ; pas d'écume sur les plages |
 | K03 | ⏭ | système de particules unifié : pas fait (gain invisible, risque de régression) |
 | K04, K05, K07 | ✅ | fumée des pneus + secousse, couchers de soleil et étoiles, écran titre vivant |
 | K06 | 🟡 | allures variées (101) + les PNJ à l'arrêt tournent le corps vers le joueur à moins de 6 m (105, non vu à l'écran) ; transitions de clips douces (phase 109, `updateAvatarAnim` : fondu 0,12–0,3 s selon le cas, marche/course synchronisées, 0,18 s mini entre deux changements ; vérifié sur les poids, pas à l'oeil) |
 | M01–M03 | ✅ | README court + `docs/HISTORIQUE.md`, `docs/MODULES.md` généré, anciens plans archivés |
 
-Bug trouvé et corrigé en route : le menu pause ne figeait pas l'avion en vol.
+Bugs trouvés et corrigés en route : le menu pause ne figeait pas l'avion en vol ; les effets sonores étaient muets depuis la phase 82 (gain branché sur lui-même, corrigé en phase 113, test ajouté).
 
 *Phase 110 (passe de gameplay) : bonus par étoile et « Tour des îles » sur les pistes d'île, combo étendu (atterrissage, île, amerrissage, souvenir, jumelles), 4 défis du jour. Logique vérifiée dans le jeu, pas jouée à la main.*

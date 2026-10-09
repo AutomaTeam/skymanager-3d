@@ -2487,3 +2487,7 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 
 - **Bug corrige** : depuis la phase 82, le gain commun des effets (`dest()` dans sfx.js) etait branche sur lui-meme : tous les effets etaient muets. Il va maintenant sur `a.destination` ; `tools/audio.audit.mjs` verifie cette ligne.
 - J03 : `sfx.birdsong` et `sfx.ambient('water' | 'crowd')` avec pan stereo et volume selon la distance ; `_updateSpatial` (ambience.js) : fontaines de la place (60 m), oiseaux pres des pigeons (90 m), murmure du hall. Ecoute a l'oreille non verifiee.
+
+## Phase 114 - nuages qu'on traverse (K01)
+
+`js/cloudPuffs.js` : 64 sprites entre 500 et 1800 m autour de la camera (recyclés dans une boite de 9 km), nombre selon la couverture, teinte de la meteo, fondu a moins de 420 m (on traverse sans voir de bord dur). Coupes en qualite basse (`comfort._applyQuality`).

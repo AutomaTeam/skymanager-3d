@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791554199';
-import * as Save from './save.js?v=1791554199';
-import { Music } from './music.js?v=1791554199';
+import { sfx } from './sfx.js?v=1791554305';
+import * as Save from './save.js?v=1791554305';
+import { Music } from './music.js?v=1791554305';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -204,6 +204,7 @@ export class Comfort {
     r3d.renderer.setPixelRatio(Math.min(dpr, cap));
     r3d.resize();
     if (r3d.bloom) r3d.bloom.enabled = level < 2;
+    if (r3d.cloudPuffs) r3d.cloudPuffs.enabled = level < 2;   // K01 : pas de nuages traversables en qualite basse
     r3d.renderer.shadowMap.autoUpdate = level < 2;
     /* D04 : carte d'ombre plus petite quand le niveau baisse (1024 -> 768 -> 512). */
     const ss = [1024, 768, 512][level];
