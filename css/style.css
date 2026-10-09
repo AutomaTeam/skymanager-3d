@@ -2116,3 +2116,5 @@ body[data-state="HUB"] .mascot, body[data-state="CABIN"] .mascot { left: 4.4rem;
 body.lefty[data-state="HUB"] .mascot, body.lefty[data-state="CABIN"] .mascot { left: auto; right: 4.4rem; }
 .av-rw { grid-column: 1 / -1; margin-top: 0.45rem; padding: 0.35rem 0.6rem; border-radius: 0.6rem; font-size: 12px; font-weight: 800;
   color: #422006; background: linear-gradient(135deg, #fde047, #f59e0b); text-align: center; }
+/* En Arcade, le gros bouton ATTERRIR (aide) occupe le coin : le bouton VUE se pousse a gauche (il le chevauchait de ~20 px). */
+body.arcade:not(.lefty) #quickBtns { right: 13.4rem; }

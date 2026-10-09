@@ -164,7 +164,7 @@
   </div>
 
   <!-- Boutons rapides -->
-  <div class="absolute right-[6.5rem] bottom-[max(1rem,env(safe-area-inset-bottom))] grid grid-cols-2 gap-2">
+  <div id="quickBtns" class="absolute right-[6.5rem] bottom-[max(1rem,env(safe-area-inset-bottom))] grid grid-cols-2 gap-2">
     <button id="btnFlapsDn" class="act-btn pro-only">FLAPS +</button>
     <button id="btnFlapsUp" class="act-btn pro-only">FLAPS -</button>
     <button id="btnGear" class="act-btn pro-only">GEAR</button>
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791577985').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791578069').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791577985"></script>
+<script type="module" src="js/main.js?v=1791578069"></script>
 </body>
 </html>

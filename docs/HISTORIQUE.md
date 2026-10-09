@@ -2540,3 +2540,7 @@ Acheter une amelioration ne changeait que des chiffres. Maintenant chaque achat 
 
 - **Bug** : la rangee « Assis / Couche / Tourne / Haut-la » etait positionnee par rapport a la colonne de boutons de gauche (`position: absolute` dans `#funDock`) au lieu de l'ecran : elle recouvrait le bouton des montures 🛹 des que le chien etait a cote. Elle est maintenant en bas au centre (`position: fixed`). Verifie en 1024x768 : chaque bouton de la colonne recoit bien le clic.
 - Pendant la quete d'aventure « Éteins un feu », un feu demarre au plus 40 s apres le precedent (avant : 3 a 5 min d'attente si le feu s'etait eteint sans l'enfant).
+
+## Phase 130 - bouton VUE qui chevauchait ATTERRIR
+
+En vol (Arcade, format tablette 1024x768), le bouton « VUE » recouvrait ~20 px du gros bouton « ATTERRIR (aide) » : un enfant qui visait l'atterrissage pouvait changer de camera. Le groupe des boutons rapides (`#quickBtns`) se decale a gauche en Arcade (pas en mode gaucher, ou le gros bouton est a gauche).

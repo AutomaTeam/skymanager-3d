@@ -79,3 +79,5 @@ des sensations**. Diagnostic fait en jouant une partie neuve dans le Browser pan
 | F1, F2 | ✅ | 12 scénarios verts, fuzz 25 s sans erreur, `npm test` vert, lint 0 erreur |
 | F3 | ⏭ | partie réelle sur iPad avec l'enfant : à faire par un adulte |
 | Bonus | ✅ | phase 125 : le tutoriel fait voler dès l'étape 2 (et pas de menu de missions avant le premier vol) ; phase 126 : écrans de fête pour avion offert / nouveau titre, bulle de Coco qui ne cache plus les boutons |
+| G (ajout) | ✅ | phases 127-128 : `js/growth.js`, chaque achat se voit (kiosques, portes, VIP, toit, balises, avions garés) + kiosques où l'on achète une glace (trophée Gourmand) ; cadeau du chapitre affiché |
+| Contrôle tablette | ✅ | phases 129-130 : tours du chien qui cachaient 🛹 (bug existant), VUE qui chevauchait ATTERRIR ; vérifié par `elementFromPoint` en 1024x768 |
