@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791576226';
 
 export const funMethods = {
   /* Un « boost » d'ambiance : satisfaction de la cabine ou ambiance du hall. */
@@ -22,11 +22,11 @@ export const funMethods = {
       this._cd[kind] = g.time + cd;
     }
     const ANNOUNCES = [
-      'Mesdames et messieurs, bienvenue a bord ! Ici votre steward prefere.',
+      'Mesdames et messieurs, bienvenue à bord ! Ici votre steward préféré.',
       'Attention : le duty-free vend des bonbons... et des rires !',
-      'Nous volons a 10 000 metres. Merci de ne pas ouvrir la fenetre.',
-      'Pour votre securite, gardez le sourire attache.',
-      'Le commandant vous salue, il a dit que c\'etait facile !'
+      'Nous volons à 10 000 mètres. Merci de ne pas ouvrir la fenêtre.',
+      'Pour votre sécurité, gardez le sourire attaché.',
+      'Le commandant vous salue, il a dit que c\'était facile !'
     ];
     const E = {
       announce: { ico: '📢', txt: 'Annonce !', snd: () => { sfx.hello(); this._boost(2.5); g.toast('📢 ' + ANNOUNCES[Math.floor(Math.random() * ANNOUNCES.length)], 3600); } },
@@ -34,7 +34,7 @@ export const funMethods = {
       music:    { ico: '🎵', txt: 'Musique !', snd: () => { sfx.jingle(); this._boost(2); } },
       honk:   { ico: '📯', txt: 'PIIIIP !',      snd: () => sfx.honk() },
       hello:  { ico: '👋', txt: 'Salut !',       snd: () => sfx.hello() },
-      party:  { ico: '🎉', txt: 'Fete !',        snd: () => { sfx.tada(); this.confetti(60); } },
+      party:  { ico: '🎉', txt: 'Fête !',        snd: () => { sfx.tada(); this.confetti(60); } },
       dance:  { ico: '💃', txt: 'On danse !',    snd: () => { sfx.pop(); this._danceT = 2.2; } },
       /* Au sol, un vrai selfie qui part dans l'album (fun.selfie) ; ailleurs, juste le flash. */
       selfie: { ico: '📸', txt: 'Cheese !',      snd: () => { if (!(g.fun && g.fun.selfie())) { sfx.shutter(); this._flash(); } } }
@@ -148,7 +148,7 @@ export const funMethods = {
       const bonus = 6 + s.rounds * 3;
       sfx.tada(); this.confetti(50);
       this.giveCoins(bonus, { silent: true, xp: 6, label: 'Objectif de service !' });
-      g.toast(`🎯 Service reussi ! +${bonus} 🪙 — encore ${s.goal + 3} passagers pour le suivant !`, 3600, 'ok');
+      g.toast(`🎯 Service réussi ! +${bonus} 🪙 — encore ${s.goal + 3} passagers pour le suivant !`, 3600, 'ok');
       s.goal += 3;
     }
     const sat = g.cabin.satisfaction;
@@ -163,8 +163,8 @@ export const funMethods = {
     if (!s || s.served < 1) return;
     const sat = Math.round(this.g.cabin.satisfaction);
     const face = sat >= 85 ? '😍' : sat >= 60 ? '🙂' : '😕';
-    if (sat >= 85 && s.served >= 3) { this.giveStars(1); this.g.toast(`${face} Service termine : ${s.served} passagers, ${sat} % contents ! +1 ⭐`, 4200, 'ok'); }
-    else this.g.toast(`${face} Service termine : ${s.served} passagers servis, ${sat} % contents.`, 3600, 'ok');
+    if (sat >= 85 && s.served >= 3) { this.giveStars(1); this.g.toast(`${face} Service terminé : ${s.served} passagers, ${sat} % contents ! +1 ⭐`, 4200, 'ok'); }
+    else this.g.toast(`${face} Service terminé : ${s.served} passagers servis, ${sat} % contents.`, 3600, 'ok');
     this.save();
   },
   /* Recompense d'un service en cabine (appele par main.js) ; req = { row, side, type }. */
@@ -196,7 +196,7 @@ export const funMethods = {
     if (c.n > 0) {
       c.t -= dt;
       if (c.t <= 0) {
-        if (this.comboMult > 1) this.g.toast(`Combo termine : ${c.n} actions enchainees !`, 2400, 'ok');
+        if (this.comboMult > 1) this.g.toast(`Combo terminé : ${c.n} actions enchaînées !`, 2400, 'ok');
         c.n = 0; c.t = 0;
       }
     }
@@ -246,10 +246,10 @@ export const funMethods = {
     if (ok) {
       this.data.stats.quests = (this.data.stats.quests || 0) + 1;
       sfx.tada(); this.confetti(45);
-      this.giveCoins(q.reward, { silent: true, xp: 8, label: 'Mission flash reussie !' });
+      this.giveCoins(q.reward, { silent: true, xp: 8, label: 'Mission flash réussie !' });
       this._bumpCombo();
     } else {
-      this.g.toast('⏱ Trop tard... pas grave, une autre mission arrive bientot !', 3000);
+      this.g.toast('⏱ Trop tard... pas grave, une autre mission arrive bientôt !', 3000);
     }
     this.save();
   },
@@ -314,7 +314,7 @@ export const funMethods = {
     if (!show) return;
     const pos = clamp(sink / 600, 0, 1);
     $('lmNeedle').style.left = `${Math.round(pos * 100)}%`;
-    const txt = sink < 230 ? ['Parfait, continue comme ca !', 'ok'] : sink < 320 ? ['Un peu vite... tire doucement', 'mid'] : ['Trop vite ! Tire vers le haut', 'bad'];
+    const txt = sink < 230 ? ['Parfait, continue comme ça !', 'ok'] : sink < 320 ? ['Un peu vite... tire doucement', 'mid'] : ['Trop vite ! Tire vers le haut', 'bad'];
     const t = $('lmTxt');
     t.textContent = txt[0];
     meter.dataset.lvl = txt[1];

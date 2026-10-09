@@ -2513,3 +2513,8 @@ Plan : `PLAN_JEU_COOL.md` (diagnostic en jouant une partie neuve, lots A a F, jo
 - Tableau HUB sans EUR (boutique a bord en pieces, nombre de passagers) ; avion « au parking » / « en vol » ; noms simples des pieces au poste de reparation (`KID_PART`).
 - Les pieces gagnees volent jusqu'au compteur, qui monte petit a petit ; les anneaux d'un meme vol sonnent de plus en plus aigu.
 - Scenario navigateur `?scenario=story`.
+
+## Phase 124 - accents francais partout (plan « jeu cool », C3)
+
+Presque tout le texte affiche etait sans accents (« Repare l'avion », « tresors », « DECOLLER »). `tools/accents.mjs` ne touche qu'au texte affiche : chaines et gabarits JS (analyse acorn ; pas les cles d'objet, imports, selecteurs, cles de stockage, identifiants, morceaux colles a un `${}`, shaders) et texte HTML hors balises (+ aria-label, title, alt, placeholder). Dictionnaire `tools/accents.dict.json` (~350 mots) ; les mots ambigus (repare -> « Répare l'avion » / « Avion réparé ») choisissent selon le contexte (sujet, auxiliaire, debut ou fin de phrase) ; « a » devient « à » devant un article, un infinitif, un nombre ; une petite liste de corrections a la main (`EXCEPT`). 736 lignes dans 57 fichiers, relues. Tests mis a jour (terminal, cache-cache). La ville « Athènes » deja visitee est migree dans la sauvegarde.
+Relancer apres ajout de texte : `node tools/accents.mjs --diff` puis `--apply`.

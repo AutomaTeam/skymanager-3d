@@ -10,11 +10,11 @@
    Donnees : localStorage 'skymanager.hangar'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791576226';
 import {
   BODY_COLORS, ACCENT_COLORS, NOSE_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791575411';
+} from './livery.js?v=1791576226';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
@@ -24,7 +24,7 @@ const CATALOG = { body: BODY_COLORS, accent: ACCENT_COLORS, pattern: PATTERNS, s
 /* Onglets de peinture : 'nose' (nez / moteur) a son propre choix mais partage les couleurs d'accent possedees. */
 const LISTS = { ...CATALOG, nose: NOSE_COLORS };
 const OWN_KEY = (kind) => (kind === 'nose' ? 'accent' : kind);
-const SLOT_LABELS = ['Nez', 'Avant', 'Arriere'];
+const SLOT_LABELS = ['Nez', 'Avant', 'Arrière'];
 
 export class Hangar {
   constructor(game) {
@@ -281,18 +281,18 @@ export class Hangar {
     const t = this.trial;
     if (!t) return;
     if (t.kind === 'plane') {
-      if (!this._spend(t.price)) { sfx.oops(); this.g.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); return; }
+      if (!this._spend(t.price)) { sfx.oops(); this.g.toast('Pas assez de pièces… vole encore un peu !', 2400, 'warn'); return; }
       this.data.planes.push(t.id);
       this.data.selected = t.id;
       this.save();
       this.trial = null;
       sfx.levelUp(); this.g.arcade.confetti(60);
       this._showPreview(t.id);
-      this.g.fun.say(`Bravo ! ${planeOf(t.id).name} est a toi !`, 3);
+      this.g.fun.say(`Bravo ! ${planeOf(t.id).name} est à toi !`, 3);
       this._render();
       return;
     }
-    if (!this._spend(t.price)) { sfx.oops(); this.g.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); return; }
+    if (!this._spend(t.price)) { sfx.oops(); this.g.toast('Pas assez de pièces… vole encore un peu !', 2400, 'warn'); return; }
     this.data.owned[OWN_KEY(t.kind)].push(t.id);
     const lv = this.livery(this.previewId);
     if (t.kind === 'body') lv.body = t.id;
@@ -349,8 +349,8 @@ export class Hangar {
       }
       html += '</div>';
     } else if (this.tab === 'name') {
-      html += '<input id="hgName" class="hg-name" maxlength="12" autocomplete="off" placeholder="Ex : ECLAIR" />';
-      html += '<p class="hg-hint">Le nom apparait sur le flanc de ton avion.</p>';
+      html += '<input id="hgName" class="hg-name" maxlength="12" autocomplete="off" placeholder="Ex : ÉCLAIR" />';
+      html += '<p class="hg-hint">Le nom apparaît sur le flanc de ton avion.</p>';
       html += '<div class="hg-share"><button id="hgShare">📤 Partager mon avion</button><button id="hgImport">📥 Copier celui d\'un copain</button></div>';
     } else {
       const kind = this.tab;
@@ -403,7 +403,7 @@ export class Hangar {
       const lvOk = t.kind !== 'plane' || this.g.arcade.data.level >= PLANES[t.id].level;
       $('hgBuyTxt').innerHTML = lvOk
         ? `Essai : <b>${t.name}</b> — <b>${t.price} 🪙</b>${can ? '' : ' <em>(il te manque ' + (t.price - this.coins) + ' 🪙)</em>'}`
-        : `<b>${t.name}</b> se debloque au <b>niveau ${PLANES[t.id].level}</b>`;
+        : `<b>${t.name}</b> se débloque au <b>niveau ${PLANES[t.id].level}</b>`;
       $('hgBuyYes').classList.toggle('hidden', !lvOk);
       $('hgBuyYes').disabled = !can;
       bar.classList.remove('hidden');

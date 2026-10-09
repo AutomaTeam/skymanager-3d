@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { Vehicle } from './vehicle.js?v=1791575411';
-import { buildFireTruck } from './airportLife.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { Vehicle } from './vehicle.js?v=1791576226';
+import { buildFireTruck } from './airportLife.js?v=1791576226';
 
 const ENTER_RANGE = 6;
 const SPRAY_RANGE = 14;          // m entre le camion et le feu pour arroser
@@ -80,7 +80,7 @@ export class FireTruck extends Vehicle {
     g.r3d.airport.add(vis.group);
     this.fire = { x, z, hp: 1, t: FIRE_LIFE, vis };
     sfx.siren();
-    g.toast('🔥 AU FEU ! Une poubelle brule. Cours a la caserne prendre le camion de pompiers !', 5200, 'warn');
+    g.toast('🔥 AU FEU ! Une poubelle brûle. Cours à la caserne prendre le camion de pompiers !', 5200, 'warn');
     g.fun.say('Au feu ! Vite, le camion de pompiers est devant la caserne !', 3, 4200);
   }
 
@@ -90,7 +90,7 @@ export class FireTruck extends Vehicle {
     this.fire = null;
     g.r3d.airport.remove(f.vis.group);
     this.cd = 180 + Math.random() * 120;
-    if (!byPlayer) { g.toast('🚒 Les pompiers de l\'aeroport ont eteint le feu. La prochaine fois, ce sera toi !', 3600); return; }
+    if (!byPlayer) { g.toast('🚒 Les pompiers de l\'aéroport ont éteint le feu. La prochaine fois, ce sera toi !', 3600); return; }
     const A = g.arcade;
     A.giveCoins(REWARD, { silent: true, xp: 10 });
     A.data.stats.fires = (A.data.stats.fires || 0) + 1;
@@ -98,8 +98,8 @@ export class FireTruck extends Vehicle {
     A.save();
     sfx.tada();
     A.confetti(90);
-    g.toast(`🚒 Bravo pompier ! Le feu est eteint ! +${REWARD} 🪙`, 4200, 'ok');
-    g.fun.say('Tu es un vrai pompier ! Tout le monde est en securite !', 3, 3600);
+    g.toast(`🚒 Bravo pompier ! Le feu est éteint ! +${REWARD} 🪙`, 4200, 'ok');
+    g.fun.say('Tu es un vrai pompier ! Tout le monde est en sécurité !', 3, 3600);
     A.checkBadges();
   }
 
@@ -140,7 +140,7 @@ export class FireTruck extends Vehicle {
     this.model.group.visible = true;
     this._seat();
     sfx.siren();
-    g.toast(this.fire ? '🚒 Pin-pon ! Suis la fleche jusqu\'au feu, puis arrose-le !' : '🚒 Au volant du camion de pompiers ! Fais un tour… ou attends l\'alarme.', 4200, 'ok');
+    g.toast(this.fire ? '🚒 Pin-pon ! Suis la flèche jusqu\'au feu, puis arrose-le !' : '🚒 Au volant du camion de pompiers ! Fais un tour… ou attends l\'alarme.', 4200, 'ok');
   }
 
   _onExit() {
@@ -230,11 +230,11 @@ export class FireTruck extends Vehicle {
     if (!f || g.state !== 'HUB') return null;
     if (this.active) {
       return Math.hypot(f.x - this.x, f.z - this.z) < SPRAY_RANGE
-        ? { icon: '💦', text: 'Arrete-toi et appuie sur ARROSER LE FEU !', target: { x: f.x, z: f.z } }
-        : { icon: '🚒', text: 'Pin-pon ! Fonce jusqu\'au feu (suis la fleche) !', target: { x: f.x, z: f.z } };
+        ? { icon: '💦', text: 'Arrête-toi et appuie sur ARROSER LE FEU !', target: { x: f.x, z: f.z } }
+        : { icon: '🚒', text: 'Pin-pon ! Fonce jusqu\'au feu (suis la flèche) !', target: { x: f.x, z: f.z } };
     }
     if (g.driving) return null;
     const t = this._parked();
-    return { icon: '🔥', text: 'AU FEU ! Cours a la caserne et monte dans le camion de pompiers !', target: t ? { x: t.position.x, z: t.position.z - 6 } : null };
+    return { icon: '🔥', text: 'AU FEU ! Cours à la caserne et monte dans le camion de pompiers !', target: t ? { x: t.position.x, z: t.position.z - 6 } : null };
   }
 }

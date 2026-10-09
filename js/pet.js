@@ -13,15 +13,15 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { buildDog, emojiSprite } from './groundFun.js?v=1791575411';
+import * as Save from './save.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { buildDog, emojiSprite } from './groundFun.js?v=1791576226';
 
 const STORE = 'skymanager.pet';
 const SNIFF_RANGE = 30;          // m autour du joueur ou Biscuit sent une piece
 const PET_RANGE = 2.4;           // m pour le caresser
 const PET_LINES = [
-  '{n} remue la queue tres fort !',
+  '{n} remue la queue très fort !',
   '{n} te leche la main. Beurk... mais trop mignon !',
   '{n} fait une roulade de joie !',
   '{n} te donne la patte !',
@@ -255,7 +255,7 @@ export class Pet {
         this.g.toast(`🐕 ${this.data.name} a appris « ${T.name} » ! +8 🪙`, 4000, 'ok');
         if (Object.values(this.data.tricks).every(v => v >= LEARN)) { this.g.fun.say(`${this.data.name} sait faire TOUTES les astuces ! Quel chien intelligent !`, 3, 4800); this.g.arcade.giveStars(1); }
       } else {
-        this.g.arcade.popup(`🐕 Entrainement « ${T.name} » : ${this.data.tricks[id]}/${LEARN}`);
+        this.g.arcade.popup(`🐕 Entraînement « ${T.name} » : ${this.data.tricks[id]}/${LEARN}`);
       }
     } else this.g.arcade.popup(`🐕 ${T.name} !`);
     this.save();
@@ -272,7 +272,7 @@ export class Pet {
       g.arcade.confetti(50);
       sfx.sparkle();
       this._say('💎', 3);
-      g.toast(`🐕 ${this.data.name} a deterre un tresor rare ! 💎 +20 🪙${u ? ' · ' + u.label + ' !' : ''}`, 4800, 'ok');
+      g.toast(`🐕 ${this.data.name} a déterré un trésor rare ! 💎 +20 🪙${u ? ' · ' + u.label + ' !' : ''}`, 4800, 'ok');
     }
   }
 
@@ -283,8 +283,8 @@ export class Pet {
     this._build();
     sfx.bark();
     g.arcade.confetti(50);
-    g.toast(`🐕 ${this.data.name}, le chien que tu as rattrape, veut rester avec toi ! Il flaire les pieces cachees.`, 5200, 'ok');
-    g.fun.say(`${this.data.name} te suit partout maintenant ! Suis-le quand il aboie : il a trouve une piece !`, 3, 4800);
+    g.toast(`🐕 ${this.data.name}, le chien que tu as rattrapé, veut rester avec toi ! Il flaire les pièces cachées.`, 5200, 'ok');
+    g.fun.say(`${this.data.name} te suit partout maintenant ! Suis-le quand il aboie : il a trouvé une pièce !`, 3, 4800);
   }
 
   _build() {
@@ -329,7 +329,7 @@ export class Pet {
       if (coin.key !== this._sniffed) {
         this._sniffed = coin.key;
         this._barkCd = 0;
-        g.arcade.popup(`🐕 Wouf ! ${this.data.name} a flaire une piece cachee !`);
+        g.arcade.popup(`🐕 Wouf ! ${this.data.name} a flairé une pièce cachée !`);
       }
     } else {
       /* A cote du joueur (a sa gauche) et a peine en arriere : derriere lui, il se mettait entre

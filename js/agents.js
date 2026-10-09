@@ -35,7 +35,7 @@ export const MAX_ACTIVE = 24;
 
 /* Au-dela de cette distance du point d'interet, un agent passe a
    5 Hz : il accumule dt et avance d'un coup. */
-import { slideMove } from './bodies.js?v=1791575411';
+import { slideMove } from './bodies.js?v=1791576226';
 
 const SLOW_DIST = 95;
 const SLOW_DIST2 = SLOW_DIST * SLOW_DIST;
@@ -977,7 +977,7 @@ export class AgentSystem {
         problems.push(`${tag} : position non finie (wx=${a.wx}, wy=${a.wy}, wz=${a.wz})`);
       }
       if (!Number.isFinite(a.l) || !Number.isFinite(a.m)) {
-        problems.push(`${tag} : coordonnees locales non finies (l=${a.l}, m=${a.m})`);
+        problems.push(`${tag} : coordonnées locales non finies (l=${a.l}, m=${a.m})`);
       }
       if (!Number.isFinite(a.heading)) {
         problems.push(`${tag} : cap non fini (heading=${a.heading})`);
@@ -996,11 +996,11 @@ export class AgentSystem {
       if (a.mesh.group.visible && a !== this.controlled
           && this.nav.frames && this.nav.frames.aircraft
           && !this.nav.isWalkable(a.wx, a.wz)) {
-        problems.push(`${tag} : position affichee hors du graphe praticable (${a.wx.toFixed(1)}, ${a.wz.toFixed(1)})`);
+        problems.push(`${tag} : position affichée hors du graphe praticable (${a.wx.toFixed(1)}, ${a.wz.toFixed(1)})`);
       }
     }
     if (this.agents.length > MAX_ACTIVE) {
-      problems.push(`Plafond depasse : ${this.agents.length} agents construits pour MAX_ACTIVE=${MAX_ACTIVE}`);
+      problems.push(`Plafond dépassé : ${this.agents.length} agents construits pour MAX_ACTIVE=${MAX_ACTIVE}`);
     }
     return problems;
   }

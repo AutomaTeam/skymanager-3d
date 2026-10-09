@@ -42,24 +42,24 @@ export const MISSIONS = [
     crit: [
       { key: 'pax', label: 'Passagers', need: 120, of: c => c.pax },
       { key: 'fpm', label: 'Taux de chute < 320 fpm', need: 1, of: c => c.fpm < 320 ? 1 : 0 },
-      { key: 'offset', label: 'Ecart axe < 30 m', need: 1, of: c => c.offset < 30 ? 1 : 0 }
+      { key: 'offset', label: 'Écart axe < 30 m', need: 1, of: c => c.offset < 30 ? 1 : 0 }
     ]
   },
   {
     id: 'precision',
-    label: 'Poser de precision',
-    brief: 'Touchez la piste a moins de 150 fpm, dans un couloir de 8 m.',
+    label: 'Poser de précision',
+    brief: 'Touchez la piste à moins de 150 fpm, dans un couloir de 8 m.',
     reward: 70000, rep: 3,
     crit: [
       { key: 'fpm', label: 'Taux de chute < 150 fpm', need: 1, of: c => c.fpm < 150 ? 1 : 0 },
-      { key: 'offset', label: 'Ecart axe < 8 m', need: 1, of: c => c.offset < 8 ? 1 : 0 },
+      { key: 'offset', label: 'Écart axe < 8 m', need: 1, of: c => c.offset < 8 ? 1 : 0 },
       { key: 'bank', label: 'Inclinaison < 3 deg', need: 1, of: c => c.bank < 3 ? 1 : 0 }
     ]
   },
   {
     id: 'night',
     label: 'Vol de nuit',
-    brief: 'Decollez et posez-vous entre 20 h et 6 h, feux allumes.',
+    brief: 'Décollez et posez-vous entre 20 h et 6 h, feux allumés.',
     reward: 80000, rep: 3,
     crit: [
       { key: 'night', label: 'Poser de nuit', need: 1, of: c => c.night ? 1 : 0 },
@@ -68,18 +68,18 @@ export const MISSIONS = [
   },
   {
     id: 'economy',
-    label: 'Vol economique',
-    brief: 'Tenez au moins 3 minutes en brulant moins de 900 kg.',
+    label: 'Vol économique',
+    brief: 'Tenez au moins 3 minutes en brûlant moins de 900 kg.',
     reward: 60000, rep: 2,
     crit: [
-      { key: 'duration', label: 'Duree >= 180 s', need: 180, of: c => c.duration },
-      { key: 'fuel', label: 'Carburant brule <= 900 kg', need: 1, of: c => c.fuelUsed <= 900 ? 1 : 0 }
+      { key: 'duration', label: 'Durée >= 180 s', need: 180, of: c => c.duration },
+      { key: 'fuel', label: 'Carburant brûle <= 900 kg', need: 1, of: c => c.fuelUsed <= 900 ? 1 : 0 }
     ]
   },
   {
     id: 'crosswind',
     label: 'Vent traversier',
-    brief: 'Posez-vous avec au moins 7 m/s de vent de travers, ailes a plat.',
+    brief: 'Posez-vous avec au moins 7 m/s de vent de travers, ailes à plat.',
     reward: 85000, rep: 4,
     min: c => c.windSpeed >= 6,
     crit: [
@@ -90,18 +90,18 @@ export const MISSIONS = [
   },
   {
     id: 'altitude',
-    label: 'Croisiere haute',
+    label: 'Croisière haute',
     brief: 'Montez au-dessus de 8 000 ft et tenez 4 minutes de vol.',
     reward: 65000, rep: 2,
     crit: [
       { key: 'alt', label: 'Altitude max >= 8 000 ft', need: 8000, of: c => c.maxAlt },
-      { key: 'duration', label: 'Duree >= 240 s', need: 240, of: c => c.duration }
+      { key: 'duration', label: 'Durée >= 240 s', need: 240, of: c => c.duration }
     ]
   },
   {
     id: 'clean',
     label: 'Appareil irreprochable',
-    brief: 'Volez avec un appareil dont aucun composant ne depasse 55 % d\'usure.',
+    brief: 'Volez avec un appareil dont aucun composant ne dépasse 55 % d\'usure.',
     reward: 55000, rep: 3,
     crit: [
       { key: 'wear', label: 'Usure max < 55 %', need: 1, of: c => c.worstWear < 55 ? 1 : 0 },
@@ -114,7 +114,7 @@ export const MISSIONS = [
     brief: 'Sept minutes de vol et 10 000 ft au compteur.',
     reward: 110000, rep: 5,
     crit: [
-      { key: 'duration', label: 'Duree >= 420 s', need: 420, of: c => c.duration },
+      { key: 'duration', label: 'Durée >= 420 s', need: 420, of: c => c.duration },
       { key: 'alt', label: 'Altitude max >= 10 000 ft', need: 10000, of: c => c.maxAlt }
     ]
   }

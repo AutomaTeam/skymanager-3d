@@ -7,31 +7,31 @@
    Module du registre (js/registry.js). Etat : skymanager.jobs.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import * as Save from './save.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import * as Save from './save.js?v=1791576226';
 
 const STORE = 'skymanager.jobs';
 
 /* src : 'a' = arcade.data.stats, 'f' = fun.data.stats. */
 export const JOBS = [
   { id: 'fire', ico: '🚒', name: 'Pompier', shirt: 0xef4444, cap: 0xef4444, tasks: [
-    { text: 'Eteins un feu avec le camion', src: 'a', key: 'fires', n: 1 },
+    { text: 'Éteins un feu avec le camion', src: 'a', key: 'fires', n: 1 },
     { text: 'Rassure 2 personnes (dis bonjour)', src: 'a', key: 'greet', n: 2 },
-    { text: 'Prends une photo de l\'equipe', src: 'f', key: 'photos', n: 1 }] },
+    { text: 'Prends une photo de l\'équipe', src: 'f', key: 'photos', n: 1 }] },
   { id: 'bags', ico: '🧳', name: 'Bagagiste', shirt: 0xfacc15, cap: 0xfacc15, tasks: [
     { text: 'Livre 2 chargements de valises (tracteur)', src: 'a', key: 'tugTrips', n: 2 },
     { text: 'Fais un plein avec le camion citerne', src: 'a', key: 'refuels', n: 1 },
     { text: 'Nettoie la piste avec la balayeuse', src: 'a', key: 'sweeps', n: 1 }] },
   { id: 'guide', ico: '🗺️', name: 'Guide', shirt: 0x06b6d4, cap: 0xf5f5f5, tasks: [
-    { text: 'Dis bonjour a 4 personnes', src: 'a', key: 'greet', n: 4 },
-    { text: 'Trouve 2 pieces cachees', src: 'a', key: 'treasure', n: 2 },
+    { text: 'Dis bonjour à 4 personnes', src: 'a', key: 'greet', n: 4 },
+    { text: 'Trouve 2 pièces cachées', src: 'a', key: 'treasure', n: 2 },
     { text: 'Prends une photo de groupe (selfie)', src: 'f', key: 'photos', n: 1 }] },
-  { id: 'mech', ico: '🔧', name: 'Mecanicien', shirt: 0x3b82f6, cap: 0x111827, tasks: [
-    { text: 'Repare 3 pieces de l\'avion', src: 'a', key: 'repair', n: 3 },
+  { id: 'mech', ico: '🔧', name: 'Mécanicien', shirt: 0x3b82f6, cap: 0x111827, tasks: [
+    { text: 'Répare 3 pièces de l\'avion', src: 'a', key: 'repair', n: 3 },
     { text: 'Fais le plein avec le camion citerne', src: 'a', key: 'refuels', n: 1 },
-    { text: 'Amene l\'escalier a la porte de l\'avion', src: 'a', key: 'stairsTrips', n: 1 }] },
-  { id: 'ctrl', ico: '🗼', name: 'Controleur', shirt: 0xf8fafc, cap: 0x22c55e, tasks: [
-    { text: 'Verifie 4 passagers au terminal', src: 'a', key: 'serve', n: 4 },
+    { text: 'Amène l\'escalier à la porte de l\'avion', src: 'a', key: 'stairsTrips', n: 1 }] },
+  { id: 'ctrl', ico: '🗼', name: 'Contrôleur', shirt: 0xf8fafc, cap: 0x22c55e, tasks: [
+    { text: 'Vérifie 4 passagers au terminal', src: 'a', key: 'serve', n: 4 },
     { text: 'Sers 3 passagers en cabine', src: 'a', key: 'cabinServe', n: 3 },
     { text: 'Conduis le bus une fois', src: 'a', key: 'busTrips', n: 1 }] }
 ];
@@ -81,8 +81,8 @@ export class Jobs {
       const done = this.data.done.includes(j.id);
       const on = act && act.id === j.id;
       return `<button class="job-card${done ? ' done' : ''}${on ? ' on' : ''}" data-job="${j.id}"><span class="jc-ico">${j.ico}</span><b>${j.name}</b>` +
-        `<small>${on ? `Tache ${this.data.active.i + 1}/3 : ${this.task.text}` : j.tasks.map((t, i) => `${i + 1}. ${t.text}`).join('<br>')}</small>` +
-        `<em>${done ? '✔ Fait aujourd\'hui' : on ? '▶ En cours' : 'Je choisis ce metier !'}</em></button>`;
+        `<small>${on ? `Tâche ${this.data.active.i + 1}/3 : ${this.task.text}` : j.tasks.map((t, i) => `${i + 1}. ${t.text}`).join('<br>')}</small>` +
+        `<em>${done ? '✔ Fait aujourd\'hui' : on ? '▶ En cours' : 'Je choisis ce métier !'}</em></button>`;
     }).join('');
     host.querySelectorAll('[data-job]').forEach(b => b.addEventListener('click', () => { this.start(b.dataset.job); this.close(); }));
     const stop = document.getElementById('jobStop');
@@ -131,7 +131,7 @@ export class Jobs {
     if (a.i + 1 < j.tasks.length) {
       a.i++; a.base = this._stat(j.tasks[a.i]);
       this.save();
-      g.toast(`${j.ico} Bravo ! Tache suivante : ${j.tasks[a.i].text}.`, 3800, 'ok');
+      g.toast(`${j.ico} Bravo ! Tâche suivante : ${j.tasks[a.i].text}.`, 3800, 'ok');
       return;
     }
     /* metier termine */
@@ -139,11 +139,11 @@ export class Jobs {
     this.data.active = null;
     A.giveCoins(15, { silent: true, xp: 15 });
     sfx.tada(); A.confetti(80);
-    let msg = `${j.ico} Metier de ${j.name} termine ! +15 🪙`;
+    let msg = `${j.ico} Métier de ${j.name} terminé ! +15 🪙`;
     if (new Set(this.data.done).size >= 3 && !this.data.bonus) {
       this.data.bonus = true;
       A.giveCoins(40, { silent: true, xp: 25 });
-      msg += ' · 3 metiers dans la journee : bonus +40 🪙 !';
+      msg += ' · 3 métiers dans la journée : bonus +40 🪙 !';
     }
     this.save();
     this._restoreLook();

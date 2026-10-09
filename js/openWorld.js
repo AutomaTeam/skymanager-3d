@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { itemOf } from './deco.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { itemOf } from './deco.js?v=1791576226';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -50,13 +50,13 @@ function waterNormal() {
 }
 
 export const ISLANDS = [
-  { id: 'lighthouse', ico: '🗼', name: 'Ile du Phare',         x: 3200, z: -4300, r: 210, hint: 'Le phare veille sur la mer' },
-  { id: 'palm',       ico: '🏝️', name: 'Ile aux Palmiers',     x: 2250, z: -4900, r: 270, hint: 'Sable chaud et cocotiers',
+  { id: 'lighthouse', ico: '🗼', name: 'Île du Phare',         x: 3200, z: -4300, r: 210, hint: 'Le phare veille sur la mer' },
+  { id: 'palm',       ico: '🏝️', name: 'Île aux Palmiers',     x: 2250, z: -4900, r: 270, hint: 'Sable chaud et cocotiers',
     strip: { x: -120, len: 340, w: 26, ico: '🍦', text: 'Le marchand de glaces te sert une glace !', coins: 15 } },
-  { id: 'fun',        ico: '🎡', name: 'Ile des Manèges',      x: 4350, z: -4550, r: 320, hint: 'Un parc d\'attractions geant',
+  { id: 'fun',        ico: '🎡', name: 'Île des Manèges',      x: 4350, z: -4550, r: 320, hint: 'Un parc d\'attractions géant',
     strip: { x: -190, len: 340, w: 26, ico: '🎟️', text: 'Un billet gratuit pour le grand huit !', coins: 15 } },
-  { id: 'castle',     ico: '🏰', name: 'Ile du Chateau',       x: 2400, z: -6150, r: 310, hint: 'Chevaliers et dragons ?' },
-  { id: 'volcano',    ico: '🌋', name: 'Ile du Volcan',        x: 3950, z: -6050, r: 390, hint: 'Attention, il fume !' },
+  { id: 'castle',     ico: '🏰', name: 'Île du Château',       x: 2400, z: -6150, r: 310, hint: 'Chevaliers et dragons ?' },
+  { id: 'volcano',    ico: '🌋', name: 'Île du Volcan',        x: 3950, z: -6050, r: 390, hint: 'Attention, il fume !' },
   { id: 'ice',        ico: '🧊', name: 'Banquise des Pingouins', x: 3250, z: -6700, r: 300, hint: 'Brrr ! Il fait froid ici' }
 ];
 export const islandOf = (id) => ISLANDS.find(i => i.id === id);
@@ -266,7 +266,7 @@ export class OpenWorld {
     if (this.g.r3d.activePlane === 'hydravion' && this.isWater(ac.pos.x, ac.pos.z) && !ac.crashed) {
       const tr = this.g.fun.trail, f = ac.forward();
       if (tr) for (let i = 0; i < 24; i++) tr.emit(ac.pos.x + (Math.random() - 0.5) * 10 - f.x * 4, 1, ac.pos.z + (Math.random() - 0.5) * 10 - f.z * 4, 0xe8f6ff, 4 + Math.random() * 4, 1.2 + Math.random());
-      this._egg('splash', '💦', 'Amerrissage reussi ! Splash !', 15);
+      this._egg('splash', '💦', 'Amerrissage réussi ! Splash !', 15);
       this.g.arcade.event('splash');
       return;
     }
@@ -290,7 +290,7 @@ export class OpenWorld {
         sd.paid = true;
         A.giveCoins(30, { silent: true, xp: 20 });
         A.confetti(80); sfx.levelUp();
-        this.g.toast('🏝️🏝️ Tour des iles reussi ! +30 🪙', 4200, 'ok');
+        this.g.toast('🏝️🏝️ Tour des îles réussi ! +30 🪙', 4200, 'ok');
       }
       this.save();
       return;
@@ -485,8 +485,8 @@ export class OpenWorld {
       arc.giveCoins(bonus, { silent: true, xp: 20 });
       arc.confetti(80);
       this.fireworks(s.x, s.y + 40, s.z, 4);
-      this.g.toast(`🌠 ${n} etoiles trouvees ! Bonus +${bonus} 🪙`, 4200, 'ok');
-      this.g.fun.say(n >= this.stars.length ? 'TOUTES les etoiles ! Tu es legendaire !' : `${n} etoiles ! Continue, il en reste ${this.stars.length - n} !`, 3);
+      this.g.toast(`🌠 ${n} étoiles trouvées ! Bonus +${bonus} 🪙`, 4200, 'ok');
+      this.g.fun.say(n >= this.stars.length ? 'TOUTES les étoiles ! Tu es légendaire !' : `${n} étoiles ! Continue, il en reste ${this.stars.length - n} !`, 3);
       if (n >= this.stars.length) this._unlockSticker('crown');
     }
     this.save();
@@ -507,10 +507,10 @@ export class OpenWorld {
         arc.giveCoins(20, { silent: true, xp: 12 });
         arc.confetti(60); sfx.tada();
         arc.event('island');
-        this.g.toast(`${isl.ico} ${isl.name} decouverte ! +20 🪙`, 4400, 'ok');
+        this.g.toast(`${isl.ico} ${isl.name} découverte ! +20 🪙`, 4400, 'ok');
         this.g.fun.say(`${isl.ico} Regarde, ${isl.name} ! ${isl.hint}.`, 3, 4200);
         this.fireworks(isl.x, 160, isl.z, 2);
-        if (this.data.islands.length === ISLANDS.length) { this._unlockSticker('shark'); arc.giveCoins(50, { silent: true }); this.g.toast('🏆 Les 6 iles ! Explorateur du monde ! +50 🪙', 5000, 'ok'); }
+        if (this.data.islands.length === ISLANDS.length) { this._unlockSticker('shark'); arc.giveCoins(50, { silent: true }); this.g.toast('🏆 Les 6 îles ! Explorateur du monde ! +50 🪙', 5000, 'ok'); }
         this.save();
       }
     }
@@ -598,7 +598,7 @@ export class OpenWorld {
       if (this._lowT > 1.2) {
         this._lowT = 0;
         if (this._lowCoins < 12) { this._lowCoins++; g.arcade.giveCoins(1, { silent: true }); g.arcade.popup('🌊 Rase-mottes ! +1 🪙'); sfx.swoosh(0.5, 900, 300); }
-        if (g.sky.m && g.sky.m.charges !== undefined && g.sky.m.charges < 7) { g.sky.m.charges = 7; g.arcade.popup('💧 Reservoir plein !'); g.fun.say('Reservoir rempli ! On retourne eteindre les feux !', 2); }
+        if (g.sky.m && g.sky.m.charges !== undefined && g.sky.m.charges < 7) { g.sky.m.charges = 7; g.arcade.popup('💧 Réservoir plein !'); g.fun.say('Réservoir rempli ! On retourne éteindre les feux !', 2); }
       }
     } else this._lowT = Math.max(0, this._lowT - dt);
   }
@@ -640,7 +640,7 @@ export class OpenWorld {
       this.shoot.dir.set(-Math.sin(a) + Math.random() * 0.4, -0.25, Math.cos(a)).normalize();
       this.shoot.life = 1.2;
       sfx.sparkle();
-      if (Math.random() < 0.5) g.fun.say('Une etoile filante ! Fais un voeu !', 1, 3000);
+      if (Math.random() < 0.5) g.fun.say('Une étoile filante ! Fais un vœu !', 1, 3000);
     }
     const sh = this.shoot;
     if (sh && sh.life > 0) {

@@ -14,19 +14,19 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791575411';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791575411';
-import { UPGRADES } from './airportTycoon.js?v=1791575411';
-import { planeOf } from './fleet.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791576226';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791576226';
+import { UPGRADES } from './airportTycoon.js?v=1791576226';
+import { planeOf } from './fleet.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const fmt = (n) => Math.round(n).toLocaleString('fr-FR');
 
 const TABS = [
-  { id: 'overview', ico: '📊', name: 'Apercu' },
-  { id: 'team', ico: '👥', name: 'Equipe' },
+  { id: 'overview', ico: '📊', name: 'Aperçu' },
+  { id: 'team', ico: '👥', name: 'Équipe' },
   { id: 'shop', ico: '🛒', name: 'Boutique' },
   { id: 'stats', ico: '📈', name: 'Stats' },
   { id: 'goals', ico: '🎯', name: 'Objectifs' }
@@ -61,7 +61,7 @@ export class Hub {
           <div class="hub-title">
             <span class="hub-logo">🏢</span>
             <div class="min-w-0">
-              <input id="hubName" class="hub-name" maxlength="20" autocomplete="off" spellcheck="false" aria-label="Nom de ton aeroport">
+              <input id="hubName" class="hub-name" maxlength="20" autocomplete="off" spellcheck="false" aria-label="Nom de ton aéroport">
               <div id="hubSub" class="hub-sub"></div>
             </div>
           </div>
@@ -137,19 +137,19 @@ export class Hub {
       if (!r.ok) { sfx.oops(); g.toast(r.why, 2200, 'warn'); } else g.toast(`${ROLE[v].ico} ${ROLE[v].name} recrute(e) !`, 2600, 'ok');
     } else if (k === 'train') {
       const r = g.staff.train(v);
-      if (!r.ok) { sfx.oops(); g.toast(r.why, 2200, 'warn'); } else g.toast(`🎓 ${ROLE[v].name} : formation reussie !`, 2600, 'ok');
+      if (!r.ok) { sfx.oops(); g.toast(r.why, 2200, 'warn'); } else g.toast(`🎓 ${ROLE[v].name} : formation réussie !`, 2600, 'ok');
     } else if (k === 'buy') {
-      if (ty.buyUpgrade(v)) { sfx.levelUp(); arc.confetti(50); arc.event('buy'); g.toast(`🎉 ${this.kid.KID_UPGRADE[v].name} achete(e) !`, 2600, 'ok'); }
-      else { sfx.oops(); g.toast('Pas assez de pieces...', 2000, 'warn'); }
+      if (ty.buyUpgrade(v)) { sfx.levelUp(); arc.confetti(50); arc.event('buy'); g.toast(`🎉 ${this.kid.KID_UPGRADE[v].name} acheté(e) !`, 2600, 'ok'); }
+      else { sfx.oops(); g.toast('Pas assez de pièces...', 2000, 'warn'); }
     } else if (k === 'plane') {
-      if (ty.buyAircraft()) { sfx.levelUp(); arc.confetti(70); arc.event('buy'); g.toast('✈️ Nouvel avion livre ! Il gagne des pieces pour toi.', 3200, 'ok'); }
-      else { sfx.oops(); g.toast(ty.fleet.length >= ty.infrastructure.gates ? 'Il faut d\'abord une nouvelle porte !' : 'Pas assez de pieces...', 2400, 'warn'); }
+      if (ty.buyAircraft()) { sfx.levelUp(); arc.confetti(70); arc.event('buy'); g.toast('✈️ Nouvel avion livré ! Il gagne des pièces pour toi.', 3200, 'ok'); }
+      else { sfx.oops(); g.toast(ty.fleet.length >= ty.infrastructure.gates ? 'Il faut d\'abord une nouvelle porte !' : 'Pas assez de pièces...', 2400, 'warn'); }
     } else if (k === 'price') {
       ty.ticketPrice = parseInt(v, 10); ty.save(); sfx.click();
     } else if (k === 'theme') {
       if (arc.data.themes.includes(v)) { arc.setTheme(v); sfx.click(); }
-      else if (arc.buyTheme(v)) g.toast(`🎨 Carte « ${MAP_THEMES[v].name} » debloquee !`, 2600, 'ok');
-      else { sfx.oops(); g.toast('Pas assez de pieces...', 2000, 'warn'); }
+      else if (arc.buyTheme(v)) g.toast(`🎨 Carte « ${MAP_THEMES[v].name} » débloquée !`, 2600, 'ok');
+      else { sfx.oops(); g.toast('Pas assez de pièces...', 2000, 'warn'); }
     } else if (k === 'gift') {
       const r = arc.openGift();
       if (r) g.toast(`🎁 +${r.coins} 🪙 ! 🔥 Jour ${r.streak}/7${r.bonus ? ' · ' + r.bonus + ' !' : r.streak < 7 ? ' : reviens demain, le cadeau grossit !' : ''}`, 4600, 'ok');
@@ -163,7 +163,7 @@ export class Hub {
     const nm = this.root.querySelector('#hubName');
     if (document.activeElement !== nm) nm.value = arc.data.name;
     this.root.querySelector('#hubSub').textContent =
-      `Niveau ${arc.data.level} · ${arc.data.stats.flights} vol${arc.data.stats.flights > 1 ? 's' : ''} · ${g.staff.total} employe${g.staff.total > 1 ? 's' : ''}`;
+      `Niveau ${arc.data.level} · ${arc.data.stats.flights} vol${arc.data.stats.flights > 1 ? 's' : ''} · ${g.staff.total} employé${g.staff.total > 1 ? 's' : ''}`;
     this.root.querySelector('#hubCoins').textContent = fmt(arc.coins);
     this.root.querySelectorAll('.hub-tab').forEach(t => t.classList.toggle('on', t.dataset.act === 'tab:' + this.tab));
     /* Pastilles d'alerte sur les onglets. */
@@ -197,7 +197,7 @@ export class Hub {
 
     const html = `<div class="hub-grid">
       ${tile('gold', 'tab:shop', `
-        <div class="ht-h"><span>💰</span>Tresor</div>
+        <div class="ht-h"><span>💰</span>Trésor</div>
         <div class="ht-big">${fmt(arc.coins)} <small>🪙</small></div>
         <div class="ht-row">⭐ ${arc.data.stars} · Niveau <b>${arc.data.level}</b>/${MAX_LEVEL} · ${titleOf(arc.data.level)}</div>
         <div class="xp-bar big"><span class="xp-fill" style="width:${Math.round(arc.xpProgress() * 100)}%"></span></div>
@@ -206,30 +206,30 @@ export class Hub {
       ${tile('', 'tab:goals', `
         <div class="ht-h"><span>⚡</span>Objectif</div>
         <div class="ht-goal"><span>${goal.icon}</span><p>${goal.text}</p></div>
-        <div class="ht-row">Defis du jour : ${'●'.repeat(done)}${'○'.repeat(Math.max(0, arc.dailyItems.length - done))} ${arc.giftReady() ? '· 🎁 cadeau pret !' : ''}</div>`)}
+        <div class="ht-row">Défis du jour : ${'●'.repeat(done)}${'○'.repeat(Math.max(0, arc.dailyItems.length - done))} ${arc.giftReady() ? '· 🎁 cadeau prêt !' : ''}</div>`)}
       ${tile('', 'tab:team', `
-        <div class="ht-h"><span>👥</span>Equipe <em>${g.staff.total}/${g.staff.slots}</em></div>
+        <div class="ht-h"><span>👥</span>Équipe <em>${g.staff.total}/${g.staff.slots}</em></div>
         <div class="ht-icons">${hiredIcons}</div>
-        <div class="ht-note">${ROLES.some(r => g.staff.canHire(r.id).ok) ? '✨ Tu peux recruter quelqu\'un !' : 'Ils travaillent meme quand tu voles.'}</div>`)}
+        <div class="ht-note">${ROLES.some(r => g.staff.canHire(r.id).ok) ? '✨ Tu peux recruter quelqu\'un !' : 'Ils travaillent même quand tu voles.'}</div>`)}
       ${tile('', null, `
         <div class="ht-h"><span>🏢</span>Terminal <em>${moodFace}</em></div>
         <div class="ht-row">Ambiance ${bar(mood)}<b>${Math.round(mood)}%</b></div>
-        <div class="ht-row">Files <b>${term.totalQueue()}</b> · Embarques <b>${term.boarded}</b> · Caisses <b>${term.counters.storage.crates}</b></div>
+        <div class="ht-row">Files <b>${term.totalQueue()}</b> · Embarqués <b>${term.boarded}</b> · Caisses <b>${term.counters.storage.crates}</b></div>
         <div class="ht-row ht-stock">${machines.map(c => `<span>${{ shop: '🛍️', cafe: '☕', vending: '🥤' }[c.id]}${bar(c.stock / 12 * 100)}</span>`).join('')}</div>`)}
       ${tile('', null, `
         <div class="ht-h"><span>✈️</span>Avion <em>${g.state === 'PILOT' && !ac.onGround ? 'en vol' : 'au parking'}</em></div>
-        <div class="ht-row">Sante ${bar(health)}<b>${Math.round(health)}%</b></div>
+        <div class="ht-row">Santé ${bar(health)}<b>${Math.round(health)}%</b></div>
         <div class="ht-row">Carburant ${bar(ac.fuel / ac.fuelCap * 100, 'b')}<b>${Math.round(ac.fuel / ac.fuelCap * 100)}%</b></div>
-        <div class="ht-note">${worst && worst[1].wear > 40 ? '🔧 A surveiller : ' + (worst[1].label || worst[0]) : '✅ Tout va bien'}</div>`)}
+        <div class="ht-note">${worst && worst[1].wear > 40 ? '🔧 À surveiller : ' + (worst[1].label || worst[0]) : '✅ Tout va bien'}</div>`)}
       ${tile('', null, `
         <div class="ht-h"><span>🥤</span>Cabine <em>${face}</em></div>
         <div class="ht-row">Satisfaction ${bar(sat)}<b>${Math.round(sat)}%</b></div>
-        <div class="ht-note">Boutique a bord : ${fmt(Math.floor(cab.dutyFreeRevenue / COIN))} 🪙</div>`)}
+        <div class="ht-note">Boutique à bord : ${fmt(Math.floor(cab.dutyFreeRevenue / COIN))} 🪙</div>`)}
       ${tile('', 'tab:shop', `
         <div class="ht-h"><span>🛫</span>Flotte</div>
         <div class="ht-row"><b>${ty.fleet.length}</b> avion${ty.fleet.length > 1 ? 's' : ''} · <b>${ty.infrastructure.gates}</b> porte${ty.infrastructure.gates > 1 ? 's' : ''}</div>
         <div class="ht-row">≈ <b>${est.pax}</b> passagers par vol</div>
-        <div class="ht-row">Reputation ${bar(ty.reputation, 'b')}<b>${Math.round(ty.reputation)}%</b></div>`)}
+        <div class="ht-row">Réputation ${bar(ty.reputation, 'b')}<b>${Math.round(ty.reputation)}%</b></div>`)}
       <div class="hub-tile map" data-slot="map"><div class="ht-h"><span>🗺️</span>En direct</div><div id="hubMapSlot"></div></div>
     </div>`;
 
@@ -242,7 +242,7 @@ export class Hub {
   /* ----- Equipe ----- */
   _team() {
     const st = this.g.staff, arc = this.g.arcade;
-    return `<p class="hub-intro">Recrute des employes : ils travaillent tout seuls, <b>meme quand tu voles ou que tu es en cabine</b>. Forme-les pour qu'ils aillent plus vite et se trompent moins.</p>
+    return `<p class="hub-intro">Recrute des employés : ils travaillent tout seuls, <b>même quand tu voles ou que tu es en cabine</b>. Forme-les pour qu'ils aillent plus vite et se trompent moins.</p>
       <div class="hub-list">${ROLES.map(r => {
         const h = st.hired[r.id], hire = st.canHire(r.id), tr = st.canTrain(r.id);
         const locked = !st.isUnlocked(r.id);
@@ -250,7 +250,7 @@ export class Hub {
           <div class="hr-ico">${locked ? '🔒' : r.ico}</div>
           <div class="hr-mid">
             <div class="hr-name">${r.name} <em>${h.n}/${r.max}</em></div>
-            <div class="hr-desc">${locked ? `Debloque au niveau ${r.unlock} (tu es niveau ${arc.data.level})` : r.desc}</div>
+            <div class="hr-desc">${locked ? `Débloque au niveau ${r.unlock} (tu es niveau ${arc.data.level})` : r.desc}</div>
             <div class="hr-lvl">${h.n ? `Formation niveau ${h.lvl}/3 · fiable ${Math.round(st.accuracy(r.id) * 100)} %` : ''}</div>
           </div>
           <div class="hr-btns">
@@ -288,7 +288,7 @@ export class Hub {
       return `<button class="theme-btn${on ? ' on' : ''}${owned ? '' : ' locked'}" data-act="theme:${id}">${t.ico}<small>${t.name}</small><span class="pr">${on ? '✔ choisi' : owned ? 'choisir' : t.cost + ' 🪙'}</span>
         <span class="sw" style="background:linear-gradient(90deg,${t.grass} 33%,${t.runway} 33% 66%,${t.hangar} 66%)"></span></button>`;
     }).join('');
-    return `<h3 class="hub-h3">Ameliorations</h3><div class="hub-list">${ups}${plane}</div>
+    return `<h3 class="hub-h3">Améliorations</h3><div class="hub-list">${ups}${plane}</div>
       <h3 class="hub-h3">Prix des billets</h3><div class="grid grid-cols-3 gap-2">${prices}</div>
       <p class="hub-dim">Billet cher = moins de passagers. Billet pas cher = plus de passagers.</p>
       <h3 class="hub-h3">Style de la mini-carte</h3><div class="grid grid-cols-4 gap-2">${themes}</div>`;
@@ -322,7 +322,7 @@ export class Hub {
     /* Barres : gain de chaque vol, couleur selon les etoiles. */
     const bars = () => {
       const f = hist.flights;
-      if (!f.length) return '<div class="hub-empty">Aucun vol pour l\'instant : decolle pour remplir ce graphique ! 🛫</div>';
+      if (!f.length) return '<div class="hub-empty">Aucun vol pour l\'instant : décolle pour remplir ce graphique ! 🛫</div>';
       const max = Math.max(...f.map(v => v.coins), 10);
       return `<div class="fbars">${f.map(v => `<div class="fb" title="${v.city || 'Vol libre'} : +${v.coins} pieces, ${v.pax} passagers">
         <b>+${v.coins}</b><span class="fbar s${v.stars}" style="height:${Math.max(6, Math.round(v.coins / max * 100))}%"></span>
@@ -331,16 +331,16 @@ export class Hub {
 
     const s = arc.data.stats;
     const cards = [
-      ['🛫', 'Vols', s.flights], ['🪙', 'Pieces gagnees', fmt(arc.data.coinsEarned)], ['🧳', 'Passagers embarques', fmt(g.terminal.boarded)],
-      ['⭐', 'Atterrissages parfaits', s.star3], ['🟡', 'Anneaux', s.rings], ['✨', 'Pieces cachees', s.treasure]
+      ['🛫', 'Vols', s.flights], ['🪙', 'Pièces gagnées', fmt(arc.data.coinsEarned)], ['🧳', 'Passagers embarqués', fmt(g.terminal.boarded)],
+      ['⭐', 'Atterrissages parfaits', s.star3], ['🟡', 'Anneaux', s.rings], ['✨', 'Pièces cachées', s.treasure]
     ].map(c => `<div class="stat-card"><span>${c[0]}</span><b>${c[2]}</b><small>${c[1]}</small></div>`).join('');
 
     return `<div class="stat-cards">${cards}</div>
       <div class="hub-charts">
-        <div class="hub-chart"><h3 class="hub-h3">💰 Pieces</h3>${chart([{ values: hist.series('coins'), color: '#fbbf24', label: 'Pieces' }])}</div>
+        <div class="hub-chart"><h3 class="hub-h3">💰 Pièces</h3>${chart([{ values: hist.series('coins'), color: '#fbbf24', label: 'Pièces' }])}</div>
         <div class="hub-chart"><h3 class="hub-h3">😊 Bonheur</h3>${chart([{ values: hist.series('mood'), color: '#38bdf8', label: 'Ambiance du hall' }, { values: hist.series('sat'), color: '#f472b6', label: 'Satisfaction cabine' }], { min: 0, max: 100, unit: '%' })}</div>
-        <div class="hub-chart"><h3 class="hub-h3">🧳 Passagers embarques</h3>${chart([{ values: hist.series('boarded'), color: '#4ade80', label: 'Embarques' }])}</div>
-        <div class="hub-chart"><h3 class="hub-h3">👥 Equipe</h3>${chart([{ values: hist.series('staff'), color: '#a78bfa', label: 'Employes' }])}</div>
+        <div class="hub-chart"><h3 class="hub-h3">🧳 Passagers embarqués</h3>${chart([{ values: hist.series('boarded'), color: '#4ade80', label: 'Embarqués' }])}</div>
+        <div class="hub-chart"><h3 class="hub-h3">👥 Équipe</h3>${chart([{ values: hist.series('staff'), color: '#a78bfa', label: 'Employés' }])}</div>
       </div>
       <h3 class="hub-h3">🛫 Gains des derniers vols</h3>${bars()}`;
   }
@@ -351,17 +351,17 @@ export class Hub {
     const daily = arc.dailyItems.map(d => `<div class="kid-daily-row${d.done ? ' done' : ''}"><span class="ico">${d.done ? '✅' : d.icon}</span><span>${d.label} <b>(${d.progress}/${d.target})</b></span><span class="rw">+${d.reward} 🪙</span></div>`).join('');
     const gf = arc.data.gift, ready = arc.giftReady(), streak = (gf && gf.streak) || 0;
     const gift = `<div class="kid-gift${ready ? ' ready' : ''}"><span class="gi">${ready ? '🎁' : '📭'}</span>
-      <div class="gt"><b>${ready ? 'Ton cadeau du jour est la !' : 'Cadeau ouvert, a demain !'}</b>${streak > 0 ? `🔥 ${streak} jour${streak > 1 ? 's' : ''} de suite` : 'Reviens chaque jour pour un plus gros cadeau'}</div>
+      <div class="gt"><b>${ready ? 'Ton cadeau du jour est là !' : 'Cadeau ouvert, à demain !'}</b>${streak > 0 ? `🔥 ${streak} jour${streak > 1 ? 's' : ''} de suite` : 'Reviens chaque jour pour un plus gros cadeau'}</div>
       <button data-act="gift" ${ready ? '' : 'disabled'}>${ready ? 'OUVRIR' : '✔'}</button></div>`;
     const th = arc.treasureHeat();
-    const trea = th ? `<div class="kid-treasure"><div class="coins">${arc.data.treasure.got.map(v => `<i class="${v ? 'on' : ''}">🪙</i>`).join('')}</div><div class="flex-1">${th.found}/${th.total} trouvees.<br><span class="hub-dim">${th.txt}</span></div></div>` : '<div class="hub-dim">Sors sur le tarmac pour les decouvrir !</div>';
+    const trea = th ? `<div class="kid-treasure"><div class="coins">${arc.data.treasure.got.map(v => `<i class="${v ? 'on' : ''}">🪙</i>`).join('')}</div><div class="flex-1">${th.found}/${th.total} trouvées.<br><span class="hub-dim">${th.txt}</span></div></div>` : '<div class="hub-dim">Sors sur le tarmac pour les découvrir !</div>';
     const trips = DESTINATIONS.map(d => `<span class="trip${arc.data.visited.includes(d.city) ? ' on' : ''}" title="${d.city}">${arc.data.visited.includes(d.city) ? d.flag : '❔'}</span>`).join('');
     const got = arc.data.badges;
     const badges = BADGES.map(b => { const on = !!got[b.id]; return `<div class="badge${on ? ' on' : ''}"><span class="b-ico">${on ? b.ico : '❓'}</span><b>${on ? b.name : '???'}</b><small>${b.desc}</small></div>`; }).join('');
     return `${gift}
-      <h3 class="hub-h3">Defis du jour</h3><div class="space-y-1.5">${daily}</div>
-      <h3 class="hub-h3">Chasse aux pieces cachees</h3>${trea}
+      <h3 class="hub-h3">Défis du jour</h3><div class="space-y-1.5">${daily}</div>
+      <h3 class="hub-h3">Chasse aux pièces cachées</h3>${trea}
       <h3 class="hub-h3">Carnet de voyage <em>${arc.data.visited.length}/${DESTINATIONS.length}</em></h3><div class="trips">${trips}</div>
-      <h3 class="hub-h3">Trophees <em>${arc.badgeCount()}/${BADGES.length}</em></h3><div class="album-grid">${badges}</div>`;
+      <h3 class="hub-h3">Trophées <em>${arc.badgeCount()}/${BADGES.length}</em></h3><div class="album-grid">${badges}</div>`;
   }
 }

@@ -20,7 +20,7 @@ export class ModuleRegistry {
      de mise a jour (les plus petits d'abord, a egalite l'ordre d'ajout) ; opts.hooks = false : le module
      ne fournit ni bodies/goal/tips au registre (il les expose lui-meme). Rend l'instance. */
   add(id, mod, { update = true, order = 0, hooks = true } = {}) {
-    if (this.g[id] && this.g[id] !== mod) throw new Error('module deja enregistre : ' + id);
+    if (this.g[id] && this.g[id] !== mod) throw new Error('module déjà enregistré : ' + id);
     this.g[id] = mod;
     this.list.push({ id, mod, order, hooks, update: update && typeof mod.update === 'function' });
     this.list.sort((a, b) => a.order - b.order);      // tri stable : l'ordre d'ajout departage

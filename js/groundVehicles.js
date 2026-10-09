@@ -13,9 +13,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { Vehicle } from './vehicle.js?v=1791575411';
-import { emojiSprite } from './groundFun.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { Vehicle } from './vehicle.js?v=1791576226';
+import { emojiSprite } from './groundFun.js?v=1791576226';
 
 const ENTER_RANGE = 5.5;
 
@@ -97,7 +97,7 @@ export class FuelTruck extends GroundVehicle {
       name: 'CAMION CITERNE', maxFwd: 7, maxRev: 2.4, wheelbase: 4.2, maxSteer: 0.55, reach: 3.6, hl: 3.6, hw: 1.3,
       cam: { look: 1.8, ahead: 4.5, height: 6.5, dist: 13.5, follow: 3, fov: 62 },
       enterLabel: '🚚 CONDUIRE LE CAMION CITERNE',
-      intro: '🚚 Camion citerne ! Va a l\'anneau orange, a cote de l\'avion, et reste immobile 4 secondes pour faire le plein.'
+      intro: '🚚 Camion citerne ! Va à l\'anneau orange, à côté de l\'avion, et reste immobile 4 secondes pour faire le plein.'
     }, { x: 318, z: 1112, h: Math.PI });
     this.fill = 0;
     this.cool = 0;
@@ -145,7 +145,7 @@ export class FuelTruck extends GroundVehicle {
         A.data.stats.refuels = (A.data.stats.refuels || 0) + 1;
         A.save();
         sfx.tada(); A.confetti(40);
-        g.toast('⛽ Plein fait ! L\'avion est pret. +9 🪙', 3200, 'ok');
+        g.toast('⛽ Plein fait ! L\'avion est prêt. +9 🪙', 3200, 'ok');
         g.ac.fuel = Math.max(g.ac.fuel, planeFuel(g));
       }
     } else this.fill = Math.max(0, this.fill - dt * 2);
@@ -153,7 +153,7 @@ export class FuelTruck extends GroundVehicle {
 
   goal() {
     if (!this.active) return null;
-    return { icon: '🚚', text: this.cool > 0 ? 'Plein termine ! Tu peux descendre ou refaire un tour.' : 'Va a l\'anneau orange a cote de l\'avion, puis reste immobile.', target: this.cool > 0 ? null : this._fuelPoint() };
+    return { icon: '🚚', text: this.cool > 0 ? 'Plein terminé ! Tu peux descendre ou refaire un tour.' : 'Va à l\'anneau orange à côté de l\'avion, puis reste immobile.', target: this.cool > 0 ? null : this._fuelPoint() };
   }
 }
 const planeFuel = (g) => (g.ac.fuelCap || 9000);
@@ -167,7 +167,7 @@ export class Sweeper extends GroundVehicle {
       name: 'BALAYEUSE', maxFwd: 6.5, maxRev: 2.2, wheelbase: 3.0, maxSteer: 0.6, reach: 2.4, hl: 2.4, hw: 1.2,
       cam: { look: 1.6, ahead: 4, height: 6.2, dist: 12, follow: 3, fov: 62 },
       enterLabel: '🧹 CONDUIRE LA BALAYEUSE',
-      intro: '🧹 Balayeuse ! Ramasse les debris (anneaux jaunes) avant la fin du temps : chaque debris rapporte des pieces.'
+      intro: '🧹 Balayeuse ! Ramasse les débris (anneaux jaunes) avant la fin du temps : chaque débris rapporte des pièces.'
     }, { x: 334, z: 1105, h: Math.PI });
     this.debris = [];
     this.timer = 0;
@@ -241,17 +241,17 @@ export class Sweeper extends GroundVehicle {
       sfx.tada(); A.confetti(60);
       A.data.stats.sweeps = (A.data.stats.sweeps || 0) + 1; A.save();
       g.toast(`🧹 Piste propre en ${Math.round(70 - this.timer)} s ! Bonus +${12 + Math.round(this.timer / 5)} 🪙`, 4200, 'ok');
-    } else g.toast(`🧹 Temps ecoule : ${this.picked} debris ramasses. Bravo quand meme !`, 3200);
+    } else g.toast(`🧹 Temps écoulé : ${this.picked} débris ramassés. Bravo quand même !`, 3200);
     /* On peut recommencer tout de suite. */
     setTimeout(() => { if (this.active) this._spawn(); }, 2500);
   }
 
   goal() {
     if (!this.active) return null;
-    if (!this.debris.length) return { icon: '🧹', text: 'Piste propre ! Une nouvelle serie arrive…', target: null };
+    if (!this.debris.length) return { icon: '🧹', text: 'Piste propre ! Une nouvelle série arrive…', target: null };
     let best = this.debris[0], bd = 1e9;
     for (const d of this.debris) { const k = Math.hypot(d.x - this.x, d.z - this.z); if (k < bd) { bd = k; best = d; } }
-    return { icon: '🧹', text: `Ramasse les debris ! ${this.picked}/8 · ${Math.max(0, Math.ceil(this.timer))} s`, target: { x: best.x, z: best.z } };
+    return { icon: '🧹', text: `Ramasse les débris ! ${this.picked}/8 · ${Math.max(0, Math.ceil(this.timer))} s`, target: { x: best.x, z: best.z } };
   }
 }
 
@@ -264,7 +264,7 @@ export class Stairs extends GroundVehicle {
       name: 'ESCALIER', maxFwd: 5, maxRev: 2, wheelbase: 2.6, maxSteer: 0.6, reach: 2.2, hl: 2.0, hw: 1.2,
       cam: { look: 1.5, ahead: 3.5, height: 6, dist: 11.5, follow: 3, fov: 62 },
       enterLabel: '🪜 CONDUIRE L\'ESCALIER MOBILE',
-      intro: '🪜 Escalier mobile ! Amene-le a la porte de l\'avion (anneau bleu) et arrete-toi : les passagers descendent.'
+      intro: '🪜 Escalier mobile ! Amène-le à la porte de l\'avion (anneau bleu) et arrête-toi : les passagers descendent.'
     }, { x: 350, z: 1100, h: Math.PI });
     this.hold = 0;
     this.cool = 0;
@@ -308,13 +308,13 @@ export class Stairs extends GroundVehicle {
         A.giveCoins(8 + Math.floor(n / 2), { silent: true, xp: n });
         A.data.stats.stairsTrips = (A.data.stats.stairsTrips || 0) + 1; A.save();
         sfx.tada(); A.confetti(40);
-        g.toast(`🪜 ${n} passagers descendent en toute securite ! +${8 + Math.floor(n / 2)} 🪙`, 3600, 'ok');
+        g.toast(`🪜 ${n} passagers descendent en toute sécurité ! +${8 + Math.floor(n / 2)} 🪙`, 3600, 'ok');
       }
     } else this.hold = Math.max(0, this.hold - dt * 2);
   }
 
   goal() {
     if (!this.active) return null;
-    return { icon: '🪜', text: this.cool > 0 ? 'Passagers descendus ! Bravo.' : 'Amene l\'escalier a la porte de l\'avion (anneau bleu), puis arrete-toi.', target: this.cool > 0 ? null : this._doorPoint() };
+    return { icon: '🪜', text: this.cool > 0 ? 'Passagers descendus ! Bravo.' : 'Amène l\'escalier à la porte de l\'avion (anneau bleu), puis arrête-toi.', target: this.cool > 0 ? null : this._doorPoint() };
   }
 }

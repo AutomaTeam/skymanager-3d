@@ -33,17 +33,17 @@
   <div class="text-center px-8">
     <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-sky-400">SKYMANAGER <span class="text-white">3D</span></h1>
     <p class="mt-2 text-xs sm:text-sm uppercase tracking-[0.3em] text-slate-400">Ultimate Aviation Experience</p>
-    <p id="bootMsg" class="mt-8 text-sm text-slate-400">Chargement des systemes...</p>
+    <p id="bootMsg" class="mt-8 text-sm text-slate-400">Chargement des systèmes...</p>
     <div id="bootBar" class="boot-bar"><div id="bootFill" class="boot-fill"></div></div>
     <!-- Plus de menu de depart : le jeu arrive directement a l'aeroport en mode Arcade. Ces boutons restent caches (le code les relie encore). -->
     <div style="display:none">
     <div id="modePick" class="hidden mt-6 flex gap-3 justify-center">
       <button id="modeArcade" class="mode-btn on"><span class="mode-ico">🎮</span><span class="mode-t">Arcade</span><span class="mode-s">facile et fun</span></button>
-      <button id="modePro" class="mode-btn"><span class="mode-ico">🛠️</span><span class="mode-t">Pilote</span><span class="mode-s">simulation complete</span></button>
+      <button id="modePro" class="mode-btn"><span class="mode-ico">🛠️</span><span class="mode-t">Pilote</span><span class="mode-s">simulation complète</span></button>
     </div>
     </div>
     <div id="pilotCard" class="arcade-only hidden mt-5 pilot-card">
-      <input id="pilotName" maxlength="12" autocomplete="off" placeholder="Ton prenom de pilote" />
+      <input id="pilotName" maxlength="12" autocomplete="off" placeholder="Ton prénom de pilote" />
       <div class="av-row">
         <button class="av-btn" data-av="🧑‍✈️">🧑‍✈️</button><button class="av-btn" data-av="🦊">🦊</button><button class="av-btn" data-av="🐱">🐱</button><button class="av-btn" data-av="🐶">🐶</button><button class="av-btn" data-av="🤖">🤖</button><button class="av-btn" data-av="🦄">🦄</button><button class="av-btn" data-av="🐼">🐼</button><button class="av-btn" data-av="🐸">🐸</button>
       </div>
@@ -61,7 +61,7 @@
     </div>
     <p id="streakBadge" class="arcade-only hidden mt-3 streak-badge"></p>
     <p id="bootTip" class="mt-6 text-[11px] text-slate-500 max-w-xs mx-auto">
-      <span id="bootTipOrientation">Orientation paysage recommandee. </span>Ajoutez la page a l'ecran d'accueil pour le plein ecran.
+      <span id="bootTipOrientation">Orientation paysage recommandée. </span>Ajoutez la page à l'écran d'accueil pour le plein écran.
     </p>
   </div>
 </div>
@@ -124,7 +124,7 @@
   </div>
 
   <!-- Mode Arcade : gros boutons d'action -->
-  <button id="launchBtn" class="arcade-only hidden big-btn launch">🛫 DECOLLER !</button>
+  <button id="launchBtn" class="arcade-only hidden big-btn launch">🛫 DÉCOLLER !</button>
   <button id="helpLandBtn" class="arcade-only hidden big-btn help">🛬 ATTERRIR (aide)</button>
   <div id="ringChip" class="arcade-only hidden ring-chip">🟡 Anneaux <span id="ringN">0</span>/5</div>
   <div id="stuntChip" class="arcade-only hidden stunt-chip"></div>
@@ -136,7 +136,7 @@
   <!-- Boutons fun (vague 1) : acrobaties, turbo, fumee, photo -->
   <div id="funPad" class="arcade-only hidden fun-pad">
     <button id="btnPhoto" class="fun-btn small" title="Photo (P)"><span>📸</span></button>
-    <button id="btnTrail" class="fun-btn small" title="Fumee (F)"><span>💨</span></button>
+    <button id="btnTrail" class="fun-btn small" title="Fumée (F)"><span>💨</span></button>
     <button id="btnHover" class="fun-btn hidden hover" title="Vol stationnaire (H)"><span>⏸</span><small>STOP</small></button>
     <button id="btnLoop" class="fun-btn" title="Looping (E)"><span>🔄</span><small>LOOPING</small></button>
     <button id="btnRoll" class="fun-btn" title="Tonneau (R)"><span>🌀</span><small>TONNEAU</small></button>
@@ -194,7 +194,7 @@
 
   <div class="hud-top">
     <div class="px-4 py-1.5 rounded-full bg-slate-900/70 border border-slate-700 text-xs uppercase tracking-widest">
-      Aeroport — <span id="hubAreaName">Tarmac</span>
+      Aéroport — <span id="hubAreaName">Tarmac</span>
     </div>
   </div>
 
@@ -204,7 +204,7 @@
         <div class="chip"><span class="text-slate-400">AMBIANCE</span> <span id="termMood" class="text-emerald-300 font-semibold">72</span><span class="text-slate-400">%</span></div>
         <div class="chip pro-only"><span class="text-slate-400">POSTES</span> <span id="termOpen" class="text-sky-300 font-semibold">0</span><span class="text-slate-400">/</span><span id="termTotal" class="text-slate-400">0</span></div>
         <div class="chip"><span class="text-slate-400">FILE</span> <span id="termQueue" class="text-slate-100 font-semibold">0</span></div>
-        <div class="chip"><span class="text-slate-400">EMBARQUES</span> <span id="termBoarded" class="text-emerald-300 font-semibold">0</span></div>
+        <div class="chip"><span class="text-slate-400">EMBARQUÉS</span> <span id="termBoarded" class="text-emerald-300 font-semibold">0</span></div>
         <div class="chip pro-only"><span class="text-slate-400">RECETTE</span> <span id="termRevenue" class="text-amber-300 font-semibold">0</span> <span class="text-slate-400">EUR</span></div>
         <div class="chip pro-only"><span class="text-slate-400">PERDUS</span> <span id="termMissed" class="text-rose-300 font-semibold">0</span></div>
         <div class="chip"><span class="text-slate-400">STOCK</span> <span id="termStock" class="font-semibold">--</span></div>
@@ -227,14 +227,14 @@
 
   <!-- Rappel clavier (PC uniquement) -->
   <div class="pc-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
-    &#8592;&#8593;&#8594;&#8595; ou ZQSD pour se deplacer &middot; Shift pour courir
+    &#8592;&#8593;&#8594;&#8595; ou ZQSD pour se déplacer &middot; Shift pour courir
   </div>
 
   <!-- Rappel tactile (mobile/tablette uniquement) : le joystick reste
        discret au repos (voir .stick-base), ce texte est ce qui permet
        a un joueur tactile de decouvrir comment se deplacer. -->
   <div class="touch-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
-    Glissez en bas a gauche pour vous deplacer
+    Glissez en bas à gauche pour vous déplacer
   </div>
 
   <!-- Bouton d'interaction contextuel : son libelle change selon le point approche
@@ -268,11 +268,11 @@
     <div class="hud-band-inline">
       <div id="cabGoal" class="arcade-only chip cab-goal">🎯 Service : 0/5</div>
       <div class="chip"><span class="text-slate-400">CHARIOT</span> <span id="cabStock" class="text-sky-300 font-semibold">12</span><span class="text-slate-400">/12</span></div>
-      <div class="chip pro-only"><span class="text-slate-400">RANGEE CRITIQUE</span> <span id="cabWorst" class="text-amber-300 font-semibold">1</span></div>
+      <div class="chip pro-only"><span class="text-slate-400">RANGÉE CRITIQUE</span> <span id="cabWorst" class="text-amber-300 font-semibold">1</span></div>
       <div class="chip pro-only" id="cabBeltChip"><span class="text-slate-400">CEINTURES</span> <span id="cabBelt" class="text-slate-300 font-semibold">OFF</span></div>
     </div>
     <div id="cabHint" class="hud-hint">
-      Deplacez-vous dans l'allee pour servir les passagers.
+      Déplacez-vous dans l'allée pour servir les passagers.
     </div>
   </div>
 
@@ -289,7 +289,7 @@
   <!-- Alerte turbulences -->
     <div id="turbAlert" class="hidden absolute top-[11.5rem] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10">
       <div id="turbText" class="alert-box sev-critical alert-flash">
-        TURBULENCES — ANNONCEZ LA CONSIGNE DE SECURITE
+        TURBULENCES — ANNONCEZ LA CONSIGNE DE SÉCURITÉ
     </div>
     <div class="w-48 h-2 rounded-full bg-slate-800 border border-slate-600 overflow-hidden">
       <div id="turbBar" class="h-full bg-red-500" style="width:100%"></div>
@@ -305,10 +305,10 @@
     <div id="cabStickBase" class="stick-base"><div id="cabStickKnob" class="stick-knob"></div></div>
   </div>
   <div class="pc-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
-    &#8593; avancer &middot; &#8595; demi-tour &middot; &#8592;&#8594; se decaler
+    &#8593; avancer &middot; &#8595; demi-tour &middot; &#8592;&#8594; se décaler
   </div>
   <div class="touch-hint hidden pointer-events-none absolute left-3 bottom-3 text-[10px] text-slate-400 leading-relaxed">
-    Glissez en bas a gauche : haut = avancer, bas = demi-tour
+    Glissez en bas à gauche : haut = avancer, bas = demi-tour
   </div>
 
   <!-- Bouton d'interaction contextuel -->
@@ -326,31 +326,31 @@
       <h2 class="panel-title"><span class="arcade-only">⏸️ </span>Pause</h2>
       <span id="pauseState" class="chip">Au sol</span>
     </div>
-    <p class="panel-sub pro-only">Deplacez-vous librement dans l'aeroport : approchez-vous de l'avion pour piloter, embarquer en cabine ou inspecter la maintenance, et de la tour pour gerer la compagnie.</p>
-    <p class="panel-sub arcade-only">Fais une pause, joue avec le ciel ou regarde tes trophees !</p>
+    <p class="panel-sub pro-only">Déplacez-vous librement dans l'aéroport : approchez-vous de l'avion pour piloter, embarquer en cabine ou inspecter la maintenance, et de la tour pour gérer la compagnie.</p>
+    <p class="panel-sub arcade-only">Fais une pause, joue avec le ciel ou regarde tes trophées !</p>
 
     <div class="space-y-2">
       <button id="pauseResume" class="panel-btn primary">▶️ Reprendre</button>
       <button id="pauseExit" class="hidden panel-btn">Sortir vers le tarmac</button>
-      <button id="pauseResetRunway" class="pro-only panel-btn">Aligner sur la piste (reinitialiser le vol)</button>
+      <button id="pauseResetRunway" class="pro-only panel-btn">Aligner sur la piste (réinitialiser le vol)</button>
     </div>
 
     <!-- Arcade : grosses tuiles -->
     <div class="arcade-only">
       <!-- Deux petits groupes pour l'enfant ; les reglages vont dans « Plus d'options ». -->
-      <p class="panel-group-lbl">🎉 A jouer</p>
+      <p class="panel-group-lbl">🎉 À jouer</p>
       <div class="kp-grid kp-3">
         <button id="pauseStory" class="kp-tile kp-story"><span class="kp-ico">📖</span><b>Mon aventure</b><small id="pauseStoryN">les chapitres</small></button>
         <button id="pauseHangar" class="kp-tile"><span class="kp-ico">🎨</span><b>Mon hangar</b><small>avions et peinture</small></button>
-        <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
+        <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>décorer l'aéroport</small></button>
         <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
-        <button id="pauseMap" class="kp-tile"><span class="kp-ico">🗺️</span><b>Grande carte</b><small id="pauseMapN">pieces cachees</small></button>
+        <button id="pauseMap" class="kp-tile"><span class="kp-ico">🗺️</span><b>Grande carte</b><small id="pauseMapN">pièces cachées</small></button>
         <button id="pauseLook" class="kp-tile"><span class="kp-ico">👕</span><b>Mon perso</b><small>mes couleurs</small></button>
       </div>
-      <p class="panel-group-lbl">🏆 Mes tresors</p>
+      <p class="panel-group-lbl">🏆 Mes trésors</p>
       <div class="kp-grid kp-3">
-        <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophees</b><small id="pauseAlbumN">0 / 15</small></button>
-        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📚</span><b>Ma collection</b><small>avions, iles, surprises</small></button>
+        <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophées</b><small id="pauseAlbumN">0 / 15</small></button>
+        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📚</span><b>Ma collection</b><small>avions, îles, surprises</small></button>
         <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
         <button id="pausePet" class="kp-tile hidden"><span class="kp-ico">🐕</span><b>Mon chien</b><small id="pausePetName">Biscuit</small></button>
       </div>
@@ -362,7 +362,7 @@
           <button data-sky="13">☀️<small>Midi</small></button>
           <button data-sky="18.5">🌇<small>Soir</small></button>
           <button data-sky="23">🌙<small>Nuit</small></button>
-          <button id="pauseWeatherKid">🌦️<small>Meteo</small></button>
+          <button id="pauseWeatherKid">🌦️<small>Météo</small></button>
         </div>
         <p id="pauseEnvInfoKid" class="panel-note">--:-- · --</p>
       </div>
@@ -380,11 +380,11 @@
     </div>
 
     <div class="panel-group pro-only">
-      <p class="panel-group-lbl">Heure et meteo</p>
+      <p class="panel-group-lbl">Heure et météo</p>
       <div class="panel-row">
         <button id="pauseHourBack" class="panel-btn sm">-1 h</button>
         <button id="pauseHourFwd" class="panel-btn sm">+1 h</button>
-        <button id="pauseWeather" class="panel-btn sm">Meteo</button>
+        <button id="pauseWeather" class="panel-btn sm">Météo</button>
       </div>
       <p id="pauseEnvInfo" class="panel-note">--:-- · --</p>
     </div>
@@ -393,32 +393,32 @@
       <summary>⚙️ Plus d'options</summary>
       <div class="pilot-card arcade-only" style="margin:.6rem 0">
         <p class="panel-group-lbl">🧑‍✈️ Mon pilote</p>
-        <input id="pausePilotName" maxlength="12" autocomplete="off" placeholder="Ton prenom de pilote" />
+        <input id="pausePilotName" maxlength="12" autocomplete="off" placeholder="Ton prénom de pilote" />
         <div class="av-row">
           <button class="av-btn" data-av="🧑‍✈️">🧑‍✈️</button><button class="av-btn" data-av="🦊">🦊</button><button class="av-btn" data-av="🐱">🐱</button><button class="av-btn" data-av="🐶">🐶</button><button class="av-btn" data-av="🤖">🤖</button><button class="av-btn" data-av="🦄">🦄</button><button class="av-btn" data-av="🐼">🐼</button><button class="av-btn" data-av="🐸">🐸</button>
         </div>
       </div>
       <div class="kp-grid arcade-only kp-opts">
-        <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
+        <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumée</b><small>Nuage blanc</small></button>
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
-        <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Reglages</b><small>musique, confort</small></button>
-        <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupee</small></button>
-        <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulte</b><small>Normal</small></button>
-        <button id="pauseJobs" class="kp-tile"><span class="kp-ico">👷</span><b>Mon metier</b><small>aujourd'hui je suis…</small></button>
+        <button id="pauseSettings" class="kp-tile"><span class="kp-ico">⚙️</span><b>Réglages</b><small>musique, confort</small></button>
+        <button id="pauseVoice" class="kp-tile"><span class="kp-ico">🤐</span><b>Voix de Coco</b><small>coupée</small></button>
+        <button id="pauseDiff" class="kp-tile"><span class="kp-ico">✈️</span><b>Difficulté</b><small>Normal</small></button>
+        <button id="pauseJobs" class="kp-tile"><span class="kp-ico">👷</span><b>Mon métier</b><small>aujourd'hui je suis…</small></button>
         <button id="pauseSleep" class="kp-tile"><span class="kp-ico">😴</span><b>Dormir</b><small>jusqu'au matin</small></button>
-        <button id="pauseLost" class="kp-tile"><span class="kp-ico">🧭</span><b>Je suis perdu</b><small>retour a l'aeroport</small></button>
+        <button id="pauseLost" class="kp-tile"><span class="kp-ico">🧭</span><b>Je suis perdu</b><small>retour à l'aéroport</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
         <button id="pauseMode" class="kp-tile" style="display:none"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
       </div>
       <div class="panel-group">
         <p class="panel-group-lbl">Progression</p>
-        <button id="pauseResetProgress" class="panel-btn danger sm">Reinitialiser la progression</button>
-        <p class="panel-note">Efface tout : pieces, avions, decorations, etoiles, trophees, statistiques. Les reglages restent.</p>
+        <button id="pauseResetProgress" class="panel-btn danger sm">Réinitialiser la progression</button>
+        <p class="panel-note">Efface tout : pièces, avions, décorations, étoiles, trophées, statistiques. Les réglages restent.</p>
       </div>
       <div class="panel-group">
         <p class="panel-group-lbl">Credits</p>
-        <p class="panel-note">Modeles 3D via poly.pizza : Quaternius (personnage, camionnette), Kay Lousberg (fret) — CC0.
+        <p class="panel-note">Modèles 3D via poly.pizza : Quaternius (personnage, camionnette), Kay Lousberg (fret) — CC0.
           « Simple Suitcase » par Don Carson et « Generator » par KolosStudios — CC-BY.</p>
       </div>
     </details>
@@ -444,7 +444,7 @@
 <div id="unrulyPanel" class="hidden panel-overlay">
   <div class="panel-card center">
     <h2 class="panel-title text-amber-400">Incident cabine</h2>
-    <p id="unrulyText" class="panel-sub mt-2">Un passager refuse d'eteindre son appareil electronique.</p>
+    <p id="unrulyText" class="panel-sub mt-2">Un passager refuse d'éteindre son appareil électronique.</p>
     <div class="space-y-2">
       <button id="btnCalm" class="panel-btn primary">Apaiser la situation</button>
       <button id="btnCaptain" class="panel-btn">Appeler le commandant de bord</button>
@@ -464,7 +464,7 @@
 
     <div id="partsGroup" class="panel-group pro-only">
       <div class="flex items-center justify-between mb-2">
-        <p class="panel-group-lbl !mb-0">Magasin de pieces</p>
+        <p class="panel-group-lbl !mb-0">Magasin de pièces</p>
         <span id="partsCash" class="text-[11px] text-emerald-300">-- EUR</span>
       </div>
       <div id="partsList" class="grid grid-cols-2 gap-2"></div>
@@ -478,8 +478,8 @@
 <div id="minigame" class="hidden panel-overlay">
   <div class="panel-card center">
     <h2 id="mgTitle" class="panel-title text-sky-400">Serrage au couple</h2>
-    <p id="mgSub" class="panel-sub mt-1">Tapez quand le repere passe dans la zone verte</p>
-    <p id="mgStep" class="text-[11px] font-semibold text-amber-300 mb-4">Etape 1/3 — Serrage</p>
+    <p id="mgSub" class="panel-sub mt-1">Tapez quand le repère passe dans la zone verte</p>
+    <p id="mgStep" class="text-[11px] font-semibold text-amber-300 mb-4">Étape 1/3 — Serrage</p>
 
     <div id="mgTrack" class="relative w-full h-5 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
       <div id="mgZone" class="absolute top-0 bottom-0 bg-emerald-500/40 border-x-2 border-emerald-400"></div>
@@ -505,17 +505,17 @@
   <div class="panel-card wide">
     <div class="panel-head">
       <div>
-        <h2 class="panel-title">Gestion de l'aeroport</h2>
-        <p class="panel-sub !mb-0">Les decisions prises ici modifient la recette du prochain vol.</p>
+        <h2 class="panel-title">Gestion de l'aéroport</h2>
+        <p class="panel-sub !mb-0">Les décisions prises ici modifient la recette du prochain vol.</p>
       </div>
       <button id="tycoonClose" class="panel-btn sm !w-auto px-3">Fermer</button>
     </div>
 
     <!-- Indicateurs -->
     <div class="grid grid-cols-3 gap-2 mt-3">
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Tresorerie</span><span id="tyCash" class="tycoon-stat-val">0 EUR</span></div>
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Reputation</span><span id="tyRep" class="tycoon-stat-val">0%</span></div>
-      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Vols effectues</span><span id="tyFlights" class="tycoon-stat-val">0</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Trésorerie</span><span id="tyCash" class="tycoon-stat-val">0 EUR</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Réputation</span><span id="tyRep" class="tycoon-stat-val">0%</span></div>
+      <div class="tycoon-stat"><span class="tycoon-stat-lbl">Vols effectués</span><span id="tyFlights" class="tycoon-stat-val">0</span></div>
     </div>
 
     <!-- Onglets : la carte est longue, on la decoupe pour rester lisible sur telephone -->
@@ -566,7 +566,7 @@
 
       <!-- Apercu du prochain vol : rend visible l'effet des decisions -->
       <div class="tycoon-section">
-        <h3 class="tycoon-h3">Apercu du prochain vol</h3>
+        <h3 class="tycoon-h3">Aperçu du prochain vol</h3>
         <div id="tyEstimate" class="estimate-list"></div>
       </div>
     </div>
@@ -619,7 +619,7 @@
       <svg id="objArrow" class="obj-arrow hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5 L21.5 21 L12 16.4 L2.5 21 Z"/></svg>
       <div id="objDist" class="obj-dist"></div>
     </div>
-    <button id="objSkip" class="obj-skip hidden" type="button" aria-label="Passer cette etape">Passer ⏭</button>
+    <button id="objSkip" class="obj-skip hidden" type="button" aria-label="Passer cette étape">Passer ⏭</button>
   </div>
   <div id="coinChip" class="hidden coin-chip">
     <span class="coin-row"><b>🪙</b> <span id="coinN">0</span></span>
@@ -638,7 +638,7 @@
       <button data-trick="spin" aria-label="Tourne">🔄<small>Tourne</small></button>
       <button data-trick="five" aria-label="Haut la">✋<small>Haut-là</small></button>
     </div>
-    <button id="petBall" class="fun-main hidden" aria-label="Lancer la balle a ton chien">🎾</button>
+    <button id="petBall" class="fun-main hidden" aria-label="Lancer la balle à ton chien">🎾</button>
     <button id="funToggle" class="fun-main" aria-label="Petits gestes rigolos">🎈</button>
     <div id="funRow" class="fun-row hidden">
       <button data-emote="honk" data-scope="hub" aria-label="Klaxon">📯</button>
@@ -646,7 +646,7 @@
       <button data-emote="candy" data-scope="cabin" aria-label="Bonbons">🍬</button>
       <button data-emote="music" data-scope="cabin term" aria-label="Musique">🎵</button>
       <button data-emote="hello" aria-label="Saluer">👋</button>
-      <button data-emote="party" aria-label="Fete">🎉</button>
+      <button data-emote="party" aria-label="Fête">🎉</button>
       <button data-emote="dance" data-scope="hub term" aria-label="Danser">💃</button>
       <button data-emote="selfie" aria-label="Selfie">📸</button>
     </div>
@@ -678,7 +678,7 @@
     </div>
   </div>
   <div id="flightSteps" class="hidden flight-steps">
-    <span data-fs="0">🛫<b>Decolle</b></span><i></i>
+    <span data-fs="0">🛫<b>Décolle</b></span><i></i>
     <span data-fs="1">🟡<b>Anneaux <em id="fsRings">0/5</em></b></span><i></i>
     <span data-fs="2">🛬<b>Atterris</b></span>
   </div>
@@ -712,18 +712,18 @@
     <div id="helpCards" class="help-cards"></div>
     <p class="panel-sub help-more">Plus d'explications :</p>
     <div class="help-list">
-      <details><summary>🕹️ Se deplacer</summary><p>Glisse le pouce en bas a gauche (ou fleches / ZQSD). Pousse a fond (ou Shift) pour courir. La <b>fleche jaune</b> en haut et le <b>faisceau de lumiere</b> montrent toujours ou aller.</p></details>
-      <details><summary>🔧 Reparer l'avion</summary><p>Va sur un point colore autour de l'avion et appuie sur le gros bouton. Plus la piece est usee, plus tu gagnes de pieces.</p></details>
-      <details><summary>🏢 Le terminal</summary><p>Place-toi devant un comptoir et lis le dossier du passager : un billet, un bagage, un plateau... Si tout est bon, valide. Sinon refuse ou fais payer. Recharge les machines avec des caisses de la reserve.</p></details>
-      <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DECOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dores</b> et ramasse les pieces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
-      <details><summary>🥤 La cabine</summary><p>Avance dans l'allee et sers les passagers qui ont une bulle. 💬 = une question (reponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
-      <details><summary>⚡ Missions, combos, defis</summary><p>Enchaine les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les defis du jour et la chasse aux pieces cachees sont dans la tour.</p></details>
-      <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour monter sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de cote pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pieces quand tu te poses tranquille. Le <b>skatepark</b> est pres de la tour !</p></details>
-      <details><summary>🚜 Le tracteur a bagages</summary><p>Approche-toi du tracteur jaune (il attend souvent devant le terminal) et appuie sur <b>CONDUIRE LE TRACTEUR</b>. Haut = avancer, bas = reculer, gauche/droite = tourner. Charge les valises sur l'<b>anneau bleu</b> (au terminal), puis livre-les a la soute de l'avion sur l'<b>anneau orange</b>. Contourne l'avion par devant !</p></details>
-      <details><summary>🚌 Le bus des passagers</summary><p>Monte dans le bus jaune (il attend souvent devant le terminal) : les passagers montent sur l'<b>anneau bleu</b>, puis emmene-les jusqu'au grand avion gare plus loin, sur l'<b>anneau orange</b>.</p></details>
-      <details><summary>🚒 Au feu les pompiers !</summary><p>Quand l'alarme sonne, une poubelle brule quelque part. Cours a la <b>caserne</b> (la fleche te guide), monte dans le camion de pompiers, fonce jusqu'au feu et appuie plusieurs fois sur <b>ARROSER LE FEU</b>. Tu deviens un vrai pompier !</p></details>
-      <details><summary>🐕 Ton chien et les gens</summary><p>Rattrape un chien echappe : il devient ton compagnon ! Il te suit, aboie quand il sent une <b>piece cachee</b> (suis-le !) et rapporte la balle 🎾. Caresse-le, change son nom dans le menu pause. Pres de quelqu'un, appuie sur <b>DIRE BONJOUR</b> : chacun a quelque chose a te raconter.</p></details>
-      <details><summary>🗼 La tour de controle</summary><p>C'est ton bureau : cadeau du jour, boutique (billets, ameliorations, nouvel avion, style de carte) et album de trophees.</p></details>
+      <details><summary>🕹️ Se déplacer</summary><p>Glisse le pouce en bas à gauche (ou flèches / ZQSD). Pousse à fond (ou Shift) pour courir. La <b>flèche jaune</b> en haut et le <b>faisceau de lumière</b> montrent toujours où aller.</p></details>
+      <details><summary>🔧 Réparer l'avion</summary><p>Va sur un point coloré autour de l'avion et appuie sur le gros bouton. Plus la pièce est usée, plus tu gagnes de pièces.</p></details>
+      <details><summary>🏢 Le terminal</summary><p>Place-toi devant un comptoir et lis le dossier du passager : un billet, un bagage, un plateau... Si tout est bon, valide. Sinon refuse ou fais payer. Recharge les machines avec des caisses de la réserve.</p></details>
+      <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DÉCOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dorés</b> et ramasse les pièces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
+      <details><summary>🥤 La cabine</summary><p>Avance dans l'allée et sers les passagers qui ont une bulle. 💬 = une question (réponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
+      <details><summary>⚡ Missions, combos, défis</summary><p>Enchaîne les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les défis du jour et la chasse aux pièces cachées sont dans la tour.</p></details>
+      <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour monter sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de côté pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pièces quand tu te poses tranquille. Le <b>skatepark</b> est près de la tour !</p></details>
+      <details><summary>🚜 Le tracteur à bagages</summary><p>Approche-toi du tracteur jaune (il attend souvent devant le terminal) et appuie sur <b>CONDUIRE LE TRACTEUR</b>. Haut = avancer, bas = reculer, gauche/droite = tourner. Charge les valises sur l'<b>anneau bleu</b> (au terminal), puis livre-les à la soute de l'avion sur l'<b>anneau orange</b>. Contourne l'avion par devant !</p></details>
+      <details><summary>🚌 Le bus des passagers</summary><p>Monte dans le bus jaune (il attend souvent devant le terminal) : les passagers montent sur l'<b>anneau bleu</b>, puis emmène-les jusqu'au grand avion gare plus loin, sur l'<b>anneau orange</b>.</p></details>
+      <details><summary>🚒 Au feu les pompiers !</summary><p>Quand l'alarme sonne, une poubelle brûle quelque part. Cours à la <b>caserne</b> (la flèche te guide), monte dans le camion de pompiers, fonce jusqu'au feu et appuie plusieurs fois sur <b>ARROSER LE FEU</b>. Tu deviens un vrai pompier !</p></details>
+      <details><summary>🐕 Ton chien et les gens</summary><p>Rattrape un chien échappé : il devient ton compagnon ! Il te suit, aboie quand il sent une <b>pièce cachée</b> (suis-le !) et rapporte la balle 🎾. Caresse-le, change son nom dans le menu pause. Près de quelqu'un, appuie sur <b>DIRE BONJOUR</b> : chacun a quelque chose a te raconter.</p></details>
+      <details><summary>🗼 La tour de contrôle</summary><p>C'est ton bureau : cadeau du jour, boutique (billets, améliorations, nouvel avion, style de carte) et album de trophées.</p></details>
     </div>
   </div>
 </div>
@@ -738,7 +738,7 @@
       <button data-plantab="dest">🌍 Destinations</button>
     </div>
     <div id="planCards" class="space-y-2 plan-scroll"></div>
-    <button id="planSkip" class="panel-btn mt-3">Vol libre (sans defi)</button>
+    <button id="planSkip" class="panel-btn mt-3">Vol libre (sans défi)</button>
   </div>
 </div>
 
@@ -758,7 +758,7 @@
   <div class="panel-card wide kid">
     <div class="panel-head">
       <div>
-        <h2 class="panel-title">🏆 Mes trophees</h2>
+        <h2 class="panel-title">🏆 Mes trophées</h2>
         <p id="kidAlbumSub" class="panel-sub !mb-0">--</p>
       </div>
       <button id="kidAlbumClose" class="panel-btn sm !w-auto px-3">Fermer</button>
@@ -772,12 +772,12 @@
   <div class="panel-card wide map-card kid">
     <div class="panel-head">
       <div>
-        <h2 class="panel-title">🗺️ <span id="mapBigName">Mon aeroport</span></h2>
-        <p class="panel-sub !mb-0">Tu es la <b class="text-rose-400">fleche rouge</b>. L'<b class="text-amber-300">etoile</b> montre ou aller. Les ✨ sont des pieces cachees ! Molette ou pincement pour zoomer, glisse pour deplacer.</p>
+        <h2 class="panel-title">🗺️ <span id="mapBigName">Mon aéroport</span></h2>
+        <p class="panel-sub !mb-0">Tu es la <b class="text-rose-400">flèche rouge</b>. L'<b class="text-amber-300">étoile</b> montre où aller. Les ✨ sont des pièces cachées ! Molette ou pincement pour zoomer, glisse pour déplacer.</p>
       </div>
       <div class="map-tools">
-        <button id="mapModeBtn" class="panel-btn sm !w-auto px-3">Tout l'aeroport</button>
-        <button id="mapZoomOut" class="panel-btn sm !w-auto px-3" aria-label="Dezoomer">&minus;</button>
+        <button id="mapModeBtn" class="panel-btn sm !w-auto px-3">Tout l'aéroport</button>
+        <button id="mapZoomOut" class="panel-btn sm !w-auto px-3" aria-label="Dézoomer">&minus;</button>
         <button id="mapZoomIn" class="panel-btn sm !w-auto px-3" aria-label="Zoomer">+</button>
         <button id="mapZoomReset" class="panel-btn sm !w-auto px-3" aria-label="Recentrer">&#9678;</button>
         <button id="mapBigClose" class="panel-btn sm !w-auto px-3">Fermer</button>
@@ -785,7 +785,7 @@
     </div>
     <canvas id="mapBigCv" class="map-big" width="960" height="924"></canvas>
     <div class="map-legend">
-      <span>🔴 toi</span><span>⭐ objectif</span><span>✨ piece cachee</span><span>✈️ avion</span><span>🚚 vehicule</span><span>👣 tes pas</span>
+      <span>🔴 toi</span><span>⭐ objectif</span><span>✨ pièce cachée</span><span>✈️ avion</span><span>🚚 véhicule</span><span>👣 tes pas</span>
     </div>
   </div>
 </div>
@@ -801,11 +801,11 @@
     <div class="kid-tiles">
       <div class="kid-tile"><b id="kidRepPax">0</b><span>passagers</span></div>
       <div class="kid-tile"><b id="kidRepRings">0</b><span>anneaux</span></div>
-      <div class="kid-tile gold"><b id="kidRepCoins">+0</b><span>pieces</span></div>
+      <div class="kid-tile gold"><b id="kidRepCoins">+0</b><span>pièces</span></div>
     </div>
     <div id="kidRepBonus" class="kid-bonus"></div>
     <button id="kidChest" class="kid-chest"><span class="chest-ico">🎁</span><b>Ouvre ton coffre surprise !</b></button>
-    <button id="kidRepHome" class="panel-btn primary mt-3 !py-4 !text-base">🏠 Retour a l'aeroport</button>
+    <button id="kidRepHome" class="panel-btn primary mt-3 !py-4 !text-base">🏠 Retour à l'aéroport</button>
     <button id="kidRepAgain" class="panel-btn mt-2">✈️ Rejouer un vol</button>
     <button id="kidRepHangar" class="panel-btn mt-2">🎨 Mon hangar</button>
   </div>
@@ -841,11 +841,11 @@
 <!-- ============ REGLAGES (confort, accessibilite) ============ -->
 <div id="settingsPanel" class="hidden panel-overlay">
   <div class="panel-card center kid">
-    <h2 class="panel-title">⚙️ Reglages</h2>
+    <h2 class="panel-title">⚙️ Réglages</h2>
     <div class="set-list">
-      <button id="setQuality" class="set-row"><span class="set-ico">🖥️</span><b>Qualite d'image</b><small>Auto</small></button>
-      <button id="setMusic" class="set-row"><span class="set-ico">🎵</span><b>Musique</b><small>Activee</small></button>
-      <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons a droite</small></button>
+      <button id="setQuality" class="set-row"><span class="set-ico">🖥️</span><b>Qualité d'image</b><small>Auto</small></button>
+      <button id="setMusic" class="set-row"><span class="set-ico">🎵</span><b>Musique</b><small>Activée</small></button>
+      <button id="setLefty" class="set-row"><span class="set-ico">🤚</span><b>Main gauche</b><small>Boutons à droite</small></button>
       <button id="setBig" class="set-row"><span class="set-ico">🔠</span><b>Taille du texte</b><small>Normal</small></button>
       <button id="setVoiceRate" class="set-row"><span class="set-ico">🗣️</span><b>Vitesse de la voix</b><small>Normale</small></button>
       <div class="set-row set-vol"><span class="set-ico">🎚️</span><b>Volumes</b>
@@ -864,23 +864,23 @@
       <button id="setBreak" class="set-row"><span class="set-ico">⏰</span><b>Rappel de pause</b><small>Pas de rappel</small></button>
     </div>
     <p class="panel-note">Le son global se coupe aussi dans le menu (tuile « Son »).</p>
-    <button id="setClose" class="panel-btn primary mt-2">Termine</button>
+    <button id="setClose" class="panel-btn primary mt-2">Terminé</button>
   </div>
 </div>
 <div id="jobPanel" class="hidden panel-overlay">
   <div class="panel-card wide kid">
     <h2 class="panel-title text-center">👷 Aujourd'hui je suis…</h2>
-    <p class="panel-sub text-center">Choisis un metier : 3 petites taches, un costume et des pieces !</p>
+    <p class="panel-sub text-center">Choisis un métier : 3 petites tâches, un costume et des pièces !</p>
     <div id="jobList" class="job-list"></div>
-    <button id="jobStop" class="panel-btn mt-2 hidden">Arreter ce metier</button>
+    <button id="jobStop" class="panel-btn mt-2 hidden">Arrêter ce métier</button>
     <button id="jobClose" class="panel-btn primary mt-2">Fermer</button>
   </div>
 </div>
 <div id="limitPanel" class="hidden panel-overlay">
   <div class="panel-card center kid">
     <div class="quiz-ico">🌙</div>
-    <h2 class="panel-title">Coco va dormir, a demain !</h2>
-    <p class="panel-sub">Ta partie est bien sauvegardee. Tu retrouveras ton aeroport demain.</p>
+    <h2 class="panel-title">Coco va dormir, à demain !</h2>
+    <p class="panel-sub">Ta partie est bien sauvegardée. Tu retrouveras ton aéroport demain.</p>
     <button id="limitParent" class="panel-btn mt-2">Un parent veut jouer 15 min de plus</button>
   </div>
 </div>
@@ -888,7 +888,7 @@
   <div class="panel-card center kid">
     <div class="quiz-ico">😴</div>
     <h2 class="panel-title">C'est l'heure de la pause !</h2>
-    <p class="panel-sub">Tu joues depuis un bon moment. Bois un verre d'eau, regarde au loin, etire-toi… puis reviens voler !</p>
+    <p class="panel-sub">Tu joues depuis un bon moment. Bois un verre d'eau, regarde au loin, étire-toi… puis reviens voler !</p>
     <button id="breakOk" class="panel-btn primary mt-2">J'ai fait ma pause !</button>
   </div>
 </div>
@@ -918,7 +918,7 @@
 <div id="albumPanel" class="hidden panel-overlay">
   <div class="panel-card wide kid">
     <h2 class="panel-title text-center">📖 Mon album</h2>
-    <p class="text-center text-xs text-slate-300">Cartes trouvees : <b id="albumTotal">0 / 0</b></p>
+    <p class="text-center text-xs text-slate-300">Cartes trouvées : <b id="albumTotal">0 / 0</b></p>
     <div class="al-bar"><span id="albumBar"></span></div>
     <div id="albumTabs" class="al-tabs"></div>
     <div id="albumFilters" class="al-filters"></div>
@@ -999,7 +999,7 @@
     </div>
     <div class="panel-row mt-4">
       <button id="repExitHub" class="panel-btn sm">Sortir de l'avion</button>
-      <button id="repGoTycoon" class="panel-btn sm">Voir le bilan aeroport</button>
+      <button id="repGoTycoon" class="panel-btn sm">Voir le bilan aéroport</button>
     </div>
     <button id="repClose" class="panel-btn primary mt-2">Continuer de piloter</button>
   </div>
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791575411').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791576226').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791575411"></script>
+<script type="module" src="js/main.js?v=1791576226"></script>
 </body>
 </html>

@@ -17,7 +17,7 @@
    z = -1500, axe x = 0. Inclinaison > 0 = aile droite basse.
    ============================================================ */
 
-import { heliCommand } from './heliModel.js?v=1791575411';
+import { heliCommand } from './heliModel.js?v=1791576226';
 
 const KTS = 1.94384;
 
@@ -127,7 +127,7 @@ export class FlightAssist {
 
       if (!this.launched) {
         this.state = 'PARKED';
-        this.hint = 'Appuie sur DECOLLER !';
+        this.hint = 'Appuie sur DÉCOLLER !';
         out.brake = 1;
         return out;
       }
@@ -141,7 +141,7 @@ export class FlightAssist {
       const vr = ac.vRotate() * KTS;
       if (ias >= vr) {
         out.pitch = clamp(inp.pitch + 0.42, -1, 1);
-        this.hint = 'On decolle !';
+        this.hint = 'On décolle !';
       } else {
         out.pitch = 0;
         this.hint = `Vitesse ${ias.toFixed(0)} / ${vr.toFixed(0)}`;

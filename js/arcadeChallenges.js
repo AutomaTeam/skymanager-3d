@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791576226';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -35,7 +35,7 @@ export const challengeMethods = {
         sfx.levelUp();
         this.confetti(90);
         this.giveCoins(wk.item.reward, { silent: true, xp: 40 });
-        this.g.toast(`🏆 DEFI DE LA SEMAINE reussi ! +${wk.item.reward} 🪙`, 5200, 'ok');
+        this.g.toast(`🏆 DÉFI DE LA SEMAINE réussi ! +${wk.item.reward} 🪙`, 5200, 'ok');
       }
     }
     /* Defis du jour. */
@@ -49,7 +49,7 @@ export const challengeMethods = {
           sfx.levelUp();
           this.confetti(40);
           this.giveCoins(d.reward, { silent: true, xp: 10 });
-          this.g.toast(`🏆 Defi reussi : ${d.label} — +${d.reward} 🪙`, 4200, 'ok');
+          this.g.toast(`🏆 Défi réussi : ${d.label} — +${d.reward} 🪙`, 4200, 'ok');
         }
       }
     }
@@ -117,12 +117,12 @@ export const challengeMethods = {
       const ac = this.g.ac;
       const sg = this.g.sky && this.g.sky.goal();
       if (sg) return sg;
-      if (ac.onGround && !this.g.assist.launched && !ac.touchdown) return { icon: '🛫', text: 'Appuie sur DECOLLER, puis tire vers le haut !', target: null };
-      if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ca roule ! Tire vers le haut pour decoller.', target: null };
-      if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer a la maison.', target: null };
-      if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau dore ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
-      if (ac.heli) return { icon: '🚁', text: 'Suis la fleche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
-      return { icon: '🛬', text: 'Suis la fleche vers la piste et atterris doucement.', target: null };
+      if (ac.onGround && !this.g.assist.launched && !ac.touchdown) return { icon: '🛫', text: 'Appuie sur DÉCOLLER, puis tire vers le haut !', target: null };
+      if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ça roule ! Tire vers le haut pour décoller.', target: null };
+      if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer à la maison.', target: null };
+      if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau doré ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
+      if (ac.heli) return { icon: '🚁', text: 'Suis la flèche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
+      return { icon: '🛬', text: 'Suis la flèche vers la piste et atterris doucement.', target: null };
     }
     if (this.g.state === 'HUB') for (const v of this.g.vehicles || []) { const vg = v.goal(); if (vg) return vg; }
     const mg = this.g.state === 'HUB' && this.g.modules.goal();      // objectifs des modules du registre
@@ -149,26 +149,26 @@ export const challengeMethods = {
   _suggestGoal() {
     const g = this.g, t = g.tycoon, opts = [];
     const wear = Math.max(0, ...Object.values(g.mechanic.components).map(c => c.wear));
-    if (wear > 55) opts.push({ icon: '🔧', text: 'Une piece de l\'avion est usee : va la reparer !', target: this.stationTarget() });
+    if (wear > 55) opts.push({ icon: '🔧', text: 'Une pièce de l\'avion est usée : va la réparer !', target: this.stationTarget() });
     const buy = ['shops', 'gates', 'vipLounge', 'terminals', 'runways'].find(k => t.canBuy(k));
-    if (buy) opts.push({ icon: '🛍️', text: 'Tu as assez de pieces : va acheter une amelioration a la tour !', target: this.markerPos('tower') });
-    else if (t.canBuyAircraft()) opts.push({ icon: '✈️', text: 'Tu peux acheter un nouvel avion a la tour !', target: this.markerPos('tower') });
+    if (buy) opts.push({ icon: '🛍️', text: 'Tu as assez de pièces : va acheter une amélioration à la tour !', target: this.markerPos('tower') });
+    else if (t.canBuyAircraft()) opts.push({ icon: '✈️', text: 'Tu peux acheter un nouvel avion à la tour !', target: this.markerPos('tower') });
     const tz = this.data.treasure;
-    if (tz && tz.got.some(v => !v)) opts.push({ icon: '✨', text: `Cherche les pieces cachees (${tz.got.filter(Boolean).length}/${tz.got.length}) : la mini-carte t'aide !`, target: null });
-    if (this.giftReady()) opts.push({ icon: '🎁', text: 'Ton cadeau du jour t\'attend a la tour !', target: this.markerPos('tower') });
+    if (tz && tz.got.some(v => !v)) opts.push({ icon: '✨', text: `Cherche les pièces cachées (${tz.got.filter(Boolean).length}/${tz.got.length}) : la mini-carte t'aide !`, target: null });
+    if (this.giftReady()) opts.push({ icon: '🎁', text: 'Ton cadeau du jour t\'attend à la tour !', target: this.markerPos('tower') });
     const unseen = DESTINATIONS.filter(d => !(this.data.visited || []).includes(d.city));
-    opts.push({ icon: '🛫', text: unseen.length ? 'Prends un vol vers une nouvelle ville pour remplir ton carnet !' : 'Refais un vol pour battre ton record d\'etoiles !', target: this.markerPos('cockpit') });
-    opts.push({ icon: '🥤', text: 'Va en cabine servir les passagers et repondre a leurs questions !', target: this.markerPos('cabinDoor') });
+    opts.push({ icon: '🛫', text: unseen.length ? 'Prends un vol vers une nouvelle ville pour remplir ton carnet !' : 'Refais un vol pour battre ton record d\'étoiles !', target: this.markerPos('cockpit') });
+    opts.push({ icon: '🥤', text: 'Va en cabine servir les passagers et répondre à leurs questions !', target: this.markerPos('cabinDoor') });
     /* Ce qu'on peut faire a pied (souvent jamais decouvert sans un petit coup de pouce). */
     const st = this.data.stats;
     const tug = g.tug && g.tug._ambient();
-    if (tug && !(st.tugTrips > 2)) opts.push({ icon: '🚜', text: 'Conduis le tracteur a bagages jaune : charge les valises et livre-les a l\'avion !', target: { x: tug.mv.x, z: tug.mv.z } });
+    if (tug && !(st.tugTrips > 2)) opts.push({ icon: '🚜', text: 'Conduis le tracteur à bagages jaune : charge les valises et livre-les à l\'avion !', target: { x: tug.mv.x, z: tug.mv.z } });
     const bus = g.bus && g.bus._ambient();
-    if (bus && !(st.busTrips > 1)) opts.push({ icon: '🚌', text: 'Conduis le bus jaune : emmene les passagers du terminal jusqu\'a l\'avion !', target: { x: bus.mv.x, z: bus.mv.z } });
+    if (bus && !(st.busTrips > 1)) opts.push({ icon: '🚌', text: 'Conduis le bus jaune : emmène les passagers du terminal jusqu\'à l\'avion !', target: { x: bus.mv.x, z: bus.mv.z } });
     const ft = g.fire && g.fire._parked();
     if (ft && !(st.fires > 0)) opts.push({ icon: '🚒', text: 'Va voir le camion de pompiers devant la caserne : tu peux le conduire !', target: { x: ft.position.x, z: ft.position.z - 6 } });
-    if (g.pet && g.pet.adopted && !(st.fetch > 3)) opts.push({ icon: '🎾', text: `Joue a la balle avec ${g.pet.data.name} : appuie sur 🎾 !`, target: null });
-    if (!(st.greet > 5)) opts.push({ icon: '👋', text: 'Dis bonjour aux gens de l\'aeroport : les spotteurs au bord de la piste adorent parler d\'avions !', target: { x: 92, z: 1188 } });
+    if (g.pet && g.pet.adopted && !(st.fetch > 3)) opts.push({ icon: '🎾', text: `Joue à la balle avec ${g.pet.data.name} : appuie sur 🎾 !`, target: null });
+    if (!(st.greet > 5)) opts.push({ icon: '👋', text: 'Dis bonjour aux gens de l\'aéroport : les spotteurs au bord de la piste adorent parler d\'avions !', target: { x: 92, z: 1188 } });
     return opts[Math.floor(g.time / 40) % opts.length];
   },
   _targetForChallenge(d) {
@@ -250,7 +250,7 @@ export const challengeMethods = {
       if (this.data.badges[b.id] || !b.test(this.data)) continue;
       this.data.badges[b.id] = todayKey();
       sfx.tada(); this.confetti(60);
-      this.g.toast(`🏅 Nouveau trophee : ${b.name} !`, 4200, 'ok');
+      this.g.toast(`🏅 Nouveau trophée : ${b.name} !`, 4200, 'ok');
       this.save();
     }
   },

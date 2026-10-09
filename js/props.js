@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { loadGltf } from './assetLoader.js?v=1791575411';
-import { SOFT, RECOLOR } from './palette.js?v=1791575411';
+import { loadGltf } from './assetLoader.js?v=1791576226';
+import { SOFT, RECOLOR } from './palette.js?v=1791576226';
 
 export const MODELS = 'assets/models/';
 
@@ -102,7 +102,7 @@ export function instanced(file, list, opts = {}) {
       mesh.computeBoundingSphere();
       group.add(mesh);
     }
-  }).catch((e) => console.warn('[props] modele ignore :', file, e && e.message));
+  }).catch((e) => console.warn('[props] modèle ignore :', file, e && e.message));
   return group;
 }
 

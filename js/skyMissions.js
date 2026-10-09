@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { SkyWorld } from './skyWorld.js?v=1791575411';
-import { HELIPAD } from './heliModel.js?v=1791575411';
-import { ISLANDS } from './openWorld.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { SkyWorld } from './skyWorld.js?v=1791576226';
+import { HELIPAD } from './heliModel.js?v=1791576226';
+import { ISLANDS } from './openWorld.js?v=1791576226';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -134,12 +134,12 @@ class BalloonMission extends Mission {
     return best ? { x: best.x, y: best.y, z: best.z } : null;
   }
   target() { const g = this.guide(); return g ? { x: g.x, z: g.z } : null; }
-  goal() { return { icon: '🎈', text: `Eclate les ballons ! (${this.popped}/${this.total})`, target: this.target() }; }
+  goal() { return { icon: '🎈', text: `Éclate les ballons ! (${this.popped}/${this.total})`, target: this.target() }; }
   progressText() { return `🎈 ${this.popped}/${this.total}`; }
   dispose() { this.balls.forEach(b => this.world.remove(b)); this.balls = []; }
   result() {
     const s = this.popped;
-    return { score: s, medal: s >= 12 ? 3 : s >= 9 ? 2 : s >= 5 ? 1 : 0, lines: [`🎈 ${s} ballon${s > 1 ? 's' : ''} eclate${s > 1 ? 's' : ''} sur ${this.total}`] };
+    return { score: s, medal: s >= 12 ? 3 : s >= 9 ? 2 : s >= 5 ? 1 : 0, lines: [`🎈 ${s} ballon${s > 1 ? 's' : ''} éclate${s > 1 ? 's' : ''} sur ${this.total}`] };
   }
 }
 
@@ -221,10 +221,10 @@ class RaceMission extends Mission {
   }
   dispose() { this.hoops.forEach(h => this.world.remove(h)); if (this.ghost) this.world.remove(this.ghost); }
   result() {
-    if (this.idx < this.hoops.length) return { score: this.idx, medal: this.idx >= 6 ? 1 : 0, lines: [`🏁 ${this.idx} anneaux sur ${this.hoops.length} — le temps est ecoule`] };
+    if (this.idx < this.hoops.length) return { score: this.idx, medal: this.idx >= 6 ? 1 : 0, lines: [`🏁 ${this.idx} anneaux sur ${this.hoops.length} — le temps est écoulé`] };
     const T = this.finishT, r = T / this.ideal;
     const medal = r <= 1.12 ? 3 : r <= 1.4 ? 2 : 1;
-    const lines = [`🏁 Course terminee en ${T.toFixed(1)} s`];
+    const lines = [`🏁 Course terminée en ${T.toFixed(1)} s`];
     const best = this.sky.data.best.race;
     if (!best || !best.time || T < best.time) {
       lines.push('🏆 Nouveau record !');
@@ -286,7 +286,7 @@ class FireMission extends Mission {
         sfx.tada();
         this.sky.g.arcade.confetti(30);
         this.sky.reward(5, `🔥 ${this.out}/${this.fires.length}`);
-        this.sky.say(this.out >= this.fires.length ? 'Tous les feux sont eteints ! Bravo !' : 'Un feu de moins !', 2);
+        this.sky.say(this.out >= this.fires.length ? 'Tous les feux sont éteints ! Bravo !' : 'Un feu de moins !', 2);
       }
     }
     if (this.out >= this.fires.length) this.done = true;
@@ -307,12 +307,12 @@ class FireMission extends Mission {
   target() { const f = this._nearest(); return f ? { x: f.x, z: f.z } : null; }
   guide() { const f = this._nearest(); return f ? { x: f.x, y: 130, z: f.z } : null; }
   reticle() { return this.charges > 0 ? 'water' : null; }
-  goal() { return { icon: '🔥', text: `Eteins les feux ! Place le viseur dessus. (${this.out}/${this.fires.length})`, target: this.target() }; }
+  goal() { return { icon: '🔥', text: `Éteins les feux ! Place le viseur dessus. (${this.out}/${this.fires.length})`, target: this.target() }; }
   progressText() { return `🔥 ${this.out}/${this.fires.length} · 💧 ${this.charges}`; }
   dispose() { this.fires.forEach(f => this.world.remove(f)); for (const o of [...this.world.items]) if (o.kind === 'water') this.world.remove(o); }
   result() {
     const s = this.out;
-    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 2 ? 1 : 0, lines: [`🔥 ${s} feu${s > 1 ? 'x' : ''} eteint${s > 1 ? 's' : ''} sur ${this.fires.length}`] };
+    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 2 ? 1 : 0, lines: [`🔥 ${s} feu${s > 1 ? 'x' : ''} éteint${s > 1 ? 's' : ''} sur ${this.fires.length}`] };
   }
 }
 
@@ -347,7 +347,7 @@ class ParcelMission extends Mission {
         this.score += pts;
         if (pts) this.hits++;
         sfx.star(Math.max(1, pts));
-        this.sky.g.arcade.popup(pts === 3 ? '🎯 PILE ! +3' : pts === 2 ? '👍 Bien ! +2' : pts === 1 ? '🙂 Pas loin ! +1' : '😅 Rate…');
+        this.sky.g.arcade.popup(pts === 3 ? '🎯 PILE ! +3' : pts === 2 ? '👍 Bien ! +2' : pts === 1 ? '🙂 Pas loin ! +1' : '😅 Raté…');
         if (pts) this.sky.reward(pts, `🎁 ${this.score}`);
         this.world.pop(px, 4, pz, 0xffd23f);
         this.world.remove(o);
@@ -416,13 +416,13 @@ class DeliveryMission extends ParcelMission {
    ------------------------------------------------------------ */
 const CARGOS = {
   rescue: [
-    { ico: '🧑‍🦰', name: 'le patient', mode: 'calm', from: 'la maison', to: "l'hopital", say: ['Merci de voler doucement…', 'Aie ! Pas trop de virages !'] }
+    { ico: '🧑‍🦰', name: 'le patient', mode: 'calm', from: 'la maison', to: "l'hôpital", say: ['Merci de voler doucement…', 'Aïe ! Pas trop de virages !'] }
   ],
   zoo: [
     { ico: '🐧', name: 'le pingouin', mode: 'calm', from: 'la banquise', to: 'le zoo', say: ['Brrr ! Pas de secousses !', 'Oui oui ! Tout doux !'] },
-    { ico: '🐼', name: 'le panda', mode: 'calm', from: 'la foret', to: 'le zoo', say: ['Miam… je dors… ne me reveille pas !', 'Ronron ! Doucement !'] },
+    { ico: '🐼', name: 'le panda', mode: 'calm', from: 'la forêt', to: 'le zoo', say: ['Miam… je dors… ne me réveille pas !', 'Ronron ! Doucement !'] },
     { ico: '🦁', name: 'le lion', mode: 'wild', from: 'la savane', to: 'le zoo', say: ['Grrr ! Je m\'ennuie… fais des acrobaties !', 'ROAAAR ! Encore un tonneau !'] },
-    { ico: '🐘', name: 'l\'elephant', mode: 'calm', from: 'la savane', to: 'le zoo', say: ['Prout… euh, pardon ! Doucement !', 'Je suis lourd, tiens bien le manche !'] },
+    { ico: '🐘', name: 'l\'éléphant', mode: 'calm', from: 'la savane', to: 'le zoo', say: ['Prout… euh, pardon ! Doucement !', 'Je suis lourd, tiens bien le manche !'] },
     { ico: '🐵', name: 'le singe', mode: 'wild', from: 'la jungle', to: 'le zoo', say: ['Ouh ouh ! Fais des tonneaux !', 'Aaah aaah ! Plus fort !'] },
     { ico: '🐨', name: 'le koala', mode: 'calm', from: 'l\'Australie', to: 'le zoo', say: ['Zzz… je m\'accroche… doucement !', 'Mon eucalyptus va tomber !'] }
   ]
@@ -464,7 +464,7 @@ class CarryMission extends Mission {
         this.phase = 1;
         this.pick.setState('done'); this.beaconA.group.visible = false;
         this.drop.setState('next');
-        this.sky.say(`${this.cargo.ico} ${this.cargo.name} est a bord ! Direction ${this.cargo.to} !`, 3);
+        this.sky.say(`${this.cargo.ico} ${this.cargo.name} est à bord ! Direction ${this.cargo.to} !`, 3);
       } else {
         this.done = true; this.arrived = true;
         this.drop.setState('done');
@@ -491,7 +491,7 @@ class CarryMission extends Mission {
     const c = this.cargo;
     const txt = this.phase === 0 ? `Va chercher ${c.name} ${c.ico} !`
       : c.mode === 'wild' ? `${c.ico} Fais des acrobaties pour amuser ${c.name} ! Puis direction ${c.to}.`
-        : `Amene ${c.name} ${c.ico} a ${c.to} — vole en douceur !`;
+        : `Amène ${c.name} ${c.ico} à ${c.to} — vole en douceur !`;
     return { icon: c.ico, text: txt, target: this.target() };
   }
   progressText() { return this.phase === 0 ? `${this.cargo.ico} en route…` : `${this.cargo.ico} humeur ${Math.round(this.mood)}%`; }
@@ -550,7 +550,7 @@ class ShowMission extends Mission {
   dispose() { this.world.remove(this.crowd); }
   result() {
     const s = this.done0;
-    return { score: this.score, medal: s >= 5 ? 3 : s >= 4 ? 2 : s >= 2 ? 1 : 0, lines: [`🎪 ${s} figure${s > 1 ? 's' : ''} reussie${s > 1 ? 's' : ''} sur ${this.figs.length} — ${this.score} points`] };
+    return { score: this.score, medal: s >= 5 ? 3 : s >= 4 ? 2 : s >= 2 ? 1 : 0, lines: [`🎪 ${s} figure${s > 1 ? 's' : ''} réussie${s > 1 ? 's' : ''} sur ${this.figs.length} — ${this.score} points`] };
   }
 }
 
@@ -591,12 +591,12 @@ class IslandMission extends Mission {
   }
   target() { const i = this.targets[this.idx]; return i ? { x: i.x, z: i.z } : null; }
   guide() { const i = this.targets[this.idx]; return i ? { x: i.x, y: 170, z: i.z } : null; }
-  goal() { const i = this.targets[this.idx]; return { icon: '🏝️', text: i ? `Cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Exploration terminee !', target: this.target() }; }
+  goal() { const i = this.targets[this.idx]; return { icon: '🏝️', text: i ? `Cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Exploration terminée !', target: this.target() }; }
   progressText() { return `🏝️ ${this.idx}/${this.targets.length}`; }
   dispose() { this.hoops.forEach(h => this.world.remove(h)); }
   result() {
     const s = this.idx;
-    return { score: s, medal: s >= 3 ? 3 : s >= 2 ? 2 : s >= 1 ? 1 : 0, lines: [`🏝️ ${s} ile${s > 1 ? 's' : ''} survolee${s > 1 ? 's' : ''} sur ${this.targets.length}`] };
+    return { score: s, medal: s >= 3 ? 3 : s >= 2 ? 2 : s >= 1 ? 1 : 0, lines: [`🏝️ ${s} île${s > 1 ? 's' : ''} survolée${s > 1 ? 's' : ''} sur ${this.targets.length}`] };
   }
 }
 
@@ -677,12 +677,12 @@ class BannerMission extends Mission {
   }
   target() { const t = this.hoops[this.idx]; return t ? { x: t.x, z: t.z } : null; }
   guide() { const t = this.hoops[this.idx]; return t ? { x: t.x, y: t.y, z: t.z } : null; }
-  goal() { return { icon: '🪁', text: `Montre ton message a la foule ! (${this.idx}/${this.hoops.length})`, target: this.target() }; }
+  goal() { return { icon: '🪁', text: `Montre ton message à la foule ! (${this.idx}/${this.hoops.length})`, target: this.target() }; }
   progressText() { return `🪁 ${this.text} · ${this.idx}/${this.hoops.length}`; }
   dispose() { this.world.remove(this.banner); this.hoops.forEach(h => this.world.remove(h)); }
   result() {
     const s = this.idx;
-    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 1 ? 1 : 0, lines: [`🪁 Ton message « ${this.text} » a ete vu ${s} fois sur ${this.hoops.length}`] };
+    return { score: s, medal: s >= 4 ? 3 : s >= 3 ? 2 : s >= 1 ? 1 : 0, lines: [`🪁 Ton message « ${this.text} » a été vu ${s} fois sur ${this.hoops.length}`] };
   }
 }
 
@@ -716,7 +716,7 @@ class WinchMission extends Mission {
           this.world.remove(this.hikerObj); this.world.remove(this.mark);
           this.pad = this.world.beacon({ x: HELIPAD.x, z: HELIPAD.z, radius: 30, color: 0x4ade80, height: 300 });
           sfx.tada(); this.g.arcade.confetti(40);
-          this.sky.reward(10, '🚁 Randonneur a bord !');
+          this.sky.reward(10, '🚁 Randonneur à bord !');
           this.hold = 0;
         }
       } else this.hold = Math.max(0, this.hold - dt * 2);
@@ -729,9 +729,9 @@ class WinchMission extends Mission {
   guide() { const t = this.target(); return { x: t.x, y: this.ac.groundY + 60, z: t.z }; }
   goal() {
     if (this.phase === 'find') return { icon: '🚁', text: this.hold > 0.2 ? `Reste immobile… ${Math.round(this.hold / this.need * 100)} %` : 'Vole vers le randonneur (colonne jaune), puis reste en vol stationnaire !', target: this.target() };
-    return { icon: '🏥', text: this.hold > 0.2 ? 'Pose-toi doucement…' : 'Ramene le randonneur a l\'helipad (colonne verte) !', target: this.target() };
+    return { icon: '🏥', text: this.hold > 0.2 ? 'Pose-toi doucement…' : 'Ramène le randonneur à l\'helipad (colonne verte) !', target: this.target() };
   }
-  progressText() { return this.phase === 'find' ? '🚁 cherche le randonneur' : '🚁 retour a l\'helipad'; }
+  progressText() { return this.phase === 'find' ? '🚁 cherche le randonneur' : '🚁 retour à l\'helipad'; }
   dispose() { [this.hikerObj, this.mark, this.pad].forEach(o => o && this.world.remove(o)); }
   result() {
     if (!this.arrived) return { score: 0, medal: this.phase === 'home' ? 1 : 0, lines: [this.phase === 'home' ? '🚁 Randonneur treuille, mais le retour n\'est pas fini' : '🚁 Le randonneur attend toujours…'] };
@@ -751,7 +751,7 @@ class GlideMission extends Mission {
     if (this.air >= this.need) this.done = true;
   }
   goal() {
-    if (!this.ac.released) return { icon: '🪂', text: 'Le remorqueur te monte a 500 m…', target: null };
+    if (!this.ac.released) return { icon: '🪂', text: 'Le remorqueur te monte à 500 m…', target: null };
     return { icon: '🪂', text: `Reste en l'air ! Cherche les ascendances (oiseaux, nuages). ${Math.round(this.air)}/${this.need} s`, target: null };
   }
   progressText() { return `🪂 ${Math.round(this.air)}/${this.need} s en vol libre`; }
@@ -820,7 +820,7 @@ class FormationMission extends Mission {
   }
   target() { return { x: this.lx, z: this.lz }; }
   guide() { const s = this._slotPos(); return { x: s.x, y: s.y, z: s.z }; }
-  goal() { return { icon: '✈️', text: `Reste dans le rond vert, a cote du Capitaine Coco ! (${Math.round(this.inside)}/${this.total} s)`, target: this.target() }; }
+  goal() { return { icon: '✈️', text: `Reste dans le rond vert, à côté du Capitaine Coco ! (${Math.round(this.inside)}/${this.total} s)`, target: this.target() }; }
   progressText() { return `✈️ ${Math.round(this.inside)} s · parcours ${this.lvl.name}`; }
   dispose() { this.world.remove(this.leader); this.world.remove(this.slot); }
   result() {
@@ -849,11 +849,11 @@ class TourMission extends IslandMission {
     this.sky.say('Balade ! Je te guide. Appuie sur l\'appareil photo pour prendre de belles photos !', 2, 4500);
   }
   guide() { const i = this.targets[this.idx]; return i ? { x: i.x, y: 190, z: i.z } : null; }
-  goal() { const i = this.targets[this.idx]; return { icon: '🌅', text: i ? `Balade : cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Balade terminee, bravo !', target: this.target() }; }
-  progressText() { return `🌅 ${this.idx}/${this.targets.length} iles`; }
+  goal() { const i = this.targets[this.idx]; return { icon: '🌅', text: i ? `Balade : cap sur ${i.name} ! (${this.idx}/${this.targets.length})` : 'Balade terminée, bravo !', target: this.target() }; }
+  progressText() { return `🌅 ${this.idx}/${this.targets.length} îles`; }
   result() {
     const s = this.idx, n = this.targets.length;
-    return { score: s, medal: s >= n ? 3 : s >= n - 2 ? 2 : s >= 2 ? 1 : 0, lines: [`🌅 ${s} ile${s > 1 ? 's' : ''} visitee${s > 1 ? 's' : ''} sur ${n}`] };
+    return { score: s, medal: s >= n ? 3 : s >= n - 2 ? 2 : s >= 2 ? 1 : 0, lines: [`🌅 ${s} île${s > 1 ? 's' : ''} visitée${s > 1 ? 's' : ''} sur ${n}`] };
   }
 }
 
@@ -861,21 +861,21 @@ class TourMission extends IslandMission {
    Catalogue
    ============================================================ */
 export const MISSION_DEFS = [
-  { id: 'balloons', ico: '🎈', name: 'Chasse aux ballons', brief: 'Eclate un maximum de ballons colores !', level: 1, limit: 110, cls: BalloonMission },
+  { id: 'balloons', ico: '🎈', name: 'Chasse aux ballons', brief: 'Éclate un maximum de ballons colorés !', level: 1, limit: 110, cls: BalloonMission },
   { id: 'race',     ico: '🏁', name: 'Course d\'anneaux',  brief: 'Passe tous les anneaux le plus vite possible. Bats ton record !', level: 1, limit: 0, cls: RaceMission },
-  { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Eteins les feux de foret avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
+  { id: 'fire',     ico: '🔥', name: 'Pompier du ciel',    brief: 'Éteins les feux de forêt avec l\'eau de ton avion.', level: 2, limit: 170, cls: FireMission },
   { id: 'parcel',   ico: '🎁', name: 'Livreur de colis',   brief: 'Largue les colis a parachute sur les cibles.', level: 2, limit: 170, cls: ParcelMission },
-  { id: 'tour',     ico: '🌅', name: 'Balade des iles',    brief: 'L\'avion te promene au-dessus de toutes les iles. Zen et photos !', level: 1, limit: 0, cls: TourMission, always: true },
-  { id: 'islands',  ico: '🏝️', name: 'Exploration des iles', brief: 'Survole 3 iles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission, glider: true },
-  { id: 'show',     ico: '🎪', name: 'Show aerien',        brief: 'Enchaine tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
-  { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amene un patient a l\'hopital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
-  { id: 'glide',    ico: '🪂', name: 'Vol a voile',        brief: 'Planeur : reste 3 minutes en l\'air grace aux ascendances.', level: 3, limit: 0, cls: GlideMission, gliderOnly: true, glider: true },
-  { id: 'delivery', ico: '📦', name: 'Livraison aux iles', brief: 'Une commande pour une ile : largue-la au bon endroit !', level: 3, limit: 240, cls: DeliveryMission },
+  { id: 'tour',     ico: '🌅', name: 'Balade des îles',    brief: 'L\'avion te promène au-dessus de toutes les îles. Zen et photos !', level: 1, limit: 0, cls: TourMission, always: true },
+  { id: 'islands',  ico: '🏝️', name: 'Exploration des îles', brief: 'Survole 3 îles de l\'archipel, tout au nord-est !', level: 2, limit: 0, cls: IslandMission, glider: true },
+  { id: 'show',     ico: '🎪', name: 'Show aérien',        brief: 'Enchaîne tonneaux et loopings devant le public.', level: 3, limit: 130, cls: ShowMission, noHeli: true },
+  { id: 'rescue',   ico: '🚑', name: 'Secours',            brief: 'Amène un patient à l\'hôpital, en douceur et vite !', level: 3, limit: 190, cls: CarryMission },
+  { id: 'glide',    ico: '🪂', name: 'Vol à voile',        brief: 'Planeur : reste 3 minutes en l\'air grâce aux ascendances.', level: 3, limit: 0, cls: GlideMission, gliderOnly: true, glider: true },
+  { id: 'delivery', ico: '📦', name: 'Livraison aux îles', brief: 'Une commande pour une île : largue-la au bon endroit !', level: 3, limit: 240, cls: DeliveryMission },
   { id: 'rainbow',  ico: '🌈', name: 'Arc-en-ciel',        brief: 'Traverse 4 arcs-en-ciel dans le ciel !', level: 2, limit: 150, cls: RainbowMission, glider: true },
-  { id: 'banner',   ico: '🪁', name: 'Banniere',           brief: 'Ecris un message et promene-le au-dessus de la foule.', level: 2, limit: 190, cls: BannerMission, needsText: true },
-  { id: 'winch',    ico: '🚁', name: 'Treuillage',         brief: 'En helicoptere : sauve un randonneur sur une ile !', level: 2, limit: 260, cls: WinchMission, heliOnly: true },
-  { id: 'formation', ico: '✈️', name: 'Vol en formation',  brief: 'Reste a cote du Capitaine Coco, 3 parcours.', level: 3, limit: 66, cls: FormationMission, noHeli: true },
-  { id: 'zoo',      ico: '🐧', name: 'Transport d\'animaux', brief: 'Amene un animal au zoo. Chacun a ses gouts !', level: 4, limit: 200, cls: CarryMission }
+  { id: 'banner',   ico: '🪁', name: 'Bannière',           brief: 'Écris un message et promène-le au-dessus de la foule.', level: 2, limit: 190, cls: BannerMission, needsText: true },
+  { id: 'winch',    ico: '🚁', name: 'Treuillage',         brief: 'En hélicoptère : sauve un randonneur sur une île !', level: 2, limit: 260, cls: WinchMission, heliOnly: true },
+  { id: 'formation', ico: '✈️', name: 'Vol en formation',  brief: 'Reste à côté du Capitaine Coco, 3 parcours.', level: 3, limit: 66, cls: FormationMission, noHeli: true },
+  { id: 'zoo',      ico: '🐧', name: 'Transport d\'animaux', brief: 'Amène un animal au zoo. Chacun a ses goûts !', level: 4, limit: 200, cls: CarryMission }
 ];
 export const defOf = (id) => MISSION_DEFS.find(d => d.id === id);
 
@@ -944,12 +944,12 @@ export class SkyMissions {
     /* Banniere : l'enfant ecrit son message avant de decoller (12 lettres, mots vilains remplaces). */
     if (this.armed && this.armed.needsText) {
       let t = null;
-      try { t = window.prompt('Ecris ton message (12 lettres) :', this.data.banner || 'COUCOU !'); } catch (e) { /* pas de prompt */ }
+      try { t = window.prompt('Écris ton message (12 lettres) :', this.data.banner || 'COUCOU !'); } catch (e) { /* pas de prompt */ }
       this.data.banner = cleanBanner(t === null ? this.data.banner : t);
       this.save();
     }
     if (this.armed) {
-      this.g.fun.say(`${this.armed.ico} Mission « ${this.armed.name} » ! Decolle et c'est parti !`, 3, 4200);
+      this.g.fun.say(`${this.armed.ico} Mission « ${this.armed.name} » ! Décolle et c'est parti !`, 3, 4200);
       /* Depart express : si l'avion est deja pret, il decolle tout seul. */
     }
   }
@@ -1053,7 +1053,7 @@ export class SkyMissions {
     sfx[res.medal >= 2 ? 'tada' : 'star'](res.medal);
     this.g.arcade.confetti(res.medal ? 40 + res.medal * 25 : 8);
     this._showResult();
-    this.say(res.medal === 3 ? 'MEDAILLE D\'OR ! Tu es un champion !' : res.medal ? 'Mission reussie ! Bravo !' : 'Pas grave, on recommence ?', 3, 4200);
+    this.say(res.medal === 3 ? 'MÉDAILLE D\'OR ! Tu es un champion !' : res.medal ? 'Mission réussie ! Bravo !' : 'Pas grave, on recommence ?', 3, 4200);
   }
 
   _showResult() {
@@ -1061,7 +1061,7 @@ export class SkyMissions {
     const box = $('skyResult');
     if (!box) return;
     $('skyResMedal').textContent = MEDAL_ICO[res.medal];
-    $('skyResTitle').textContent = res.medal ? `${MEDAL_NAME[res.medal]} !` : 'Mission terminee';
+    $('skyResTitle').textContent = res.medal ? `${MEDAL_NAME[res.medal]} !` : 'Mission terminée';
     $('skyResName').textContent = `${def.ico} ${def.name}`;
     $('skyResLines').innerHTML = res.lines.join('<br>') + `<br><b>+${coins} 🪙</b>`;
     box.classList.remove('hidden');
@@ -1080,7 +1080,7 @@ export class SkyMissions {
   /* ---------------- Interface en vol ---------------- */
   goal() {
     if (this.m) return this.m.goal();
-    if (this.armed) return { icon: this.armed.ico, text: `Mission « ${this.armed.name} » : decolle !`, target: null };
+    if (this.armed) return { icon: this.armed.ico, text: `Mission « ${this.armed.name} » : décolle !`, target: null };
     return null;
   }
   target() { return this.m ? this.m.target() : null; }

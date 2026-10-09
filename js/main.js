@@ -8,64 +8,64 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791575411';
-import { collectBodies } from './bodies.js?v=1791575411';
-import { addAutoBlockers, addInteriorBlockers } from './autoBlockers.js?v=1791575411';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791576226';
+import { collectBodies } from './bodies.js?v=1791576226';
+import { addAutoBlockers, addInteriorBlockers } from './autoBlockers.js?v=1791576226';
 import * as THREE from 'three';
-import { Jobs } from './jobs.js?v=1791575411';
-import { Replay } from './replay.js?v=1791575411';
-import { FuelTruck, Sweeper, Stairs } from './groundVehicles.js?v=1791575411';
-import { Hunt } from './hunt.js?v=1791575411';
-import { Seasonal } from './seasonal.js?v=1791575411';
-import { Thermals } from './thermals.js?v=1791575411';
-import { ModuleRegistry } from './registry.js?v=1791575411';
-import { Voice } from './voice.js?v=1791575411';
-import { GamepadInput } from './gamepadInput.js?v=1791575411';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791575411';
-import { Aircraft, KTS, FT } from './flightPhysics.js?v=1791575411';
-import { TouchControls } from './touchControls.js?v=1791575411';
-import { WalkJoystick } from './mechanicControls.js?v=1791575411';
-import { CabinService } from './cabinService.js?v=1791575411';
-import { MechanicSystem, FAILURES } from './mechanicSystem.js?v=1791575411';
-import { AirportTycoon, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791575411';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791575411';
-import { Navigation } from './navigation.js?v=1791575411';
-import { AgentSystem } from './agents.js?v=1791575411';
-import { Environment } from './environment.js?v=1791575411';
-import { MissionSystem } from './missions.js?v=1791575411';
-import { Staff } from './staff.js?v=1791575411';
-import { History } from './history.js?v=1791575411';
-import { Hub } from './hub.js?v=1791575411';
-import { Arcade } from './arcade.js?v=1791575411';
-import { FlightAssist } from './flightAssist.js?v=1791575411';
-import { Fun } from './fun.js?v=1791575411';
-import { Hangar } from './hangar.js?v=1791575411';
-import { SkyMissions } from './skyMissions.js?v=1791575411';
-import { MiniGames } from './minigames.js?v=1791575411';
-import { GroundFun } from './groundFun.js?v=1791575411';
-import { Pet } from './pet.js?v=1791575411';
-import { Social } from './social.js?v=1791575411';
-import { Tug } from './tug.js?v=1791575411';
-import { FireTruck } from './fireTruck.js?v=1791575411';
-import { Ambience } from './ambience.js?v=1791575411';
-import { Bus } from './bus.js?v=1791575411';
-import { Look } from './look.js?v=1791575411';
-import { Deco } from './deco.js?v=1791575411';
-import { Album } from './album.js?v=1791575411';
-import { OpenWorld } from './openWorld.js?v=1791575411';
-import { Comfort } from './comfort.js?v=1791575411';
-import { Rides } from './rides.js?v=1791575411';
-import { planeOf } from './fleet.js?v=1791575411';
-import { HELIPAD } from './heliModel.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { perfHud } from './perfHud.js?v=1791575411';
-import { iconify } from './icons.js?v=1791575411';
-import { hudMethods } from './hudController.js?v=1791575411';
-import { pauseMethods } from './pauseMenu.js?v=1791575411';
-import { hubMethods } from './hubUpdate.js?v=1791575411';
-import { $, IS_TOUCH, HOTSPOTS } from './gameShared.js?v=1791575411';
-import { Story } from './story.js?v=1791575411';
-import { Travel } from './travel.js?v=1791575411';
+import { Jobs } from './jobs.js?v=1791576226';
+import { Replay } from './replay.js?v=1791576226';
+import { FuelTruck, Sweeper, Stairs } from './groundVehicles.js?v=1791576226';
+import { Hunt } from './hunt.js?v=1791576226';
+import { Seasonal } from './seasonal.js?v=1791576226';
+import { Thermals } from './thermals.js?v=1791576226';
+import { ModuleRegistry } from './registry.js?v=1791576226';
+import { Voice } from './voice.js?v=1791576226';
+import { GamepadInput } from './gamepadInput.js?v=1791576226';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791576226';
+import { Aircraft, KTS, FT } from './flightPhysics.js?v=1791576226';
+import { TouchControls } from './touchControls.js?v=1791576226';
+import { WalkJoystick } from './mechanicControls.js?v=1791576226';
+import { CabinService } from './cabinService.js?v=1791576226';
+import { MechanicSystem, FAILURES } from './mechanicSystem.js?v=1791576226';
+import { AirportTycoon, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791576226';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791576226';
+import { Navigation } from './navigation.js?v=1791576226';
+import { AgentSystem } from './agents.js?v=1791576226';
+import { Environment } from './environment.js?v=1791576226';
+import { MissionSystem } from './missions.js?v=1791576226';
+import { Staff } from './staff.js?v=1791576226';
+import { History } from './history.js?v=1791576226';
+import { Hub } from './hub.js?v=1791576226';
+import { Arcade } from './arcade.js?v=1791576226';
+import { FlightAssist } from './flightAssist.js?v=1791576226';
+import { Fun } from './fun.js?v=1791576226';
+import { Hangar } from './hangar.js?v=1791576226';
+import { SkyMissions } from './skyMissions.js?v=1791576226';
+import { MiniGames } from './minigames.js?v=1791576226';
+import { GroundFun } from './groundFun.js?v=1791576226';
+import { Pet } from './pet.js?v=1791576226';
+import { Social } from './social.js?v=1791576226';
+import { Tug } from './tug.js?v=1791576226';
+import { FireTruck } from './fireTruck.js?v=1791576226';
+import { Ambience } from './ambience.js?v=1791576226';
+import { Bus } from './bus.js?v=1791576226';
+import { Look } from './look.js?v=1791576226';
+import { Deco } from './deco.js?v=1791576226';
+import { Album } from './album.js?v=1791576226';
+import { OpenWorld } from './openWorld.js?v=1791576226';
+import { Comfort } from './comfort.js?v=1791576226';
+import { Rides } from './rides.js?v=1791576226';
+import { planeOf } from './fleet.js?v=1791576226';
+import { HELIPAD } from './heliModel.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { perfHud } from './perfHud.js?v=1791576226';
+import { iconify } from './icons.js?v=1791576226';
+import { hudMethods } from './hudController.js?v=1791576226';
+import { pauseMethods } from './pauseMenu.js?v=1791576226';
+import { hubMethods } from './hubUpdate.js?v=1791576226';
+import { $, IS_TOUCH, HOTSPOTS } from './gameShared.js?v=1791576226';
+import { Story } from './story.js?v=1791576226';
+import { Travel } from './travel.js?v=1791576226';
 
 
    // m/s — releve pour rendre le grand plan praticable
@@ -79,11 +79,11 @@ import { Travel } from './travel.js?v=1791575411';
 
 /* Ameliorations de la tour, en mots simples (mode Arcade). */
 const KID_UPGRADE = {
-  runways:   { ico: '🛣️', name: 'Nouvelle piste',     desc: '+12 passagers a chaque vol.' },
+  runways:   { ico: '🛣️', name: 'Nouvelle piste',     desc: '+12 passagers à chaque vol.' },
   gates:     { ico: '🚪', name: 'Nouvelle porte',      desc: 'Pour accueillir un avion de plus.' },
-  terminals: { ico: '🏢', name: 'Grand terminal',      desc: '+10 passagers et plus de pieces a chaque vol.' },
-  shops:     { ico: '🛍️', name: 'Boutique',            desc: 'Plus de pieces a chaque vol.' },
-  vipLounge: { ico: '👑', name: 'Salon VIP',           desc: '+10 passagers : ils adorent ton aeroport !' }
+  terminals: { ico: '🏢', name: 'Grand terminal',      desc: '+10 passagers et plus de pièces à chaque vol.' },
+  shops:     { ico: '🛍️', name: 'Boutique',            desc: 'Plus de pièces à chaque vol.' },
+  vipLounge: { ico: '👑', name: 'Salon VIP',           desc: '+10 passagers : ils adorent ton aéroport !' }
 };
 
 /* Prix de billet proposes en Arcade. */
@@ -115,8 +115,8 @@ class Game {
     this.arcade = new Arcade(this);
     this.assist = new FlightAssist();
     /* Planeur (G01) : largage de la remorque, et rappel en finale si on se retrouve trop bas. */
-    this.assist.onRelease = () => { sfx.whoosh(); this.toast('🪂 Remorque larguee ! Maintenant tu planes en silence.', 3600, 'ok'); this.fun.say('Cherche les oiseaux qui tournent : l\'air monte dessous !', 2, 4200); };
-    this.assist.onLowGlider = () => { this.toast('🛬 Presque au sol ! Je te ramene en finale.', 3000, 'ok'); this.helpLanding(); };
+    this.assist.onRelease = () => { sfx.whoosh(); this.toast('🪂 Remorque larguée ! Maintenant tu planes en silence.', 3600, 'ok'); this.fun.say('Cherche les oiseaux qui tournent : l\'air monte dessous !', 2, 4200); };
+    this.assist.onLowGlider = () => { this.toast('🛬 Presque au sol ! Je te ramène en finale.', 3000, 'ok'); this.helpLanding(); };
     this.voice = new Voice();
     this.modules = new ModuleRegistry(this);     // modules a mise a jour continue (js/registry.js)
     const EARLY = { order: -1, hooks: false };   // couches « fun » : mises a jour avant les autres, sans hooks
@@ -321,7 +321,7 @@ class Game {
       this.fun.countdownLaunch();
       return;
     }
-    this.toast(this.ac.heli ? '🚁 Ton helicoptere t\'attend sur l\'helipad !' : '🚜 Le tracteur t\'amene au bout de la piste !', 2600);
+    this.toast(this.ac.heli ? '🚁 Ton hélicoptère t\'attend sur l\'helipad !' : '🚜 Le tracteur t\'amène au bout de la piste !', 2600);
     /* Choix du plan de vol (destination + defi). */
     this.arcade.offerPlan();
   }
@@ -335,7 +335,7 @@ class Game {
       this.assist.altHold = null;
       this.arcade.clearRing();
       sfx.whoosh();
-      this.toast('🚁 Je te ramene sur l\'helipad et je te pose doucement !', 3400, 'ok');
+      this.toast('🚁 Je te ramène sur l\'helipad et je te pose doucement !', 3400, 'ok');
       return;
     }
     /* Planeur : on le replace plus pres de la piste (3,3 km) et plus haut, sans moteur il ne porte pas aussi loin. */
@@ -362,7 +362,7 @@ class Game {
     this.arcade.resetFlight();
     const gate = this.r3d.gatePosition;
     this.goToHub({ pos: new THREE.Vector3(gate.x - 16, 0, gate.z - 22), heading: -Math.PI / 2 });
-    this.toast('🚜 L\'avion est revenu a la porte. Bien joue !', 2600, 'ok');
+    this.toast('🚜 L\'avion est revenu à la porte. Bien joué !', 2600, 'ok');
   }
 
     /* ==========================================================
@@ -437,7 +437,7 @@ class Game {
            fois par episode de crise, pas a chaque frame sous le seuil. */
         if (this.terminal.mood < 25 && !this._terminalCritical) {
           this._terminalCritical = true;
-          this.toast('Terminal en difficulte — l\'ambiance du hall s\'effondre.', 4000, 'err');
+          this.toast('Terminal en difficulté — l\'ambiance du hall s\'effondré.', 4000, 'err');
         } else if (this.terminal.mood > 45) {
           this._terminalCritical = false;
         }
@@ -577,7 +577,7 @@ class Game {
 
     $('hubHint').textContent = this.mechanic.needsMaintenance()
       ? 'Maintenance requise avant le prochain vol — approchez-vous d\'un point de diagnostic sur l\'appareil.'
-      : 'Approchez-vous de l\'avion pour piloter ou embarquer, et de la tour pour gerer l\'aeroport.';
+      : 'Approchez-vous de l\'avion pour piloter ou embarquer, et de la tour pour gérer l\'aéroport.';
 
         /* Le monde a continue de tourner pendant qu'on etait ailleurs :
            on resume ce qu'il s'est passe, sinon l'autonomie reste invisible. */
@@ -636,7 +636,7 @@ class Game {
     this.tdTimer = 0;
             this.beginFlightLog();
             $('report').classList.add('hidden');
-            this.flash('Aligne piste 36. Poussee decollage quand vous etes pret.', 5000);
+            this.flash('Aligne piste 36. Poussée décollage quand vous êtes prêt.', 5000);
           }
 
   /* ========================================================== */
@@ -673,7 +673,7 @@ class Game {
         if (ff) this.ac.applyFault(ff.kind);
       }
       this.mechanic.releasedToService = !this.mechanic.needsMaintenance();
-      this.toast(`${c.label} remis en etat — panne levee.`, 3000, 'ok');
+      this.toast(`${c.label} remis en état — panne levée.`, 3000, 'ok');
     }
 
     /* Remet le journal a zero. Appele a chaque nouveau vol. */
@@ -805,14 +805,14 @@ class Game {
     if (this.time > (this.hintUntil || 0)) {
       const vr = ac.vRotate() * KTS, vref = ac.vRef() * KTS;
       if (this.phase === 'PARKING' && kt < 2) {
-        this.hint = 'Relachez le frein et roulez vers la piste 36, puis poussee decollage une fois aligne';
+        this.hint = 'Relâchez le frein et roulez vers la piste 36, puis poussée décollage une fois aligné';
       } else if (this.phase === 'DECOLLAGE' && kt < vr) {
-        this.hint = `Vr ${vr.toFixed(0)} kt — tirez le manche a la rotation`;
+        this.hint = `Vr ${vr.toFixed(0)} kt — tirez le manche à la rotation`;
       } else if (this.phase === 'MONTEE') {
         this.hint = ac.gearDown ? 'Rentrez le train (GEAR)' :
-          (ac.flapIndex > 0 ? 'Rentrez les volets progressivement' : 'Montez a 250 kt, assiette 12 deg');
+          (ac.flapIndex > 0 ? 'Rentrez les volets progressivement' : 'Montez à 250 kt, assiette 12 deg');
       } else if (this.phase === 'CROISIERE') {
-        this.hint = 'Croisiere stable — surveillez le carburant';
+        this.hint = 'Croisière stable — surveillez le carburant';
       } else if (this.phase === 'APPROCHE') {
         this.hint = `Vref ${vref.toFixed(0)} kt — train sorti, volets FULL, -700 fpm`;
       } else if (this.phase === 'FREINAGE') {
@@ -992,7 +992,7 @@ window.addEventListener('load', () => {
     iconify(document.body);    // emojis -> icones SVG (js/icons.js)
     if (fill) fill.style.width = '100%';
     if (bar) bar.classList.add('done');
-    $('bootMsg').textContent = 'Systemes prets.';
+    $('bootMsg').textContent = 'Systèmes prêts.';
     /* Pas de menu : on arrive directement a l'aeroport. Seul le tout premier lancement
        demande un prenom et un avatar (un seul bouton JOUER). */
     const firstRun = !game.fun.data.pilot.seen && !(game.fun.data.pilot.name || '').trim() && !/[?&](scenario|fuzz|skip)(=|&|$)/.test(window.location.search);

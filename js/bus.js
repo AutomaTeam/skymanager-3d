@@ -14,10 +14,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { LAYOUT } from './layout.js?v=1791575411';
-import { Vehicle } from './vehicle.js?v=1791575411';
-import { buildBus } from './airportLife.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { LAYOUT } from './layout.js?v=1791576226';
+import { Vehicle } from './vehicle.js?v=1791576226';
+import { buildBus } from './airportLife.js?v=1791576226';
 
 const ENTER_RANGE = 7;
 const PAX_MAX = 20;
@@ -72,7 +72,7 @@ export class Bus extends Vehicle {
     this.stopRing.visible = this.standRing.visible = true;
     this._seat();
     sfx.honk();
-    g.toast('🚌 Au volant du bus ! Fais monter les passagers au terminal (anneau bleu), puis emmene-les a l\'avion (anneau orange).', 5200, 'ok');
+    g.toast('🚌 Au volant du bus ! Fais monter les passagers au terminal (anneau bleu), puis emmène-les à l\'avion (anneau orange).', 5200, 'ok');
   }
 
   _onExit() {
@@ -122,7 +122,7 @@ export class Bus extends Vehicle {
     A.save();
     sfx.tada();
     A.confetti(n >= PAX_MAX ? 60 : 30);
-    g.toast(`🚌 ${n} passager${n > 1 ? 's' : ''} deposes au pied de l'avion ! +${coins} 🪙${n >= PAX_MAX ? ' (bus plein : bonus !)' : ''}`, 3400, 'ok');
+    g.toast(`🚌 ${n} passager${n > 1 ? 's' : ''} déposés au pied de l'avion ! +${coins} 🪙${n >= PAX_MAX ? ' (bus plein : bonus !)' : ''}`, 3400, 'ok');
   }
 
   update(dt) {
@@ -134,7 +134,7 @@ export class Bus extends Vehicle {
 
   goal() {
     if (!this.active) return null;
-    if (this.pax > 0) return { icon: '🚌', text: `Emmene les ${this.pax} passagers jusqu'a l'avion (anneau orange) !`, target: STAND };
-    return { icon: '🚌', text: `Va a l'arret du terminal (anneau bleu) : ${Math.floor(this.waiting)} passagers attendent.`, target: STOP };
+    if (this.pax > 0) return { icon: '🚌', text: `Emmène les ${this.pax} passagers jusqu'à l'avion (anneau orange) !`, target: STAND };
+    return { icon: '🚌', text: `Va à l'arrêt du terminal (anneau bleu) : ${Math.floor(this.waiting)} passagers attendent.`, target: STOP };
   }
 }

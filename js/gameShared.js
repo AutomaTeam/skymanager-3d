@@ -3,7 +3,7 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { STATIONS } from './mechanicSystem.js?v=1791575411';
+import { STATIONS } from './mechanicSystem.js?v=1791576226';
 
 export const $ = (id) => document.getElementById(id);
 
@@ -41,7 +41,7 @@ export const HOTSPOTS = [
   /* La tour (x 252..272) et son bureau (x 273..283) sont a 100 m de la
      porte d'embarquement. Le point de gestion est devant la porte du bureau,
      cote aire de stationnement, sur du sol degage. */
-  { key: 'tower', type: 'tower', frame: 'world', label: 'GESTION DE L\'AEROPORT', pos: [289, 0, 1132] },
+  { key: 'tower', type: 'tower', frame: 'world', label: 'GESTION DE L\'AÉROPORT', pos: [289, 0, 1132] },
   /* Repere seulement (fleche d'objectif Arcade) : le terminal s'ouvre a pied, on n'y « entre » plus par un bouton. */
   { key: 'terminal', type: 'terminal', frame: 'world', label: 'TERMINAL', pos: [360, 0, 1193], passive: true }
 ];
@@ -61,10 +61,10 @@ export const CONTROL_LABEL = { mechanic: 'MECANICIEN', ramp: 'AGENT DE PISTE' };
 
 /* Boutons contextuels du monde libre, en mots simples (mode Arcade). */
 export const ARCADE_LABEL = {
-  mechanic: (h) => `🔧 REPARER : ${h.label.toUpperCase()}`,
+  mechanic: (h) => `🔧 RÉPARER : ${h.label.toUpperCase()}`,
   cockpit: () => '✈️ MONTER DANS L\'AVION',
   cabin: () => '🥤 SERVIR EN CABINE',
-  tower: () => '🗼 MA TOUR DE CONTROLE',
+  tower: () => '🗼 MA TOUR DE CONTRÔLE',
   game: (h) => h.game === 'wash' ? '🧽 LAVER L\'AVION' : '⛽ FAIRE LE PLEIN',
   terminal: () => '🏢 ENTRER DANS LE TERMINAL'
 };

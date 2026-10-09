@@ -8,10 +8,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { emojiSprite } from './groundFun.js?v=1791575411';
-import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791575411';
-import * as Save from './save.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { emojiSprite } from './groundFun.js?v=1791576226';
+import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791576226';
+import * as Save from './save.js?v=1791576226';
 
 const STORE = 'skymanager.hunt';
 const COUNT = 10;
@@ -28,9 +28,9 @@ export function weekSpots(key) {
 
 /* Temperature selon la distance (m) au Coco le plus proche. */
 export function warmth(d) {
-  if (d < 9) return { ico: '🔥', txt: 'Tu brules !' };
+  if (d < 9) return { ico: '🔥', txt: 'Tu brûles !' };
   if (d < 25) return { ico: '🌡️', txt: 'Chaud, chaud !' };
-  if (d < 60) return { ico: '🙂', txt: 'Tiede…' };
+  if (d < 60) return { ico: '🙂', txt: 'Tiède…' };
   return { ico: '🧊', txt: 'Froid…' };
 }
 
@@ -97,7 +97,7 @@ export class Hunt {
     const n = this.data.got.length;
     sfx.sparkle();
     A.giveCoins(3, { silent: true });
-    A.popup(`🦜 Coco trouve ! ${n}/${COUNT}  +3 🪙`);
+    A.popup(`🦜 Coco trouvé ! ${n}/${COUNT}  +3 🪙`);
     A.confetti(14);
     if (n >= COUNT) {
       A.giveCoins(50, { silent: true, xp: 25 });
@@ -118,6 +118,6 @@ export class Hunt {
   }
 
   tips() {
-    return this.items.length ? [`🦜 ${this.items.length} Coco se cachent cette semaine a l'aeroport : cherche-les a pied !`] : [];
+    return this.items.length ? [`🦜 ${this.items.length} Coco se cachent cette semaine à l'aéroport : cherche-les à pied !`] : [];
   }
 }

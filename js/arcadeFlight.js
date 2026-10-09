@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791576226';
 
 export const flightMethods = {
   /* ---------------- Anneaux de vol ---------------- */
@@ -37,7 +37,7 @@ export const flightMethods = {
       if (this.g.fun) this.g.fun.onRing();
       this.clearRing();
       if (this.ringsThisFlight < RING_TOTAL) this.spawnRing();
-      else this.g.toast('🟡 Tous les anneaux ! Suis la fleche pour retourner a la piste.', 4200, 'ok');
+      else this.g.toast('🟡 Tous les anneaux ! Suis la flèche pour retourner à la piste.', 4200, 'ok');
     } else {
       /* Anneau depasse : on en replace un devant. */
       const f = ac.forward();
@@ -147,7 +147,7 @@ export const flightMethods = {
         host.querySelectorAll('.plan-card').forEach(b => b.addEventListener('click', () => {
           const o = offers[+b.dataset.i];
           close(); this.plan = o;
-          if (o && o.bonus) this.g.toast(`${o.dest.flag} Cap sur ${o.dest.city} ! Defi : ${PLAN_TYPES[o.kind].text}`, 3800, 'ok');
+          if (o && o.bonus) this.g.toast(`${o.dest.flag} Cap sur ${o.dest.city} ! Défi : ${PLAN_TYPES[o.kind].text}`, 3800, 'ok');
         }));
       }
       iconifyHost(host);
@@ -168,7 +168,7 @@ export const flightMethods = {
     if (!crashed) {
       if (!this.data.visited.includes(p.dest.city)) this.data.visited.push(p.dest.city);
     }
-    if (!p.bonus) { this.save(); return { bonus: 0, line: `${p.dest.flag} Arrive a ${p.dest.city} ! Bon voyage.` }; }
+    if (!p.bonus) { this.save(); return { bonus: 0, line: `${p.dest.flag} Arrive à ${p.dest.city} ! Bon voyage.` }; }
     const ok = !crashed && t.test({ stars, rings: this.ringsThisFlight, time });
     if (ok) {
       this.data.stats.plans++;
@@ -176,10 +176,10 @@ export const flightMethods = {
       this.event('plan');
       sfx.tada();
       this.save();
-      return { bonus: p.bonus, line: `${p.dest.flag} ${p.dest.city} : defi « ${t.name} » reussi ! +${p.bonus} 🪙` };
+      return { bonus: p.bonus, line: `${p.dest.flag} ${p.dest.city} : défi « ${t.name} » réussi ! +${p.bonus} 🪙` };
     }
     this.save();
-    return { bonus: 0, line: `${p.dest.flag} ${p.dest.city} : defi « ${t.name} » pas reussi cette fois — retente !` };
+    return { bonus: 0, line: `${p.dest.flag} ${p.dest.city} : défi « ${t.name} » pas réussi cette fois — retente !` };
   },
   /* Pastille de plan de vol en haut a gauche pendant le vol. */
   _renderPlanChip() {
@@ -205,9 +205,9 @@ export const flightMethods = {
   rateLanding(td, crashed) {
     if (crashed) return { stars: 0, title: 'Oups ! Un atterrissage brusque', tip: 'Pas grave, recommence : le train est sorti automatiquement.' };
     const off = Math.abs(td.offset);
-    let stars = 1, title = 'Atterri ! Bien joue', tip = 'Essaie de descendre plus doucement.';
+    let stars = 1, title = 'Atterri ! Bien joué', tip = 'Essaie de descendre plus doucement.';
     /* Seuils genereux : un enfant qui laisse faire l'aide (ou qui pose a peu pres droit) doit voir 2-3 etoiles. */
-    if (td.fpm < 420 && off < 24) { stars = 2; title = 'Tres bel atterrissage !'; tip = 'Encore un peu plus doux pour 3 etoiles.'; }
+    if (td.fpm < 420 && off < 24) { stars = 2; title = 'Très bel atterrissage !'; tip = 'Encore un peu plus doux pour 3 étoiles.'; }
     if (td.fpm < 280 && off < 16) { stars = 3; title = 'ATTERRISSAGE PARFAIT !'; tip = 'Tu es un vrai pilote !'; }
     return { stars, title, tip };
   },
@@ -346,14 +346,14 @@ export const flightMethods = {
     if (!tz) return null;
     const found = tz.got.filter(Boolean).length;
     const total = tz.got.length;
-    if (found >= total) return { ico: '✅', txt: 'Toutes les pieces du jour sont trouvees !', found, total, d: Infinity };
+    if (found >= total) return { ico: '✅', txt: 'Toutes les pièces du jour sont trouvées !', found, total, d: Infinity };
     const p = this.g.player.pos;
     let d = Infinity;
     tz.spots.forEach((s, i) => { if (!tz.got[i]) d = Math.min(d, Math.hypot(s[0] - p.x, s[1] - p.z)); });
     let ico = '🥶', txt = 'Froid...';
-    if (d < 25) { ico = '🔥'; txt = 'BRULANT ! Tu y es presque !'; }
+    if (d < 25) { ico = '🔥'; txt = 'BRÛLANT ! Tu y es presque !'; }
     else if (d < 70) { ico = '♨️'; txt = 'Chaud !'; }
-    else if (d < 160) { ico = '🙂'; txt = 'Tiede...'; }
+    else if (d < 160) { ico = '🙂'; txt = 'Tiède...'; }
     return { ico, txt, found, total, d };
   },
   _updateTreasure(dt) {
@@ -376,7 +376,7 @@ export const flightMethods = {
       this.data.stats.treasure++;
       this._bumpCombo();
       this.giveCoins(3, { silent: true });
-      this.popup(`✨ Piece cachee ! ${n}/${tz.got.length}  +3 🪙`);
+      this.popup(`✨ Pièce cachée ! ${n}/${tz.got.length}  +3 🪙`);
       this.confetti(14);
       if (n === tz.got.length && !tz.bonus) {
         tz.bonus = true;
@@ -384,7 +384,7 @@ export const flightMethods = {
         this.giveCoins(25, { silent: true, xp: 20 });
         this.giveStars(1);
         sfx.tada(); this.confetti(90);
-        g.toast('🗺️ TOUTES les pieces du jour ! Bonus +25 🪙 et 1 ⭐', 5000, 'ok');
+        g.toast('🗺️ TOUTES les pièces du jour ! Bonus +25 🪙 et 1 ⭐', 5000, 'ok');
       }
       this.save();
     }

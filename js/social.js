@@ -10,9 +10,9 @@
    Pres de Biscuit (pet.js), le meme bouton sert a le caresser.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { collectBodies } from './bodies.js?v=1791575411';
-import { emojiSprite } from './groundFun.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { collectBodies } from './bodies.js?v=1791576226';
+import { emojiSprite } from './groundFun.js?v=1791576226';
 
 const RANGE = 2.8;               // m pour saluer quelqu'un
 const COINS_PER_DAY = 12;
@@ -22,12 +22,12 @@ const BINOC_RANGE = 3.2;
 const EMOJIS = ['😄', '👋', '😊', '🤩', '😁', '🙌', '😎', '🥰'];
 const LINES = {
   passenger: [
-    'Bonjour ! Je pars en vacances a la mer !',
+    'Bonjour ! Je pars en vacances à la mer !',
     'Coucou ! Tu travailles ici ? Trop de la chance !',
     'Salut ! C\'est mon premier voyage en avion !',
     'Bonjour ! J\'ai mis mon maillot de bain dans ma valise.',
-    'Hello ! Je vais voir ma mamie, elle fait les meilleures crepes.',
-    'Salut ! Tu sais ou on achete des bonbons ?'
+    'Hello ! Je vais voir ma mamie, elle fait les meilleures crêpes.',
+    'Salut ! Tu sais où on achète des bonbons ?'
   ],
   staff: [
     'Salut chef ! On travaille dur pour toi !',
@@ -35,36 +35,36 @@ const LINES = {
     'Coucou ! Merci de m\'avoir embauche !'
   ],
   mechanic: [
-    'Salut ! L\'avion brille grace a toi !',
+    'Salut ! L\'avion brille grâce à toi !',
     'Bonjour ! J\'ai serre tous les boulons !',
-    'Coucou ! Tu veux m\'aider a reparer ?'
+    'Coucou ! Tu veux m\'aider à réparer ?'
   ],
   ramp: [
-    'Salut ! Je guide les avions avec mes batons lumineux !',
-    'Bonjour ! Attention aux helices !',
-    'Coucou ! Les valises sont bien rangees.'
+    'Salut ! Je guide les avions avec mes bâtons lumineux !',
+    'Bonjour ! Attention aux hélices !',
+    'Coucou ! Les valises sont bien rangées.'
   ],
   pilot: [
-    'Salut ! Je suis le commandant. On decolle bientot !',
+    'Salut ! Je suis le commandant. On décolle bientôt !',
     'Bonjour ! Tu veux devenir pilote plus tard ?'
   ],
   attendant: [
     'Bonjour ! Bienvenue dans notre compagnie !',
-    "Coucou ! J'ai prepare plein de jus d'orange."
+    "Coucou ! J'ai préparé plein de jus d'orange."
   ],
   spotter: [
-    'Regarde ! Le prochain avion va decoller juste devant nous !',
+    'Regarde ! Le prochain avion va décoller juste devant nous !',
     'Je collectionne les photos d\'avions. J\'en ai plus de mille !',
-    'Tu entends ? C\'est le bruit des reacteurs, j\'adore !',
-    'Ici, c\'est la meilleure place de l\'aeroport pour voir les avions.'
+    'Tu entends ? C\'est le bruit des réacteurs, j\'adoré !',
+    'Ici, c\'est la meilleure place de l\'aéroport pour voir les avions.'
   ],
   spotterKid: [
     'Coucou ! Plus tard, je serai pilote !',
-    'Mon papa m\'emmene voir les avions tous les dimanches !'
+    'Mon papa m\'emmène voir les avions tous les dimanches !'
   ],
   other: [
-    'Bonjour ! Belle journee pour voler !',
-    'Salut ! Ton aeroport est super !',
+    'Bonjour ! Belle journée pour voler !',
+    'Salut ! Ton aéroport est super !',
     'Coucou ! J\'adore les avions !'
   ]
 };

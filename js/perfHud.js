@@ -54,7 +54,7 @@ export const perfHud = {
     el.textContent =
       `FPS ${last.fps}\n` +
       `calls ${last.calls}  tris ${(last.tris / 1000).toFixed(0)}k\n` +
-      `objets ${last.meshes}  ombres ${last.casters}  lumieres ${last.lights}\n` +
+      `objets ${last.meshes}  ombres ${last.casters}  lumières ${last.lights}\n` +
       `textures ${last.tex}  geos ${last.geos}  shaders ${last.programs}`;
   }
 };

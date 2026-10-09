@@ -3,19 +3,19 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791575411';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791576226';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791575411';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791575411';
-import { COUNTERS } from './terminalSystem.js?v=1791575411';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791575411';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791576226';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791576226';
+import { COUNTERS } from './terminalSystem.js?v=1791576226';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791576226';
 
 /* Noms simples des pieces au poste de reparation (mode Arcade). */
 const KID_PART = {
   tyresNose: '🛞 Pneus de devant', tyresMain: '🛞 Grosses roues', brakes: '🛑 Freins', struts: '🦘 Amortisseurs',
-  flapsActu: '🪽 Volets des ailes', hydraulics: '💧 Tuyaux d\'huile', fanBlades: '🌀 Helices du reacteur', airframe: '🛡️ Carrosserie'
+  flapsActu: '🪽 Volets des ailes', hydraulics: '💧 Tuyaux d\'huile', fanBlades: '🌀 Hélices du réacteur', airframe: '🛡️ Carrosserie'
 };
 
 export const hubMethods = {
@@ -115,10 +115,10 @@ export const hubMethods = {
          la plus specifique quand on est colle a un agent. */
       if (this.controlled) {
         $('btnInspect').classList.remove('hidden');
-        $('btnInspectLabel').textContent = 'RENDRE LE CONTROLE';
+        $('btnInspectLabel').textContent = 'RENDRE LE CONTRÔLE';
       } else if (npc) {
         $('btnInspect').classList.remove('hidden');
-        $('btnInspectLabel').textContent = `PRENDRE LE CONTROLE (${CONTROL_LABEL[npc.role] || npc.role.toUpperCase()})`;
+        $('btnInspectLabel').textContent = `PRENDRE LE CONTRÔLE (${CONTROL_LABEL[npc.role] || npc.role.toUpperCase()})`;
       } else {
         /* Rien a faire ici ? On peut toujours dire bonjour aux gens ou caresser Biscuit (social.js). */
         const soc = this.driving ? this.driving.button() : nearest ? null : this.social.near();
@@ -147,7 +147,7 @@ export const hubMethods = {
       this.agents.takeControl(a);
       this.controlled = a;
       this.controlRole = a.role;
-      this.controlHint = `Vous etes ${CONTROL_LABEL[a.role] || a.role}. ${this.roleHint(a.role)}`;
+      this.controlHint = `Vous êtes ${CONTROL_LABEL[a.role] || a.role}. ${this.roleHint(a.role)}`;
       /* L'avatar du joueur s'efface : on ne joue plus qu'un seul corps.
          La lampe reste allumee, elle suit desormais l'agent tenu. */
       this.r3d.setPlayerVisible(false);
@@ -156,7 +156,7 @@ export const hubMethods = {
       this.player.moving = false;
       this.nearHotspot = null;
       $('hubHint').textContent = this.controlHint;
-      this.toast(`Controle pris : ${CONTROL_LABEL[a.role] || a.role}.`, 2200);
+      this.toast(`Contrôle pris : ${CONTROL_LABEL[a.role] || a.role}.`, 2200);
     },
     /* L'agent reprend sa routine depuis sa position actuelle : aucune
        teleportation, il repart d'ou le joueur l'a laisse. */
@@ -173,16 +173,16 @@ export const hubMethods = {
               const w = this.agents._safeSpot(a, a.wx, a.wz, 12, 1) || this.nav.nearestWalkable(a.wx, a.wz, 12, 1);
               this.player.pos.set(w.x, this.r3d.groundHeight(w.x, w.z), w.z);
               this.player.heading = a.heading;
-              this.toast('Controle rendu — l\'agent reprend son service.', 2200);
+              this.toast('Contrôle rendu — l\'agent reprend son service.', 2200);
             }
       $('hubHint').textContent = this.mechanic.needsMaintenance()
         ? 'Maintenance requise avant le prochain vol — approchez-vous d\'un point de diagnostic sur l\'appareil.'
-        : 'Approchez-vous de l\'avion pour piloter ou embarquer, et de la tour pour gerer l\'aeroport.';
+        : 'Approchez-vous de l\'avion pour piloter ou embarquer, et de la tour pour gérer l\'aéroport.';
     },
     /* Rappel de ce que le role tenu sait faire, pour ne pas laisser le
        joueur devant un avatar sans autre perspective que marcher. */
     roleHint(role) {
-      if (role === 'mechanic') return 'Approchez-vous d\'un point de diagnostic sur l\'appareil pour reparer.';
+      if (role === 'mechanic') return 'Approchez-vous d\'un point de diagnostic sur l\'appareil pour réparer.';
       return 'Vous circulez sur l\'aire de trafic, autour de l\'appareil.';
     },
     handleHubInteract() {
@@ -215,12 +215,12 @@ export const hubMethods = {
       if (inside) {
         $('hubAreaName').textContent = 'Terminal';
         $('hubHint').textContent = this.arcade.on
-          ? 'Va devant un comptoir (suis la fleche) et appuie sur le bouton pour faire avancer les passagers !'
+          ? 'Va devant un comptoir (suis la flèche) et appuie sur le bouton pour faire avancer les passagers !'
           : "Rejoignez un poste pour l'ouvrir ou traiter la file. La porte d'embarquement rapporte de l'argent.";
         this.toast('Vous entrez dans le terminal.', 1400);
       } else {
         $('hubAreaName').textContent = 'Tarmac';
-        $('hubHint').textContent = "Approchez-vous de l'avion pour piloter ou embarquer, et de la tour pour gerer l'aeroport.";
+        $('hubHint').textContent = "Approchez-vous de l'avion pour piloter ou embarquer, et de la tour pour gérer l'aéroport.";
         $('btnCounter').classList.add('hidden');
         this.nearCounter = null;
       }
@@ -293,19 +293,19 @@ export const hubMethods = {
             const r = t.restock(c.id);
             this.toast(r.msg, 2200, r.ok ? 'ok' : 'warn');
             if (r.ok) {
-              if (A.on) { A.giveCoins(3, { label: 'Machine rechargee !' }); A.event('restock'); } else sfx.ding();
+              if (A.on) { A.giveCoins(3, { label: 'Machine rechargée !' }); A.event('restock'); } else sfx.ding();
             } else sfx.oops();
             break;
           }
           case 'bag': {
             if (t.loadBag()) {
-              if (A.on) { A.giveCoins(1, { label: 'Bagage charge' }); A.event('bag'); } else sfx.click();
+              if (A.on) { A.giveCoins(1, { label: 'Bagage chargé' }); A.event('bag'); } else sfx.click();
             }
             break;
           }
           case 'serve': {
             const left = t.serveNext(c.id);
-            if (left === null) { this.toast(t.lastMessage || 'Rien a servir ici.', 1800, 'warn'); sfx.oops(); break; }
+            if (left === null) { this.toast(t.lastMessage || 'Rien à servir ici.', 1800, 'warn'); sfx.oops(); break; }
             if (A.on) { A.giveCoins({ shop: 3, cafe: 3, vending: 2 }[c.kind] || 2, { label: 'Vendu !' }); A.event('serve'); } else sfx.click();
             break;
           }
@@ -330,7 +330,7 @@ export const hubMethods = {
          1er appui : on propose ; 2e appui dans les 8 s : on achete. */
       shopSouvenir() {
         const h = this.hangar, o = h.shopOffer();
-        if (!o) { this.toast('🛍️ Tu as deja tout achete ici, bravo !', 2600); return; }
+        if (!o) { this.toast('🛍️ Tu as déjà tout acheté ici, bravo !', 2600); return; }
         const now = performance.now();
         const same = this._souvenir && this._souvenir.id === o.it.id && now - this._souvenir.t < 8000;
         if (!same) {
@@ -341,7 +341,7 @@ export const hubMethods = {
         }
         this._souvenir = null;
         if (h.buyOffer(o)) { sfx.tada(); this.arcade.confetti(30); this.arcade.event('souvenir'); this.toast(`🎉 ${o.it.ico || ''} ${o.it.name} est dans ton hangar !`, 3600, 'ok'); }
-        else { sfx.oops(); this.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); }
+        else { sfx.oops(); this.toast('Pas assez de pièces… vole encore un peu !', 2400, 'warn'); }
       },
       /* ---------- Panneau de verification ---------- */
       openCheckPanel(c) {
@@ -376,25 +376,25 @@ export const hubMethods = {
         if (c.kind === 'checkin') {
           title = '🎫 Enregistrement';
           rule = `Compare le billet au vol du jour, puis regarde le poids du bagage (limite ${TODAY.bagLimit} kg).`;
-          body = who + card('BILLET', `<div class="big">${pax.name}</div><div>Vol : <b>${pax.flight}</b> · siege ${pax.seat}</div>` +
+          body = who + card('BILLET', `<div class="big">${pax.name}</div><div>Vol : <b>${pax.flight}</b> · siège ${pax.seat}</div>` +
                  `<div class="ref">Vol du jour : ${TODAY.flight} → ${TODAY.dest}</div>`) +
                  card('BAGAGE', `<div class="big">${pax.kg} kg</div><div class="ref">Limite : ${TODAY.bagLimit} kg · surcharge ${TODAY.feePerKg} €/kg</div>`);
-          btns = [['ok', 'ok', '✅ VALIDER', 'en regle'], ['fee', 'fee', '💰 SURCHARGE', 'bagage trop lourd'], ['refuse', 'no', '⛔ REFUSER', 'mauvais vol']];
+          btns = [['ok', 'ok', '✅ VALIDER', 'en règle'], ['fee', 'fee', '💰 SURCHARGE', 'bagage trop lourd'], ['refuse', 'no', '⛔ REFUSER', 'mauvais vol']];
         } else if (c.kind === 'security') {
-          title = '🛃 Controle de surete';
-          rule = 'Regarde le plateau. Couteau, ciseaux, petards, marteau ou grande bouteille : on confisque !';
+          title = '🛃 Contrôle de sûreté';
+          rule = 'Regarde le plateau. Couteau, ciseaux, pétards, marteau ou grande bouteille : on confisque !';
           body = who + card('PLATEAU (SCANNER)', `<div class="chk-tray">${pax.tray.map(e => `<span>${e}</span>`).join('')}</div>` +
                  `<div class="ref" style="text-align:center;margin-top:.3rem">Interdit : 🔪 ✂️ 🧨 🍾 🔨</div>`, 'wide');
           btns = [['pass', 'ok', '✅ PASSER', 'rien d\'interdit'], ['seize', 'no', '🚫 CONFISQUER', 'objet interdit']];
         } else {
           title = '📲 Porte d\'embarquement';
-          rule = `Scanne la carte (vol ${TODAY.flight}). Lis les notes : elles t'aident a rattraper une erreur d'avant !`;
+          rule = `Scanne la carte (vol ${TODAY.flight}). Lis les notes : elles t'aident à rattraper une erreur d'avant !`;
           const notes = gateNotes(pax);
           body = who + card('CARTE D\'EMBARQUEMENT', `<div class="big">${pax.name}</div><div>Vol : <b>${pax.passFlight}</b> · place ${pax.seat}</div>` +
                  `<div class="ref">Ici : ${TODAY.flight} · ${TODAY.gate} · ${TODAY.dest}</div>`, 'wide') +
                  (notes.length ? card('NOTES DU HALL', notes.map(n => `<div class="chk-note">${n.icon} ${n.text}</div>`).join(''), 'wide') : '');
           btns = [['scan', 'ok', '📲 SCANNER', 'carte valide'], ['fee', 'fee', '💰 SURCHARGE', 'bagage trop lourd'],
-                  ['refuse', 'no', '⛔ REFUSER', 'mauvais vol ou detecteur']];
+                  ['refuse', 'no', '⛔ REFUSER', 'mauvais vol ou détecteur']];
         }
         $('chkTitle').textContent = title;
         $('chkRule').textContent = rule;
@@ -453,7 +453,7 @@ export const hubMethods = {
         $('report').classList.add('hidden');
 
         if (this.arcade.on) { this.startArcadeFlight(); return; }
-        this.flash('Aux commandes. Relachez le frein et roulez vers la piste 36.', 4500);
+        this.flash('Aux commandes. Relâchez le frein et roulez vers la piste 36.', 4500);
       },
   openStationPanel(stationKey) {
     const st = STATIONS.find(s => s.key === stationKey);
@@ -471,7 +471,7 @@ export const hubMethods = {
   /* Plan « jeu cool » C2 : des noms que l'enfant comprend (KID_PART, en tete de fichier). */
   refreshStationPanelKid() {
     const st = STATIONS.find(s => s.key === this.currentStation);
-    $('stationSub').textContent = 'Appuie sur REPARER, puis tape au bon moment !';
+    $('stationSub').textContent = 'Appuie sur RÉPARER, puis tape au bon moment !';
     $('stationWo').textContent = '';
     $('stationList').innerHTML = st.components.map(key => {
       const c = this.mechanic.components[key];
@@ -481,9 +481,9 @@ export const hubMethods = {
         <div style="flex:1;min-width:0">
           <div class="nm">${KID_PART[key] || c.label}</div>
           <div class="hp-bar"><div class="hp-fill" style="width:${hp}%;background:${color}"></div></div>
-          <div class="station-wear">${hp >= 92 ? 'Comme neuf !' : hp >= 70 ? 'Un peu use' : hp >= 40 ? 'A reparer bientot' : 'Tres abime : vite !'} (${hp}%)</div>
+          <div class="station-wear">${hp >= 92 ? 'Comme neuf !' : hp >= 70 ? 'Un peu usé' : hp >= 40 ? 'À réparer bientôt' : 'Très abîmé : vite !'} (${hp}%)</div>
         </div>
-        <button class="station-repair-btn" data-repair="${key}" ${hp >= 92 ? 'disabled' : ''}>${hp >= 92 ? '✅ Parfait' : '🔧 REPARER'}</button>
+        <button class="station-repair-btn" data-repair="${key}" ${hp >= 92 ? 'disabled' : ''}>${hp >= 92 ? '✅ Parfait' : '🔧 RÉPARER'}</button>
       </div>`;
     }).join('');
     $('stationList').querySelectorAll('[data-repair]').forEach(btn => {
@@ -519,15 +519,15 @@ export const hubMethods = {
           <span class="station-dot" style="background:${color}"></span>${c.label}
           ${wo ? `<span class="ml-1 text-[10px] px-1.5 py-0.5 rounded ${wo.priority === 'urgent' ? 'bg-red-500/25 text-red-300' : 'bg-amber-500/20 text-amber-300'}">${wo.priority === 'urgent' ? 'URGENT' : 'PLANIFIE'}</span>` : ''}
           <div class="station-wear">${sub.join(' · ')}</div>
-          <div class="station-wear">Piece : ${part ? part.label : '—'} <span class="${stock > 0 ? 'text-emerald-400' : 'text-red-400'}">(stock ${stock})</span></div>
+          <div class="station-wear">Pièce : ${part ? part.label : '—'} <span class="${stock > 0 ? 'text-emerald-400' : 'text-red-400'}">(stock ${stock})</span></div>
         </div>
-        <button class="station-repair-btn" data-repair="${key}">Reparer</button>
+        <button class="station-repair-btn" data-repair="${key}">Réparer</button>
       </div>`;
     }).join('');
     $('stationList').innerHTML = rows;
     $('stationWo').textContent = `${this.mechanic.openWorkOrders().length} ordre(s)`;
     $('stationSub').textContent = this.mechanic.needsMaintenance()
-      ? 'Des composants depassent leur seuil critique : intervention obligatoire avant le vol.'
+      ? 'Des composants dépassent leur seuil critique : intervention obligatoire avant le vol.'
       : 'Diagnostic : usure, fluides et couples de serrage.';
 
     /* Magasin de pieces : achat avec la tresorerie de l'aeroport. */
@@ -548,10 +548,10 @@ export const hubMethods = {
       btn.addEventListener('click', () => {
         const p = btn.dataset.buy;
         const res = this.mechanic.buyPart(p, 1, this.tycoon.cash);
-        if (!res) { this.toast('Tresorerie insuffisante pour cette piece.', 2000, 'err'); return; }
+        if (!res) { this.toast('Trésorerie insuffisante pour cette pièce.', 2000, 'err'); return; }
         this.tycoon.cash -= res.cost;
         this.tycoon.save();
-        this.toast(`${PARTS[p].label} achete (${res.cost.toLocaleString('fr-FR')} EUR).`, 2000);
+        this.toast(`${PARTS[p].label} acheté (${res.cost.toLocaleString('fr-FR')} EUR).`, 2000);
         this.refreshStationPanel();
       });
     });
@@ -582,16 +582,16 @@ export const hubMethods = {
     const comp = this.mechanic.components[componentKey];
     const hasFluid = comp.fluid != null;
     const steps = this.arcade.on ? [
-      { name: 'Visse la piece', hint: 'Tape quand la barre blanche passe dans le vert !', speed: 1.2, width: 38 }
+      { name: 'Visse la pièce', hint: 'Tape quand la barre blanche passe dans le vert !', speed: 1.2, width: 38 }
     ] : [
-      { name: 'Serrage au couple', hint: 'Tapez quand le repere passe dans la zone verte', speed: 1.6, width: 22 },
-      { name: hasFluid ? 'Mise a niveau du circuit' : 'Controle d\'usure',
-        hint: hasFluid ? 'Remplissez jusqu\'au repere — visez le centre' : 'Verifiez l\'epaisseur restante',
+      { name: 'Serrage au couple', hint: 'Tapez quand le repère passe dans la zone verte', speed: 1.6, width: 22 },
+      { name: hasFluid ? 'Mise à niveau du circuit' : 'Contrôle d\'usure',
+        hint: hasFluid ? 'Remplissez jusqu\'au repère — visez le centre' : 'Vérifiez l\'épaisseur restante',
         speed: 2.1, width: 18 },
-      { name: 'Controle final', hint: 'Derniere verification avant remise en service', speed: 2.7, width: 14 }
+      { name: 'Contrôle final', hint: 'Dernière vérification avant remise en service', speed: 2.7, width: 14 }
     ];
 
-    $('mgTitle').textContent = this.arcade.on ? '🔧 Repare !' : 'Serrage au couple';
+    $('mgTitle').textContent = this.arcade.on ? '🔧 Répare !' : 'Serrage au couple';
     $('mgDot1').style.display = $('mgDot2').style.display = this.arcade.on ? 'none' : '';
     $('mgSub').textContent = label;
     $('mgResult').textContent = '';
@@ -605,7 +605,7 @@ export const hubMethods = {
     const results = [];
     for (let round = 0; round < steps.length; round++) {
       const step = steps[round];
-      $('mgStep').textContent = steps.length === 1 ? step.name : `Etape ${round + 1}/${steps.length} — ${step.name}`;
+      $('mgStep').textContent = steps.length === 1 ? step.name : `Étape ${round + 1}/${steps.length} — ${step.name}`;
       $('mgSub').textContent = step.hint;
       const q = await this.runMinigameRound(round, step);
       results.push(q);
@@ -621,15 +621,15 @@ export const hubMethods = {
            appareil parfaitement repare continuerait de voler avec un
            reacteur bride jusqu'au rechargement de la page. */
         this.clearFaultFor(componentKey);
-        const bits = [`Qualite ${avg.toFixed(0)}%`, `usure ${res.wear.toFixed(0)}%`];
+        const bits = [`Qualité ${avg.toFixed(0)}%`, `usure ${res.wear.toFixed(0)}%`];
     if (res.fluid != null) bits.push(`fluide ${res.fluid.toFixed(0)}%`);
     if (res.torque != null) bits.push(`couple ${res.torque.toFixed(0)}%`);
-    if (!res.usedPart) bits.push('sans piece neuve (qualite reduite)');
+    if (!res.usedPart) bits.push('sans pièce neuve (qualité réduite)');
     $('mgResult').textContent = bits.join(' · ');
     $('mgTapBtn').textContent = 'CONTINUER';
     if (this.arcade.on) {
-      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! ✨' : rawAvg >= 55 ? 'Bien joue !' : 'Repare, mais essaie plus precis !';
-      this.arcade.giveCoins(3 + Math.round(rawAvg / 25), { label: 'Reparation !' });
+      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! ✨' : rawAvg >= 55 ? 'Bien joué !' : 'Répare, mais essaie plus précis !';
+      this.arcade.giveCoins(3 + Math.round(rawAvg / 25), { label: 'Réparation !' });
       this.arcade.event('repair');
     }
 
@@ -695,8 +695,8 @@ export const hubMethods = {
     $('unrulyPanel').classList.add('hidden');
 
     $('cabHint').textContent = this.arcade.on
-      ? 'Avance dans l\'allee et sers les passagers qui ont une bulle. Porte SORTIE a gauche, COCKPIT tout devant !'
-      : 'Servez les passagers dans l\'allee. Rechargez le chariot au galley (avant) et vendez le duty-free a l\'entree.';
+      ? 'Avance dans l\'allée et sers les passagers qui ont une bulle. Porte SORTIE à gauche, COCKPIT tout devant !'
+      : 'Servez les passagers dans l\'allée. Rechargez le chariot au galley (avant) et vendez le duty-free à l\'entrée.';
   },
   /* Sortie par la porte : on reparait sur le seuil, cote passerelle. */
   exitCabinByDoor() {
@@ -776,7 +776,7 @@ export const hubMethods = {
     }
     if (!near && cabin.unruly) {
       const rz = -(cabin.unruly.row - 1) * rowSpacing;
-      if (Math.abs(rz - att.z) < 1.7) near = { kind: 'unruly', label: 'GERER L\'INCIDENT' };
+      if (Math.abs(rz - att.z) < 1.7) near = { kind: 'unruly', label: 'GÉRER L\'INCIDENT' };
     }
     /* Le galley occupe l'avant de la cabine (z = 0.2) et le chariot
        duty-free est juste derriere (z = 0.95). Le rail s'arrete a 0.9 :
@@ -828,7 +828,7 @@ export const hubMethods = {
       if (res.reason === 'stock') {
         this.toast('Chariot vide — rechargez-le au galley.', 2000, 'warn');
       } else if (res.reason === 'seatbelt') {
-        this.toast('Consigne ceintures active : le passager n\'a pas apprecie.', 2200, 'warn');
+        this.toast('Consigne ceintures active : le passager n\'a pas apprécié.', 2200, 'warn');
       } else {
         if (this.arcade.on) {
           this.arcade.cabinServed(req);
@@ -841,7 +841,7 @@ export const hubMethods = {
       else this.toast(`Vente duty-free : +${amount} EUR`, 1800);
     } else if (near.kind === 'galley') {
       const added = this.cabin.restockCart();
-      this.toast(added > 0 ? `Chariot recharge (+${added} unites).` : 'Le chariot est deja plein.', 1800);
+      this.toast(added > 0 ? `Chariot rechargé (+${added} unités).` : 'Le chariot est déjà plein.', 1800);
     } else if (near.kind === 'unruly') {
       $('unrulyPanel').classList.remove('hidden');
     } else if (near.kind === 'door') {

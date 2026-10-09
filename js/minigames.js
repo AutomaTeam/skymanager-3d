@@ -11,8 +11,8 @@
    Donnees : localStorage 'skymanager.mini'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791576226';
 
 const STORE = 'skymanager.mini';
 const $ = (id) => document.getElementById(id);
@@ -21,9 +21,9 @@ const pick = (a) => a[Math.floor(Math.random() * a.length)];
 const COOLDOWN = 100000;           // ms entre deux versements de pieces
 
 export const GAMES = {
-  wash: { id: 'wash', ico: '🧽', name: 'Lavage de l\'avion', blurb: 'Frotte l\'ecran pour que l\'avion brille !' },
-  fuel: { id: 'fuel', ico: '⛽', name: 'Plein de carburant', blurb: 'Maintiens, puis lache dans la zone verte.' },
-  scan: { id: 'scan', ico: '🔍', name: 'Valises bizarres', blurb: 'Trouve l\'objet qui n\'a rien a faire la !' }
+  wash: { id: 'wash', ico: '🧽', name: 'Lavage de l\'avion', blurb: 'Frotte l\'écran pour que l\'avion brille !' },
+  fuel: { id: 'fuel', ico: '⛽', name: 'Plein de carburant', blurb: 'Maintiens, puis lâche dans la zone verte.' },
+  scan: { id: 'scan', ico: '🔍', name: 'Valises bizarres', blurb: 'Trouve l\'objet qui n\'a rien à faire là !' }
 };
 
 const NORMAL = ['👕', '👖', '🧦', '🩳', '🧢', '👟', '🧣', '🧥', '📘', '🪥', '🧴', '🕶️'];
@@ -72,7 +72,7 @@ export class MiniGames {
 
   /* ---------------- Menu des mini-jeux ---------------- */
   menu() {
-    if (this.g.state !== 'HUB') { this.g.toast('Les mini-jeux se jouent a l\'aeroport.', 2400, 'warn'); return; }
+    if (this.g.state !== 'HUB') { this.g.toast('Les mini-jeux se jouent à l\'aéroport.', 2400, 'warn'); return; }
     this._clear();
     const now = Date.now();
     const tiles = Object.values(GAMES).map(m => {
@@ -80,7 +80,7 @@ export class MiniGames {
       const wait = Math.max(0, Math.ceil(((d.last || 0) + COOLDOWN - now) / 1000));
       const stars = '★'.repeat(d.best || 0) + '<i>' + '★'.repeat(3 - (d.best || 0)) + '</i>';
       return `<button class="mg-tile" data-game="${m.id}"><span class="mg-ico">${m.ico}</span><span class="mg-mid"><b>${m.name}</b><small>${m.blurb}</small></span>` +
-        `<span class="mg-meta">${stars}<small>${wait ? `🪙 dans ${wait}s` : '🪙 pret !'}</small></span></button>`;
+        `<span class="mg-meta">${stars}<small>${wait ? `🪙 dans ${wait}s` : '🪙 prêt !'}</small></span></button>`;
     }).join('');
     this._show('🎮 Mini-jeux', `<div class="mg-menu">${tiles}</div>`);
     $('mg2Body').querySelectorAll('[data-game]').forEach(b => b.addEventListener('click', () => { sfx.click(); this.open(b.dataset.game); }));
@@ -114,7 +114,7 @@ export class MiniGames {
     $('mg2Body').innerHTML =
       `<div class="mg-end"><div class="mg-stars">${'★'.repeat(stars)}<i>${'★'.repeat(3 - stars)}</i></div>` +
       `<p class="mg-lines">${lines.join('<br>')}</p>` +
-      `<p class="mg-coins">${paid ? `+${coins} 🪙` : stars ? 'Bravo ! (pieces deja gagnees, reviens plus tard)' : 'Dommage, retente !'}</p>` +
+      `<p class="mg-coins">${paid ? `+${coins} 🪙` : stars ? 'Bravo ! (pièces déjà gagnées, reviens plus tard)' : 'Dommage, retente !'}</p>` +
       `<button id="mgAgain" class="panel-btn primary">Rejouer</button> <button id="mgMenu" class="panel-btn">Mini-jeux</button></div>`;
     $('mgAgain').addEventListener('click', () => { sfx.click(); this.open(id); });
     $('mgMenu').addEventListener('click', () => { sfx.click(); onDone ? this.close() : this.menu(); });
@@ -177,7 +177,7 @@ export class MiniGames {
   /* ---------------- 2. Carburant ---------------- */
   _fuel() {
     $('mg2Body').innerHTML =
-      '<p class="mg-help">Maintiens le bouton pour remplir, lache dans la zone verte !</p>' +
+      '<p class="mg-help">Maintiens le bouton pour remplir, lâche dans la zone verte !</p>' +
       '<div class="mg-fuel"><div class="mg-tank"><div id="mgBand" class="mg-band"></div><div id="mgLevel" class="mg-level"></div></div>' +
       '<div class="mg-fuelside"><p id="mgFuelInfo" class="mg-info">Manche 1 / 4</p><button id="mgHold" class="mg-hold">⛽<small>MAINTIENS</small></button></div></div>';
     let round = 0, ok = 0, level = 0, filling = false, locked = false, lo = 0, hi = 0;

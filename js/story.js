@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { load, write } from './save.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { load, write } from './save.js?v=1791576226';
 
 const STORE = 'skymanager.story';
 
@@ -247,6 +247,13 @@ export class Story {
       text: `📖 ${this.questText(q)}${prog}`,
       target: q.where ? placeOf(this.g, q.where) : null
     };
+  }
+
+  /* Petit texte de la tuile du menu pause. */
+  progressLabel() {
+    if (this.data.done) return '🏆 terminée !';
+    if (!this.g.arcade.data.tutorialDone) return 'après le tutoriel';
+    return `chapitre ${this.data.ch + 1} / ${CHAPTERS.length}`;
   }
 
   /* Pour le voyage rapide : endroit de la quete en cours. */

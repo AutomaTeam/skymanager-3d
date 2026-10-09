@@ -10,8 +10,8 @@
    Etat sauvegarde : localStorage « skymanager.look ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { SKIN_TONES, HAIR_TONES } from './renderer3d.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { SKIN_TONES, HAIR_TONES } from './renderer3d.js?v=1791576226';
 
 const STORE = 'skymanager.look';
 const SHIRTS = [0xf97316, 0xef4444, 0xec4899, 0xa855f7, 0x3b82f6, 0x06b6d4, 0x22c55e, 0xfacc15, 0xf8fafc, 0x1f2937];
@@ -58,7 +58,7 @@ export class Look {
       <div id="lookRows"></div>
       <div class="panel-row mt-2">
         <button id="lookRandom" class="panel-btn">🎲 Au hasard</button>
-        <button id="lookClose" class="panel-btn primary">Termine</button>
+        <button id="lookClose" class="panel-btn primary">Terminé</button>
       </div></div>`;
     document.body.appendChild(el);
     this.el = el;

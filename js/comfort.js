@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import * as Save from './save.js?v=1791575411';
-import { Music } from './music.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import * as Save from './save.js?v=1791576226';
+import { Music } from './music.js?v=1791576226';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -34,7 +34,7 @@ const LIMITS = [0, 30, 45, 60, 90];
 /* Petit calcul pour les reglages parentaux (un enfant de 12 ans ne le fait pas par hasard). */
 function parentGate() {
   const a = 6 + Math.floor(Math.random() * 4), b = 7 + Math.floor(Math.random() * 3);
-  const r = window.prompt(`Reglage pour les parents : combien font ${a} x ${b} ?`);
+  const r = window.prompt(`Réglage pour les parents : combien font ${a} x ${b} ?`);
   return r !== null && parseInt(r, 10) === a * b;
 }
 const today = () => new Date().toISOString().slice(0, 10);
@@ -72,7 +72,7 @@ export class Comfort {
     t('setLefty', () => { this.data.lefty = !this.data.lefty; this._changed(); });
     t('setBig', () => { this.data.textSize = (this.data.textSize + 1) % 3; this._changed(); });
     t('setMusic', () => { this.data.music = !this.data.music; this._changed(); });
-    t('setVoiceRate', () => { const R = [0.8, 1, 1.2]; this.data.voiceRate = R[(R.indexOf(this.data.voiceRate) + 1) % R.length]; this._changed(); this.g.voice.speak('Voila ma voix !', { prio: 3 }); });
+    t('setVoiceRate', () => { const R = [0.8, 1, 1.2]; this.data.voiceRate = R[(R.indexOf(this.data.voiceRate) + 1) % R.length]; this._changed(); this.g.voice.speak('Voilà ma voix !', { prio: 3 }); });
     for (const [id, key] of [['volMusic', 'vMusic'], ['volFx', 'vFx'], ['volVoice', 'vVoice']]) {
       const el = $(id);
       if (el) el.addEventListener('input', () => { this.data[key] = +el.value; this.save(); this.apply(); });
@@ -100,7 +100,7 @@ export class Comfort {
     });
     t('setTiltCal', () => { this.g.controls.calibrateTilt(); this.g.toast('🎯 C\'est ta nouvelle position neutre.', 1800, 'ok'); sfx.click(); });
     t('setLimit', () => {
-      if (!parentGate()) { this.g.toast('🌙 Ce reglage est pour les parents.', 2200, 'warn'); return; }
+      if (!parentGate()) { this.g.toast('🌙 Ce réglage est pour les parents.', 2200, 'warn'); return; }
       this.data.limitMin = LIMITS[(LIMITS.indexOf(this.data.limitMin) + 1) % LIMITS.length]; this._changed();
     });
     t('limitParent', () => {
@@ -122,8 +122,8 @@ export class Comfort {
       a.download = `skymanager-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      this.g.toast('💾 Fichier de sauvegarde cree !', 3200, 'ok');
-    } catch (e) { this.g.toast('💾 Impossible de creer le fichier.', 3000, 'warn'); }
+      this.g.toast('💾 Fichier de sauvegarde créé !', 3200, 'ok');
+    } catch (e) { this.g.toast('💾 Impossible de créer le fichier.', 3000, 'warn'); }
   }
 
   importFile(file) {
@@ -135,7 +135,7 @@ export class Comfort {
         if (!window.confirm('Remplacer ta partie par celle du fichier ?')) return;
         const n = Save.importAll(d.keys);
         if (!n) throw new Error('vide');
-        this.g.toast(`📂 Partie chargee (${n} elements). Le jeu redemarre…`, 2600, 'ok');
+        this.g.toast(`📂 Partie chargée (${n} éléments). Le jeu redémarre…`, 2600, 'ok');
         setTimeout(() => window.location.reload(), 1200);
       } catch (e) { this.g.toast('📂 Ce fichier n\'est pas une sauvegarde SkyManager.', 3600, 'warn'); }
     };
@@ -159,14 +159,14 @@ export class Comfort {
     const d = this.data;
     const set = (id, txt, on) => { const el = $(id); if (!el) return; el.querySelector('small').textContent = txt; el.classList.toggle('on', on); };
     set('setQuality', `${QUALITY_LABEL[d.quality]}${d.quality === 'auto' && this.level ? ` (niveau ${this.level})` : ''}`, d.quality !== 'auto');
-    set('setLefty', d.lefty ? 'Boutons a gauche' : 'Boutons a droite', d.lefty);
-    set('setBig', ['Normal', 'Grand', 'Tres grand'][d.textSize], d.textSize > 0);
-    set('setMusic', d.music ? 'Activee' : 'Coupee', d.music);
+    set('setLefty', d.lefty ? 'Boutons à gauche' : 'Boutons à droite', d.lefty);
+    set('setBig', ['Normal', 'Grand', 'Très grand'][d.textSize], d.textSize > 0);
+    set('setMusic', d.music ? 'Activée' : 'Coupée', d.music);
     const tl = this.g.controls && this.g.controls.tilt;
     set('setTilt', tl && tl.on ? 'Active' : 'Coupe', !!(tl && tl.on));
     const cal = $('setTiltCal'); if (cal) cal.classList.toggle('hidden', !(tl && tl.on));
     set('setVoiceRate', { 0.8: 'Lente', 1: 'Normale', 1.2: 'Rapide' }[d.voiceRate] || 'Normale', d.voiceRate !== 1);
-    set('setHaptic', d.haptics ? 'Active' : 'Coupee', d.haptics);
+    set('setHaptic', d.haptics ? 'Active' : 'Coupée', d.haptics);
     set('setLimit', d.limitMin ? `${d.limitMin} min par jour` : 'Pas de limite', !!d.limitMin);
     for (const [id, key] of [['volMusic', 'vMusic'], ['volFx', 'vFx'], ['volVoice', 'vVoice']]) { const el = $(id); if (el) el.value = d[key]; }
     const hn = HORNS.find(h => h.id === d.horn) || HORNS[0];

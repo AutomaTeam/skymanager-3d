@@ -17,9 +17,9 @@
    Etat sauvegarde : localStorage « skymanager.staff ».
    ============================================================ */
 
-import { bestChoice, DEFAULT_CHOICE } from './terminalFlow.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { collectBodies, PERSON_R } from './bodies.js?v=1791575411';
+import { bestChoice, DEFAULT_CHOICE } from './terminalFlow.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { collectBodies, PERSON_R } from './bodies.js?v=1791576226';
 
 const STORE = 'skymanager.staff';
 const COIN = 1000;                              // EUR par piece (meme valeur que arcade.js)
@@ -27,21 +27,21 @@ const MAX_LEVEL = 3;
 
 export const ROLES = [
   { id: 'checkin', ico: '🛂', name: 'Agent d\'enregistrement', max: 3, cost: 40, unlock: 1, base: 5.0,
-    desc: 'Tient un guichet : il verifie les billets et les bagages. Chaque agent ouvre un guichet de plus.',
+    desc: 'Tient un guichet : il vérifie les billets et les bagages. Chaque agent ouvre un guichet de plus.',
     counters: ['checkin1', 'checkin2', 'checkin3'] },
   { id: 'baggage', ico: '🧳', name: 'Bagagiste', max: 2, cost: 30, unlock: 1, base: 9,
     desc: 'Charge les valises dans l\'avion sans que tu aies a t\'en occuper.' },
-  { id: 'security', ico: '🕵️', name: 'Agent de surete', max: 1, cost: 50, unlock: 2, base: 4.0,
+  { id: 'security', ico: '🕵️', name: 'Agent de sûreté', max: 1, cost: 50, unlock: 2, base: 4.0,
     desc: 'Regarde le plateau du scanner et confisque les objets interdits.', counters: ['security'] },
   { id: 'gate', ico: '📲', name: 'Agent de porte', max: 1, cost: 45, unlock: 2, base: 3.5,
     desc: 'Scanne les cartes d\'embarquement et fait monter les passagers.', counters: ['gate'] },
   { id: 'shop', ico: '🛍️', name: 'Vendeur', max: 2, cost: 30, unlock: 2, base: 6,
-    desc: 'Sert les clients de la boutique et du cafe.', counters: ['shop', 'cafe'] },
-  { id: 'mechanic', ico: '🧑‍🔧', name: 'Mecanicien', max: 2, cost: 60, unlock: 2, base: 10,
-    desc: 'Repare doucement les pieces usees de l\'avion.' },
+    desc: 'Sert les clients de la boutique et du café.', counters: ['shop', 'cafe'] },
+  { id: 'mechanic', ico: '🧑‍🔧', name: 'Mécanicien', max: 2, cost: 60, unlock: 2, base: 10,
+    desc: 'Répare doucement les pièces usées de l\'avion.' },
   { id: 'stock', ico: '📦', name: 'Magasinier', max: 1, cost: 35, unlock: 3, base: 12,
-    desc: 'Va chercher des caisses a la reserve et recharge les machines vides.' },
-  { id: 'hostess', ico: '👩‍✈️', name: 'Hotesse', max: 2, cost: 55, unlock: 3, base: 14,
+    desc: 'Va chercher des caisses à la réserve et recharge les machines vides.' },
+  { id: 'hostess', ico: '👩‍✈️', name: 'Hôtesse', max: 2, cost: 55, unlock: 3, base: 14,
     desc: 'En cabine, elle sert les passagers pendant que tu fais autre chose.' }
 ];
 export const ROLE = Object.fromEntries(ROLES.map(r => [r.id, r]));
@@ -85,9 +85,9 @@ export class Staff {
   /* ---------------- Achats ---------------- */
   canHire(id) {
     const r = ROLE[id], h = this.hired[id];
-    if (!this.isUnlocked(id)) return { ok: false, why: `Debloque au niveau ${r.unlock}` };
-    if (h.n >= r.max) return { ok: false, why: 'Equipe complete' };
-    if (this.g.arcade.coins < r.cost) return { ok: false, why: `Il te faut ${r.cost} pieces` };
+    if (!this.isUnlocked(id)) return { ok: false, why: `Débloque au niveau ${r.unlock}` };
+    if (h.n >= r.max) return { ok: false, why: 'Équipe complète' };
+    if (this.g.arcade.coins < r.cost) return { ok: false, why: `Il te faut ${r.cost} pièces` };
     return { ok: true };
   }
 
@@ -111,7 +111,7 @@ export class Staff {
     if (h.n < 1) return { ok: false, why: 'Recrute d\'abord' };
     if (h.lvl >= MAX_LEVEL) return { ok: false, why: 'Niveau max' };
     const cost = trainCost(r, h.lvl);
-    if (this.g.arcade.coins < cost) return { ok: false, why: `Il te faut ${cost} pieces`, cost };
+    if (this.g.arcade.coins < cost) return { ok: false, why: `Il te faut ${cost} pièces`, cost };
     return { ok: true, cost };
   }
 
@@ -355,7 +355,7 @@ export class Staff {
     if (!this._earned) return;
     this._earnT = (this._earnT || 0) + dt;
     if (this._earnT < 25) return;
-    this.g.toast(`👥 Ton equipe a gagne +${this._earned} 🪙`, 2200, 'ok');
+    this.g.toast(`👥 Ton équipe a gagné +${this._earned} 🪙`, 2200, 'ok');
     this._earned = 0; this._earnT = 0;
   }
 

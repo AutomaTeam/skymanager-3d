@@ -16,7 +16,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { instanced } from './props.js?v=1791575411';
+import { instanced } from './props.js?v=1791576226';
 
 const N = 'nature/kenney-nature-kit/';
 const F = 'interior/kenney-furniture-kit/';
@@ -170,7 +170,7 @@ export function buildDecor() {
      Reperes de paysage : chateau d'eau, eoliennes, pompiers
      -------------------------------------------------------- */
   group.add(instanced(I + 'water-tower.glb', [{ x: 700, z: 815 }], { height: 15, cast: true }));
-  block(700, 815, 2.6, 2.6, "chateau d'eau");
+  block(700, 815, 2.6, 2.6, "château d'eau");
   const mills = [{ x: 650, z: 880 }, { x: 650, z: 1040 }];
   group.add(instanced(I + 'windmill.glb', mills, { height: 17, cast: true }));
   mills.forEach(m => block(m.x, m.z, 1.6, 1.6, 'eolienne'));
@@ -184,7 +184,7 @@ export function buildDecor() {
 
   /* Chariot elevateur (poly.pizza, CC BY 3.0) dans la zone de fret. */
   group.add(instanced(P + 'forklift-kolos.glb', [{ x: 640, z: 1158, r: 2.2 }], { length: 3.4, cast: true }));
-  block(640, 1158, 1.0, 1.6, 'chariot elevateur');
+  block(640, 1158, 1.0, 1.6, 'chariot élévateur');
   group.add(instanced(C + 'firetruck.glb', [{ x: 178, z: 1285, r: Math.PI }], { length: 8.5, cast: true }));
   group.add(instanced(C + 'ambulance.glb', [{ x: 212, z: 1285, r: Math.PI }], { length: 6.2, cast: true }));
   block(178, 1285, 1.7, 4.3, 'camion de pompiers');

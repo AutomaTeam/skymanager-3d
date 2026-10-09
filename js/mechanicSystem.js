@@ -33,8 +33,8 @@ export const STATIONS = [
   { key: 'gearRight', label: 'Train principal D',  pos: [3.8, -3.45, 1.8], components: ['struts'] },
   { key: 'wingLeft',  label: 'Aile gauche',        pos: [-11, -1.0, 3.2], components: ['flapsActu'] },
   { key: 'wingRight', label: 'Aile droite',        pos: [11, -1.0, 3.2], components: ['hydraulics'] },
-  { key: 'engineLeft', label: 'Reacteur gauche',   pos: [-6.6, -2.0, -1.2], components: ['fanBlades'] },
-  { key: 'engineRight', label: 'Reacteur droit',   pos: [6.6, -2.0, -1.2], components: ['fanBlades'] },
+  { key: 'engineLeft', label: 'Réacteur gauche',   pos: [-6.6, -2.0, -1.2], components: ['fanBlades'] },
+  { key: 'engineRight', label: 'Réacteur droit',   pos: [6.6, -2.0, -1.2], components: ['fanBlades'] },
   { key: 'fuselage',  label: 'Fuselage / structure', pos: [0, -1.5, -4], components: ['airframe'] }
 ];
 
@@ -58,7 +58,7 @@ const COMPONENT_DEFS = {
   struts:     { label: 'Amortisseurs',           critical: 70, part: 'seal',     fluid: 65,   torque: 50 },
   flapsActu:  { label: 'Actionneurs de volets',  critical: 70, part: 'actuator', fluid: 60,   torque: 55 },
   hydraulics: { label: 'Circuits hydrauliques',  critical: 65, part: 'fluid',    fluid: 55,   torque: 50 },
-  fanBlades:  { label: 'Soufflantes reacteurs',  critical: 60, part: 'blade',    fluid: 60,   torque: 65 },
+  fanBlades:  { label: 'Soufflantes réacteurs',  critical: 60, part: 'blade',    fluid: 60,   torque: 65 },
   airframe:   { label: 'Structure / composites', critical: 55, part: 'panel',    fluid: null, torque: 70 }
 };
 
@@ -74,14 +74,14 @@ const COMPONENT_DEFS = {
    s'use vite.
    ------------------------------------------------------------ */
 export const FAILURES = {
-  tyresNose:  { kind: 'tyre',    weight: 3, label: 'Crevaison train avant',    alert: 'CREVAISON AVANT — tenue de cap degradee' },
+  tyresNose:  { kind: 'tyre',    weight: 3, label: 'Crevaison train avant',    alert: 'CREVAISON AVANT — tenue de cap dégradée' },
   tyresMain:  { kind: 'tyre',    weight: 4, label: 'Crevaison train principal', alert: 'CREVAISON PRINCIPALE — l\'appareil tire au roulage' },
-  brakes:     { kind: 'brake',   weight: 3, label: 'Freins degrade',           alert: 'FREINS DEGRADES — distance d\'arret allongee' },
-  struts:     { kind: 'drag',    weight: 2, label: 'Amortisseur fuyant',       alert: 'AMORTISSEUR FUYANT — trainee et instabilite' },
-  flapsActu:  { kind: 'flaps',   weight: 3, label: 'Volets bloques',           alert: 'VOLETS BLOQUES — configuration figee' },
+  brakes:     { kind: 'brake',   weight: 3, label: 'Freins dégradé',           alert: 'FREINS DÉGRADÉS — distance d\'arrêt allongée' },
+  struts:     { kind: 'drag',    weight: 2, label: 'Amortisseur fuyant',       alert: 'AMORTISSEUR FUYANT — traînée et instabilité' },
+  flapsActu:  { kind: 'flaps',   weight: 3, label: 'Volets bloqués',           alert: 'VOLETS BLOQUÉS — configuration figée' },
   hydraulics: { kind: 'control', weight: 3, label: 'Perte hydraulique',        alert: 'PERTE HYDRAULIQUE — gouvernes amollies' },
-  fanBlades:  { kind: 'thrust',  weight: 3, label: 'Reacteur degrade',         alert: 'REACTEUR DEGRADE — poussee reduite' },
-  airframe:   { kind: 'drag',    weight: 1, label: 'Fissure structurelle',     alert: 'FISSURE STRUCTURELLE — trainee et vibrations' }
+  fanBlades:  { kind: 'thrust',  weight: 3, label: 'Réacteur dégradé',         alert: 'RÉACTEUR DÉGRADÉ — poussée réduite' },
+  airframe:   { kind: 'drag',    weight: 1, label: 'Fissure structurelle',     alert: 'FISSURE STRUCTURELLE — traînée et vibrations' }
 };
 
 export class MechanicSystem {
@@ -283,9 +283,9 @@ export class MechanicSystem {
     if (!c) return null;
     const flags = [];
     if (c.wear >= c.critical) flags.push('usure critique');
-    else if (c.wear >= c.critical * 0.55) flags.push('usure a surveiller');
+    else if (c.wear >= c.critical * 0.55) flags.push('usure à surveiller');
     if (c.fluid != null && c.fluid < 35) flags.push('niveau bas');
-    if (c.torque != null && c.torque < 35) flags.push('fixations desserrees');
+    if (c.torque != null && c.torque < 35) flags.push('fixations desserrées');
     return { ...c, flags, ok: flags.length === 0 };
   }
 

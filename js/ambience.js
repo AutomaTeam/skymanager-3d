@@ -14,18 +14,18 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { emojiSprite } from './groundFun.js?v=1791575411';
-import { TODAY } from './terminalFlow.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { emojiSprite } from './groundFun.js?v=1791576226';
+import { TODAY } from './terminalFlow.js?v=1791576226';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [
-  `Le vol ${TODAY.flight} a destination de ${TODAY.dest} embarque ${TODAY.gate.toLowerCase()}.`,
+  `Le vol ${TODAY.flight} à destination de ${TODAY.dest} embarque ${TODAY.gate.toLowerCase()}.`,
   'Merci de ne pas laisser vos bagages sans surveillance.',
-  'Un doudou lapin a ete retrouve pres du cafe. Il attend son proprietaire !',
-  `Derniere minute : les passagers du vol ${TODAY.flight} sont attendus ${TODAY.gate.toLowerCase()}.`,
-  'Bienvenue dans notre aeroport ! Bon voyage a tous.',
-  'Le cafe vous propose un chocolat chaud... avec de la chantilly !'
+  'Un doudou lapin a été retrouvé près du café. Il attend son propriétaire !',
+  `Dernière minute : les passagers du vol ${TODAY.flight} sont attendus ${TODAY.gate.toLowerCase()}.`,
+  'Bienvenue dans notre aéroport ! Bon voyage à tous.',
+  'Le café vous propose un chocolat chaud... avec de la chantilly !'
 ];
 
 /* Spotteurs : position, couleur de tenue, casquette, echelle (la fille est plus petite). */

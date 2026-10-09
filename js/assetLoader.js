@@ -54,6 +54,6 @@ export function spawnModel(url, { onReady, castShadow = true, receiveShadow = tr
     }
     holder.userData.model = { scene: inst, animations: gltf.animations || [], mixer };
     if (onReady) onReady(holder.userData.model);
-  }).catch((err) => console.error('[assets] echec de chargement :', url, err));
+  }).catch((err) => console.error('[assets] échec de chargement :', url, err));
   return holder;
 }

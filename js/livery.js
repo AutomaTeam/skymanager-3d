@@ -57,7 +57,7 @@ export const PATTERNS = [
   { id: 'checker', name: 'Damier',      ico: '🏁', price: 10 },
   { id: 'zigzag',  name: 'Zigzag',      ico: '⚡', price: 10 },
   { id: 'dots',    name: 'Pois',        ico: '🔴', price: 10 },
-  { id: 'stars',   name: 'Etoiles',     ico: '⭐', price: 15 },
+  { id: 'stars',   name: 'Étoiles',     ico: '⭐', price: 15 },
   { id: 'flames',  name: 'Flammes',     ico: '🔥', price: 20 },
   { id: 'tiger',   name: 'Tigre',       ico: '🐯', price: 25, rare: true },
   { id: 'rainbow', name: 'Arc-en-ciel', ico: '🌈', price: 40, rare: true }
@@ -66,12 +66,12 @@ export const PATTERNS = [
 /* Autocollants (emoji dessines sur une pastille). */
 export const STICKERS = [
   { id: 'none', name: 'Aucun', ico: '∅', price: 0 },
-  { id: 'star', name: 'Etoile', ico: '⭐', price: 0 },
-  { id: 'heart', name: 'Coeur', ico: '❤️', price: 0 },
+  { id: 'star', name: 'Étoile', ico: '⭐', price: 0 },
+  { id: 'heart', name: 'Cœur', ico: '❤️', price: 0 },
   { id: 'smile', name: 'Sourire', ico: '😀', price: 0 },
   { id: 'sun', name: 'Soleil', ico: '☀️', price: 4 },
-  { id: 'bolt', name: 'Eclair', ico: '⚡', price: 4 },
-  { id: 'rocket', name: 'Fusee', ico: '🚀', price: 6 },
+  { id: 'bolt', name: 'Éclair', ico: '⚡', price: 4 },
+  { id: 'rocket', name: 'Fusée', ico: '🚀', price: 6 },
   { id: 'flame', name: 'Flamme', ico: '🔥', price: 6 },
   { id: 'rainbow', name: 'Arc-en-ciel', ico: '🌈', price: 6 },
   { id: 'cat', name: 'Chat', ico: '🐱', price: 8 },
@@ -83,7 +83,7 @@ export const STICKERS = [
   { id: 'shark', name: 'Requin', ico: '🦈', price: 12 },
   { id: 'robot', name: 'Robot', ico: '🤖', price: 12 },
   { id: 'alien', name: 'Alien', ico: '👽', price: 15 },
-  { id: 'ghost', name: 'Fantome', ico: '👻', price: 15 },
+  { id: 'ghost', name: 'Fantôme', ico: '👻', price: 15 },
   { id: 'pizza', name: 'Pizza', ico: '🍕', price: 15 },
   { id: 'donut', name: 'Donut', ico: '🍩', price: 15 },
   { id: 'cool', name: 'Lunettes', ico: '😎', price: 15 },
@@ -97,7 +97,7 @@ export const STICKERS = [
   { id: 'guitar', name: 'Guitare', ico: '🎸', price: 15 },
   { id: 'crown', name: 'Couronne', ico: '👑', price: 40, rare: true },
   { id: 'diamond', name: 'Diamant', ico: '💎', price: 40, rare: true },
-  { id: 'trophy', name: 'Trophee', ico: '🏆', price: 40, rare: true },
+  { id: 'trophy', name: 'Trophée', ico: '🏆', price: 40, rare: true },
   { id: 'dragon', name: 'Dragon', ico: '🐉', price: 50, rare: true }
 ];
 

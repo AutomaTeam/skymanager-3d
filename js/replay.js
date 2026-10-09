@@ -71,7 +71,7 @@ export class Replay {
     if (rep) rep.classList.add('hidden');
     if (this.btn) this.btn.classList.add('hidden');
     if (this.stopBtn) this.stopBtn.classList.remove('hidden');
-    g.toast('🎬 Rejeu des 20 dernieres secondes !', 2400, 'ok');
+    g.toast('🎬 Rejeu des 20 dernières secondes !', 2400, 'ok');
     g.r3d.cameraMode = 'chase';
   }
 

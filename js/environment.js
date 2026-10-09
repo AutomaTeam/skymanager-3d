@@ -57,7 +57,7 @@ const SKY_KEYS = [
    brouillard a couper au couteau) ; `dim` attenue le soleil.
    ------------------------------------------------------------ */
 export const WEATHERS = {
-  clear:  { label: 'Degage',     cloud: 0.35, rain: 0.0, fog: 1.00, wind: [2, 6],   turb: 0.25, dim: 1.00 },
+  clear:  { label: 'Dégagé',     cloud: 0.35, rain: 0.0, fog: 1.00, wind: [2, 6],   turb: 0.25, dim: 1.00 },
   cloudy: { label: 'Nuageux',    cloud: 0.78, rain: 0.0, fog: 0.85, wind: [5, 11],  turb: 0.45, dim: 0.72 },
   rain:   { label: 'Pluie',      cloud: 0.92, rain: 0.6, fog: 0.60, wind: [8, 16],  turb: 0.70, dim: 0.50 },
   fog:    { label: 'Brouillard', cloud: 0.60, rain: 0.0, fog: 0.22, wind: [1, 4],   turb: 0.20, dim: 0.60 },
@@ -248,7 +248,7 @@ export class Environment {
   /* Resume long pour le rapport d'activite du monde. */
   report() {
     const kt = Math.round(this.windSpeed * 1.94384);
-    return `Meteo : ${this.weatherLabel().toLowerCase()}, ${this.timeLabel()}, vent ${String(Math.round(this.windDir)).padStart(3, '0')} a ${kt} kt`;
+    return `Météo : ${this.weatherLabel().toLowerCase()}, ${this.timeLabel()}, vent ${String(Math.round(this.windDir)).padStart(3, '0')} à ${kt} kt`;
   }
 
   /* Reglage manuel de l'heure (menu pause) : sert aussi a tester

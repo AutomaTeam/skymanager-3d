@@ -245,7 +245,7 @@ withRng(17, () => {
   t._auto(t.counters.baggage);
   check(t.stats.incidents === 1 && t.bagsSinceFlight === 0, 'bagage abandonne charge sans surveillance : incident');
   t.counters.baggage.line = [{ id: 2, ownerId: 1, kg: 10, orphan: true }];
-  check(t.actionLabel('baggage').includes('ABANDONNE'), 'le bouton du tri annonce le bagage abandonne');
+  check(t.actionLabel('baggage').includes('ABANDONNÉ'), 'le bouton du tri annonce le bagage abandonne');
 });
 
 /* ---------- Un poste non tenu laisse passer les erreurs ---------- */

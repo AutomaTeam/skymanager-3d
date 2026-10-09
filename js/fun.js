@@ -17,8 +17,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { Particles } from './particles.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { Particles } from './particles.js?v=1791576226';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -34,7 +34,7 @@ const BOOST_MIN = 0.12;               // jauge mini pour lancer le turbo
 
 export const AVATARS = ['🧑‍✈️', '🦊', '🐱', '🐶', '🤖', '🦄', '🐼', '🐸'];
 export const TRAILS = [
-  { id: 'off',     name: 'Sans fumee',  ico: '🚫', colors: null },
+  { id: 'off',     name: 'Sans fumée',  ico: '🚫', colors: null },
   { id: 'white',   name: 'Nuage blanc', ico: '☁️', colors: [0xffffff] },
   { id: 'red',     name: 'Rouge',       ico: '🔴', colors: [0xff3b3b] },
   { id: 'blue',    name: 'Bleu',        ico: '🔵', colors: [0x38a1ff] },
@@ -82,11 +82,11 @@ const LINES = {
 };
 
 const GIFTS = [
-  { w: 50, kind: 'coins', min: 6,  max: 18,  text: (n) => `${n} pieces !`,        ico: '🪙' },
-  { w: 22, kind: 'coins', min: 20, max: 40,  text: (n) => `Gros tas de ${n} pieces !`, ico: '💰' },
-  { w: 14, kind: 'xp',    min: 25, max: 50,  text: (n) => `${n} points d'experience !`, ico: '✨' },
+  { w: 50, kind: 'coins', min: 6,  max: 18,  text: (n) => `${n} pièces !`,        ico: '🪙' },
+  { w: 22, kind: 'coins', min: 20, max: 40,  text: (n) => `Gros tas de ${n} pièces !`, ico: '💰' },
+  { w: 14, kind: 'xp',    min: 25, max: 50,  text: (n) => `${n} points d'expérience !`, ico: '✨' },
   { w: 10, kind: 'boost', min: 1,  max: 1,   text: () => 'Turbo plein pour le prochain vol !', ico: '⚡' },
-  { w: 4,  kind: 'coins', min: 60, max: 100, text: (n) => `JACKPOT : ${n} pieces !`,   ico: '💎' }
+  { w: 4,  kind: 'coins', min: 60, max: 100, text: (n) => `JACKPOT : ${n} pièces !`,   ico: '💎' }
 ];
 
 /* ============================================================
@@ -334,9 +334,9 @@ export class Fun {
       el.querySelector('b').textContent = title;
       el.querySelector('small').textContent = sub;
     };
-    set('pauseDiff', this.diff.ico, 'Difficulte', this.diff.name);
+    set('pauseDiff', this.diff.ico, 'Difficulté', this.diff.name);
     const tr = TRAILS.find(x => x.id === this.data.trail) || TRAILS[0];
-    set('pauseTrail', tr.ico, 'Fumee', tr.name);
+    set('pauseTrail', tr.ico, 'Fumée', tr.name);
     set('pauseVoice', this.data.voice ? '🗣️' : '🤐', 'Voix de Coco', this.data.voice ? 'active' : 'coupee');
   }
 
@@ -344,7 +344,7 @@ export class Fun {
     const ids = Object.keys(DIFFS);
     this.data.difficulty = ids[(ids.indexOf(this.data.difficulty) + 1) % ids.length];
     this.save(); sfx.pop(); this.refreshPause();
-    this.g.toast(`${this.diff.ico} Difficulte : ${this.diff.name}`, 2200, 'ok');
+    this.g.toast(`${this.diff.ico} Difficulté : ${this.diff.name}`, 2200, 'ok');
   }
 
   cycleTrail() {
@@ -621,7 +621,7 @@ export class Fun {
     x.strokeStyle = '#e5dcc3'; x.lineWidth = 3; x.strokeRect(20, 20, W, H);
     x.fillStyle = '#334155'; x.font = 'bold 34px Arial, sans-serif';
     const arc = this.g.arcade;
-    const dest = arc.plan && arc.plan.dest ? `${arc.plan.dest.city}` : (this.g.arcade.data.name || 'Mon aeroport');
+    const dest = arc.plan && arc.plan.dest ? `${arc.plan.dest.city}` : (this.g.arcade.data.name || 'Mon aéroport');
     x.fillText(`${this.data.pilot.avatar} ${this.name} · ${dest}`, 30, H + 72);
     x.font = '22px Arial, sans-serif'; x.fillStyle = '#64748b';
     x.textAlign = 'right';
@@ -733,21 +733,21 @@ export class Fun {
   nextTip() {
     const g = this.g, tips = [];
     const st = this.data.stats;
-    if (!g.sky.data.done) tips.push('🎯 Essaie une MISSION au tableau de depart : ballons, course, pompier…');
-    else if (!Object.values(g.sky.data.best).some(b => b.medal === 3)) tips.push("🥇 Vise une medaille d'OR sur une mission !");
+    if (!g.sky.data.done) tips.push('🎯 Essaie une MISSION au tableau de départ : ballons, course, pompier…');
+    else if (!Object.values(g.sky.data.best).some(b => b.medal === 3)) tips.push("🥇 Vise une médaille d'OR sur une mission !");
     if (st.rolls + st.loops < 3) tips.push('🌀 En vol, essaie TONNEAU et LOOPING pour gagner des points !');
-    if (g.openWorld.starCount < 8) tips.push('🌠 Des etoiles filantes sont cachees dans le ciel : cherche-les !');
-    if (!g.openWorld.data.islands.length) tips.push("🏝️ Au nord-est, une mer et six iles t'attendent !");
+    if (g.openWorld.starCount < 8) tips.push('🌠 Des étoiles filantes sont cachées dans le ciel : cherche-les !');
+    if (!g.openWorld.data.islands.length) tips.push("🏝️ Au nord-est, une mer et six îles t'attendent !");
     const h = g.hangar;
-    if (g.arcade.coins >= 25 && !g.arcade.data.stats.hangarVisit) tips.push(`🎨 Tu as ${g.arcade.coins} pieces : passe a Mon hangar pour peindre ton avion !`);
+    if (g.arcade.coins >= 25 && !g.arcade.data.stats.hangarVisit) tips.push(`🎨 Tu as ${g.arcade.coins} pièces : passe à Mon hangar pour peindre ton avion !`);
     if (!h.planeOwned('hydravion') && g.arcade.data.level >= 2 && g.arcade.coins >= 120) tips.push("🛩️ Tu peux acheter l'Hydravion au hangar !");
-    if (!h.planeOwned('zebulon') && g.arcade.data.level >= 3 && g.arcade.coins >= 150) tips.push('🛩️ Tu peux acheter le Zebulon (avion de voltige) au hangar !');
-    if (!g.deco.data.items.length && g.arcade.coins >= 30) tips.push('🏗️ Construis ta place : fontaine, manege, grande roue…');
+    if (!h.planeOwned('zebulon') && g.arcade.data.level >= 3 && g.arcade.coins >= 150) tips.push('🛩️ Tu peux acheter le Zébulon (avion de voltige) au hangar !');
+    if (!g.deco.data.items.length && g.arcade.coins >= 30) tips.push('🏗️ Construis ta place : fontaine, manège, grande roue…');
     const ast = g.arcade.data.stats;
-    if (!(ast.tugTrips > 0)) tips.push('🚜 A l\'aeroport, monte dans le tracteur jaune et livre les valises a l\'avion !');
-    if (!(ast.fires > 0)) tips.push('🚒 Quand l\'alarme sonne, cours a la caserne : tu peux conduire le camion de pompiers !');
+    if (!(ast.tugTrips > 0)) tips.push('🚜 À l\'aéroport, monte dans le tracteur jaune et livre les valises à l\'avion !');
+    if (!(ast.fires > 0)) tips.push('🚒 Quand l\'alarme sonne, cours à la caserne : tu peux conduire le camion de pompiers !');
     tips.push(...g.modules.tips());                  // conseils fournis par les modules du registre
-    if (!tips.length) tips.push("🔁 Refais un vol : bats ton record d'etoiles et d'acrobaties !");
+    if (!tips.length) tips.push("🔁 Refais un vol : bats ton record d'étoiles et d'acrobaties !");
     return tips[Math.floor(Math.random() * tips.length)];
   }
 

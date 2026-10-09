@@ -15,9 +15,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { LAYOUT } from './layout.js?v=1791575411';
-import { Vehicle } from './vehicle.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { LAYOUT } from './layout.js?v=1791576226';
+import { Vehicle } from './vehicle.js?v=1791576226';
 
 const ENTER_RANGE = 4;           // m pour monter dans le tracteur
 const CART_LEN = 2.9;            // distance d'attelage entre deux elements
@@ -119,7 +119,7 @@ export class Tug extends Vehicle {
     this.dockRing.visible = this.holdRing.visible = true;
     this._seat();
     sfx.honk();
-    g.toast('🚜 Au volant ! Va chercher les valises au terminal (anneau bleu), puis livre-les a l\'avion (anneau orange).', 5200, 'ok');
+    g.toast('🚜 Au volant ! Va chercher les valises au terminal (anneau bleu), puis livre-les à l\'avion (anneau orange).', 5200, 'ok');
     this._refreshBags();
   }
 
@@ -189,7 +189,7 @@ export class Tug extends Vehicle {
         this.bags += n; this.dock -= n;
         this._refreshBags();
         sfx.pop();
-        g.arcade.popup(`🧳 +${n} valise${n > 1 ? 's' : ''} chargee${n > 1 ? 's' : ''} (${this.bags}/${BAGS_MAX})`);
+        g.arcade.popup(`🧳 +${n} valise${n > 1 ? 's' : ''} chargée${n > 1 ? 's' : ''} (${this.bags}/${BAGS_MAX})`);
       } else if (!this._emptyMsg) {
         this._emptyMsg = true;
         g.arcade.popup('🧳 Pas de valise pour l\'instant… elles arrivent !');

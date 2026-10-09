@@ -171,7 +171,7 @@ export class TouchControls {
     if (!on) { this.tilt.on = false; this.tilt.base = null; window.removeEventListener('deviceorientation', this._onOrient); return { ok: true }; }
     if (typeof DeviceOrientationEvent === 'undefined') return { ok: false, why: 'Cet appareil n\'a pas de capteur.' };
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      try { if (await DeviceOrientationEvent.requestPermission() !== 'granted') return { ok: false, why: 'Permission refusee.' }; }
+      try { if (await DeviceOrientationEvent.requestPermission() !== 'granted') return { ok: false, why: 'Permission refusée.' }; }
       catch (e) { return { ok: false, why: 'Permission impossible.' }; }
     }
     this._onOrient = this._onOrient || ((e) => this.injectOrientation(e.beta, e.gamma));

@@ -9,6 +9,6 @@ ok(a.length === 10 && new Set(a).size === 10, '10 cachettes differentes');
 ok(JSON.stringify(a) === JSON.stringify(b), 'meme semaine = memes cachettes');
 ok(JSON.stringify(a) !== JSON.stringify(c), 'semaine suivante = autres cachettes');
 ok(a.every(i => Number.isInteger(i) && i >= 0 && i < 30), 'indices valides');
-ok(warmth(3).txt === 'Tu brules !' && warmth(15).txt === 'Chaud, chaud !' && warmth(40).txt === 'Tiede…' && warmth(300).txt === 'Froid…', 'chaud / froid selon la distance');
+ok(warmth(3).txt === 'Tu brûles !' && warmth(15).txt === 'Chaud, chaud !' && warmth(40).txt === 'Tiède…' && warmth(300).txt === 'Froid…', 'chaud / froid selon la distance');
 if (bad) process.exit(1);
 console.log('Tout est bon (cache-cache).');

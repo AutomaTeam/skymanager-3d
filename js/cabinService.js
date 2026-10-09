@@ -19,12 +19,12 @@
 const STORE = 'skymanager.cabin';
 
 export const REQUEST_LABELS = {
-  cafe: 'Cafe',
-  repas: 'Repas special',
-  boisson: 'Boisson fraiche',
+  cafe: 'Café',
+  repas: 'Repas spécial',
+  boisson: 'Boisson fraîche',
   couverture: 'Couverture',
   casque: 'Casque audio',
-  medical: 'Assistance medicale',
+  medical: 'Assistance médicale',
   /* Mode Arcade : demandes rigolotes. */
   quiz: 'Question de passager',
   bonbon: 'Bonbon',
@@ -290,7 +290,7 @@ export class CabinService {
   }
 
   status() {
-    return `Satisfaction passagers ${this.satisfaction.toFixed(0)}% — duty-free cumule ${this.dutyFreeRevenue.toLocaleString('fr-FR')} EUR`;
+    return `Satisfaction passagers ${this.satisfaction.toFixed(0)}% — duty-free cumulé ${this.dutyFreeRevenue.toLocaleString('fr-FR')} EUR`;
   }
 
   save() {

@@ -12,8 +12,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
+import * as Save from './save.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
 
 const STORE = 'skymanager.deco';
 const $ = (id) => document.getElementById(id);
@@ -43,7 +43,7 @@ export const ITEMS = [
   { id: 'tent',    ico: '🎪', name: 'Chapiteau',    cost: 45,  r: 3.4, charm: 5, income: 2, make: mkTent },
   { id: 'slide',   ico: '🛝', name: 'Toboggan',     cost: 35,  r: 2.0, charm: 4, income: 1, make: mkSlide },
   { id: 'statue',  ico: '🗿', name: 'Statue d\'avion', cost: 50, r: 2.0, charm: 6, income: 1, make: mkStatue },
-  { id: 'carousel', ico: '🎠', name: 'Manege',      cost: 80,  r: 3.6, charm: 8, income: 5, make: mkCarousel },
+  { id: 'carousel', ico: '🎠', name: 'Manège',      cost: 80,  r: 3.6, charm: 8, income: 5, make: mkCarousel },
   { id: 'ferris',  ico: '🎡', name: 'Grande roue',  cost: 140, r: 5.5, charm: 14, income: 10, make: mkFerris }
 ];
 export const itemOf = (id) => ITEMS.find(i => i.id === id);
@@ -281,7 +281,7 @@ export class Deco {
 
   open() {
     const g = this.g;
-    if (g.state !== 'HUB') { g.toast('Construis ta place a l\'aeroport, a pied !', 2400, 'warn'); return; }
+    if (g.state !== 'HUB') { g.toast('Construis ta place à l\'aéroport, à pied !', 2400, 'warn'); return; }
     this.active = true;
     this.mode = 'place';
     $('decoBar').classList.remove('hidden');
@@ -295,7 +295,7 @@ export class Deco {
     }
     this._buildGhost();
     this._render();
-    g.toast('🏗️ Marche pour deplacer le curseur, puis pose ton objet !', 3200, 'ok');
+    g.toast('🏗️ Marche pour déplacer le curseur, puis pose ton objet !', 3200, 'ok');
   }
 
   close() {
@@ -403,7 +403,7 @@ export class Deco {
     }
     if (!this.cursor.ok) return;
     const it = this.cur;
-    if (g.arcade.coins < it.cost) { g.toast('Pas assez de pieces !', 1800, 'warn'); sfx.oops(); return; }
+    if (g.arcade.coins < it.cost) { g.toast('Pas assez de pièces !', 1800, 'warn'); sfx.oops(); return; }
     g.tycoon.cash -= it.cost * COIN; g.tycoon.save();
     const rec = { id: it.id, x: this.cursor.x, z: this.cursor.z, r: this.rot };
     this.data.items.push(rec);
@@ -411,7 +411,7 @@ export class Deco {
     this.save();
     sfx.tada(); g.arcade.confetti(24);
     g.arcade.event('build');
-    g.arcade.popup(`${it.ico} ${it.name} pose !`);
+    g.arcade.popup(`${it.ico} ${it.name} posé !`);
     this._render();
   }
 }

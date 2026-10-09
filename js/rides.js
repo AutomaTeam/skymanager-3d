@@ -19,14 +19,14 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791575411';
-import { buildPark, PARK } from './rideCourse.js?v=1791575411';
-import { buildParkMeshes } from './ridePark.js?v=1791575411';
-import { buildRide } from './rideModels.js?v=1791575411';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791575411';
-import { slideMove, collectBodies } from './bodies.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { Particles } from './particles.js?v=1791575411';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791576226';
+import { buildPark, PARK } from './rideCourse.js?v=1791576226';
+import { buildParkMeshes } from './ridePark.js?v=1791576226';
+import { buildRide } from './rideModels.js?v=1791576226';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791576226';
+import { slideMove, collectBodies } from './bodies.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { Particles } from './particles.js?v=1791576226';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -113,7 +113,7 @@ export class Rides {
       this.group.add(this.parkMesh);
       this.group.add(this.rig);
       this.fx = new FX(this.group, 160);
-    } catch (e) { console.error('[rides] scene', e); }
+    } catch (e) { console.error('[rides] scène', e); }
     this._bind();
   }
 
@@ -218,7 +218,7 @@ export class Rides {
     const why = !g.arcade.on ? 'Les montures sont dans le mode Arcade.'
       : g.state !== 'HUB' ? ''
       : g.controlled ? 'Rends d\'abord le contrôle de l\'agent.'
-      : g.driving ? 'Descends d\'abord du vehicule.'
+      : g.driving ? 'Descends d\'abord du véhicule.'
       : g.inTerminal ? 'Pas de roulettes dans le terminal ! Sors d\'abord.'
       : g.hangar.active || g.deco.active ? 'Ferme d\'abord cet écran.' : null;
     if (why === null) return true;

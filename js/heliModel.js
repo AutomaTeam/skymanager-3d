@@ -19,7 +19,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791575411';
+import { LAYOUT } from './layout.js?v=1791576226';
 
 const KTS = 1.94384;
 const FPM = 196.85;
@@ -147,7 +147,7 @@ export function heliCommand(ac, as, inp, dt) {
   }
   if (!as.launched) {
     as.state = 'PARKED';
-    as.hint = 'Appuie sur DECOLLER !';
+    as.hint = 'Appuie sur DÉCOLLER !';
     out.brake = 1;
     c.vy = 0; c.turn = 0; c.speed = 0;
     return out;

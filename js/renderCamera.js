@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { COCKPIT_EYE } from './cockpit.js?v=1791575411';
-import { clamp01s } from './renderShared.js?v=1791575411';
+import { COCKPIT_EYE } from './cockpit.js?v=1791576226';
+import { clamp01s } from './renderShared.js?v=1791576226';
 
 export const cameraMethods = {
   /* ---------------------------------------------------------- */

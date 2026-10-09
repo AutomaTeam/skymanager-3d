@@ -3,11 +3,11 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791575411';
-import { LAYOUT } from './layout.js?v=1791575411';
-import { drawIcon } from './icons.js?v=1791575411';
-import { PARK, buildPark } from './rideCourse.js?v=1791575411';
-import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { LAYOUT } from './layout.js?v=1791576226';
+import { drawIcon } from './icons.js?v=1791576226';
+import { PARK, buildPark } from './rideCourse.js?v=1791576226';
+import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791576226';
 
 export const mapMethods = {
   _mapToPx(x, z, w, h) {
@@ -20,7 +20,7 @@ export const mapMethods = {
       const r = p.rect;
       if (x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1) return p;
     }
-    return { name: 'Aeroport', ico: '🌍' };
+    return { name: 'Aéroport', ico: '🌍' };
   },
   /* Fond fixe (decor), dessine une seule fois par taille et par theme. */
   _mapBase(w, h, win = MAP_WIN, big = w > 700) {
@@ -190,7 +190,7 @@ export const mapMethods = {
     pill('CARBURANT', L.fuelFarm.tanks[1].x, L.fuelFarm.tanks[0].z - 18);
     pill('POMPIERS', (fr.x0 + fr.x1) / 2, fr.z0 - 12);
     pill('HELIPORT', hp.x + 30, hp.z - 24);
-    pill('AVIATION LEGERE', L.gaApron.x1 + 34, (L.gaApron.z0 + L.gaApron.z1) / 2);
+    pill('AVIATION LÉGÈRE', L.gaApron.x1 + 34, (L.gaApron.z0 + L.gaApron.z1) / 2);
     pill('SEUIL 36', rw.x + 56, rw.zStart - 40);
     pill('SEUIL 18', rw.x + 56, rw.zEnd + 40);
     pill('PAPI', L.papi.x + 26, L.papi.z);
@@ -413,7 +413,7 @@ export const mapMethods = {
       cv.classList.toggle('tall', this._bigMode === 'full');
     }
     const btn = $('mapModeBtn');
-    if (btn) btn.textContent = this._bigMode === 'full' ? 'Complexe' : 'Tout l\'aeroport';
+    if (btn) btn.textContent = this._bigMode === 'full' ? 'Complexe' : 'Tout l\'aéroport';
     this.resetMapView();
   },
   _bindMapGestures(cv) {

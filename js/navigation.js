@@ -19,7 +19,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791575411';
+import { LAYOUT } from './layout.js?v=1791576226';
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 
@@ -33,7 +33,7 @@ const SEGMENT_STEP = 0.8;   // < epaisseur des murs les plus fins (1 m), sinon u
 export const ZONES = [
   {
     id: 'tarmac',
-    label: 'Aire aeroportuaire',
+    label: 'Aire aéroportuaire',
     frame: 'world',
     priority: 0,          // priorite basse : les interieurs priment
     blockers: true,       // les batiments y sont creuses
@@ -54,7 +54,7 @@ export const ZONES = [
        3.4 m : le fuselage fait 3.9 m de diametre exterieur, il reste
        donc de la place pour les rangees de sieges de part et d'autre. */
     id: 'cabinAisle',
-    label: 'Allee cabine',
+    label: 'Allée cabine',
     frame: 'aircraft',
     priority: 1,
     rect: { x0: -0.9, x1: 0.9, z0: -12.1, z1: 0.9 }
@@ -93,13 +93,13 @@ export const BLOCKERS = [
   ...LAYOUT.termFurniture.map(f => ({
     id: f.id, label: f.id, zone: 'termHall', rect: { x0: f.x0, x1: f.x1, z0: f.z0, z1: f.z1 }
   })),
-  { id: 'terminalBuilding', label: 'Batiment terminal', rect: { x0: 230, x1: 490, z0: 1195, z1: 1265 } },
+  { id: 'terminalBuilding', label: 'Bâtiment terminal', rect: { x0: 230, x1: 490, z0: 1195, z1: 1265 } },
   /* La tour (phase 18) est un cylindre de rayon 10 au pied, centre
      (262, 1128), a 100 m de la porte d'embarquement (avant : derriere le
      terminal, a 250 m de marche). Le bureau d'exploitation est colle contre
      elle, sa porte cote aire de stationnement (x 283) : c'est la que se
      trouve le point d'interaction (voir HOTSPOTS dans main.js). */
-  { id: 'towerBase', label: 'Tour de controle', rect: { x0: 252, x1: 272, z0: 1118, z1: 1138 } },
+  { id: 'towerBase', label: 'Tour de contrôle', rect: { x0: 252, x1: 272, z0: 1118, z1: 1138 } },
   { id: 'opsOffice', label: 'Bureau exploitation', rect: { x0: 273, x1: 283, z0: 1128, z1: 1136 } },
   /* Les hangars sont des demi-cylindres de rayon 30 et de 90 m de long,
      tournes a 90 deg : 60 m sur X (510..570) et 90 m sur Z. */

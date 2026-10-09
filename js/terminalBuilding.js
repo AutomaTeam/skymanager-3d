@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791575411';
-import { LAYOUT } from './layout.js?v=1791575411';
-import { SHIRTS } from './terminalFlow.js?v=1791575411';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791575411';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791576226';
+import { LAYOUT } from './layout.js?v=1791576226';
+import { SHIRTS } from './terminalFlow.js?v=1791576226';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791576226';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -465,7 +465,7 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
       mesh(deskGroup, new THREE.BoxGeometry(0.35, 0.5, 0.2), steelMat, -0.9, 1.4, -0.4);
       mesh(deskGroup, new THREE.SphereGeometry(0.06, 6, 5), new THREE.MeshBasicMaterial({ color: 0x22d3ee }), -0.9, 1.72, -0.4);
       /* Ecran de porte : destination. */
-      const gs = panelSign('PORTE 3  ·  LYON', { bg: '#0f2f52', fg: '#fde047', w: 3.2, h: 0.7, sub: 'Embarquement immediat' });
+      const gs = panelSign('PORTE 3  ·  LYON', { bg: '#0f2f52', fg: '#fde047', w: 3.2, h: 0.7, sub: 'Embarquement immédiat' });
       gs.position.set(0, 2.5, 0.05);
       gs.rotation.y = Math.PI;
       deskGroup.add(gs);
@@ -624,9 +624,9 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
   };
   hangSign('PORTES 1 - 5   ↑', 360, 1214, { bg: '#f59e0b', fg: '#1c1917', w: 9, h: 1.4 });
   hangSign('ENREGISTREMENT   ↓', 338, 1236, { bg: '#0369a1', w: 10, h: 1.4 });
-  hangSign('SURETE   →', 396, 1233, { bg: '#0f766e', w: 6.5, h: 1.4 });
+  hangSign('SÛRETÉ   →', 396, 1233, { bg: '#0f766e', w: 6.5, h: 1.4 });
   hangSign('BOUTIQUES   →', 428, 1222, { bg: '#b45309', w: 8, h: 1.4 });
-  hangSign('←   CAFE · BAGAGES', 292, 1232, { bg: '#7c3aed', w: 10, h: 1.4 });
+  hangSign('←   CAFÉ · BAGAGES', 292, 1232, { bg: '#7c3aed', w: 10, h: 1.4 });
   hangSign('SORTIE / PARKING   ↓', 360, 1256, { bg: '#15803d', w: 10, h: 1.4 });
 
   /* ------------------------------------------------------------

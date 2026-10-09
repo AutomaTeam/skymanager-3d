@@ -14,14 +14,14 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { planeOf } from './fleet.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791575411';
-import { mapMethods } from './arcadeMap.js?v=1791575411';
-import { challengeMethods } from './arcadeChallenges.js?v=1791575411';
-import { funMethods } from './arcadeFun.js?v=1791575411';
-import { flightMethods } from './arcadeFlight.js?v=1791575411';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791575411';
+import { planeOf } from './fleet.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791576226';
+import { mapMethods } from './arcadeMap.js?v=1791576226';
+import { challengeMethods } from './arcadeChallenges.js?v=1791576226';
+import { funMethods } from './arcadeFun.js?v=1791576226';
+import { flightMethods } from './arcadeFlight.js?v=1791576226';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791576226';
 
 
 const STORE = 'skymanager.arcade';
@@ -42,13 +42,13 @@ const xpForLevel = (lvl) => 60 + lvl * 40;
 const STEPS = [
   {
     id: 'move', icon: '🕹️', reward: 5,
-    text: 'Deplace-toi avec le joystick (ou les fleches).',
+    text: 'Déplace-toi avec le joystick (ou les flèches).',
     target: () => null,
     done: (g, a) => g.state === 'HUB' && a._moved > 10
   },
   {
     id: 'repair', icon: '🔧', reward: 10,
-    text: 'Repare l\'avion ! Va sur un point colore et appuie sur le bouton.',
+    text: 'Répare l\'avion ! Va sur un point coloré et appuie sur le bouton.',
     target: (g) => g.arcade.stationTarget(),
     done: (g, a) => a._stepStats.repair >= 1
   },
@@ -60,31 +60,31 @@ const STEPS = [
   },
   {
     id: 'serve', icon: '🧳', reward: 15,
-    text: 'Verifie 3 passagers : billet, bagage, plateau. Lis bien, puis valide ou refuse !',
+    text: 'Vérifie 3 passagers : billet, bagage, plateau. Lis bien, puis valide ou refuse !',
     target: (g) => g.arcade.counterTarget(),
     done: (g, a) => a._stepStats.serve >= 3
   },
   {
     id: 'tower', icon: '🗼', reward: 15,
-    text: 'Va a la tour de controle et ouvre le bureau pour agrandir ton aeroport.',
+    text: 'Va à la tour de contrôle et ouvre le bureau pour agrandir ton aéroport.',
     target: (g) => g.arcade.markerPos('tower'),
     done: (g, a) => a._stepStats.tower >= 1
   },
   {
     id: 'takeoff', icon: '🛫', reward: 20,
-    text: 'Monte dans le cockpit, appuie sur DECOLLER et pilote !',
+    text: 'Monte dans le cockpit, appuie sur DÉCOLLER et pilote !',
     target: (g) => g.arcade.markerPos('cockpit'),
     done: (g, a) => a._stepStats.takeoff >= 1
   },
   {
     id: 'rings', icon: '🟡', reward: 25,
-    text: 'Traverse 3 anneaux dores en volant dedans !',
+    text: 'Traverse 3 anneaux dorés en volant dedans !',
     target: () => null,
     done: (g, a) => a._stepStats.ring >= 3
   },
   {
     id: 'land', icon: '🛬', reward: 40,
-    text: 'Retourne vers la piste (fleche) et atterris. Le bouton ATTERRIR t\'aide !',
+    text: 'Retourne vers la piste (flèche) et atterris. Le bouton ATTERRIR t\'aide !',
     target: () => null,
     done: (g, a) => a._stepStats.landing >= 1
   }
@@ -110,13 +110,13 @@ export const nextUnlock = (lvl) => { const k = Object.keys(LEVEL_UNLOCKS).map(Nu
 export const MAX_LEVEL = 30;
 const PLANE_GIFTS = { 6: 'hydravion', 12: 'zebulon', 18: 'helico', 24: 'plume' };
 const BIG_COINS = { 10: 300, 20: 300, 30: 500 };
-export const TITLES = [[1, 'Apprenti pilote'], [5, 'Pilote junior'], [10, 'Pilote confirme'], [15, 'As des airs'], [20, 'Capitaine'], [25, 'Commandant'], [30, 'Legende du ciel']];
+export const TITLES = [[1, 'Apprenti pilote'], [5, 'Pilote junior'], [10, 'Pilote confirmé'], [15, 'As des airs'], [20, 'Capitaine'], [25, 'Commandant'], [30, 'Légende du ciel']];
 export const titleOf = (lvl) => TITLES.filter(t => t[0] <= lvl).pop()[1];
 export function rewardKind(lvl) {
   if (lvl > MAX_LEVEL) return null;
   if (LEVEL_UNLOCKS[lvl]) return { kind: 'theme', ico: '🗺️', text: `Carte « ${LEVEL_UNLOCKS[lvl]} »` };
   if (PLANE_GIFTS[lvl]) return { kind: 'plane', ico: '✈️', text: `Un avion offert : ${PLANE_GIFTS[lvl]}` };
-  if (BIG_COINS[lvl]) return { kind: 'coins', ico: '💰', text: `${BIG_COINS[lvl]} pieces en plus` };
+  if (BIG_COINS[lvl]) return { kind: 'coins', ico: '💰', text: `${BIG_COINS[lvl]} pièces en plus` };
   return { kind: 'livery', ico: '🎨', text: 'Un objet de peinture surprise' };
 }
 /* Prochaine recompense apres le niveau `lvl`. */
@@ -136,20 +136,20 @@ export function nextReward(lvl) {
 export const QUIZ = [
   { q: 'Combien de moteurs a notre avion de ligne ?', a: ['2', '1', '6'] },
   { q: 'Comment s\'appelle l\'endroit ou les avions atterrissent ?', a: ['La piste', 'Le quai', 'La route'] },
-  { q: 'De quelle couleur est la « boite noire » d\'un avion ?', a: ['Orange', 'Noire', 'Bleue'] },
-  { q: 'Qui aide le commandant a piloter ?', a: ['Le copilote', 'Le controleur', 'Le steward'] },
-  { q: 'Que fait la tour de controle ?', a: ['Elle guide les avions', 'Elle repare les avions', 'Elle vend les billets'] },
-  { q: 'A quoi servent les volets des ailes ?', a: ['A voler doucement', 'A ouvrir les portes', 'A faire du bruit'] },
-  { q: 'En quelle unite mesure-t-on l\'altitude d\'un avion ?', a: ['En pieds', 'En bananes', 'En litres'] },
-  { q: 'Quel pays a vu voler les freres Wright, en 1903 ?', a: ['Les Etats-Unis', 'La Chine', 'Le Bresil'] },
+  { q: 'De quelle couleur est la « boîte noire » d\'un avion ?', a: ['Orange', 'Noire', 'Bleue'] },
+  { q: 'Qui aide le commandant à piloter ?', a: ['Le copilote', 'Le contrôleur', 'Le steward'] },
+  { q: 'Que fait la tour de contrôle ?', a: ['Elle guide les avions', 'Elle répare les avions', 'Elle vend les billets'] },
+  { q: 'À quoi servent les volets des ailes ?', a: ['À voler doucement', 'À ouvrir les portes', 'À faire du bruit'] },
+  { q: 'En quelle unité mesure-t-on l\'altitude d\'un avion ?', a: ['En pieds', 'En bananes', 'En litres'] },
+  { q: 'Quel pays a vu voler les frères Wright, en 1903 ?', a: ['Les États-Unis', 'La Chine', 'Le Brésil'] },
   { q: 'Quel oiseau est un grand champion de vol ?', a: ['L\'albatros', 'Le pingouin', 'L\'autruche'] },
-  { q: 'Le son voyage a environ...', a: ['1 200 km/h', '100 km/h', '30 km/h'] },
-  { q: 'Quel metal sert le plus a fabriquer les avions ?', a: ['L\'aluminium', 'L\'or', 'Le bois'] },
-  { q: 'Que veut dire « atterrir » ?', a: ['Se poser sur le sol', 'Decoller', 'Faire demi-tour'] },
+  { q: 'Le son voyage à environ...', a: ['1 200 km/h', '100 km/h', '30 km/h'] },
+  { q: 'Quel métal sert le plus à fabriquer les avions ?', a: ['L\'aluminium', 'L\'or', 'Le bois'] },
+  { q: 'Que veut dire « atterrir » ?', a: ['Se poser sur le sol', 'Décoller', 'Faire demi-tour'] },
   { q: 'Ou se trouve la Tour Eiffel ?', a: ['A Paris', 'A Rome', 'A Londres'] },
-  { q: 'Quelle planete est la plus proche du Soleil ?', a: ['Mercure', 'Mars', 'Jupiter'] },
-  { q: 'Que met-on quand l\'avion decolle ?', a: ['La ceinture', 'Un chapeau', 'Des palmes'] },
-  { q: 'Comment dit-on « aeroport » en anglais ?', a: ['Airport', 'Harbor', 'Station'] },
+  { q: 'Quelle planète est la plus proche du Soleil ?', a: ['Mercure', 'Mars', 'Jupiter'] },
+  { q: 'Que met-on quand l\'avion décolle ?', a: ['La ceinture', 'Un chapeau', 'Des palmes'] },
+  { q: 'Comment dit-on « aéroport » en anglais ?', a: ['Airport', 'Harbor', 'Station'] },
   { q: 'Combien de minutes dans une heure ?', a: ['60', '100', '30'] },
   { q: 'Quel animal ne sait PAS voler ?', a: ['Le manchot', 'La chauve-souris', 'L\'aigle'] }
 ];
@@ -157,18 +157,18 @@ export const QUIZ = [
 
 /* « Le savais-tu ? » : petits faits d'aviation affiches dans le menu pause. */
 export const FUN_FACTS = [
-  'Un avion de ligne decolle a environ 250 km/h. Plus vite qu\'une voiture de course sur autoroute !',
-  'Les pilotes parlent aux tours de controle en anglais, partout dans le monde.',
-  'La « boite noire » d\'un avion est en realite... orange, pour etre retrouvee facilement.',
-  'Les pistes portent un numero : c\'est leur direction en degres, divisee par 10. Piste 36 = plein nord !',
+  'Un avion de ligne décolle à environ 250 km/h. Plus vite qu\'une voiture de course sur autoroute !',
+  'Les pilotes parlent aux tours de contrôle en anglais, partout dans le monde.',
+  'La « boîte noire » d\'un avion est en réalité... orange, pour être retrouvée facilement.',
+  'Les pistes portent un numéro : c\'est leur direction en degrés, divisée par 10. Piste 36 = plein nord !',
   'Un gros avion peut peser plus de 300 tonnes, autant que 200 voitures.',
   'Les ailes des avions se plient un peu en vol : c\'est fait expres, elles sont souples !',
   'Le plus long vol du monde dure plus de 18 heures sans escale.',
-  'Les pompiers d\'aeroport arrivent au bout de la piste en moins de 3 minutes.',
+  'Les pompiers d\'aéroport arrivent au bout de la piste en moins de 3 minutes.',
   'Les hublots sont ronds pour que l\'avion ne se fissure pas aux coins.',
-  'A 10 000 metres d\'altitude, il fait environ -50 °C dehors !',
-  'Un avion d\'aujourd\'hui peut se poser tout seul, grace au pilote automatique.',
-  'Le manche sert a monter et descendre, le palonnier a tourner la queue de l\'avion.'
+  'À 10 000 mètres d\'altitude, il fait environ -50 °C dehors !',
+  'Un avion d\'aujourd\'hui peut se poser tout seul, grâce au pilote automatique.',
+  'Le manche sert à monter et descendre, le palonnier à tourner la queue de l\'avion.'
 ];
 
 /* ============================================================ */
@@ -222,7 +222,7 @@ export class Arcade {
     const def = {
       mode: 'arcade', stars: 0, xp: 0, level: 1, step: 0, tutorialDone: false,
       coinsEarned: 0, daily: null, stats: { serve: 0, repair: 0, flights: 0, rings: 0, star3: 0 },
-      name: 'Mon aeroport', mapTheme: 'jour', themes: ['jour'], badges: {}, gift: null, treasure: null
+      name: 'Mon aéroport', mapTheme: 'jour', themes: ['jour'], badges: {}, gift: null, treasure: null
     };
     def.stats.treasure = 0; def.stats.treasureDays = 0; def.stats.quests = 0; def.stats.bestCombo = 0;
     for (const k of ['quiz', 'cabinServe', 'announce', 'candy', 'music', 'plans']) def.stats[k] = 0;
@@ -230,7 +230,7 @@ export class Arcade {
     for (const k of ['honk', 'hello', 'party', 'dance', 'selfie']) def.stats[k] = 0;
     try {
       const d = JSON.parse(localStorage.getItem(STORE) || 'null');
-      if (d) return Object.assign(def, d, { stats: Object.assign(def.stats, d.stats || {}), badges: d.badges || {}, themes: d.themes || ['jour'], visited: d.visited || [] });
+      if (d) return Object.assign(def, d, { stats: Object.assign(def.stats, d.stats || {}), badges: d.badges || {}, themes: d.themes || ['jour'], visited: (d.visited || []).map(c => (c === 'Athenes' ? 'Athènes' : c)) });   // ville renommee avec son accent
     } catch (e) { /* ignore */ }
     return def;
   }
@@ -313,18 +313,18 @@ export class Arcade {
       if (r.kind === 'theme') {
         const th = LEVEL_UNLOCKS[lvl];
         if (!this.data.themes.includes(th)) this.data.themes.push(th);
-        line = `carte « ${MAP_THEMES[th].name} » debloquee !`;
+        line = `carte « ${MAP_THEMES[th].name} » débloquée !`;
       } else if (r.kind === 'plane') {
         const id = PLANE_GIFTS[lvl];
         if (!g.hangar.data.planes.includes(id)) { g.hangar.data.planes.push(id); g.hangar.save(); }
         line = `avion « ${planeOf(id).name} » offert ${planeOf(id).ico} !`;
       } else if (r.kind === 'coins') {
         t.cash += BIG_COINS[lvl] * COIN;
-        line = `${BIG_COINS[lvl]} pieces en plus !`;
+        line = `${BIG_COINS[lvl]} pièces en plus !`;
       } else {
         const u = g.hangar.randomUnlock();
-        if (u) line = `${u.label} debloque !`;
-        else { t.cash += 50 * COIN; line = '+50 pieces (tu as deja toute la peinture !)'; }
+        if (u) line = `${u.label} débloqué !`;
+        else { t.cash += 50 * COIN; line = '+50 pièces (tu as déjà toute la peinture !)'; }
       }
     }
     t.save();
@@ -408,14 +408,14 @@ export class Arcade {
 
   _completeStep(st) {
     sfx.ding();
-    this.giveCoins(st.reward, { silent: false, label: 'Objectif reussi !' });
+    this.giveCoins(st.reward, { silent: false, label: 'Objectif réussi !' });
     this.confetti(30);
     this.data.step++;
     this._stepStats = { repair: 0, serve: 0, tower: 0, takeoff: 0, ring: 0, landing: 0 };
     this._moved = 0;
     if (this.data.step >= STEPS.length) {
       this.data.tutorialDone = true;
-      this.g.toast('🎓 Tutoriel termine ! Releve les defis du jour pour gagner plus de pieces.', 5000, 'ok');
+      this.g.toast('🎓 Tutoriel terminé ! Relève les défis du jour pour gagner plus de pièces.', 5000, 'ok');
       this.giveCoins(50, { silent: true });
       sfx.levelUp();
       this.confetti(90);
@@ -450,7 +450,7 @@ export class Arcade {
   /* ---------------- Perso : nom de l'aeroport et style de carte ---------------- */
   setName(n) {
     const v = (n || '').replace(/[<>]/g, '').trim().slice(0, 20);
-    this.data.name = v || 'Mon aeroport';
+    this.data.name = v || 'Mon aéroport';
     this.save();
     return this.data.name;
   }

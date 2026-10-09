@@ -10,9 +10,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { emojiSprite } from './groundFun.js?v=1791575411';
-import * as Save from './save.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { emojiSprite } from './groundFun.js?v=1791576226';
+import * as Save from './save.js?v=1791576226';
 
 const STORE = 'skymanager.season';
 
@@ -27,12 +27,12 @@ export function seasonOf(d = new Date()) {
 const THEMES = {
   halloween: {
     ico: '🎃', name: 'Halloween', item: 'citrouille', decor: ['👻', '🦇', '🕸️'],
-    hello: '🎃 Joyeux Halloween ! 10 citrouilles se cachent a l\'aeroport : trouve-les a pied !',
+    hello: '🎃 Joyeux Halloween ! 10 citrouilles se cachent à l\'aéroport : trouve-les à pied !',
     done: '🎃 TOUTES les citrouilles ! Bonus +40 🪙 et une surprise de peinture !'
   },
   noel: {
-    ico: '🎁', name: 'Noel', item: 'cadeau', decor: ['🎄', '⛄', '⭐'],
-    hello: '🎄 Joyeux Noel ! 10 cadeaux se cachent a l\'aeroport : trouve-les a pied !',
+    ico: '🎁', name: 'Noël', item: 'cadeau', decor: ['🎄', '⛄', '⭐'],
+    hello: '🎄 Joyeux Noël ! 10 cadeaux se cachent à l\'aéroport : trouve-les à pied !',
     done: '🎁 TOUS les cadeaux ! Bonus +40 🪙 et une surprise de peinture !'
   }
 };
@@ -137,6 +137,6 @@ export class Seasonal {
   }
 
   tips() {
-    return this.theme && !this.data.done ? [`${this.theme.ico} ${this.theme.name} : ${SPOTS.length - this.found} ${this.theme.item}(s) cachee(s) a l'aeroport !`] : [];
+    return this.theme && !this.data.done ? [`${this.theme.ico} ${this.theme.name} : ${SPOTS.length - this.found} ${this.theme.item}(s) cachée(s) à l'aéroport !`] : [];
   }
 }

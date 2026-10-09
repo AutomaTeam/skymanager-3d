@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791575411';
-import { CabinService } from './cabinService.js?v=1791575411';
-import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791575411';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791575411';
-import { TerminalSystem } from './terminalSystem.js?v=1791575411';
-import { MissionSystem } from './missions.js?v=1791575411';
-import { Staff } from './staff.js?v=1791575411';
-import { History } from './history.js?v=1791575411';
-import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791575411';
+import * as Save from './save.js?v=1791576226';
+import { CabinService } from './cabinService.js?v=1791576226';
+import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791576226';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791576226';
+import { TerminalSystem } from './terminalSystem.js?v=1791576226';
+import { MissionSystem } from './missions.js?v=1791576226';
+import { Staff } from './staff.js?v=1791576226';
+import { History } from './history.js?v=1791576226';
+import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791576226';
 
 export const pauseMethods = {
   /* ========================================================== */
@@ -28,7 +28,7 @@ export const pauseMethods = {
       this.hangar.open();
     });
     $('pauseHangar').addEventListener('click', () => {
-      if (this.state !== 'HUB') { this.toast('Retourne d\'abord a l\'aeroport pour ouvrir ton hangar.', 2800, 'warn'); return; }
+      if (this.state !== 'HUB') { this.toast('Retourne d\'abord à l\'aéroport pour ouvrir ton hangar.', 2800, 'warn'); return; }
       this.hangar.open();
     });
     $('kidRepHangar').addEventListener('click', () => {
@@ -58,7 +58,7 @@ export const pauseMethods = {
         this.returnHome();
       } else if (this.state === 'PILOT') {
         if (this.ac.onGround) this.exitToHub();
-        else this.toast('Il faut etre au sol pour sortir de l\'avion.', 2600, 'warn');
+        else this.toast('Il faut être au sol pour sortir de l\'avion.', 2600, 'warn');
       } else if (this.state === 'CABIN') {
         this.exitToHub();
       }
@@ -90,14 +90,14 @@ export const pauseMethods = {
     $('pauseWeather').addEventListener('click', () => {
       this.env.forceWeather();
       this.updateEnvChip();
-      this.toast(`Meteo : ${this.env.weatherLabel()}`, 1800);
+      this.toast(`Météo : ${this.env.weatherLabel()}`, 1800);
     });
 
         /* PHASE 12 — remise a zero complete de la progression. */
         $('pauseResetProgress').addEventListener('click', () => {
-          if (!window.confirm('Effacer toute la progression (tresorerie, flotte, usure, contrats, statistiques) ?')) return;
+          if (!window.confirm('Effacer toute la progression (trésorerie, flotte, usure, contrats, statistiques) ?')) return;
           /* Arcade : un enfant peut appuyer par erreur, on redemande une fois. */
-          if (this.arcade.on && !window.confirm('Vraiment TOUT effacer ? Tes pieces, tes avions, tes etoiles et tes trophees disparaitront.')) return;
+          if (this.arcade.on && !window.confirm('Vraiment TOUT effacer ? Tes pièces, tes avions, tes étoiles et tes trophées disparaîtront.')) return;
           AirportTycoon.reset();
           MechanicSystem.reset();
           CabinService.reset();
@@ -136,11 +136,11 @@ export const pauseMethods = {
           this._worldPaused = true;
           const ok = this.mechanic.signLogbook();
           if (ok) {
-            $('hubHint').textContent = 'Carnet signe — appareil conforme, pret pour le prochain vol.';
-            this.toast('Carnet de route signe. Conformite validee.', 3000, 'ok');
+            $('hubHint').textContent = 'Carnet signé — appareil conforme, prêt pour le prochain vol.';
+            this.toast('Carnet de route signé. Conformité validée.', 3000, 'ok');
           } else {
             const worst = Object.values(this.mechanic.components).sort((a, b) => b.wear - a.wear)[0];
-            this.toast(`Non conforme : ${worst.label} a ${worst.wear.toFixed(0)}% d'usure — reparez avant de signer.`, 4200, 'err');
+            this.toast(`Non conforme : ${worst.label} a ${worst.wear.toFixed(0)}% d'usure — réparez avant de signer.`, 4200, 'err');
           }
           this._worldPaused = false;
         });
@@ -154,7 +154,7 @@ export const pauseMethods = {
       this.flash(`Volets ${this.ac.flaps.name}`);
     });
     $('btnGear').addEventListener('click', () => {
-      if (!this.ac.toggleGear()) this.flash('Trop rapide pour manoeuvrer le train (Vlo 270 kt)');
+      if (!this.ac.toggleGear()) this.flash('Trop rapide pour manœuvrer le train (Vlo 270 kt)');
       else this.flash(this.ac.gearDown ? 'Train sorti' : 'Train rentre');
     });
     $('btnSpoiler').addEventListener('click', () => {
@@ -167,7 +167,7 @@ export const pauseMethods = {
     });
     $('btnView').addEventListener('click', () => {
       const m = this.r3d.nextCamera();
-      this.flash({ chase: 'Vue poursuite', cockpit: 'Vue cockpit — glisse pour regarder autour', orbit: 'Vue exterieure', tower: 'Vue tour de controle', cinema: '🎬 Camera cinema' }[m]);
+      this.flash({ chase: 'Vue poursuite', cockpit: 'Vue cockpit — glisse pour regarder autour', orbit: 'Vue extérieure', tower: 'Vue tour de contrôle', cinema: '🎬 Caméra cinéma' }[m]);
       this.updatePilotViewUI();
     });
 
@@ -206,24 +206,24 @@ export const pauseMethods = {
     $('btnSeatbelt').addEventListener('click', () => {
       const on = this.cabin.toggleSeatbeltSign();
       this.toast(on
-        ? 'Consigne ceintures activee — les volets se ferment, mais ne servez personne debout.'
-        : 'Consigne ceintures levee — le service peut reprendre.', 2400);
+        ? 'Consigne ceintures activée — les volets se ferment, mais ne servez personne debout.'
+        : 'Consigne ceintures levée — le service peut reprendre.', 2400);
     });
     $('btnAnnounce').addEventListener('click', () => {
       this.cabin.resolveTurbulence(true);
-      if (this.arcade.on) { this.arcade.giveCoins(4, { label: 'Annonce a temps !' }); sfx.hello(); }
+      if (this.arcade.on) { this.arcade.giveCoins(4, { label: 'Annonce à temps !' }); sfx.hello(); }
       $('turbAlert').classList.add('hidden');
-      this.toast('Annonce faite a temps — cabine securisee (+ satisfaction).', 3000, 'ok');
+      this.toast('Annonce faite à temps — cabine sécurisée (+ satisfaction).', 3000, 'ok');
     });
     $('btnCalm').addEventListener('click', () => {
       this.cabin.resolveUnruly('calm');
       $('unrulyPanel').classList.add('hidden');
-      this.toast('Situation apaisee.', 3000, 'ok');
+      this.toast('Situation apaisée.', 3000, 'ok');
     });
     $('btnCaptain').addEventListener('click', () => {
       this.cabin.resolveUnruly('captain');
       $('unrulyPanel').classList.add('hidden');
-      this.toast('Le commandant a ete informe — incident clos.', 3000, 'ok');
+      this.toast('Le commandant a été informé — incident clos.', 3000, 'ok');
     });
 
     /* ---- Aeroport / tycoon (iteration 4) ---- */
@@ -235,11 +235,11 @@ export const pauseMethods = {
     $('tyPriceDown').addEventListener('click', () => { this.tycoon.setTicketPrice(-10); this.refreshTycoonPanel(); });
     $('tyBuyAircraft').addEventListener('click', () => {
       if (this.tycoon.buyAircraft()) {
-        this.toast(`Nouvel appareil livre — flotte de ${this.tycoon.fleet.length} avions.`, 3000, 'ok');
+        this.toast(`Nouvel appareil livré — flotte de ${this.tycoon.fleet.length} avions.`, 3000, 'ok');
       } else {
         this.toast(this.tycoon.fleet.length >= this.tycoon.infrastructure.gates
           ? 'Portes insuffisantes — construisez-en une nouvelle avant d\'agrandir la flotte.'
-          : 'Tresorerie insuffisante pour cet achat.', 3600);
+          : 'Trésorerie insuffisante pour cet achat.', 3600);
       }
       this.refreshTycoonPanel();
     });
@@ -250,14 +250,14 @@ export const pauseMethods = {
             const r = this.tycoon.refuel(this.ac, target);
             this.toast(r
               ? `Appoint de ${Math.round(r.kg).toLocaleString('fr-FR')} kg — ${Math.round(r.cost).toLocaleString('fr-FR')} EUR.`
-              : 'Reservoir deja plein ou tresorerie insuffisante.', 3200);
+              : 'Réservoir déjà plein ou trésorerie insuffisante.', 3200);
             this.refreshTycoonPanel();
           });
           $('tyFuelFull').addEventListener('click', () => {
             const r = this.tycoon.refuel(this.ac);
             this.toast(r
               ? `Plein complet : ${Math.round(r.kg).toLocaleString('fr-FR')} kg — ${Math.round(r.cost).toLocaleString('fr-FR')} EUR.`
-              : 'Reservoir deja plein ou tresorerie insuffisante.', 3200);
+              : 'Réservoir déjà plein ou trésorerie insuffisante.', 3200);
             this.refreshTycoonPanel();
           });
           $('tyMissionReroll').addEventListener('click', () => {
@@ -289,12 +289,12 @@ export const pauseMethods = {
       this.refreshPauseLabels();
       /* Conseils de l'ecran de demarrage selon le mode. */
       $('bootTip').innerHTML = mode === 'arcade'
-        ? 'Jeu facile : suis la <b>fleche jaune</b> et le <b>faisceau de lumiere</b> pour trouver quoi faire. ' +
-          (IS_TOUCH ? 'Deplacement : joystick (pousse a fond pour courir). ' : 'Deplacement : fleches ou ZQSD (tiens la fleche pour courir). ') +
+        ? 'Jeu facile : suis la <b>flèche jaune</b> et le <b>faisceau de lumière</b> pour trouver quoi faire. ' +
+          (IS_TOUCH ? 'Déplacement : joystick (pousse à fond pour courir). ' : 'Déplacement : flèches ou ZQSD (tiens la flèche pour courir). ') +
           'En vol : gauche/droite = virer, haut/bas = monter/descendre.'
-        : 'Simulation complete : volets, train, gaz, maintenance et gestion detaillee. ' +
-          (IS_TOUCH ? 'Aux commandes : manche et manette des gaz a l\'ecran.'
-            : 'Deplacement : fleches ou ZQSD. Aux commandes : cliquez-glissez le manche et la manette des gaz, ou fleches (tangage/roulis) · Q/D (palonnier) · W/S (gaz) · Espace (freins).');
+        : 'Simulation complète : volets, train, gaz, maintenance et gestion détaillée. ' +
+          (IS_TOUCH ? 'Aux commandes : manche et manette des gaz à l\'écran.'
+            : 'Déplacement : flèches ou ZQSD. Aux commandes : cliquez-glissez le manche et la manette des gaz, ou flèches (tangage/roulis) · Q/D (palonnier) · W/S (gaz) · Espace (freins).');
     };
     $('modeArcade').addEventListener('click', () => { sfx.click(); pick('arcade'); });
     $('modePro').addEventListener('click', () => { sfx.click(); pick('pro'); });
@@ -342,7 +342,7 @@ export const pauseMethods = {
       veil.classList.add('on');
       this.toast('😴 Bonne nuit… zzz', 1800);
       setTimeout(() => {
-        try { this.env.setHour(7); this.updateEnvChip(); this.fun.say('Bonjour ! Il est 7 heures, une belle journee commence !', 2, 4200); } catch (e) { this._noteError('dormir', e); }
+        try { this.env.setHour(7); this.updateEnvChip(); this.fun.say('Bonjour ! Il est 7 heures, une belle journée commence !', 2, 4200); } catch (e) { this._noteError('dormir', e); }
         setTimeout(() => veil.classList.remove('on'), 500);
       }, 1700);
     });
@@ -351,10 +351,10 @@ export const pauseMethods = {
     $('helpClose').addEventListener('click', () => $('helpPanel').classList.add('hidden'));
     this.renderHelpCards();
     $('pauseTuto').addEventListener('click', () => {
-      if (!window.confirm('Refaire le tutoriel depuis le debut ? (tes pieces et trophees restent)')) return;
+      if (!window.confirm('Refaire le tutoriel depuis le début ? (tes pièces et trophées restent)')) return;
       this.arcade.restartTutorial();
       this.closePause();
-      this.toast('🎓 Tutoriel relance : suis la fleche jaune !', 3000, 'ok');
+      this.toast('🎓 Tutoriel relancé : suis la flèche jaune !', 3000, 'ok');
     });
     $('pauseMap').addEventListener('click', () => { sfx.click(); this.closePause(); this.openMapBig(); });
     document.querySelectorAll('[data-sky]').forEach(b => b.addEventListener('click', () => {
@@ -413,14 +413,14 @@ export const pauseMethods = {
   renderHelpCards() {
     const A = this.arcade;
     const cards = [
-      { ico: '🔧', text: 'Repare l\'avion : va sur un point colore.', go: () => A.showMe({ icon: '🔧', text: 'Voila le poste a reparer !', target: A.stationTarget() }) },
-      { ico: '🏢', text: 'Accueille les passagers au terminal.', go: () => A.showMe({ icon: '🏢', text: 'Voila le terminal !', target: A.markerPos('terminal') }) },
-      { ico: '🗼', text: 'La tour : cadeau du jour et boutique.', go: () => A.showMe({ icon: '🗼', text: 'Voila la tour de controle !', target: A.markerPos('tower') }) },
-      { ico: '✈️', text: 'Monte dans l\'avion et vole !', go: () => A.showMe({ icon: '✈️', text: 'Voila l\'avion !', target: A.markerPos('cockpit') }) },
+      { ico: '🔧', text: 'Répare l\'avion : va sur un point coloré.', go: () => A.showMe({ icon: '🔧', text: 'Voilà le poste à réparer !', target: A.stationTarget() }) },
+      { ico: '🏢', text: 'Accueille les passagers au terminal.', go: () => A.showMe({ icon: '🏢', text: 'Voilà le terminal !', target: A.markerPos('terminal') }) },
+      { ico: '🗼', text: 'La tour : cadeau du jour et boutique.', go: () => A.showMe({ icon: '🗼', text: 'Voilà la tour de contrôle !', target: A.markerPos('tower') }) },
+      { ico: '✈️', text: 'Monte dans l\'avion et vole !', go: () => A.showMe({ icon: '✈️', text: 'Voilà l\'avion !', target: A.markerPos('cockpit') }) },
       { ico: '🛹', text: 'Roule en skate, BMX, rollers…', go: () => this._pulse('rideBtn') },
-      { ico: '🎾', text: 'Joue a la balle avec ton chien.', go: () => this._pulse('petBall') },
+      { ico: '🎾', text: 'Joue à la balle avec ton chien.', go: () => this._pulse('petBall') },
       { ico: '🗺️', text: 'Ouvre la grande carte du monde.', go: () => this.openMapBig() },
-      { ico: '🎁', text: 'Ton cadeau du jour t\'attend a la tour.', go: () => A.showMe({ icon: '🎁', text: 'Ton cadeau est dans la tour !', target: A.markerPos('tower') }) }
+      { ico: '🎁', text: 'Ton cadeau du jour t\'attend à la tour.', go: () => A.showMe({ icon: '🎁', text: 'Ton cadeau est dans la tour !', target: A.markerPos('tower') }) }
     ];
     const host = $('helpCards');
     if (!host) return;
@@ -429,7 +429,7 @@ export const pauseMethods = {
       sfx.click();
       $('helpPanel').classList.add('hidden');
       this.closePause();
-      if (this.state !== 'HUB' && cards[+b.dataset.hc].ico !== '🗺️') { this.toast('👉 Reviens a pied pour que je te montre !', 2600); return; }
+      if (this.state !== 'HUB' && cards[+b.dataset.hc].ico !== '🗺️') { this.toast('👉 Reviens à pied pour que je te montre !', 2600); return; }
       cards[+b.dataset.hc].go();
     }));
   },
@@ -446,7 +446,7 @@ export const pauseMethods = {
   openPause() {
       this._worldPaused = true;
       $('pauseExit').classList.toggle('hidden', this.state === 'HUB');
-      $('pauseExit').textContent = this.arcade.on && this.state === 'PILOT' ? '🏠 Retour a l\'aeroport' : 'Sortir vers le tarmac';
+      $('pauseExit').textContent = this.arcade.on && this.state === 'PILOT' ? '🏠 Retour à l\'aéroport' : 'Sortir vers le tarmac';
       $('pauseState').textContent = {
         PILOT: 'Aux commandes', HUB: 'Tarmac', CABIN: 'Cabine', TERMINAL: 'Terminal'
       }[this.state] || this.state;
@@ -454,9 +454,10 @@ export const pauseMethods = {
       $('pauseEnvInfoKid').textContent = `${this.env.timeLabel()} · ${this.env.weatherLabel()}`;
       $('pauseFact').textContent = FUN_FACTS[Math.floor(Math.random() * FUN_FACTS.length)];
       $('pauseAlbumN').textContent = `${this.arcade.badgeCount()} / ${BADGES.length}`;
+      if (this.story && $('pauseStoryN')) $('pauseStoryN').textContent = this.story.progressLabel();
       $('pauseMap').classList.toggle('hidden', this.state !== 'HUB');
       const th = this.arcade.treasureHeat();
-      $('pauseMapN').textContent = th ? `pieces : ${th.found}/${th.total}` : 'pieces cachees';
+      $('pauseMapN').textContent = th ? `pièces : ${th.found}/${th.total}` : 'pièces cachées';
       this.refreshPauseLabels();
       this.fun.refreshPause();
       this.pet.refreshPause();
@@ -510,7 +511,7 @@ export const pauseMethods = {
   },
   openAlbum() {
     this.renderAlbum($('kidAlbumBody'));
-    $('kidAlbumSub').textContent = `${this.arcade.badgeCount()} trophee${this.arcade.badgeCount() > 1 ? 's' : ''} sur ${BADGES.length}`;
+    $('kidAlbumSub').textContent = `${this.arcade.badgeCount()} trophée${this.arcade.badgeCount() > 1 ? 's' : ''} sur ${BADGES.length}`;
     $('kidAlbum').classList.remove('hidden');
   },
   closeAlbum() { $('kidAlbum').classList.add('hidden'); },
@@ -538,7 +539,7 @@ export const pauseMethods = {
         } else {
           const gate = this.r3d.gatePosition;
           this.goToHub({ pos: new THREE.Vector3(gate.x - 16, 0, gate.z - 22), heading: -Math.PI / 2 });
-          this.toast('🧭 Tu es de retour pres de ton avion !', 2400, 'ok');
+          this.toast('🧭 Tu es de retour près de ton avion !', 2400, 'ok');
         }
       } catch (e) { this._noteError('retour maison', e); }
       setTimeout(() => veil.classList.remove('on'), 150);
@@ -573,12 +574,12 @@ export const pauseMethods = {
       if (a.ok) {
         sfx.star(2); this.arcade.confetti(30);
         this.arcade.data.stats.quiz = (this.arcade.data.stats.quiz || 0) + 1;
-        this.arcade.giveCoins(5, { silent: true, label: 'Bonne reponse !' });
-        $('quizRes').textContent = '🎉 Bravo, bonne reponse !';
+        this.arcade.giveCoins(5, { silent: true, label: 'Bonne réponse !' });
+        $('quizRes').textContent = '🎉 Bravo, bonne réponse !';
       } else {
         sfx.oops();
         this.arcade.giveCoins(1, { silent: true });
-        $('quizRes').textContent = `Presque ! La reponse : ${good}`;
+        $('quizRes').textContent = `Presque ! La réponse : ${good}`;
       }
       setTimeout(() => {
         $('quizPanel').classList.add('hidden');
@@ -635,7 +636,7 @@ export const pauseMethods = {
         $('tyMission').innerHTML =
           `<div class="font-semibold text-indigo-300">${m.label}</div>` +
           `<div class="text-xs text-slate-400 mt-0.5">${m.brief}</div>` +
-          `<div class="text-xs mt-1">Prime ${m.reward.toLocaleString('fr-FR')} EUR · +${m.rep} reputation</div>` +
+          `<div class="text-xs mt-1">Prime ${m.reward.toLocaleString('fr-FR')} EUR · +${m.rep} réputation</div>` +
           m.crit.map(c => {
             const p = MissionSystem.critProgress(c, ctx);
             return `<div class="flex justify-between gap-3 text-xs mt-1"><span class="${p >= 1 ? 'text-emerald-400' : 'text-slate-400'}">${p >= 1 ? '&#10003;' : '&#9675;'} ${c.label}</span><span>${Math.round(p * 100)}%</span></div>`;
@@ -647,7 +648,7 @@ export const pauseMethods = {
         const ac = this.ac;
         const missing = Math.max(0, ac.fuelCap - ac.fuel);
         $('tyFuelInfo').innerHTML =
-          `Reservoir : <span class="font-semibold">${(ac.fuel / 1000).toFixed(1)} t</span> / ${(ac.fuelCap / 1000).toFixed(0)} t ` +
+          `Réservoir : <span class="font-semibold">${(ac.fuel / 1000).toFixed(1)} t</span> / ${(ac.fuelCap / 1000).toFixed(0)} t ` +
           `(${Math.round(ac.fuel / ac.fuelCap * 100)} %)<br>` +
           `Prix : ${ty.fuelPrice.toFixed(2)} EUR/kg — plein manquant : ` +
           `<span class="font-semibold">${Math.round(ty.fuelCost(missing)).toLocaleString('fr-FR')} EUR</span>`;
@@ -664,7 +665,7 @@ export const pauseMethods = {
           ['Bonus boutiques/terminal', `x${est.shopBonus.toFixed(2)}`]
         ];
         if (est.passiveFleet > 0) estRows.push(['Revenu flotte passive', `+${Math.round(est.passiveFleet).toLocaleString('fr-FR')} EUR`]);
-        estRows.push(['Couts (carburant, redevances)', `-${Math.round(est.costs).toLocaleString('fr-FR')} EUR`]);
+        estRows.push(['Coûts (carburant, redevances)', `-${Math.round(est.costs).toLocaleString('fr-FR')} EUR`]);
         $('tyEstimate').innerHTML =
           estRows.map(([k, v]) => `<div class="estimate-row"><span class="text-slate-400">${k}</span><span>${v}</span></div>`).join('') +
           `<div class="estimate-row total"><span>Profit net estime</span><span class="${est.profit >= 0 ? 'pos' : 'neg'}">${est.profit >= 0 ? '+' : ''}${Math.round(est.profit).toLocaleString('fr-FR')} EUR</span></div>`;
@@ -691,7 +692,7 @@ export const pauseMethods = {
       btn.addEventListener('click', () => {
         const key = btn.dataset.upgrade;
         if (this.tycoon.buyUpgrade(key)) {
-          this.toast(`${UPGRADES[key].label} — amelioration achetee.`, 3000, 'ok');
+          this.toast(`${UPGRADES[key].label} — amélioration achetée.`, 3000, 'ok');
           this.refreshTycoonPanel();
         }
       });
@@ -700,12 +701,12 @@ export const pauseMethods = {
     const fleet = ty.fleet;
     $('tyFleetInfo').innerHTML = `${fleet.length} appareil(s) / ${ty.infrastructure.gates} portes disponibles.` +
       `<br>Appareil pilote : ${fleet[0].hours.toFixed(1)} h de vol.` +
-      (fleet.length > 1 ? `<br>${fleet.length - 1} autre(s) appareil(s) generent un revenu passif a chaque vol.` : '');
+      (fleet.length > 1 ? `<br>${fleet.length - 1} autre(s) appareil(s) génèrent un revenu passif à chaque vol.` : '');
     const aircraftCost = ty.aircraftCost();
     $('tyBuyAircraft').textContent = `Acheter un appareil (${aircraftCost.toLocaleString('fr-FR')} EUR)`;
     $('tyBuyAircraft').disabled = !ty.canBuyAircraft();
     if (fleet.length >= ty.infrastructure.gates) {
-      $('tyFleetHint').textContent = 'Portes saturees — achetez une porte d\'embarquement supplementaire (onglet Exploitation).';
+      $('tyFleetHint').textContent = 'Portes saturées — achetez une porte d\'embarquement supplémentaire (onglet Exploitation).';
     } else if (ty.cash < aircraftCost) {
       $('tyFleetHint').textContent = `Il manque ${Math.round(aircraftCost - ty.cash).toLocaleString('fr-FR')} EUR.`;
     } else {
@@ -718,9 +719,9 @@ export const pauseMethods = {
       const rows = [
         ['Passagers', `${f.pax}`],
         ['Recette billets + boutiques', `${Math.round(f.revenue).toLocaleString('fr-FR')} EUR`],
-        ['Couts (carburant, redevances)', `${Math.round(f.costs).toLocaleString('fr-FR')} EUR`],
+        ['Coûts (carburant, redevances)', `${Math.round(f.costs).toLocaleString('fr-FR')} EUR`],
         ['Profit net', `${Math.round(f.profit).toLocaleString('fr-FR')} EUR`],
-        ['Variation reputation', `${f.repDelta >= 0 ? '+' : ''}${f.repDelta}`]
+        ['Variation réputation', `${f.repDelta >= 0 ? '+' : ''}${f.repDelta}`]
       ];
       $('tyLastFlightBody').innerHTML = rows.map(([k, v]) =>
         `<div class="flex justify-between gap-4"><span class="text-slate-400">${k}</span><span class="font-semibold">${v}</span></div>`

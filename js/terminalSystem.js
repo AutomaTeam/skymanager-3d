@@ -27,7 +27,7 @@
 
 import {
   makePassenger, evaluate, DEFAULT_CHOICE, overweightFee, bestChoice, hasDanger
-} from './terminalFlow.js?v=1791575411';
+} from './terminalFlow.js?v=1791576226';
 
 const STORE = 'skymanager.terminal';
 const STORE_VERSION = 2;
@@ -37,17 +37,17 @@ const STORE_VERSION = 2;
    surete -> boutiques -> salon et porte d'embarquement (cote piste, nord).
    Les obstacles correspondants sont dans LAYOUT.termFurniture. */
 export const COUNTERS = [
-  { id: 'security', label: 'Controle de surete',    kind: 'security', pos: [396, 1240],   facing: Math.PI },
+  { id: 'security', label: 'Contrôle de sûreté',    kind: 'security', pos: [396, 1240],   facing: Math.PI },
   { id: 'checkin1', label: 'Enregistrement 1',      kind: 'checkin',  pos: [326, 1248],   facing: Math.PI },
   { id: 'checkin2', label: 'Enregistrement 2',      kind: 'checkin',  pos: [338, 1248],   facing: Math.PI },
   { id: 'checkin3', label: 'Enregistrement 3',      kind: 'checkin',  pos: [350, 1248],   facing: Math.PI },
   { id: 'gate',     label: "Porte d'embarquement", kind: 'gate',     pos: [372, 1208],   facing: 0 },
   { id: 'shop',     label: 'Boutique duty-free',    kind: 'shop',     pos: [452, 1226],   facing: Math.PI / 2 },
-  { id: 'cafe',     label: 'Cafe / restauration',   kind: 'cafe',     pos: [300, 1224],   facing: -Math.PI / 2 },
+  { id: 'cafe',     label: 'Café / restauration',   kind: 'cafe',     pos: [300, 1224],   facing: -Math.PI / 2 },
   /* Phase 25 : tri des bagages (a cote du carrousel), distributeur, reserve. */
   { id: 'baggage',  label: 'Tri des bagages',       kind: 'baggage',  pos: [272.5, 1238], facing: -Math.PI / 2 },
   { id: 'vending',  label: 'Distributeur',          kind: 'vending',  pos: [432, 1206],   facing: 0 },
-  { id: 'storage',  label: 'Reserve',               kind: 'storage',  pos: [455, 1257],   facing: 0 }
+  { id: 'storage',  label: 'Réserve',               kind: 'storage',  pos: [455, 1257],   facing: 0 }
 ];
 const CT = Object.fromEntries(COUNTERS.map(c => [c.id, c]));
 
@@ -55,8 +55,8 @@ const CT = Object.fromEntries(COUNTERS.map(c => [c.id, c]));
    traite quand PERSONNE ne s'en occupe ; `income` = recette par passager
    (0 pour les postes de controle) ; `board` = le passager monte a bord. */
 const KIND = {
-  checkin:  { rate: 4.2,  income: 0,  board: false, verb: 'VERIFIER LE BILLET', stage: true },
-  security: { rate: 3.2,  income: 0,  board: false, verb: 'VERIFIER LE PLATEAU', stage: true },
+  checkin:  { rate: 4.2,  income: 0,  board: false, verb: 'VÉRIFIER LE BILLET', stage: true },
+  security: { rate: 3.2,  income: 0,  board: false, verb: 'VÉRIFIER LE PLATEAU', stage: true },
   gate:     { rate: 2.4,  income: 46, board: true,  verb: 'SCANNER LA CARTE', stage: true },
   shop:     { rate: 0,    income: 14, board: false, verb: 'ENCAISSER' },
   cafe:     { rate: 0,    income: 9,  board: false, verb: 'SERVIR' },
@@ -535,8 +535,8 @@ export class TerminalSystem {
   /* Prend une caisse a la reserve (le joueur en porte une seule). */
   takeCrate() {
     const st = this.counters.storage;
-    if (this.carry > 0) return { ok: false, msg: 'Tu portes deja une caisse : va la poser dans une machine.' };
-    if (st.crates < 1) return { ok: false, msg: 'La reserve est vide ! Une livraison arrive bientot.' };
+    if (this.carry > 0) return { ok: false, msg: 'Tu portes déjà une caisse : va la poser dans une machine.' };
+    if (st.crates < 1) return { ok: false, msg: 'La réserve est vide ! Une livraison arrive bientôt.' };
     st.crates--;
     this.carry = CRATE_QTY;
     this.save();
@@ -547,16 +547,16 @@ export class TerminalSystem {
   restock(id) {
     const c = this.counters[id];
     if (!c || !STOCK_KINDS.includes(c.kind)) return { ok: false, msg: 'Ce n\'est pas une machine.' };
-    if (this.carry <= 0) return { ok: false, msg: 'Va d\'abord chercher une caisse a la reserve.' };
+    if (this.carry <= 0) return { ok: false, msg: 'Va d\'abord chercher une caisse à la réserve.' };
     const room = MAX_STOCK - Math.floor(c.stock);
-    if (room < 1) return { ok: false, msg: `${c.label} est deja pleine.` };
+    if (room < 1) return { ok: false, msg: `${c.label} est déjà pleine.` };
     const add = Math.min(this.carry, room);
     c.stock = Math.min(MAX_STOCK, c.stock + add);
     this.carry -= add;
     this.stats.restocks++;
     this.mood = Math.min(100, this.mood + 1.5);
     this.save();
-    return { ok: true, added: add, left: this.carry, msg: `${c.label} rechargee (+${add}).` };
+    return { ok: true, added: add, left: this.carry, msg: `${c.label} rechargée (+${add}).` };
   }
 
   /* Charge (ou retire) un bagage du tri. Un bagage « abandonne » (son passager a ete
@@ -633,7 +633,7 @@ export class TerminalSystem {
     const k = KIND[c.kind];
     if (c.kind === 'storage') {
       if (this.carry > 0) return `📦 TU PORTES UNE CAISSE (${this.carry})`;
-      return c.crates > 0 ? `📦 PRENDRE UNE CAISSE (reserve : ${c.crates})` : '📦 RESERVE VIDE';
+      return c.crates > 0 ? `📦 PRENDRE UNE CAISSE (réserve : ${c.crates})` : '📦 RÉSERVE VIDE';
     }
     if (STOCK_KINDS.includes(c.kind)) {
       const s = Math.floor(c.stock), q = c.line.length;
@@ -643,8 +643,8 @@ export class TerminalSystem {
       return s < 4 ? `⚠️ PRESQUE VIDE (${s}/${MAX_STOCK}) : apporte une caisse` : `STOCK ${s}/${MAX_STOCK}`;
     }
     if (c.kind === 'baggage') {
-      if (!c.line.length) return 'AUCUN BAGAGE A CHARGER';
-      return c.line[0].orphan ? '🗑️ RETIRER UN BAGAGE ABANDONNE' : `🧳 ${k.verb} (${c.line.length} en attente)`;
+      if (!c.line.length) return 'AUCUN BAGAGE À CHARGER';
+      return c.line[0].orphan ? '🗑️ RETIRER UN BAGAGE ABANDONNÉ' : `🧳 ${k.verb} (${c.line.length} en attente)`;
     }
     if (!c.open) return `OUVRIR ${c.label.toUpperCase()}`;
     if (c.line.length > 0) return `${k.verb} (file : ${c.line.length})`;
@@ -715,7 +715,7 @@ export class TerminalSystem {
 
   status() {
     return `Ambiance terminal ${this.mood.toFixed(0)}% — ${this.totalQueue()} passager(s) en attente`
-      + ` — ${this.boarded} embarque(s) — recette ${Math.round(this.revenue).toLocaleString('fr-FR')} EUR`;
+      + ` — ${this.boarded} embarqué(s) — recette ${Math.round(this.revenue).toLocaleString('fr-FR')} EUR`;
   }
 
   save() {

@@ -3,12 +3,12 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { KTS, FT, FPM } from './flightPhysics.js?v=1791575411';
-import { COIN } from './arcade.js?v=1791575411';
-import { planeOf } from './fleet.js?v=1791575411';
-import { sfx } from './sfx.js?v=1791575411';
-import { drawPFD } from './cockpit.js?v=1791575411';
-import { $, clamp } from './gameShared.js?v=1791575411';
+import { KTS, FT, FPM } from './flightPhysics.js?v=1791576226';
+import { COIN } from './arcade.js?v=1791576226';
+import { planeOf } from './fleet.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576226';
+import { drawPFD } from './cockpit.js?v=1791576226';
+import { $, clamp } from './gameShared.js?v=1791576226';
 
 export const hudMethods = {
   updateHUD() {
@@ -35,8 +35,8 @@ export const hudMethods = {
     $('gN1').parentElement.classList.toggle('caution', ac.hasFault && ac.faults.thrust < 1);
 
     $('phaseTag').textContent = {
-      PARKING: 'Au parking', ROULAGE: 'Roulage', DECOLLAGE: 'Decollage',
-      MONTEE: 'Montee', CROISIERE: 'Croisiere', DESCENTE: 'Descente',
+      PARKING: 'Au parking', ROULAGE: 'Roulage', DECOLLAGE: 'Décollage',
+      MONTEE: 'Montée', CROISIERE: 'Croisière', DESCENTE: 'Descente',
       APPROCHE: 'Approche', FREINAGE: 'Freinage'
     }[this.phase] || this.phase;
 
@@ -55,11 +55,11 @@ export const hudMethods = {
     } else if (!ac.gearDown && ac.pos.y * FT < 500 && ac.vsi < 0) {
       alertText = 'TRAIN NON SORTI';
     } else if (ac.fuel <= 0) {
-      alertText = 'PANNE SECHE';
+      alertText = 'PANNE SÈCHE';
     } else if (fuelPct < 0.12) {
       alertText = 'CARBURANT FAIBLE';
     } else if (fuelPct < 0.25) {
-      alertText = 'CARBURANT A SURVEILLER';
+      alertText = 'CARBURANT À SURVEILLER';
       alertSev = 'sev-warning';
     }
     if (alertText) {
@@ -191,12 +191,12 @@ export const hudMethods = {
     $('kidRepRings').textContent = `${arc.ringsThisFlight}/5`;
     $('kidRepCoins').textContent = `+${flightCoins + bonus + (pr ? pr.bonus : 0)}`;
     const lines = [];
-    if (rate.stars) lines.push(`⭐ ${rate.stars} etoile${rate.stars > 1 ? 's' : ''} = +${rate.stars * 10} 🪙`);
+    if (rate.stars) lines.push(`⭐ ${rate.stars} étoile${rate.stars > 1 ? 's' : ''} = +${rate.stars * 10} 🪙`);
     if (arc.ringsThisFlight) lines.push(`🟡 ${arc.ringsThisFlight} anneau${arc.ringsThisFlight > 1 ? 'x' : ''} = +${arc.ringsThisFlight * 3} 🪙`);
     lines.push(`🎫 ${paxShown} passager${paxShown > 1 ? 's' : ''} = +${flightCoins} 🪙`);
     if (pr) lines.push(pr.line);
     if (bagsLoaded) lines.push(`🧳 ${bagsLoaded} bagage${bagsLoaded > 1 ? 's' : ''} charge${bagsLoaded > 1 ? 's' : ''} dans la soute`);
-    else if (boarded > 0) lines.push('🧳 Aucun bagage charge : passe au tri des bagages !');
+    else if (boarded > 0) lines.push('🧳 Aucun bagage chargé : passe au tri des bagages !');
     if (boarded === 0) lines.push('💡 Fais embarquer des passagers au terminal pour gagner plus !');
     $('kidRepBonus').innerHTML = lines.join('<br>');
 
@@ -211,11 +211,11 @@ export const hudMethods = {
     const t = this.ac.touchdown;
     const fpm = t.fpm;
     let grade, color, badge, letter;
-    if (this.ac.crashed) { grade = 'CRASH — appareil endommage'; color = 'text-red-400'; badge = 'g-red'; letter = 'X'; }
+    if (this.ac.crashed) { grade = 'CRASH — appareil endommagé'; color = 'text-red-400'; badge = 'g-red'; letter = 'X'; }
     else if (fpm < 80) { grade = 'BUTTER — poser parfait'; color = 'text-emerald-400'; badge = 'g-emerald'; letter = 'S'; }
-    else if (fpm < 180) { grade = 'SMOOTH — tres bon poser'; color = 'text-sky-400'; badge = 'g-sky'; letter = 'A'; }
+    else if (fpm < 180) { grade = 'SMOOTH — très bon poser'; color = 'text-sky-400'; badge = 'g-sky'; letter = 'A'; }
     else if (fpm < 320) { grade = 'CORRECT — poser standard'; color = 'text-amber-300'; badge = 'g-amber'; letter = 'B'; }
-    else if (fpm < 600) { grade = 'FERME — passagers secoues'; color = 'text-orange-400'; badge = 'g-orange'; letter = 'C'; }
+    else if (fpm < 600) { grade = 'FERME — passagers secoués'; color = 'text-orange-400'; badge = 'g-orange'; letter = 'C'; }
     else { grade = 'BRUTAL — inspection requise'; color = 'text-red-400'; badge = 'g-red'; letter = 'D'; }
 
     $('repTitle').className = `panel-title ${color}`;
@@ -229,7 +229,7 @@ export const hudMethods = {
       ['Taux de chute', `${fpm.toFixed(0)} fpm`],
       ['Vitesse au toucher', `${t.ias.toFixed(0)} kt (Vref ${(this.ac.vRef() * KTS).toFixed(0)})`],
       ['Inclinaison', `${Math.abs(t.bank).toFixed(1)} deg`],
-      ['Ecart axe de piste', `${off.toFixed(1)} m`],
+      ['Écart axe de piste', `${off.toFixed(1)} m`],
       ['Configuration', `Volets ${t.flaps} / train ${t.gearDown ? 'sorti' : 'RENTRE'}`],
       ['Carburant restant', `${(this.ac.fuel / 1000).toFixed(1)} t`]
     ];
@@ -302,9 +302,9 @@ export const hudMethods = {
         if (fEl) {
           const parts = [];
           if (faults.length) parts.push(`<div class="text-red-400 font-bold">PANNES EN VOL : ${faults.join(', ')}</div>`);
-          if (crashBill > 0) parts.push(`<div class="text-red-400 font-bold">FACTURE DE REMISE EN ETAT : ${crashBill.toLocaleString('fr-FR')} EUR</div>`);
+          if (crashBill > 0) parts.push(`<div class="text-red-400 font-bold">FACTURE DE REMISE EN ÉTAT : ${crashBill.toLocaleString('fr-FR')} EUR</div>`);
           if (!parts.length) parts.push('<div class="text-emerald-400">Aucune panne, aucun dommage.</div>');
-          fEl.innerHTML = `<div class="rep-block-h">Etat de l'appareil</div>` + parts.join('');
+          fEl.innerHTML = `<div class="rep-block-h">État de l'appareil</div>` + parts.join('');
           fEl.className = `rep-block ${parts.length > 1 || faults.length || crashBill > 0 ? 'ko' : 'ok'}`;
         }
 

@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791575411';
-import { LAYOUT } from './layout.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791576226';
+import { LAYOUT } from './layout.js?v=1791576226';
 
 const $ = (id) => document.getElementById(id);
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -29,29 +29,29 @@ const SPOTS = [
 
 export const STORIES = [
   { id: 'granny', ico: '👵', name: 'Mamie Jeannette', color: 0xb45f8a, hat: 0xe5e7eb, gift: { sticker: 'cat' }, coins: 10, escort: 'Je ne trouve plus mon avion… tu m\'accompagnes ?',
-    lines: ['Oh, bonjour mon petit ! Je pars voir mes petits-enfants.', 'Mon perroquet a mange mon billet… mais tu m\'as retrouvee, merci !', 'Tiens, un petit cadeau pour toi !'] },
+    lines: ['Oh, bonjour mon petit ! Je pars voir mes petits-enfants.', 'Mon perroquet a mangé mon billet… mais tu m\'as retrouvée, merci !', 'Tiens, un petit cadeau pour toi !'] },
   { id: 'clown', ico: '🤡', name: 'Pipo le clown', color: 0xe11d48, hat: 0xfacc15, gift: { sticker: 'smile' }, coins: 12,
-    lines: ['Pouet pouet ! Je vais faire le spectacle dans une autre ville !', 'Mon nez rouge est reste dans l\'avion hier… Ah non, le voila !', 'Voici un sourire pour ton avion !'] },
+    lines: ['Pouet pouet ! Je vais faire le spectacle dans une autre ville !', 'Mon nez rouge est resté dans l\'avion hier… Ah non, le voilà !', 'Voici un sourire pour ton avion !'] },
   { id: 'pirate', ico: '🏴‍☠️', name: 'Capitaine Barbe-Rose', color: 0x1f2937, hat: 0x111827, gift: { sticker: 'shark' }, coins: 14, game: 'scan',
-    lines: ['Arrr ! Mes bagages sont bizarres, moussaillon !', 'Aide-moi a trouver l\'intrus dans mes valises !'] },
+    lines: ['Arrr ! Mes bagages sont bizarres, moussaillon !', 'Aide-moi à trouver l\'intrus dans mes valises !'] },
   { id: 'astro', ico: '🧑‍🚀', name: 'Luna l\'astronaute', color: 0xf3f4f6, hat: 0x38bdf8, gift: { sticker: 'rocket' }, coins: 14,
-    lines: ['Houston, nous avons un visiteur !', 'Je rentre de l\'espace. Le plus beau vol, c\'est quand meme celui-ci !', 'Prends cette fusee, elle porte bonheur !'] },
-  { id: 'star', ico: '🎤', name: 'La chanteuse Stella', color: 0x9333ea, hat: 0xfde047, gift: { sticker: 'star' }, coins: 16, escort: 'Vite, emmene-moi a l\'avion, mon concert commence bientot !',
-    lines: ['Coucou ! Je suis en retard pour mon concert !', 'Tu me ramenes a l\'heure ? Tu es mon heros !', 'Une etoile pour toi, comme sur scene !'] },
+    lines: ['Houston, nous avons un visiteur !', 'Je rentre de l\'espace. Le plus beau vol, c\'est quand même celui-ci !', 'Prends cette fusée, elle porte bonheur !'] },
+  { id: 'star', ico: '🎤', name: 'La chanteuse Stella', color: 0x9333ea, hat: 0xfde047, gift: { sticker: 'star' }, coins: 16, escort: 'Vite, emmène-moi à l\'avion, mon concert commence bientôt !',
+    lines: ['Coucou ! Je suis en retard pour mon concert !', 'Tu me ramènes à l\'heure ? Tu es mon héros !', 'Une étoile pour toi, comme sur scène !'] },
   { id: 'robot', ico: '🤖', name: 'Bip-Bop le robot', color: 0x64748b, hat: 0x22d3ee, gift: { sticker: 'robot' }, coins: 12,
-    lines: ['Bip bop ! Je suis un robot-voyageur.', 'Mon detecteur de sourires indique : 100 % !', 'Je te donne mon badge robot. Bip !'] },
-  { id: 'kids', ico: '🧒', name: 'La classe de CE2', color: 0x16a34a, hat: 0xf97316, gift: { sticker: 'rainbow' }, coins: 12, escort: 'La maitresse a dit de suivre le guide jusqu\'a l\'avion : c\'est toi !',
+    lines: ['Bip bop ! Je suis un robot-voyageur.', 'Mon détecteur de sourires indique : 100 % !', 'Je te donne mon badge robot. Bip !'] },
+  { id: 'kids', ico: '🧒', name: 'La classe de CE2', color: 0x16a34a, hat: 0xf97316, gift: { sticker: 'rainbow' }, coins: 12, escort: 'La maîtresse a dit de suivre le guide jusqu\'à l\'avion : c\'est toi !',
     lines: ['Bonjour ! On va voir la mer en classe verte !', 'On adore les avions ! Tu nous fais un tonneau, plus tard ?', 'On t\'offre un arc-en-ciel !'] },
   { id: 'chef', ico: '👨‍🍳', name: 'Chef Pizzaiolo', color: 0xf8fafc, hat: 0xf8fafc, gift: { sticker: 'pizza' }, coins: 12,
     lines: ['Buongiorno ! Je transporte la meilleure pizza du monde.', 'Ne dis rien… Je t\'en garde une part !', 'Voici une pizza pour ton avion !'] },
   { id: 'magician', ico: '🎩', name: 'Zigomar le magicien', color: 0x312e81, hat: 0x111827, gift: { sticker: 'unicorn' }, coins: 14,
-    lines: ['Abracadabra ! J\'ai fait disparaitre ma valise…', 'Ah non, elle etait dans mon chapeau !', 'Pour toi, une licorne magique. Chut, c\'est un secret !'] },
+    lines: ['Abracadabra ! J\'ai fait disparaître ma valise…', 'Ah non, elle était dans mon chapeau !', 'Pour toi, une licorne magique. Chut, c\'est un secret !'] },
   { id: 'football', ico: '⚽', name: 'Lina la footballeuse', color: 0x2563eb, hat: 0xfacc15, gift: { sticker: 'flame' }, coins: 14,
-    lines: ['Salut ! Mon equipe joue la finale demain !', 'Tu veux faire une passe ? Attention, je tire fort !', 'Une flamme pour ton avion : tu es un champion !'] },
+    lines: ['Salut ! Mon équipe joue la finale demain !', 'Tu veux faire une passe ? Attention, je tire fort !', 'Une flamme pour ton avion : tu es un champion !'] },
   { id: 'polar', ico: '🐧', name: 'Igor l\'explorateur polaire', color: 0xe0f2fe, hat: 0xdc2626, gift: { sticker: 'fox' }, coins: 14,
-    lines: ['Brrr ! Je reviens du pole Nord, il faisait -40 degres !', 'Un renard des neiges m\'a suivi pendant trois jours.', 'Je te donne son portrait, pour ton hangar !'] },
-  { id: 'dino', ico: '🦖', name: 'Docteur Ossa la paleontologue', color: 0x92400e, hat: 0x65a30d, gift: { sticker: 'dino' }, coins: 16,
-    lines: ['Bonjour ! J\'emmene un os de dinosaure au musee.', 'Il est plus grand que toi ! Heureusement qu\'il voyage en soute.', 'Un dino pour ton avion. Roaaar !'] }
+    lines: ['Brrr ! Je reviens du pôle Nord, il faisait -40 degrés !', 'Un renard des neiges m\'a suivi pendant trois jours.', 'Je te donne son portrait, pour ton hangar !'] },
+  { id: 'dino', ico: '🦖', name: 'Docteur Ossa la paléontologue', color: 0x92400e, hat: 0x65a30d, gift: { sticker: 'dino' }, coins: 16,
+    lines: ['Bonjour ! J\'emmène un os de dinosaure au musée.', 'Il est plus grand que toi ! Heureusement qu\'il voyage en soute.', 'Un dino pour ton avion. Roaaar !'] }
 ];
 
 /* Mini-chien procedural : corps, tete, oreilles, pattes, queue qui remue. */
@@ -180,7 +180,7 @@ export class GroundFun {
     d.group.add(mark);
     this.ev = { kind: 'dog', t: 60, total: 60, dog: d, x, z, vx: 0, vz: 0, tire: 0, fleeing: 0, goal: { x, z }, wander: 0, mark, caught: false };
     sfx.ding();
-    g.toast('🐕 Un chien s\'est echappe sur le tarmac ! Rattrape-le !', 4200, 'ok');
+    g.toast('🐕 Un chien s\'est échappé sur le tarmac ! Rattrape-le !', 4200, 'ok');
     g.fun.say('Oh non ! Un chien court partout ! Attrape-le !', 3, 3800);
   }
 
@@ -254,7 +254,7 @@ export class GroundFun {
     g.r3d.airport.add(plush);
     this.ev = { kind: 'lost', t: 200, total: 200, phase: 'find', child, mark, plush, pm, x: c.x, z: c.z, h: 0, px: x, pz: z };
     sfx.chime();
-    g.toast('📢 Un petit enfant a perdu son doudou lapin ! Aide-le a le retrouver.', 4600, 'ok');
+    g.toast('📢 Un petit enfant a perdu son doudou lapin ! Aide-le à le retrouver.', 4600, 'ok');
     g.fun.say('Oh, un enfant pleure dans le terminal… son doudou est tombe quelque part dehors !', 3, 4200);
   }
 
@@ -276,7 +276,7 @@ export class GroundFun {
         e.plush.scale.setScalar(0.8);
         if (g.r3d.player) g.r3d.player.group.add(e.plush);
         sfx.pop();
-        g.arcade.popup('🐰 Doudou trouve ! Rapporte-le a l\'enfant.');
+        g.arcade.popup('🐰 Doudou trouvé ! Rapporte-le à l\'enfant.');
       }
     } else if (Math.hypot(e.x - p.x, e.z - p.z) < 2.6) {
       e.done = true;
@@ -311,7 +311,7 @@ export class GroundFun {
     }
     this.ev = { kind: 'balloons', t: 55, total: 55, balloons, x, z, n: 0 };
     sfx.pop();
-    g.toast('🎈 Oh non, les ballons de la fete s\'envolent ! Passe dessous pour les attraper !', 4200, 'ok');
+    g.toast('🎈 Oh non, les ballons de la fête s\'envolent ! Passe dessous pour les attraper !', 4200, 'ok');
     g.fun.say('Vite, attrape les ballons avant qu\'ils montent dans le ciel !', 3, 3800);
   }
 
@@ -464,7 +464,7 @@ export class GroundFun {
     e.t = 150; e.total = 150;
     e.ent.pose = null;
     sfx.ding();
-    g.toast(`${e.story.ico} « ${e.story.escort} » Emmene ${e.story.name} jusqu'a la porte de l'avion !`, 5200, 'ok');
+    g.toast(`${e.story.ico} « ${e.story.escort} » Emmène ${e.story.name} jusqu'à la porte de l'avion !`, 5200, 'ok');
   }
 
   /* Le visiteur suit le joueur (un peu en arriere), en contournant les obstacles comme il peut. */
@@ -496,7 +496,7 @@ export class GroundFun {
       this.data.escorts = (this.data.escorts || 0) + 1;
       g.arcade.data.stats.escorts = (g.arcade.data.stats.escorts || 0) + 1;
       g.arcade.popup('🧭 Bien guide ! +8 🪙');
-      g.fun.say(`${e.story.ico} Merci de m'avoir accompagne(e) jusqu'a l'avion !`, 3, 3600);
+      g.fun.say(`${e.story.ico} Merci de m'avoir accompagné(e) jusqu'à l'avion !`, 3, 3600);
       this._end(true);
     }
   }
@@ -530,9 +530,9 @@ export class GroundFun {
       this.leaving.push({ ent: e.ent, x: e.x, z: e.z, h: e.h, door: e.door || { x: e.x, z: e.z }, byeT: ok ? 1.1 : 0, t: 0 });
     }
     if (!ok) {
-      g.toast(e.kind === 'dog' ? '🐕 Le chien s\'est enfui… il reviendra peut-etre !'
+      g.toast(e.kind === 'dog' ? '🐕 Le chien s\'est enfui… il reviendra peut-être !'
         : e.kind === 'balloons' ? '🎈 Les ballons sont partis dans le ciel… une autre fois !'
-        : e.kind === 'lost' ? '🐰 Un agent a retrouve le doudou. La prochaine fois, ce sera toi !'
+        : e.kind === 'lost' ? '🐰 Un agent a retrouvé le doudou. La prochaine fois, ce sera toi !'
         : `${e.story.ico} ${e.story.name} est reparti(e).`, 3200);
       return;
     }
@@ -542,12 +542,12 @@ export class GroundFun {
       g.arcade.data.stats.doudous = (g.arcade.data.stats.doudous || 0) + 1;
       g.arcade.event('doudou');
       const got = this._giveSticker('heart');
-      g.toast(`🐰 L'enfant a retrouve son doudou ! Merci ! +15 🪙${got ? ' et un autocollant coeur !' : ''}`, 4400, 'ok');
+      g.toast(`🐰 L'enfant a retrouvé son doudou ! Merci ! +15 🪙${got ? ' et un autocollant cœur !' : ''}`, 4400, 'ok');
       g.fun.say('Tu as rendu un enfant tout heureux !', 3, 3200);
     } else if (e.kind === 'balloons') {
       const all = e.n === 6;
       if (all) g.arcade.giveCoins(8, { silent: true, xp: 8 });
-      g.toast(all ? '🎈 Les 6 ballons ! La fete est sauvee ! +8 🪙 de bonus' : `🎈 ${e.n} ballon${e.n > 1 ? 's' : ''} rattrape${e.n > 1 ? 's' : ''} ! Bien joue !`, 4000, 'ok');
+      g.toast(all ? '🎈 Les 6 ballons ! La fête est sauvée ! +8 🪙 de bonus' : `🎈 ${e.n} ballon${e.n > 1 ? 's' : ''} rattrape${e.n > 1 ? 's' : ''} ! Bien joué !`, 4000, 'ok');
     } else if (e.kind === 'dog') {
       this.data.dogs++;
       g.arcade.giveCoins(14, { silent: true, xp: 8 });
@@ -579,12 +579,12 @@ export class GroundFun {
     if (!e) return null;
     if (e.kind === 'visitor' && e.phase === 'follow') {
       const t = this._escortTarget();
-      return { icon: e.story.ico, text: `Accompagne ${e.story.name} jusqu'a la porte de l'avion !`, target: t ? { x: t.x, z: t.z } : null };
+      return { icon: e.story.ico, text: `Accompagne ${e.story.name} jusqu'à la porte de l'avion !`, target: t ? { x: t.x, z: t.z } : null };
     }
     if (e.kind === 'lost') {
       return e.phase === 'find'
-        ? { icon: '🐰', text: 'Un enfant a perdu son doudou lapin ! Retrouve-le dehors (suis la fleche).', target: { x: e.px, z: e.pz } }
-        : { icon: '🐰', text: 'Rapporte le doudou a l\'enfant qui pleure dans le terminal !', target: { x: e.x, z: e.z } };
+        ? { icon: '🐰', text: 'Un enfant a perdu son doudou lapin ! Retrouve-le dehors (suis la flèche).', target: { x: e.px, z: e.pz } }
+        : { icon: '🐰', text: 'Rapporte le doudou à l\'enfant qui pleure dans le terminal !', target: { x: e.x, z: e.z } };
     }
     if (e.kind === 'balloons') {
       const p = this.g.player.pos;

@@ -33,14 +33,14 @@ export const TODAY = { flight: 'SKY 214', dest: 'LYON', gate: 'PORTE 3', bagLimi
 
 /* Prenom + visage assortis : une « Zoe » ne s'affiche plus avec un grand-pere. */
 const PEOPLE = [
-  ['Lea M.', 'f'], ['Tom B.', 'm'], ['Sarah K.', 'f'], ['Yanis D.', 'm'], ['Emma R.', 'f'], ['Hugo P.', 'm'], ['Nina C.', 'f'],
-  ['Adam F.', 'm'], ['Zoe L.', 'f'], ['Lucas T.', 'm'], ['Ines A.', 'f'], ['Noah G.', 'm'], ['Manon V.', 'f'], ['Jules H.', 'm']
+  ['Léa M.', 'f'], ['Tom B.', 'm'], ['Sarah K.', 'f'], ['Yanis D.', 'm'], ['Emma R.', 'f'], ['Hugo P.', 'm'], ['Nina C.', 'f'],
+  ['Adam F.', 'm'], ['Zoé L.', 'f'], ['Lucas T.', 'm'], ['Inès A.', 'f'], ['Noah G.', 'm'], ['Manon V.', 'f'], ['Jules H.', 'm']
 ];
 const FACES = { f: ['👩', '👧', '👵', '🧑'], m: ['👨', '👦', '👴', '🧑'] };
 const OTHER_FLIGHTS = ['SKY 145', 'SKY 302', 'SKY 411', 'SKY 219', 'SKY 076'];
 const SAFE_ITEMS = ['👕', '👟', '📱', '💻', '🎧', '📚', '🧸', '🧦', '🕶️', '🎮'];
 const DANGER_ITEMS = [
-  { e: '🔪', n: 'un couteau' }, { e: '✂️', n: 'des ciseaux' }, { e: '🧨', n: 'des petards' },
+  { e: '🔪', n: 'un couteau' }, { e: '✂️', n: 'des ciseaux' }, { e: '🧨', n: 'des pétards' },
   { e: '🍾', n: 'une grande bouteille de liquide' }, { e: '🔨', n: 'un marteau' }
 ];
 
@@ -140,29 +140,29 @@ export function evaluate(stage, p, choice) {
     if (isWrongFlight(p)) {
       return choice === 'refuse'
         ? good(`Bien vu ! Ce billet est pour ${p.flight}, pas pour ${TODAY.flight}.`, 3, false)
-        : bad('Erreur : ce passager n\'est pas sur ce vol !', `Son billet dit ${p.flight}, le vol du jour est ${TODAY.flight}. On le retrouvera a la porte.`, -4);
+        : bad('Erreur : ce passager n\'est pas sur ce vol !', `Son billet dit ${p.flight}, le vol du jour est ${TODAY.flight}. On le retrouvera à la porte.`, -4);
     }
     if (isHeavy(p) && !p.feePaid) {
       const fee = overweightFee(p);
-      if (choice === 'fee') return good(`Surcharge de ${fee} € encaissee (${p.kg} kg).`, 4, true, { fee });
+      if (choice === 'fee') return good(`Surcharge de ${fee} € encaissée (${p.kg} kg).`, 4, true, { fee });
       if (choice === 'refuse') return bad('Inutile de refuser : il fallait faire payer la surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -2, false);
-      return bad('Bagage trop lourd accepte sans surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg. Tu pourras encore encaisser a la porte !`, -2);
+      return bad('Bagage trop lourd accepté sans surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg. Tu pourras encore encaisser à la porte !`, -2);
     }
     /* Dossier en regle. */
-    if (choice === 'ok') return good('Billet et bagage en regle. Bon voyage !', 2);
-    if (choice === 'fee') return bad('Pas de surcharge : le bagage n\'etait pas trop lourd.', `${p.kg} kg, sous la limite de ${TODAY.bagLimit} kg.`, -2);
-    return bad('Ce passager avait un billet valide !', `Vol ${p.flight}, bagage ${p.kg} kg : tout etait en regle.`, -3, false);
+    if (choice === 'ok') return good('Billet et bagage en règle. Bon voyage !', 2);
+    if (choice === 'fee') return bad('Pas de surcharge : le bagage n\'était pas trop lourd.', `${p.kg} kg, sous la limite de ${TODAY.bagLimit} kg.`, -2);
+    return bad('Ce passager avait un billet valide !', `Vol ${p.flight}, bagage ${p.kg} kg : tout était en règle.`, -3, false);
   }
 
   if (stage === 'security') {
     if (hasDanger(p)) {
       return choice === 'seize'
-        ? good(`Bravo ! Tu as trouve ${p.danger.n} ${p.danger.e}.`, 4)
-        : bad('Danger : un objet interdit est passe !', `Il y avait ${p.danger.n} ${p.danger.e} dans le plateau. Le detecteur de la porte peut encore le trouver.`, -3);
+        ? good(`Bravo ! Tu as trouvé ${p.danger.n} ${p.danger.e}.`, 4)
+        : bad('Danger : un objet interdit est passé !', `Il y avait ${p.danger.n} ${p.danger.e} dans le plateau. Le détecteur de la porte peut encore le trouver.`, -3);
     }
     return choice === 'pass'
       ? good('Plateau en ordre, tu peux passer.', 2)
-      : bad('Rien d\'interdit dans ce plateau !', 'Aucun couteau, ciseau, petard, marteau ni grande bouteille.', -2);
+      : bad('Rien d\'interdit dans ce plateau !', 'Aucun couteau, ciseau, pétard, marteau ni grande bouteille.', -2);
   }
 
   if (stage === 'gate') {
@@ -175,18 +175,18 @@ export function evaluate(stage, p, choice) {
     }
     if (hasDanger(p)) {
       return choice === 'refuse'
-        ? good(`Le detecteur sonne ! ${p.danger.e} On le renvoie a la surete.`, 3, false, { returnTo: 'security' })
-        : bad('Alerte : le detecteur sonnait et il est monte !', `Il avait ${p.danger.n} ${p.danger.e}. Il fallait le renvoyer a la surete.`, -6);
+        ? good(`Le détecteur sonne ! ${p.danger.e} On le renvoie à la sûreté.`, 3, false, { returnTo: 'security' })
+        : bad('Alerte : le détecteur sonnait et il est monté !', `Il avait ${p.danger.n} ${p.danger.e}. Il fallait le renvoyer à la sûreté.`, -6);
     }
     if (feeDue(p)) {
       const fee = overweightFee(p);
-      if (choice === 'fee') return good(`Rattrape ! Surcharge de ${fee} € encaissee.`, 4, true, { fee });
+      if (choice === 'fee') return good(`Rattrapé ! Surcharge de ${fee} € encaissée.`, 4, true, { fee });
       if (choice === 'refuse') return bad('Inutile de le refuser : il suffisait d\'encaisser la surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -2, false);
-      return bad('Surcharge oubliee : elle n\'a jamais ete payee.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -1.5);
+      return bad('Surcharge oubliée : elle n\'a jamais été payée.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -1.5);
     }
     return choice === 'scan'
       ? good('Carte valide. Embarquement !', 2)
-      : bad(choice === 'fee' ? 'Il n\'y avait aucune surcharge a payer !' : 'Sa carte etait bonne !',
+      : bad(choice === 'fee' ? 'Il n\'y avait aucune surcharge à payer !' : 'Sa carte était bonne !',
           `Vol ${p.passFlight}, place ${p.seat}.`, -3, choice !== 'refuse');
   }
   return bad('Poste inconnu', '', 0);
@@ -196,7 +196,7 @@ export function evaluate(stage, p, choice) {
    (le lien entre les postes). Chaque note dit quoi faire. */
 export function gateNotes(p) {
   const notes = [];
-  if (feeDue(p)) notes.push({ icon: '⚠️', text: `Son bagage pese ${p.kg} kg (limite ${TODAY.bagLimit} kg) et la surcharge n'a pas ete payee.` });
-  if (hasDanger(p)) notes.push({ icon: '🔔', text: 'Le detecteur de la porte sonne quand il passe !' });
+  if (feeDue(p)) notes.push({ icon: '⚠️', text: `Son bagage pèse ${p.kg} kg (limite ${TODAY.bagLimit} kg) et la surcharge n'a pas été payée.` });
+  if (hasDanger(p)) notes.push({ icon: '🔔', text: 'Le détecteur de la porte sonne quand il passe !' });
   return notes;
 }

@@ -14,16 +14,16 @@ const STORE = 'skymanager.tycoon';
    chaque niveau supplementaire coute baseCost * growth^niveauActuel.
    `once` = achat unique (booleen) plutot qu'un niveau croissant. */
 export const UPGRADES = {
-  runways:  { label: 'Piste supplementaire', baseCost: 2200000, growth: 1.7, max: 3,
-              desc: 'Augmente la capacite de trafic et l\'attractivite de l\'aeroport.' },
+  runways:  { label: 'Piste supplémentaire', baseCost: 2200000, growth: 1.7, max: 3,
+              desc: 'Augmente la capacité de trafic et l\'attractivité de l\'aéroport.' },
   gates:    { label: 'Porte d\'embarquement', baseCost: 550000, growth: 1.45, max: 12,
-              desc: 'Necessaire pour accueillir chaque appareil supplementaire de la flotte.' },
+              desc: 'Nécessaire pour accueillir chaque appareil supplémentaire de la flotte.' },
   terminals: { label: 'Extension terminal', baseCost: 3200000, growth: 1.8, max: 3,
-              desc: 'Ameliore le confort passagers et la recette des boutiques.' },
+              desc: 'Améliore le confort passagers et la recette des boutiques.' },
   shops:    { label: 'Boutique / restauration', baseCost: 280000, growth: 1.35, max: 8,
-              desc: 'Genere un revenu passif supplementaire a chaque vol.' },
+              desc: 'Génère un revenu passif supplémentaire à chaque vol.' },
   vipLounge: { label: 'Salon VIP', baseCost: 1400000, once: true,
-              desc: 'Ameliore durablement la reputation de la compagnie (+8).' }
+              desc: 'Améliore durablement la réputation de la compagnie (+8).' }
 };
 
 /* Niveaux de depart des infrastructures (voir le constructeur). */
@@ -309,7 +309,7 @@ export class AirportTycoon {
 
   status() {
     const c = (this.cash / 1e6).toFixed(2);
-    return `Tresorerie ${c} M EUR — reputation ${this.reputation.toFixed(0)}% — ${this.flightsCompleted} vol(s)`;
+    return `Trésorerie ${c} M EUR — réputation ${this.reputation.toFixed(0)}% — ${this.flightsCompleted} vol(s)`;
   }
 
   /* Revenu passif de la flotte, credite en continu par la boucle du monde.

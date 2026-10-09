@@ -24,7 +24,7 @@ export const PLANES = {
 
   pioupiou: {
     id: 'pioupiou', name: 'Pioupiou', ico: '🛩️', level: 1, price: 0,
-    blurb: 'Petit avion a helice : doux, facile, parfait pour apprendre.',
+    blurb: 'Petit avion à hélice : doux, facile, parfait pour apprendre.',
     stars: { ease: 5, fun: 4, speed: 2 },
     seats: 2, income: 0.4, fuel: 100,
     camScale: 0.42, camMode: 'chase',
@@ -52,7 +52,7 @@ export const PLANES = {
 
   hydravion: {
     id: 'hydravion', name: 'Hydravion', ico: '🛩️', level: 2, price: 120,
-    blurb: 'Des flotteurs ! Rase l\'eau, rempli ton reservoir et eteins les feux.',
+    blurb: 'Des flotteurs ! Rase l\'eau, remplis ton réservoir et éteins les feux.',
     stars: { ease: 4, fun: 4, speed: 2 },
     seats: 3, income: 0.5, fuel: 110,
     camScale: 0.46, camMode: 'chase',
@@ -81,7 +81,7 @@ export const PLANES = {
 
   helico: {
     id: 'helico', name: 'Colibri', ico: '🚁', level: 4, price: 200,
-    blurb: 'Un helicoptere ! Il reste en l\'air sur place et se pose partout.',
+    blurb: 'Un hélicoptère ! Il reste en l\'air sur place et se pose partout.',
     stars: { ease: 4, fun: 5, speed: 2 },
     seats: 4, income: 0.6, fuel: 100,
     camScale: 0.42, camMode: 'chase',
@@ -102,7 +102,7 @@ export const PLANES = {
   },
 
   zebulon: {
-    id: 'zebulon', name: 'Zebulon', ico: '🛩️', level: 3, price: 150,
+    id: 'zebulon', name: 'Zébulon', ico: '🛩️', level: 3, price: 150,
     blurb: 'Avion de voltige : vif, rapide, il adore les tonneaux !',
     stars: { ease: 3, fun: 5, speed: 4 },
     seats: 1, income: 0.5, fuel: 80,
@@ -130,7 +130,7 @@ export const PLANES = {
   },
   plume: {
     id: 'plume', name: 'Plume', ico: '🪂', level: 3, price: 130,
-    blurb: 'Un planeur sans moteur : remorque jusqu\'a 500 m, puis il plane en silence. Cherche les ascendances !',
+    blurb: 'Un planeur sans moteur : remorque jusqu\'à 500 m, puis il plane en silence. Cherche les ascendances !',
     stars: { ease: 3, fun: 4, speed: 1 },
     seats: 1, income: 0.3, fuel: 10,
     camScale: 0.5, camMode: 'chase',
