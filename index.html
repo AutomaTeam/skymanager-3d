@@ -667,7 +667,7 @@
     </div>
   </div>
   <div id="rideBanner" class="ride-banner"></div>
-  <button id="btnHub" class="hidden hub-btn" aria-label="Ouvrir le Hub de gestion (H)">🏢<small>HUB</small></button>
+  <button id="btnHub" class="hidden hub-btn" aria-label="Gérer mon aéroport (H)">🏢<small>GÉRER</small></button>
   <div id="planChip" class="hidden plan-chip"></div>
   <div id="comboChip" class="hidden combo-chip"><span id="comboTxt">COMBO</span><span class="combo-bar"><span id="comboFill"></span></span></div>
   <div id="questBar" class="hidden quest-bar">
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791576493').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791576638').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791576493"></script>
+<script type="module" src="js/main.js?v=1791576638"></script>
 </body>
 </html>

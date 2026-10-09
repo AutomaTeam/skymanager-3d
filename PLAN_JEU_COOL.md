@@ -66,3 +66,16 @@ des sensations**. Diagnostic fait en jouant une partie neuve dans le Browser pan
 
 | Tâche | Statut | Notes |
 |---|---|---|
+| A1–A6 | ✅ | `js/story.js` ; phase 123. Testé : scénario `?scenario=story` (6 chapitres, fêtes, final, trophées) + parcours à la main d'un chapitre dans le Browser pane. Quêtes pas jouées « pour de vrai » une par une (événements simulés). |
+| A7 | ⏭ | survol caméra en fin de chapitre : pas fait |
+| B1–B3 | ✅ | `js/travel.js`, touche T, 9 lieux tous praticables (scénario) |
+| C1, C2 | ✅ | tableau GÉRER sans EUR, noms simples des pièces (`KID_PART`). Le bouton « HUB » s'appelle maintenant « GÉRER » |
+| C3 | ✅ | phase 124 : `tools/accents.mjs` + `accents.dict.json`, 736 lignes relues à la main ; relancer `--diff` après avoir ajouté du texte |
+| D1 | ✅ | caméra qui évite l'avion (rayon, 0,02 ms) ; avant/après vérifié à l'écran sous l'aile droite |
+| D2 | ✅ | « au parking » / « en vol » |
+| D3 | ⏭ | non reproduit après coup |
+| E1, E2 | ✅ | pièces qui volent + compteur qui monte ; anneaux en gamme montante (pas écouté à l'oreille) |
+| E3 | ✅ | existait déjà (ralenti 0,35 sur l'atterrissage parfait, fun.js) |
+| F1, F2 | ✅ | 12 scénarios verts, fuzz 25 s sans erreur, `npm test` vert, lint 0 erreur |
+| F3 | ⏭ | partie réelle sur iPad avec l'enfant : à faire par un adulte |
+| Bonus | ✅ | phase 125 : le tutoriel fait voler dès l'étape 2 (et pas de menu de missions avant le premier vol) ; phase 126 : écrans de fête pour avion offert / nouveau titre, bulle de Coco qui ne cache plus les boutons |

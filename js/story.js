@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576493';
-import { load, write } from './save.js?v=1791576493';
+import { sfx } from './sfx.js?v=1791576638';
+import { load, write } from './save.js?v=1791576638';
 
 const STORE = 'skymanager.story';
 
@@ -90,7 +90,7 @@ export const CHAPTERS = [
     reward: { coins: 300, paint: true, final: true },
     quests: [
       { ev: 'buy', n: 2, ico: '🏗️', text: 'Achète encore {n} améliorations à la tour', where: 'tower' },
-      { ev: 'hire', n: 1, ico: '👥', text: 'Recrute quelqu\'un dans ton équipe (bouton HUB)', where: null, action: 'hub' },
+      { ev: 'hire', n: 1, ico: '👥', text: 'Recrute quelqu\'un dans ton équipe (bouton 🏢 GÉRER)', where: null, action: 'hub' },
       { ev: 'missionGold', n: 1, ico: '🥇', text: 'Gagne une médaille d\'or à une mission du ciel', where: 'cockpit' },
       { ev: 'landing', n: 3, ico: '✈️', text: 'Fais encore {n} vols', where: 'cockpit' }
     ]
@@ -341,7 +341,7 @@ export class Story {
     go.classList.toggle('hidden', !this.active || !q || (!q.where && !q.action));
     this.el.querySelector('#storySkip').classList.toggle('hidden', !this.active || !q);
     if (q && q.action === 'deco') go.textContent = '🌳 Décorer ma place';
-    else if (q && q.action === 'hub') go.textContent = '👥 Ouvrir le HUB';
+    else if (q && q.action === 'hub') go.textContent = '👥 Ouvrir « Gérer »';
     else go.textContent = '🧭 J\'y vais !';
   }
 
