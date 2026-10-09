@@ -16,11 +16,14 @@ export class ModuleRegistry {
     this.list = [];
   }
 
-  /* opts.update = false pour un module sans mise a jour continue. Rend l'instance. */
-  add(id, mod, { update = true } = {}) {
+  /* opts.update = false pour un module sans mise a jour continue ; opts.order (defaut 0) fixe l'ordre
+     de mise a jour (les plus petits d'abord, a egalite l'ordre d'ajout) ; opts.hooks = false : le module
+     ne fournit ni bodies/goal/tips au registre (il les expose lui-meme). Rend l'instance. */
+  add(id, mod, { update = true, order = 0, hooks = true } = {}) {
     if (this.g[id] && this.g[id] !== mod) throw new Error('module deja enregistre : ' + id);
     this.g[id] = mod;
-    this.list.push({ id, mod, update: update && typeof mod.update === 'function' });
+    this.list.push({ id, mod, order, hooks, update: update && typeof mod.update === 'function' });
+    this.list.sort((a, b) => a.order - b.order);      // tri stable : l'ordre d'ajout departage
     return mod;
   }
 
@@ -36,18 +39,18 @@ export class ModuleRegistry {
 
   bodies(opts) {
     const out = [];
-    for (const e of this.list) if (typeof e.mod.bodies === 'function') out.push(...(e.mod.bodies(opts) || []));
+    for (const e of this.list) if (e.hooks && typeof e.mod.bodies === 'function') out.push(...(e.mod.bodies(opts) || []));
     return out;
   }
 
   goal() {
-    for (const e of this.list) if (typeof e.mod.goal === 'function') { const g = e.mod.goal(); if (g) return g; }
+    for (const e of this.list) if (e.hooks && typeof e.mod.goal === 'function') { const g = e.mod.goal(); if (g) return g; }
     return null;
   }
 
   tips() {
     const out = [];
-    for (const e of this.list) if (typeof e.mod.tips === 'function') out.push(...(e.mod.tips() || []));
+    for (const e of this.list) if (e.hooks && typeof e.mod.tips === 'function') out.push(...(e.mod.tips() || []));
     return out;
   }
 }

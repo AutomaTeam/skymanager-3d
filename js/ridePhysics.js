@@ -20,7 +20,7 @@
    penalite autre que perdre le combo).
    ============================================================ */
 
-import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791485856';
+import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791553916';
 
 const TAU = Math.PI * 2;
 const PI = Math.PI;

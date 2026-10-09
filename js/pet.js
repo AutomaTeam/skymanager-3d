@@ -13,9 +13,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791485856';
-import { sfx } from './sfx.js?v=1791485856';
-import { buildDog, emojiSprite } from './groundFun.js?v=1791485856';
+import * as Save from './save.js?v=1791553916';
+import { sfx } from './sfx.js?v=1791553916';
+import { buildDog, emojiSprite } from './groundFun.js?v=1791553916';
 
 const STORE = 'skymanager.pet';
 const SNIFF_RANGE = 30;          // m autour du joueur ou Biscuit sent une piece
