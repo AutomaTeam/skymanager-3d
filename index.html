@@ -35,9 +35,12 @@
     <p class="mt-2 text-xs sm:text-sm uppercase tracking-[0.3em] text-slate-400">Ultimate Aviation Experience</p>
     <p id="bootMsg" class="mt-8 text-sm text-slate-400">Chargement des systemes...</p>
     <div id="bootBar" class="boot-bar"><div id="bootFill" class="boot-fill"></div></div>
+    <!-- Plus de menu de depart : le jeu arrive directement a l'aeroport en mode Arcade. Ces boutons restent caches (le code les relie encore). -->
+    <div style="display:none">
     <div id="modePick" class="hidden mt-6 flex gap-3 justify-center">
       <button id="modeArcade" class="mode-btn on"><span class="mode-ico">🎮</span><span class="mode-t">Arcade</span><span class="mode-s">facile et fun</span></button>
       <button id="modePro" class="mode-btn"><span class="mode-ico">🛠️</span><span class="mode-t">Pilote</span><span class="mode-s">simulation complete</span></button>
+    </div>
     </div>
     <div id="pilotCard" class="arcade-only hidden mt-5 pilot-card">
       <input id="pilotName" maxlength="12" autocomplete="off" placeholder="Ton prenom de pilote" />
@@ -45,15 +48,15 @@
         <button class="av-btn" data-av="🧑‍✈️">🧑‍✈️</button><button class="av-btn" data-av="🦊">🦊</button><button class="av-btn" data-av="🐱">🐱</button><button class="av-btn" data-av="🐶">🐶</button><button class="av-btn" data-av="🤖">🤖</button><button class="av-btn" data-av="🦄">🦄</button><button class="av-btn" data-av="🐼">🐼</button><button class="av-btn" data-av="🐸">🐸</button>
       </div>
     </div>
+    <div style="display:none">
     <button id="btnFlyNow" class="arcade-only hidden mt-5 px-10 py-5 rounded-2xl bg-emerald-400 active:bg-emerald-500 text-slate-900 font-black text-xl shadow-lg shadow-emerald-400/40 fly-now">
       ✈️ VOLER MAINTENANT !
     </button>
+    <button id="btnHangar" class="arcade-only hidden">🎨 MON HANGAR</button>
+    </div>
     <div class="mt-4 flex gap-3 justify-center">
-      <button id="btnStart" class="hidden px-8 py-3 rounded-2xl bg-sky-500 active:bg-sky-600 text-slate-900 font-bold text-base shadow-lg shadow-sky-500/30">
-        🏢 MON AEROPORT
-      </button>
-      <button id="btnHangar" class="arcade-only hidden px-8 py-3 rounded-2xl bg-violet-400 active:bg-violet-500 text-slate-900 font-bold text-base shadow-lg shadow-violet-400/30">
-        🎨 MON HANGAR
+      <button id="btnStart" class="hidden px-12 py-5 rounded-2xl bg-emerald-400 active:bg-emerald-500 text-slate-900 font-black text-xl shadow-lg shadow-emerald-400/40">
+        ✈️ JOUER !
       </button>
     </div>
     <p id="streakBadge" class="arcade-only hidden mt-3 streak-badge"></p>
@@ -370,7 +373,7 @@
     <div class="panel-group pro-only">
       <p class="panel-group-lbl">Jeu</p>
       <div class="panel-row">
-        <button id="pauseModePro" class="panel-btn sm">Mode</button>
+        <button id="pauseModePro" class="panel-btn sm" style="display:none">Mode</button>
         <button id="pauseSoundPro" class="panel-btn sm">Son</button>
       </div>
     </div>
@@ -398,7 +401,7 @@
         <button id="pauseLost" class="kp-tile"><span class="kp-ico">🧭</span><b>Je suis perdu</b><small>retour a l'aeroport</small></button>
         <button id="pauseHelp" class="kp-tile"><span class="kp-ico">❓</span><b>Aide</b><small>comment jouer</small></button>
         <button id="pauseTuto" class="kp-tile"><span class="kp-ico">🎓</span><b>Refaire le tuto</b><small>pas a pas</small></button>
-        <button id="pauseMode" class="kp-tile"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
+        <button id="pauseMode" class="kp-tile" style="display:none"><span class="kp-ico">🛠️</span><b>Mode</b><small>Arcade / Pilote</small></button>
       </div>
       <div class="panel-group">
         <p class="panel-group-lbl">Progression</p>
@@ -995,7 +998,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791556461').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791556802').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1003,6 +1006,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791556461"></script>
+<script type="module" src="js/main.js?v=1791556802"></script>
 </body>
 </html>

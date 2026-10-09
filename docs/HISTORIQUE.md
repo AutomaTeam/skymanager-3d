@@ -2496,3 +2496,6 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 - **Hangar** : nouvel onglet « Nez » pour peindre le capot / l'helice a part (le code de partage l'embarque) ; l'apercu de l'avion tourne tout autour.
 - **Particules** : un seul module `js/particles.js` pour la fumee, les traînees, les eclaboussures et les etincelles.
 - **Decor** : poteaux de cloture et marquages de piste fusionnes par zones de 400 m.
+
+### Demarrage direct (phase 119)
+- Plus de menu de depart ni de mode Pilote : le jeu arrive directement a l aeroport en mode Arcade. Seul le tout premier lancement montre le prenom, l avatar et un bouton JOUER.

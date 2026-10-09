@@ -8,61 +8,61 @@
    de maintenance, entrer au bureau d'exploitation pour la gestion.
    ============================================================ */
 
-import { bounceOffScenery } from './sceneryCollision.js?v=1791556461';
-import { collectBodies } from './bodies.js?v=1791556461';
+import { bounceOffScenery } from './sceneryCollision.js?v=1791556802';
+import { collectBodies } from './bodies.js?v=1791556802';
 import * as THREE from 'three';
-import { Jobs } from './jobs.js?v=1791556461';
-import { Replay } from './replay.js?v=1791556461';
-import { FuelTruck, Sweeper, Stairs } from './groundVehicles.js?v=1791556461';
-import { Hunt } from './hunt.js?v=1791556461';
-import { Seasonal } from './seasonal.js?v=1791556461';
-import { Thermals } from './thermals.js?v=1791556461';
-import { ModuleRegistry } from './registry.js?v=1791556461';
-import { Voice } from './voice.js?v=1791556461';
-import { GamepadInput } from './gamepadInput.js?v=1791556461';
-import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791556461';
-import { Aircraft, KTS, FT } from './flightPhysics.js?v=1791556461';
-import { TouchControls } from './touchControls.js?v=1791556461';
-import { WalkJoystick } from './mechanicControls.js?v=1791556461';
-import { CabinService } from './cabinService.js?v=1791556461';
-import { MechanicSystem, FAILURES } from './mechanicSystem.js?v=1791556461';
-import { AirportTycoon, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791556461';
-import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791556461';
-import { Navigation } from './navigation.js?v=1791556461';
-import { AgentSystem } from './agents.js?v=1791556461';
-import { Environment } from './environment.js?v=1791556461';
-import { MissionSystem } from './missions.js?v=1791556461';
-import { Staff } from './staff.js?v=1791556461';
-import { History } from './history.js?v=1791556461';
-import { Hub } from './hub.js?v=1791556461';
-import { Arcade } from './arcade.js?v=1791556461';
-import { FlightAssist } from './flightAssist.js?v=1791556461';
-import { Fun } from './fun.js?v=1791556461';
-import { Hangar } from './hangar.js?v=1791556461';
-import { SkyMissions } from './skyMissions.js?v=1791556461';
-import { MiniGames } from './minigames.js?v=1791556461';
-import { GroundFun } from './groundFun.js?v=1791556461';
-import { Pet } from './pet.js?v=1791556461';
-import { Social } from './social.js?v=1791556461';
-import { Tug } from './tug.js?v=1791556461';
-import { FireTruck } from './fireTruck.js?v=1791556461';
-import { Ambience } from './ambience.js?v=1791556461';
-import { Bus } from './bus.js?v=1791556461';
-import { Look } from './look.js?v=1791556461';
-import { Deco } from './deco.js?v=1791556461';
-import { Album } from './album.js?v=1791556461';
-import { OpenWorld } from './openWorld.js?v=1791556461';
-import { Comfort } from './comfort.js?v=1791556461';
-import { Rides } from './rides.js?v=1791556461';
-import { planeOf } from './fleet.js?v=1791556461';
-import { HELIPAD } from './heliModel.js?v=1791556461';
-import { sfx } from './sfx.js?v=1791556461';
-import { perfHud } from './perfHud.js?v=1791556461';
-import { iconify } from './icons.js?v=1791556461';
-import { hudMethods } from './hudController.js?v=1791556461';
-import { pauseMethods } from './pauseMenu.js?v=1791556461';
-import { hubMethods } from './hubUpdate.js?v=1791556461';
-import { $, IS_TOUCH, HOTSPOTS } from './gameShared.js?v=1791556461';
+import { Jobs } from './jobs.js?v=1791556802';
+import { Replay } from './replay.js?v=1791556802';
+import { FuelTruck, Sweeper, Stairs } from './groundVehicles.js?v=1791556802';
+import { Hunt } from './hunt.js?v=1791556802';
+import { Seasonal } from './seasonal.js?v=1791556802';
+import { Thermals } from './thermals.js?v=1791556802';
+import { ModuleRegistry } from './registry.js?v=1791556802';
+import { Voice } from './voice.js?v=1791556802';
+import { GamepadInput } from './gamepadInput.js?v=1791556802';
+import { Renderer3D, RUNWAY } from './renderer3d.js?v=1791556802';
+import { Aircraft, KTS, FT } from './flightPhysics.js?v=1791556802';
+import { TouchControls } from './touchControls.js?v=1791556802';
+import { WalkJoystick } from './mechanicControls.js?v=1791556802';
+import { CabinService } from './cabinService.js?v=1791556802';
+import { MechanicSystem, FAILURES } from './mechanicSystem.js?v=1791556802';
+import { AirportTycoon, KID_FLEET_PER_MIN } from './airportTycoon.js?v=1791556802';
+import { TerminalSystem, COUNTERS } from './terminalSystem.js?v=1791556802';
+import { Navigation } from './navigation.js?v=1791556802';
+import { AgentSystem } from './agents.js?v=1791556802';
+import { Environment } from './environment.js?v=1791556802';
+import { MissionSystem } from './missions.js?v=1791556802';
+import { Staff } from './staff.js?v=1791556802';
+import { History } from './history.js?v=1791556802';
+import { Hub } from './hub.js?v=1791556802';
+import { Arcade } from './arcade.js?v=1791556802';
+import { FlightAssist } from './flightAssist.js?v=1791556802';
+import { Fun } from './fun.js?v=1791556802';
+import { Hangar } from './hangar.js?v=1791556802';
+import { SkyMissions } from './skyMissions.js?v=1791556802';
+import { MiniGames } from './minigames.js?v=1791556802';
+import { GroundFun } from './groundFun.js?v=1791556802';
+import { Pet } from './pet.js?v=1791556802';
+import { Social } from './social.js?v=1791556802';
+import { Tug } from './tug.js?v=1791556802';
+import { FireTruck } from './fireTruck.js?v=1791556802';
+import { Ambience } from './ambience.js?v=1791556802';
+import { Bus } from './bus.js?v=1791556802';
+import { Look } from './look.js?v=1791556802';
+import { Deco } from './deco.js?v=1791556802';
+import { Album } from './album.js?v=1791556802';
+import { OpenWorld } from './openWorld.js?v=1791556802';
+import { Comfort } from './comfort.js?v=1791556802';
+import { Rides } from './rides.js?v=1791556802';
+import { planeOf } from './fleet.js?v=1791556802';
+import { HELIPAD } from './heliModel.js?v=1791556802';
+import { sfx } from './sfx.js?v=1791556802';
+import { perfHud } from './perfHud.js?v=1791556802';
+import { iconify } from './icons.js?v=1791556802';
+import { hudMethods } from './hudController.js?v=1791556802';
+import { pauseMethods } from './pauseMenu.js?v=1791556802';
+import { hubMethods } from './hubUpdate.js?v=1791556802';
+import { $, IS_TOUCH, HOTSPOTS } from './gameShared.js?v=1791556802';
 
 
    // m/s — releve pour rendre le grand plan praticable
@@ -586,6 +586,7 @@ class Game {
   start() {
     sfx.unlock();
     $('boot').classList.add('hidden');
+    if (!this.fun.data.pilot.seen) { this.fun.data.pilot.seen = true; this.fun.save(); }
     if (this.arcade.on) this.arcade.seedWear();
     this.placeAircraftAtGate();
     this.hangar.applyAll();
@@ -983,11 +984,16 @@ window.addEventListener('load', () => {
     if (fill) fill.style.width = '100%';
     if (bar) bar.classList.add('done');
     $('bootMsg').textContent = 'Systemes prets.';
-    $('btnStart').classList.remove('hidden');
-    $('btnFlyNow').classList.remove('hidden');
-    $('btnHangar').classList.remove('hidden');
-    $('pilotCard').classList.remove('hidden');
-    $('modePick').classList.remove('hidden');
+    /* Pas de menu : on arrive directement a l'aeroport. Seul le tout premier lancement
+       demande un prenom et un avatar (un seul bouton JOUER). */
+    const firstRun = !game.fun.data.pilot.seen && !(game.fun.data.pilot.name || '').trim() && !/[?&](scenario|fuzz|skip)(=|&|$)/.test(window.location.search);
+    if (firstRun) {
+      $('btnStart').classList.remove('hidden');
+      $('pilotCard').classList.remove('hidden');
+      $('bootMsg').textContent = 'Bienvenue !';
+    } else {
+      game.start();
+    }
     game.loop();
     if (/[?&]fuzz(=|&|$)/.test(window.location.search)) import('../tools/fuzz.js');   // A07 : test aleatoire
     if (/[?&]scenario=/.test(window.location.search)) import('../tools/scenarios.js');   // C03
