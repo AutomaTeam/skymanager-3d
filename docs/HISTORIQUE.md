@@ -2482,3 +2482,8 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 ## Phase 112 - sillage de l'hydravion (K02)
 
 `_updateWake` (openWorld.js) : sur l'eau, l'hydravion qui roule (>3 m/s) laisse deux traines d'ecume en V derriere lui.
+
+## Phase 113 - correctif audio + sons de lieu (J03)
+
+- **Bug corrige** : depuis la phase 82, le gain commun des effets (`dest()` dans sfx.js) etait branche sur lui-meme : tous les effets etaient muets. Il va maintenant sur `a.destination` ; `tools/audio.audit.mjs` verifie cette ligne.
+- J03 : `sfx.birdsong` et `sfx.ambient('water' | 'crowd')` avec pan stereo et volume selon la distance ; `_updateSpatial` (ambience.js) : fontaines de la place (60 m), oiseaux pres des pigeons (90 m), murmure du hall. Ecoute a l'oreille non verifiee.

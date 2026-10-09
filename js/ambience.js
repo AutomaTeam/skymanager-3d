@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791554133';
-import { emojiSprite } from './groundFun.js?v=1791554133';
-import { TODAY } from './terminalFlow.js?v=1791554133';
+import { sfx } from './sfx.js?v=1791554199';
+import { emojiSprite } from './groundFun.js?v=1791554199';
+import { TODAY } from './terminalFlow.js?v=1791554199';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [
@@ -151,6 +151,7 @@ export class Ambience {
       }
       this._airState = air.state;
     }
+    this._updateSpatial(dt);
     /* Annonces dans le hall. */
     if (g.inTerminal && !g._worldPaused) {
       this._annT -= dt;
@@ -160,6 +161,34 @@ export class Ambience {
         const msg = ANNOUNCES[this._annI++ % ANNOUNCES.length];
         setTimeout(() => { if (g.inTerminal) g.toast(`📢 ${msg}`, 4200); }, 1100);
       }
+    }
+  }
+
+  /* J03 : sons de lieu. Volume qui baisse avec la distance, pan selon le cote de la camera. */
+  _updateSpatial(dt) {
+    const g = this.g;
+    if (g._worldPaused) return;
+    const p = g.player.pos, cam = g.r3d.camera, e = cam.matrixWorld.elements;
+    const at = (x, z, range) => {
+      const dx = x - cam.position.x, dz = z - cam.position.z, d = Math.hypot(dx, dz);
+      if (d > range) return null;
+      return { vol: 1 - d / range, pan: d < 1 ? 0 : (dx * e[0] + dz * e[2]) / d };
+    };
+    this._spT = (this._spT || 0) - dt;
+    if (this._spT > 0) return;
+    this._spT = 1.4 + Math.random() * 1.2;
+    if (g.inTerminal) {                                   // murmure de la foule du hall
+      sfx.ambient('crowd', 0.5 + Math.random() * 0.3, (Math.random() - 0.5) * 1.2);
+      return;
+    }
+    for (const it of (g.deco && g.deco.data.items) || []) {   // fontaines de la place
+      if (it.id !== 'fountain') continue;
+      const s = at(it.x, it.z, 60);
+      if (s) sfx.ambient('water', s.vol, s.pan);
+    }
+    if (Math.random() < 0.5) {                            // oiseaux pres des groupes de pigeons
+      const f = FLOCKS[Math.floor(Math.random() * FLOCKS.length)], s = at(f.x, f.z, 90);
+      if (s) sfx.birdsong(s.vol, s.pan);
     }
   }
 

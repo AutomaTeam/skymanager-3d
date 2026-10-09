@@ -184,6 +184,47 @@ export const sfx = {
     else src.connect(lp).connect(g).connect(dest(a));
     src.start(t0);
   },
+  /* J03 : sons d'ambiance de lieu. `vol` 0..1 (deja attenue par la distance), `pan` -1..1. */
+  birdsong(vol = 0.5, pan = 0) {
+    const a = audio();
+    if (!a) return;
+    const f0 = 2400 + Math.random() * 1400, n = 2 + Math.floor(Math.random() * 3);
+    const p = a.createStereoPanner ? a.createStereoPanner() : null;
+    if (p) { p.pan.value = Math.max(-1, Math.min(1, pan)); p.connect(dest(a)); }
+    for (let i = 0; i < n; i++) {
+      const t0 = a.currentTime + i * 0.11, o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f0, t0);
+      o.frequency.exponentialRampToValueAtTime(f0 * (1.15 + Math.random() * 0.3), t0 + 0.07);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(0.05 * vol, t0 + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.09);
+      o.connect(g).connect(p || dest(a));
+      o.start(t0); o.stop(t0 + 0.12);
+    }
+  },
+  /* Bruit filtre : fontaine (clair, sifflant) ou murmure du hall (sourd, large). */
+  ambient(kind = 'water', vol = 0.5, pan = 0) {
+    const a = audio();
+    if (!a) return;
+    const dur = kind === 'water' ? 1.6 : 2.4, t0 = a.currentTime;
+    const buf = a.createBuffer(1, Math.floor(a.sampleRate * dur), a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = a.createBufferSource();
+    src.buffer = buf;
+    const f = a.createBiquadFilter();
+    f.type = kind === 'water' ? 'bandpass' : 'lowpass';
+    f.frequency.value = kind === 'water' ? 2600 : 480;
+    f.Q.value = kind === 'water' ? 0.7 : 0.5;
+    const g = a.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime((kind === 'water' ? 0.05 : 0.07) * vol, t0 + dur * 0.35);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    if (a.createStereoPanner) { const p = a.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, pan)); src.connect(f).connect(g).connect(p).connect(dest(a)); }
+    else src.connect(f).connect(g).connect(dest(a));
+    src.start(t0);
+  },
   /* Carillon d'annonce du terminal : ding-dang-dong. */
   chime() { [784, 659, 523].forEach((f, i) => tone(f, i * 0.42, 0.9, 'sine', 0.07)); },
   /* Acrobaties : balayage de bruit qui monte (tonneau, looping) */
