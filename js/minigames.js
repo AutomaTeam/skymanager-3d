@@ -11,8 +11,8 @@
    Donnees : localStorage 'skymanager.mini'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791554305';
-import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791554305';
+import { sfx } from './sfx.js?v=1791555904';
+import { BODY_COLORS, ACCENT_COLORS, find } from './livery.js?v=1791555904';
 
 const STORE = 'skymanager.mini';
 const $ = (id) => document.getElementById(id);
@@ -97,7 +97,7 @@ export class MiniGames {
   /* Fin de partie : etoiles, pieces (avec delai), bouton rejouer. */
   _end(stars, lines = []) {
     this._clear();
-    const id = this.cur.id, m = GAMES[id];
+    const id = this.cur.id;
     const d = this.data.games[id] || (this.data.games[id] = {});
     d.best = Math.max(d.best || 0, stars);
     d.plays = (d.plays || 0) + 1;
@@ -217,7 +217,7 @@ export class MiniGames {
     let round = 0, ok = 0, tLeft = 0;
     const TOTAL = 5, TIME = 8;
     const next = () => {
-      const cat = pick(NORMAL), set = [];
+      const set = [];
       const pool = NORMAL.slice().sort(() => Math.random() - 0.5).slice(0, 4);
       for (let i = 0; i < 8; i++) set.push(pool[i % pool.length]);
       const weird = pick(WEIRD);

@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791554305';
-import { CabinService } from './cabinService.js?v=1791554305';
-import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791554305';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791554305';
-import { TerminalSystem } from './terminalSystem.js?v=1791554305';
-import { MissionSystem } from './missions.js?v=1791554305';
-import { Staff } from './staff.js?v=1791554305';
-import { History } from './history.js?v=1791554305';
-import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791554305';
-import { sfx } from './sfx.js?v=1791554305';
-import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791554305';
+import * as Save from './save.js?v=1791555904';
+import { CabinService } from './cabinService.js?v=1791555904';
+import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791555904';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791555904';
+import { TerminalSystem } from './terminalSystem.js?v=1791555904';
+import { MissionSystem } from './missions.js?v=1791555904';
+import { Staff } from './staff.js?v=1791555904';
+import { History } from './history.js?v=1791555904';
+import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791555904';
+import { sfx } from './sfx.js?v=1791555904';
+import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791555904';
 
 export const pauseMethods = {
   /* ========================================================== */
@@ -629,7 +629,7 @@ export const pauseMethods = {
         /* ---- PHASE 12 : contrat en cours ---- */
         const m = this.missions.active;
         const ctx = this.missionContext();
-        const res = this.missions.evaluate(ctx);
+        this.missions.evaluate(ctx);
         $('tyMission').innerHTML =
           `<div class="font-semibold text-indigo-300">${m.label}</div>` +
           `<div class="text-xs text-slate-400 mt-0.5">${m.brief}</div>` +

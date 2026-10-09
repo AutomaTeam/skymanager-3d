@@ -4,13 +4,13 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791554305';
-import { LIGHT_GAIN } from './environment.js?v=1791554305';
-import { buildCockpit } from './cockpit.js?v=1791554305';
-import * as AF from './airframe.js?v=1791554305';
-import { LiveryRig } from './livery.js?v=1791554305';
-import { buildPlaneModel } from './planeModels.js?v=1791554305';
-import { pbr } from './renderShared.js?v=1791554305';
+import * as TEX from './textures.js?v=1791555904';
+import { LIGHT_GAIN } from './environment.js?v=1791555904';
+import { buildCockpit } from './cockpit.js?v=1791555904';
+import * as AF from './airframe.js?v=1791555904';
+import { LiveryRig } from './livery.js?v=1791555904';
+import { buildPlaneModel } from './planeModels.js?v=1791555904';
+import { pbr } from './renderShared.js?v=1791555904';
 
 export const aircraftMethods = {
   /* Silhouette d'appareil simplifiee (non pilotable) pour peupler les
@@ -73,10 +73,8 @@ export const aircraftMethods = {
     const bodyMat = pbr(skinSet, { color: 0xffffff, rough: 0.34, metal: 0.15, repeat: [1, 1] });
     const accentMat = pbr(TEX.livery(), { color: 0xffffff, rough: 0.30, metal: 0.20, repeat: [1, 1] });
     const darkMat = pbr(TEX.metal(), { color: 0x3a424c, rough: 0.55, metal: 0.45, repeat: [2, 2] });
-    const glassMat = pbr(TEX.glassGrid(), { color: 0xffffff, rough: 0.08, metal: 0.75, repeat: [1, 1] });
-    const metalMat = pbr(TEX.metal(), { color: 0xb8c0ca, rough: 0.32, metal: 0.85, repeat: [2, 2] });
-    const turbineMat = pbr(TEX.turbine(), { color: 0xffffff, rough: 0.42, metal: 0.7, repeat: [1, 1] });
-    const tireMat = pbr(TEX.tire(), { color: 0x2a2d33, rough: 0.95, repeat: [1, 1] });
+      const metalMat = pbr(TEX.metal(), { color: 0xb8c0ca, rough: 0.32, metal: 0.85, repeat: [2, 2] });
+      const tireMat = pbr(TEX.tire(), { color: 0x2a2d33, rough: 0.95, repeat: [1, 1] });
 
     /* --- Fuselage : revolution a profil reel (airframe.js) --- */
     const radomeMat = pbr(TEX.metal(), { color: 0xc9ced6, rough: 0.5, metal: 0.25, repeat: [1, 1] });

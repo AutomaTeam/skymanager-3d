@@ -20,7 +20,7 @@
    penalite autre que perdre le combo).
    ============================================================ */
 
-import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791554305';
+import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791555904';
 
 const TAU = Math.PI * 2;
 const PI = Math.PI;
@@ -177,7 +177,6 @@ export class RideBody {
   }
 
   _sub(dt, inp, env) {
-    const R = this.R, course = env.course;
     const jumpDown = !!inp.jump, trickDown = !!inp.trick;
     const jumpRel = this.jumpHeld && !jumpDown;
     const trickPress = trickDown && !this.trickHeld;
@@ -219,7 +218,6 @@ export class RideBody {
   _groundStep(dt, inp, env, jumpDown, jumpRel, trickDown) {
     const R = this.R, course = env.course;
     const fx = Math.sin(this.h), fz = Math.cos(this.h);
-    const px = Math.cos(this.h), pz = -Math.sin(this.h);
     const fs0 = this.vx * fx + this.vz * fz;
     let fs = fs0;
     const move = inp.move, turn = inp.turn;

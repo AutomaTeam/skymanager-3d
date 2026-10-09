@@ -4,16 +4,16 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791554305';
-import { spawnModel } from './assetLoader.js?v=1791554305';
-import { LIGHT_GAIN } from './environment.js?v=1791554305';
-import { LAYOUT } from './layout.js?v=1791554305';
-import { buildDecor } from './decor.js?v=1791554305';
-import { buildSkyLife } from './skylife.js?v=1791554305';
-import { AirportLife } from './airportLife.js?v=1791554305';
-import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791554305';
-import { buildTerminalShell } from './terminalBuilding.js?v=1791554305';
-import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791554305';
+import * as TEX from './textures.js?v=1791555904';
+import { spawnModel } from './assetLoader.js?v=1791555904';
+import { LIGHT_GAIN } from './environment.js?v=1791555904';
+import { LAYOUT } from './layout.js?v=1791555904';
+import { buildDecor } from './decor.js?v=1791555904';
+import { buildSkyLife } from './skylife.js?v=1791555904';
+import { AirportLife } from './airportLife.js?v=1791555904';
+import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791555904';
+import { buildTerminalShell } from './terminalBuilding.js?v=1791555904';
+import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791555904';
 
 export const groundMethods = {
       buildTerrain() {
@@ -173,7 +173,6 @@ export const groundMethods = {
        Coque vitree, portes cote piste et cote ville, toit, enseigne,
        ponts stationnes : voir terminalBuilding.js. Le mobilier interieur
        est ajoute par prebuildTerminal() (il a besoin de COUNTERS). */
-    const termMat = pbr(TEX.facade(), { color: 0xd6dde4, rough: 0.72, metal: 0.05, repeat: [4, 1] });
     const glassMat = pbr(TEX.glassGrid(), { color: 0xffffff, rough: 0.12, metal: 0.55, repeat: [3, 1] });
     const roofMat = pbr(TEX.roof(), { color: 0xb8bec6, rough: 0.95, repeat: [8, 8] });
     const termShell = buildTerminalShell({ TEX, pbr });
@@ -615,7 +614,6 @@ boom.add(dockGrp);
           const mat = new THREE.MeshBasicMaterial({ color, depthWrite: false });
           const inst = new THREE.InstancedMesh(geo, mat, list.length);
           const m = new THREE.Matrix4(), q = new THREE.Quaternion();
-          const e = new THREE.Euler(-Math.PI / 2, 0, 0);
           const pos = new THREE.Vector3(), scl = new THREE.Vector3();
           list.forEach((it, i) => {
             q.setFromEuler(new THREE.Euler(-Math.PI / 2, 0, it.rot || 0, 'XYZ'));

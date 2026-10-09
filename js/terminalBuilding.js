@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791554305';
-import { LAYOUT } from './layout.js?v=1791554305';
-import { SHIRTS } from './terminalFlow.js?v=1791554305';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791554305';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791555904';
+import { LAYOUT } from './layout.js?v=1791555904';
+import { SHIRTS } from './terminalFlow.js?v=1791555904';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791555904';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -286,7 +286,7 @@ export function buildTerminalShell({ TEX, pbr }) {
       mesh(br, new THREE.CylinderGeometry(2.4, 2.4, 3.6, 16), bridgeMat, 0, 3.4, -0.6);
       /* Tunnel de 13 m, replie contre le terminal. */
       const tun = box(br, 4.2, 3.0, 12, bridgeMat, 0, 3.3, -7.4);
-      const win = box(br, 4.3, 0.9, 11, new THREE.MeshStandardMaterial({ color: 0x1b2a3a, roughness: 0.1, metalness: 0.6 }), 0, 3.6, -7.4);
+      box(br, 4.3, 0.9, 11, new THREE.MeshStandardMaterial({ color: 0x1b2a3a, roughness: 0.1, metalness: 0.6 }), 0, 3.6, -7.4);
       /* Tete mobile + soufflet. */
       box(br, 3.4, 2.6, 1.8, dark, 0, 3.1, -14.2);
       /* Piliers et chassis a roues. */
@@ -333,11 +333,8 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
   const g = new THREE.Group();
   g.name = 'terminalInterior';
 
-  const wallMat = pbr(TEX.paintedMetal(), { color: 0xe7ebef, rough: 0.6, metal: 0.05, repeat: [8, 2], emissive: 0x25282c, emissiveIntensity: 1 });
   const deskMat = pbr(TEX.paintedMetal(), { color: 0x1f3b52, rough: 0.5, metal: 0.15, repeat: [2, 1], emissive: 0x0b1620, emissiveIntensity: 1 });
   const seatMat = pbr(TEX.fabric(), { color: 0x3f6ea8, rough: 0.92, repeat: [2, 2], emissive: 0x16283f, emissiveIntensity: 1 });
-  const skinMat = pbr(TEX.skinPores(), { color: 0xd8ab7e, rough: 0.75, repeat: [1, 1], emissive: 0x2a1a10, emissiveIntensity: 1 });
-  const hairMat = pbr(TEX.hair(), { color: 0x2b1c12, rough: 0.85, repeat: [1, 1] });
   const steelMat = pbr(TEX.brushed(), { color: 0xcbd5e1, rough: 0.28, metal: 0.85, repeat: [2, 1] });
   const tileMat = pbr(TEX.tile(), { color: 0xf1f5f9, rough: 0.18, metal: 0.02, repeat: [6, 3], emissive: 0x24272a, emissiveIntensity: 1 });
   const beltMat = pbr(TEX.metal(), { color: 0x1e293b, rough: 0.7, metal: 0.3, repeat: [8, 1] });
@@ -386,10 +383,6 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
      ------------------------------------------------------------ */
   const terminalCounters = {};
   const clothPalette = [0x64748b, 0x9333ea, 0x0d9488, 0xb45309, 0xdb2777, 0x2563eb];
-  const torsoGeo = new THREE.CapsuleGeometry(0.2, 0.85, 3, 8);
-  const headGeo = new THREE.SphereGeometry(0.16, 8, 6);
-  const hairGeo = new THREE.SphereGeometry(0.165, 8, 6, 0, 6.283, 0, 1.7);
-  const clothMats = clothPalette.map(col => pbr(TEX.fabric(), { color: col, rough: 0.92, repeat: [1, 1], emissive: col, emissiveIntensity: 0.08 }));
 
   counters.forEach((c, i) => {
     const cx = c.pos[0], cz = c.pos[1];
@@ -645,7 +638,7 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
     const cx = (x0 + x1) / 2, cz = 1263 - d / 2;
     mesh(wc, new THREE.BoxGeometry(w, 3.4, d), tileMat, cx, 1.7, cz);
     const doorX = doorSide < 0 ? x0 - 0.05 : x1 + 0.05;
-    const door = mesh(wc, new THREE.BoxGeometry(0.1, 2.2, 1.6),
+    mesh(wc, new THREE.BoxGeometry(0.1, 2.2, 1.6),
       pbr(TEX.paintedMetal(), { color: 0x94a3b8, rough: 0.5, metal: 0.3, repeat: [1, 1] }), doorX, 1.1, 1256);
     const sg = panelSign(label, { bg: '#0ea5e9', w: 3.6, h: 0.9 });
     sg.position.set(doorX + doorSide * 0.08, 2.9, 1256);

@@ -17,7 +17,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791554305';
+import { sfx } from './sfx.js?v=1791555904';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -531,7 +531,6 @@ export class Fun {
 
   _stuntDone(kind) {
     const arc = this.g.arcade;
-    const now = this.g.time;
     this.combo.n = this.combo.t > 0 ? this.combo.n + 1 : 1;
     this.combo.t = COMBO_WINDOW;
     const base = kind === 'roll' ? 10 : 16;
@@ -733,7 +732,7 @@ export class Fun {
     const x = cv.getContext('2d');
     x.drawImage(src, 0, 0);
     if (name !== 'normal') {
-      const H = 20, y0 = 20, W = src.width - 40, Hh = src.height - 110;   // seulement la photo, pas le cadre
+      const W = src.width - 40, Hh = src.height - 110;   // seulement la photo, pas le cadre
       const im = x.getImageData(20, 20, W, Hh), d = im.data;
       for (let i = 0; i < d.length; i += 4) {
         let r = d[i], g = d[i + 1], b = d[i + 2];

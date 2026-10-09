@@ -22,7 +22,7 @@
    Tout est instancie ou fusionne : quelques dizaines d'appels de dessin.
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791554305';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791555904';
 
 /* Enceinte de l'aeroport : rien de naturel n'y pousse. */
 const AIRPORT = { x0: -300, x1: 800, z0: -1750, z1: 1900 };
@@ -373,8 +373,7 @@ function mergeGeos(list) {
 export function buildAirportDecor({ TEX, pbr, RUNWAY, LAYOUT }) {
   const g = new THREE.Group();
   g.name = 'airportDecor';
-  const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(1, 1, 1), P = new THREE.Vector3();
-  const Y = new THREE.Vector3(0, 1, 0);
+  const M = new THREE.Matrix4(), S = new THREE.Vector3(1, 1, 1), P = new THREE.Vector3();
   const T = LAYOUT.terminal;
   const metal = pbr(TEX.metal(), { color: 0xcbd5e1, rough: 0.45, metal: 0.65, repeat: [1, 4] });
   const glow = new THREE.MeshBasicMaterial({ color: 0xfff6d8 });

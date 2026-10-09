@@ -122,7 +122,7 @@ function normalFromHeight(srcCanvas, strength = 2.2) {
     const i = (y * w + x) * 4;
     return (src[i] * 0.299 + src[i + 1] * 0.587 + src[i + 2] * 0.114) / 255;
   };
-  const { canvas, ctx } = paint(w, h, (x, y) => {
+  const { canvas } = paint(w, h, (x, y) => {
     const dx = (lum(x + 1, y) - lum(x - 1, y)) * strength;
     const dy = (lum(x, y + 1) - lum(x, y - 1)) * strength;
     let nx = -dx, ny = -dy, nz = 1;
@@ -589,7 +589,6 @@ export const turbine = () => once('turbine', () => {
 /* ---------------------------------------------------------- */
 export const fanDisc = () => once('fanDisc', () => {
   const S = 256;
-  const rnd = mulberry32(8080);
   const { canvas, ctx } = paint(S, S, () => [58, 62, 68]);
   const c = S / 2;
 

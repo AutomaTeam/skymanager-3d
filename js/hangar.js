@@ -10,25 +10,17 @@
    Donnees : localStorage 'skymanager.hangar'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791554305';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791554305';
+import { sfx } from './sfx.js?v=1791555904';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791555904';
 import {
   BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791554305';
+} from './livery.js?v=1791555904';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const COIN = 1000;
 
-const TABS = [
-  { id: 'plane',   ico: '✈️', label: 'Avion' },
-  { id: 'body',    ico: '🎨', label: 'Couleur' },
-  { id: 'accent',  ico: '🖌️', label: 'Accent' },
-  { id: 'pattern', ico: '🌈', label: 'Motif' },
-  { id: 'sticker', ico: '⭐', label: 'Stickers' },
-  { id: 'name',    ico: '✏️', label: 'Nom' }
-];
 const CATALOG = { body: BODY_COLORS, accent: ACCENT_COLORS, pattern: PATTERNS, sticker: STICKERS };
 const SLOT_LABELS = ['Nez', 'Avant', 'Arriere'];
 

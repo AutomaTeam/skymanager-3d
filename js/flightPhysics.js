@@ -6,7 +6,7 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791554305';
+import { heliInit, heliReset, heliStep } from './heliModel.js?v=1791555904';
 
 export const KTS = 1.94384;      // m/s -> noeuds
 export const FT = 3.28084;       // m -> pieds
@@ -443,7 +443,6 @@ export class Aircraft {
     /* ---------- Contact au sol ---------- */
     this.onGround = false;
     const omegaWorld = this.omega.clone().applyQuaternion(this.quat);
-    let totalLoad = 0;
 
     if (this.gearDown || this.pos.y < 2.0) {
       for (const g of this.gearPoints) {
@@ -461,7 +460,6 @@ export class Aircraft {
         let Fn = this.gearK * Math.min(pen, 0.6) - this.gearC * vp.y;
         if (Fn < 0) Fn = 0;
         g.load = Fn;
-        totalLoad += Fn;
         this.onGround = true;
 
         const F = new THREE.Vector3(0, Fn, 0);

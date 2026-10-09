@@ -14,9 +14,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791554305';
-import { emojiSprite } from './groundFun.js?v=1791554305';
-import { TODAY } from './terminalFlow.js?v=1791554305';
+import { sfx } from './sfx.js?v=1791555904';
+import { emojiSprite } from './groundFun.js?v=1791555904';
+import { TODAY } from './terminalFlow.js?v=1791555904';
 
 /* Annonces du hall (une toutes les ~75 s quand on y est), precedees du carillon. */
 const ANNOUNCES = [
@@ -168,7 +168,7 @@ export class Ambience {
   _updateSpatial(dt) {
     const g = this.g;
     if (g._worldPaused) return;
-    const p = g.player.pos, cam = g.r3d.camera, e = cam.matrixWorld.elements;
+    const cam = g.r3d.camera, e = cam.matrixWorld.elements;
     const at = (x, z, range) => {
       const dx = x - cam.position.x, dz = z - cam.position.z, d = Math.hypot(dx, dz);
       if (d > range) return null;

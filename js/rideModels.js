@@ -115,7 +115,7 @@ function buildBmx(color) {
   const head = [0, 0.74, 0.4];
   const frame = new THREE.Group(); frame.position.set(...head); root.add(frame);
   const P = (x, y, z) => [x - head[0], y - head[1], z - head[2]];
-  const BB = P(0, 0.31, -0.06), SEAT = P(0, 0.8, -0.3), RAX = P(0, 0.29, -0.55), HT = [0, 0, 0], HB = P(0, 0.58, 0.36);
+  const BB = P(0, 0.31, -0.06), SEAT = P(0, 0.8, -0.3), RAX = P(0, 0.29, -0.55), HT = [0, 0, 0];
   frame.add(tube(BB, SEAT, 0.022, frameM), tube(SEAT, HT, 0.02, frameM), tube(HT, BB, 0.026, frameM), tube(BB, RAX, 0.016, frameM), tube(SEAT, RAX, 0.016, frameM));
   const rw = tyre(-0.55); rw.position.set(0, 0.29, -0.55 - head[2]); rw.position.y -= head[1]; frame.add(rw);
   frame.add(box(0.12, 0.05, 0.2, blk, 0, SEAT[1] + 0.04, SEAT[2] - 0.02));
@@ -145,7 +145,7 @@ function buildRollers(color) {
   const root = new THREE.Group();
   const bootM = mat(0xf8fafc, { rough: 0.5 }), accent = mat(color, { rough: 0.4 }), frameM = mat(DARK), wm = mat(0xfde047, { rough: 0.4 });
   const skates = [], wheels = [];
-  for (const s of [-1, 1]) {
+  for (let i = 0; i < 2; i++) {
     const g = new THREE.Group();
     g.add(box(0.1, 0.13, 0.27, bootM, 0, 0.145, 0));
     g.add(box(0.105, 0.05, 0.12, accent, 0, 0.2, 0.06));
@@ -302,14 +302,12 @@ export function buildRide(id) {
   const m = id === 'scooter' ? buildScooter(color) : id === 'bmx' ? buildBmx(color) : id === 'rollers' ? buildRollers(color)
     : id === 'hover' ? buildHover(color, RIDE_HOVER) : buildSkate(color);
   const P = m.parts;
-  let rollDist = 0;
 
   return {
     id, root: m.root, parts: P, rear: m.rear,
     /* s : { dist (m parcourus ce pas), steer (-1..1), anim (figure de planche), t, speed, boost } */
     update(s) {
       for (const w of P.wheels) { w.m.rotation.x += s.dist / w.r; }
-      rollDist += s.dist;
       /* direction (velo, trottinette) : le guidon tourne un peu */
       const st = -s.steer * 0.35;
       if (P.steer) P.steer.rotation.y = st;

@@ -455,7 +455,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | B01–B03 | ✅ | `main.js` ~950 l., `renderer3d.js` ~690 l., `arcade.js` ~460 l. ; `tools/splitClass.mjs` |
 | B04 | ✅ | registre ; tous les modules y sont (phase 111 : `order: -1, hooks: false` pour les couches « fun ») |
 | B05 | ✅ | `save.js` ; migrés pet, deco, comfort, reset ; les autres modules gardent leur lecture (tolérante, testée) |
-| B06 | 🟡 | constantes inutilisées retirées ; 37 avertissements `no-unused-vars` restent (variables locales), pas de suppression de code actif |
+| B06 | 🟡 | constantes inutilisées retirées ; phase 115 : variables locales inutilisees retirees une par une ; il reste 1 avertissement (`buildFuelTruck`, fonction non appelee, gardee) |
 | C01–C05 | ✅ | eslint, `npm run bump` + test du tampon, 11 scénarios, tests save / économie |
 | D01 | 🟡 | mesures : ~440 appels de dessin au parking (rendu logiciel), 3 130 maillages, `bootMs` ≈ 1,8 s ; pas de mesure sur un vrai iPad |
 | D02 | 🟡 | `staticMerge.js` appliqué au terminal, au skatepark, au décor d'aéroport : −5 % d'appels de dessin seulement (l'objectif −30 % n'est pas atteint : le reste est animé) |

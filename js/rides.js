@@ -19,13 +19,13 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791554305';
-import { buildPark, PARK } from './rideCourse.js?v=1791554305';
-import { buildParkMeshes } from './ridePark.js?v=1791554305';
-import { buildRide } from './rideModels.js?v=1791554305';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791554305';
-import { slideMove, collectBodies } from './bodies.js?v=1791554305';
-import { sfx } from './sfx.js?v=1791554305';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791555904';
+import { buildPark, PARK } from './rideCourse.js?v=1791555904';
+import { buildParkMeshes } from './ridePark.js?v=1791555904';
+import { buildRide } from './rideModels.js?v=1791555904';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791555904';
+import { slideMove, collectBodies } from './bodies.js?v=1791555904';
+import { sfx } from './sfx.js?v=1791555904';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -36,7 +36,7 @@ const WIPE_TIME = 1.1;
 const _m1 = new THREE.Matrix4(), _m2 = new THREE.Matrix4(), _m3 = new THREE.Matrix4();
 const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _v3 = new THREE.Vector3(), _v4 = new THREE.Vector3();
 const _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion();
-const UP = new THREE.Vector3(0, 1, 0), AX = new THREE.Vector3(1, 0, 0);
+const UP = new THREE.Vector3(0, 1, 0);
 
 /* ---------------- Effets : poussiere, etincelles, etoiles ---------------- */
 class FX {
@@ -441,7 +441,7 @@ export class Rides {
 
   /* ---------------- Evenements de la physique ---------------- */
   _event(e) {
-    const g = this.g, b = this.body, R = this.R, A = g.arcade;
+    const g = this.g, b = this.body, A = g.arcade;
     switch (e.t) {
       case 'jump':
         if (e.power > 0) { sfx.ollie(); if (this.fx) this.fx.burst(b.x, 0.1, b.z, 6, 0xd1d5db, 1.8, 1, 0.45); }
