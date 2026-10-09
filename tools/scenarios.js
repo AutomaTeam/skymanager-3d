@@ -183,7 +183,7 @@ const SCENARIOS = {
     steps.push('objectif=' + (A.currentGoal().story ? 'aventure' : 'autre'));
     S.open(); frames(2); S.close();
     let fetes = 0;
-    for (let i = 0; i < 200 && !S.data.done; i++) {
+    for (let i = 0; i < 200 && (!S.data.done || S._celebrating || (S._queue && S._queue.length)); i++) {
       const q = S.quest;
       if (q) A.event(q.ev, 1);
       if (S._celebrating) { fetes++; S._closeCelebrate(); }
@@ -200,7 +200,7 @@ const SCENARIOS = {
       if (g.nav.isWalkable(g.player.pos.x, g.player.pos.z)) walk++;
     }
     steps.push('voyages praticables=' + walk + '/' + PLACES.length);
-    const ok = S.data.done && fetes === 6 && walk >= PLACES.length - 2;
+    const ok = S.data.done && fetes >= 6 && walk >= PLACES.length - 2;
     Object.assign(S.data, JSON.parse(saved)); S.save();
     A.data.tutorialDone = tuto;
     return ok;

@@ -2522,3 +2522,7 @@ Relancer apres ajout de texte : `node tools/accents.mjs --diff` puis `--apply`.
 ## Phase 125 - on vole tout de suite (tutoriel reordonne)
 
 Le tutoriel faisait reparer, verifier des billets et visiter la tour avant le premier vol. Nouvel ordre : se deplacer -> decoller -> 3 anneaux -> atterrir -> reparer -> terminal -> passagers -> tour (`STEPS` dans arcade.js). Une sauvegarde en plein tutoriel retrouve la meme etape (`OLD_STEP_ORDER`, `stepOrder: 2`). Pendant le tutoriel, le menu « Choisis ton vol » ne s'ouvre pas (on decolle direct). Juste apres le decollage, l'objectif dit « les anneaux arrivent » au lieu de « atterris ». Verifie dans le navigateur sur une sauvegarde neuve jusqu'au rapport d'atterrissage.
+
+## Phase 126 - grands ecrans de fete pour les gros cadeaux
+
+`story.celebrate(card)` : une file d'ecrans de fete (fin de chapitre, avion offert aux niveaux 6/12/18/24, nouveau titre de pilote), montres un a la fois et jamais en plein vol. Avant, un avion offert n'etait annonce que par un message de quelques secondes. La bulle de Coco se place a droite de la colonne de boutons a pied et en cabine (elle les recouvrait).

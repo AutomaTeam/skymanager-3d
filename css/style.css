@@ -2111,3 +2111,6 @@ body.cb .job-card.done { border-color: #38bdf8; }
   filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.45)); }
 .coin-chip.bump { animation: coinBump 0.35s ease-out; }
 @keyframes coinBump { 40% { transform: scale(1.18); box-shadow: 0 0 18px rgba(250, 204, 21, 0.8); } }
+/* La bulle de Coco ne cache plus la colonne de boutons de gauche (aventure, voyage, montures...) */
+body[data-state="HUB"] .mascot, body[data-state="CABIN"] .mascot { left: 4.4rem; }
+body.lefty[data-state="HUB"] .mascot, body.lefty[data-state="CABIN"] .mascot { left: auto; right: 4.4rem; }

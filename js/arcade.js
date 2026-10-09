@@ -14,14 +14,14 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { planeOf } from './fleet.js?v=1791576407';
-import { sfx } from './sfx.js?v=1791576407';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791576407';
-import { mapMethods } from './arcadeMap.js?v=1791576407';
-import { challengeMethods } from './arcadeChallenges.js?v=1791576407';
-import { funMethods } from './arcadeFun.js?v=1791576407';
-import { flightMethods } from './arcadeFlight.js?v=1791576407';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791576407';
+import { planeOf } from './fleet.js?v=1791576493';
+import { sfx } from './sfx.js?v=1791576493';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791576493';
+import { mapMethods } from './arcadeMap.js?v=1791576493';
+import { challengeMethods } from './arcadeChallenges.js?v=1791576493';
+import { funMethods } from './arcadeFun.js?v=1791576493';
+import { flightMethods } from './arcadeFlight.js?v=1791576493';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791576493';
 
 
 const STORE = 'skymanager.arcade';
@@ -336,6 +336,16 @@ export class Arcade {
     t.save();
     const title = TITLES.find(x => x[0] === lvl);
     g.toast(`🎉 NIVEAU ${lvl} ! +100 🪙${line ? ' et ' + line : ''}${title ? ` Nouveau titre : ${title[1]} !` : ''}`, 5600, 'ok');
+    /* Plan « jeu cool » : un avion offert ou un nouveau titre merite le grand ecran de fete (montre au sol). */
+    if (g.story && ((r && r.kind === 'plane') || title)) {
+      const plane = r && r.kind === 'plane' ? planeOf(PLANE_GIFTS[lvl]) : null;
+      g.story.celebrate({
+        ico: plane ? plane.ico : '🎖️', kicker: `NIVEAU ${lvl} !`,
+        title: plane ? `Un nouvel avion : ${plane.name} !` : `Tu es maintenant « ${title[1]} » !`,
+        text: plane ? 'Il t\'attend dans ton hangar. Choisis-le avant ton prochain vol !' : 'Ton nouveau titre de pilote est affiché dans le HUB.',
+        gifts: ['+100 🪙'].concat(line ? [line] : [])
+      });
+    }
     this.save();
   }
 

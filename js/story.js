@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576407';
-import { load, write } from './save.js?v=1791576407';
+import { sfx } from './sfx.js?v=1791576493';
+import { load, write } from './save.js?v=1791576493';
 
 const STORE = 'skymanager.story';
 
@@ -155,15 +155,13 @@ export class Story {
   update() {
     const g = this.g;
     /* Ecran de fete en attente (chapitre fini en vol) : on le montre une fois au sol. */
-    if (this._pending && !this._celebrating && (g.state !== 'PILOT' || g.ac.onGround) && g.state !== 'BOOT') {
-      const p = this._pending;
-      this._pending = null;
-      this._celebrate(p.c, p.lines, p.final);
+    if (this._queue && this._queue.length && !this._celebrating && (g.state !== 'PILOT' || g.ac.onGround) && g.state !== 'BOOT') {
+      this._show(this._queue.shift());
     }
     if (!this.active) return;
     if (g.state === 'BOOT' || g._worldPaused) return;
     /* Nouveau chapitre : Coco raconte le debut une fois. */
-    if (this.data.seenIntro !== this.data.ch && g.state === 'HUB' && !this._celebrating && !this._pending) {
+    if (this.data.seenIntro !== this.data.ch && g.state === 'HUB' && !this._celebrating && !(this._queue && this._queue.length)) {
       this.data.seenIntro = this.data.ch;
       this.save();
       const c = this.chapter;
@@ -227,10 +225,8 @@ export class Story {
     if (this.data.ch >= CHAPTERS.length) this.data.done = true;
     this.save();
     if (g.state === 'PILOT' && !g.ac.onGround) {
-      this._pending = { c, lines, final: !!r.final };
       g.fun.say(`${c.ico} Chapitre terminé ! Pose-toi pour ouvrir ton cadeau !`, 3, 5000);
       sfx.tada();
-      return;
     }
     this._celebrate(c, lines, !!r.final);
   }
@@ -359,21 +355,37 @@ export class Story {
   }
 
   /* ---------------- Ecran de fete ---------------- */
+  /* Carte de fin de chapitre. */
   _celebrate(c, lines, final) {
+    this.celebrate({
+      ico: final ? '🏆' : c.ico, final, title: c.title, text: c.outro, gifts: lines,
+      kicker: final ? 'AVENTURE TERMINÉE !' : `CHAPITRE ${CHAPTERS.indexOf(c) + 1} TERMINÉ !`,
+      toast: final ? '🏆 Nouveau titre : Légende de l\'aventure !' : null
+    });
+  }
+
+  /* Ecran de fete generique (chapitres, avion offert, nouveau titre...) : mis en file et montre
+     une fois au sol (jamais en plein vol), un a la fois. card = { ico, kicker, title, text, gifts[], final, toast }. */
+  celebrate(card) {
+    this._queue = this._queue || [];
+    this._queue.push(card);
+  }
+
+  _show(card) {
     const g = this.g, A = g.arcade;
     this._celebrating = true;
     const $ = (id) => this.cel.querySelector('#' + id);
-    $('scIco').textContent = final ? '🏆' : c.ico;
-    $('scKicker').textContent = final ? 'AVENTURE TERMINÉE !' : `CHAPITRE ${CHAPTERS.indexOf(c) + 1} TERMINÉ !`;
-    $('scTitle').textContent = c.title;
-    $('scText').textContent = c.outro;
-    $('scGifts').innerHTML = lines.map((l, i) => `<span style="animation-delay:${0.5 + i * 0.25}s">${l}</span>`).join('');
-    this.cel.classList.toggle('final', final);
+    $('scIco').textContent = card.ico;
+    $('scKicker').textContent = card.kicker;
+    $('scTitle').textContent = card.title;
+    $('scText').textContent = card.text || '';
+    $('scGifts').innerHTML = (card.gifts || []).map((l, i) => `<span style="animation-delay:${0.5 + i * 0.25}s">${l}</span>`).join('');
+    this.cel.classList.toggle('final', !!card.final);
     this.cel.classList.remove('hidden');
     sfx.chest();
     setTimeout(() => sfx.jingle(), 650);
-    A.confetti(final ? 160 : 110);
-    if (final) g.toast('🏆 Nouveau titre : Légende de l\'aventure !', 5200, 'ok');
+    A.confetti(card.final ? 160 : 110);
+    if (card.toast) g.toast(card.toast, 5200, 'ok');
   }
 
   _closeCelebrate() {
