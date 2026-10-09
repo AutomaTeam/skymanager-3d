@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791556299';
-import { LAYOUT } from './layout.js?v=1791556299';
+import * as TEX from './textures.js?v=1791556461';
+import { LAYOUT } from './layout.js?v=1791556461';
 
 /* Modeles externes (CC0/CC-BY, voir assets/models/CREDITS.md). Le
    fuselage/gouvernes de l'avion jouable restent procedurales (elles sont

@@ -4,16 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791556299';
-import { spawnModel } from './assetLoader.js?v=1791556299';
-import { LIGHT_GAIN } from './environment.js?v=1791556299';
-import { LAYOUT } from './layout.js?v=1791556299';
-import { buildDecor } from './decor.js?v=1791556299';
-import { buildSkyLife } from './skylife.js?v=1791556299';
-import { AirportLife } from './airportLife.js?v=1791556299';
-import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791556299';
-import { buildTerminalShell } from './terminalBuilding.js?v=1791556299';
-import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791556299';
+import * as TEX from './textures.js?v=1791556461';
+import { spawnModel } from './assetLoader.js?v=1791556461';
+import { LIGHT_GAIN } from './environment.js?v=1791556461';
+import { LAYOUT } from './layout.js?v=1791556461';
+import { buildDecor } from './decor.js?v=1791556461';
+import { buildSkyLife } from './skylife.js?v=1791556461';
+import { AirportLife } from './airportLife.js?v=1791556461';
+import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791556461';
+import { buildTerminalShell } from './terminalBuilding.js?v=1791556461';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791556461';
+import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791556461';
 
 export const groundMethods = {
       buildTerrain() {
@@ -65,13 +66,15 @@ export const groundMethods = {
        pour rester lisible, mais il est legerement adouci pour ne
        plus "bruler" en plein soleil. */
     const white = new THREE.MeshBasicMaterial({ color: 0xdfe6ec });
+    const markG = new THREE.Group();     // D02 : marquages de piste, fusionnes par case plus bas
+    g.add(markG);
 
     /* Axe central : tirets 30 m / 20 m */
     for (let z = R.startZ - 80; z > R.endZ + 80; z -= 50) {
       const d = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 30), white);
       d.rotation.x = -Math.PI / 2;
       d.position.set(0, 0.04, z);
-      g.add(d);
+      markG.add(d);
     }
 
     /* Seuils (barres) et zones de toucher des roues */
@@ -80,17 +83,19 @@ export const groundMethods = {
         const b = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 26), white);
         b.rotation.x = -Math.PI / 2;
         b.position.set(-16 + i * 4.6, 0.04, z0 - dir * 14);
-        g.add(b);
+        markG.add(b);
       }
       for (const off of [300, 450, 600]) {
         [-1, 1].forEach(s => {
           const t = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 22), white);
           t.rotation.x = -Math.PI / 2;
           t.position.set(s * 9, 0.04, z0 - dir * off);
-          g.add(t);
+          markG.add(t);
         });
       }
     });
+
+    mergeStaticByMaterial(markG, { cell: 400 });
 
     /* Feux de bord de piste : on collecte d'abord, on instancie au compte exact
        (sinon les instances non ecrites restent a l'origine, au milieu de la piste) */
@@ -404,6 +409,8 @@ boom.add(dockGrp);
         const fenceH = 2.2;
         const B = { minX: -140, maxX: 660, minZ: -1550, maxZ: 1650 };
         const postMat = pbr(TEX.metal(), { color: 0x5a6470, rough: 0.5, metal: 0.6, repeat: [1, 2] });
+        const postG = new THREE.Group();   // D02 : poteaux de cloture, fusionnes par case
+        g.add(postG);
         const addFenceRun = (x0, z0, x1, z1) => {
           const len = Math.hypot(x1 - x0, z1 - z0);
           const fenceMat = pbr(TEX.chainlink(), {
@@ -420,7 +427,7 @@ boom.add(dockGrp);
             const t = i / postCount;
             const post = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, fenceH + 0.3, 8), postMat);
             post.position.set(x0 + (x1 - x0) * t, (fenceH + 0.3) / 2, z0 + (z1 - z0) * t);
-            g.add(post);
+            postG.add(post);
           }
         };
     /* Cote est et ouest, avec une coupure d'entree pres du terminal (cote est) */
@@ -429,6 +436,7 @@ boom.add(dockGrp);
     addFenceRun(B.maxX, 1340, B.maxX, B.maxZ);
     addFenceRun(B.minX, B.minZ, B.maxX, B.minZ);
     addFenceRun(B.minX, B.maxZ, B.maxX, B.maxZ);
+    mergeStaticByMaterial(postG, { cell: 400 });
     /* Portail d'entree */
     const gateMat = pbr(TEX.hazard(), { color: 0xffffff, rough: 0.7, repeat: [1, 1] });
     const gatePost1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 3, 0.3), gateMat);

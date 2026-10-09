@@ -446,7 +446,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | T00 | ✅ | commit des phases 53–54 |
 | A01 | ✅ | « étoiles filantes » 🌠 ; le badge garde son nom « Chercheur d'étoiles » |
 | A02 | ✅ | « N veulent partir · M montent » |
-| A03 | ⏭ | bug cosmétique non reproduit (pas de rendu net sous le fuselage dans le Browser pane) |
+| A03 | 🟡 | phase 118 : reproduit par le calcul, pas a l'ecran. La coque (34 x 36 m) est un obstacle de navigation qui couvre tout le dessous du fuselage et les postes des mecaniciens sont hors de cette emprise : personne ne peut se trouver sous l'avion. Rien a corriger trouve ; si ca se reproduit, noter la position exacte |
 | A04 | 🟡 | bouton Passer + scénario `tutorial` ; pas joué à la main de bout en bout |
 | A05 | 🟡 | scénario `cabin` (service, sortie) ; boucle de satisfaction complète non mesurée |
 | A06 | ✅ | scénario `panels` : 9 panneaux, aucun gel |
@@ -458,7 +458,7 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | B06 | 🟡 | constantes inutilisées retirées ; phase 115 : variables locales inutilisees retirees une par une ; il reste 1 avertissement (`buildFuelTruck`, fonction non appelee, gardee) |
 | C01–C05 | ✅ | eslint, `npm run bump` + test du tampon, 11 scénarios, tests save / économie |
 | D01 | 🟡 | mesures : ~440 appels de dessin au parking (rendu logiciel), 3 130 maillages, `bootMs` ≈ 1,8 s ; pas de mesure sur un vrai iPad |
-| D02 | 🟡 | `staticMerge.js` appliqué au terminal, au skatepark, au décor d'aéroport : −5 % d'appels de dessin seulement (l'objectif −30 % n'est pas atteint : le reste est animé) |
+| D02 | 🟡 | phase 118 : poteaux de cloture (265) et marquages de piste (85) fusionnes par case de 400 m (`staticMerge.js`, option `cell`) : 510 -> 160 maillages libres sous l'aeroport, mais 489 -> 485 appels de dessin au parking (ces pieces sont loin de la camera). Objectif -30 % toujours pas atteint |
 | D03 | 🟡 | existait déjà (PNJ simulés moins souvent au loin, `agents.js`) |
 | D04 | ✅ | taille d'ombre selon le niveau, pas d'ombres au-dessus de 600 m |
 | D05 | ⏭ | temps de chargement mesuré, pas amélioré |
@@ -481,13 +481,13 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | H06, H07, H08, H09 | ✅/🟡 | cache-cache hebdomadaire ; Halloween + Noël (pas d'anniversaire, pas de neige) ; dormir ; photo de groupe |
 | I01 | ✅ | `KID_AIRCRAFT` 350 → 300 |
 | I02, I03, I04, I06, I07 | ✅ | 30 niveaux, album unifié, coffre en série de 7 jours, code d'avion, fichier de sauvegarde |
-| I05 | 🟡 | phase 106 : 33 autocollants (+8) ; peinture par zones et placement au doigt pas faits |
+| I05 | 🟡 | phases 106 et 116 : 33 autocollants, 10 motifs, zone « nez et moteur » peinte a part (4 petits avions, pas le gros), apercu qui tourne a 360° (glisser pour tourner). Peinture par zones sur le gros avion et autocollants poses au doigt (raycast) pas faits |
 | J01, J02, J05 | ✅ | audit statique, 3 volumes + ducking, 6 klaxons ; équilibre à l'oreille non vérifié |
 | J03 | 🟡 | pan stéréo du grondement de l'avion de ligne + phase 113 : fontaines, oiseaux, murmure du hall (distance + pan) ; pas écouté à l'oreille |
 | J04 | ✅ | thèmes hall / skatepark / îles / nuit |
 | K01 | 🟡 | cumulus des ascendances + phase 114 : 64 bouffees en sprites (`cloudPuffs.js`) qu'on traverse (fondu), selon la couverture, coupées en qualité basse ; pas vu à l'écran (panneau caché) |
 | K02 | 🟡 | vagues + reflets + sillage d'écume de l'hydravion (phase 112) ; pas d'écume sur les plages |
-| K03 | ⏭ | système de particules unifié : pas fait (gain invisible, risque de régression) |
+| K03 | ✅ | phase 117 : `particles.js` est l'unique systeme de points (fumee/traînees/pneus/eclaboussures/sillage via `Trail`, etincelles/poussiere des engins via `FX`) ; test `npm run test` inclus ; les confettis restent a l'ecran (DOM) |
 | K04, K05, K07 | ✅ | fumée des pneus + secousse, couchers de soleil et étoiles, écran titre vivant |
 | K06 | 🟡 | allures variées (101) + les PNJ à l'arrêt tournent le corps vers le joueur à moins de 6 m (105, non vu à l'écran) ; transitions de clips douces (phase 109, `updateAvatarAnim` : fondu 0,12–0,3 s selon le cas, marche/course synchronisées, 0,18 s mini entre deux changements ; vérifié sur les poids, pas à l'oeil) |
 | M01–M03 | ✅ | README court + `docs/HISTORIQUE.md`, `docs/MODULES.md` généré, anciens plans archivés |

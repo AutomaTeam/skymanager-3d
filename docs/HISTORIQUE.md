@@ -2491,3 +2491,8 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 ## Phase 114 - nuages qu'on traverse (K01)
 
 `js/cloudPuffs.js` : 64 sprites entre 500 et 1800 m autour de la camera (recyclés dans une boite de 9 km), nombre selon la couverture, teinte de la meteo, fondu a moins de 420 m (on traverse sans voir de bord dur). Coupes en qualite basse (`comfort._applyQuality`).
+
+### Peinture du nez, apercu 360 et particules (phases 116-118)
+- **Hangar** : nouvel onglet « Nez » pour peindre le capot / l'helice a part (le code de partage l'embarque) ; l'apercu de l'avion tourne tout autour.
+- **Particules** : un seul module `js/particles.js` pour la fumee, les traînees, les eclaboussures et les etincelles.
+- **Decor** : poteaux de cloture et marquages de piste fusionnes par zones de 400 m.

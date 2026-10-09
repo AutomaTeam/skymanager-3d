@@ -11,17 +11,21 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
+const _v = new THREE.Vector3();
 const KEEP = ['position', 'normal', 'uv', 'color'];
 
 /* root : le groupe a fusionner. Rend le nombre de maillages economises. */
-export function mergeStaticByMaterial(root, { minGroup = 2, maxVertices = 400000 } = {}) {
+/* cell : taille (m) d'une case. Avec une case, on ne fusionne que les pieces voisines : un decor etale sur
+   des kilometres (clôture, marquages) reste elimine par la camera au lieu d'etre dessine d'un bloc. */
+export function mergeStaticByMaterial(root, { minGroup = 2, maxVertices = 400000, cell = 0 } = {}) {
   root.updateMatrixWorld(true);
   const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
   const buckets = new Map();
   root.traverse((o) => {
     if (!o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || Array.isArray(o.material)) return;
     if (!o.visible || o.userData.dynamic || o.userData.noMerge) return;
-    const key = o.material.uuid + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0) + '|' + o.renderOrder;
+    let key = o.material.uuid + '|' + (o.castShadow ? 1 : 0) + (o.receiveShadow ? 1 : 0) + '|' + o.renderOrder;
+    if (cell > 0) { _v.setFromMatrixPosition(o.matrixWorld); key += '|' + Math.floor(_v.x / cell) + ',' + Math.floor(_v.z / cell); }
     if (!buckets.has(key)) buckets.set(key, []);
     buckets.get(key).push(o);
   });
