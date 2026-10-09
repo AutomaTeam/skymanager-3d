@@ -2499,3 +2499,6 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 
 ### Demarrage direct (phase 119)
 - Plus de menu de depart ni de mode Pilote : le jeu arrive directement a l aeroport en mode Arcade. Seul le tout premier lancement montre le prenom, l avatar et un bouton JOUER.
+
+### Objets solides (phase 121)
+- `js/autoBlockers.js` : au demarrage, tout objet statique du decor qui avait une vraie masse (batiments annexes, abris, murs de hangar, panneaux hauts) mais pas d obstacle devient infranchissable. Les vehicules, la passerelle, les portes et les points d interaction sont exclus.
