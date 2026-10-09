@@ -78,7 +78,11 @@ export const sfx = {
 
   coin()  { vib(8);  tone(988, 0, 0.09, 'square', 0.06); tone(1319, 0.08, 0.16, 'square', 0.06); },
   ding()  { vib(15);  tone(880, 0, 0.14, 'triangle', 0.12); tone(1175, 0.1, 0.2, 'triangle', 0.1); },
-  ring()  { tone(660, 0, 0.1, 'triangle', 0.13); tone(880, 0.07, 0.1, 'triangle', 0.13); tone(1320, 0.14, 0.22, 'triangle', 0.13); },
+  /* E2 : `step` = numero de l'anneau dans le vol ; chaque anneau sonne un ton plus haut (gamme majeure). */
+  ring(step = 0) {
+    const k = Math.pow(2, [0, 2, 4, 5, 7, 9, 11, 12][Math.max(0, Math.min(7, step))] / 12);
+    tone(660 * k, 0, 0.1, 'triangle', 0.13); tone(880 * k, 0.07, 0.1, 'triangle', 0.13); tone(1320 * k, 0.14, 0.22, 'triangle', 0.13);
+  },
   star(n = 1) {
     for (let i = 0; i < n; i++) tone(784 * Math.pow(1.26, i), i * 0.16, 0.28, 'triangle', 0.14);
   },

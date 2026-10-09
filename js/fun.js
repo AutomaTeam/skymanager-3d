@@ -17,8 +17,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791559596';
-import { Particles } from './particles.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { Particles } from './particles.js?v=1791575411';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);

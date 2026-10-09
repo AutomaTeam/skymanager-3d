@@ -43,9 +43,16 @@ export class ModuleRegistry {
     return out;
   }
 
+  /* Un objectif `soft` (cache-cache, saison) ne passe qu'a defaut d'un objectif normal. */
   goal() {
-    for (const e of this.list) if (e.hooks && typeof e.mod.goal === 'function') { const g = e.mod.goal(); if (g) return g; }
-    return null;
+    let soft = null;
+    for (const e of this.list) {
+      if (!e.hooks || typeof e.mod.goal !== 'function') continue;
+      const g = e.mod.goal();
+      if (g && !g.soft) return g;
+      if (g && !soft) soft = g;
+    }
+    return soft;
   }
 
   tips() {

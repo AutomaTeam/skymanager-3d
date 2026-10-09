@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { COCKPIT_EYE } from './cockpit.js?v=1791559596';
-import { clamp01s } from './renderShared.js?v=1791559596';
+import { COCKPIT_EYE } from './cockpit.js?v=1791575411';
+import { clamp01s } from './renderShared.js?v=1791575411';
 
 export const cameraMethods = {
   /* ---------------------------------------------------------- */
@@ -159,6 +159,7 @@ export const cameraMethods = {
     if (!this._hubCamInit) { this._smoothPos.copy(desired); this._hubCamInit = true; }
     this._smoothPos.lerp(desired, Math.min(1, dt * (rc ? rc.follow : 4)));
     cam.position.copy(this._smoothPos);
+    this._hubCamAvoidPlane(player, py, cam);
     cam.lookAt(target);
     const wantFov = rc ? rc.fov : 58;
     cam.fov = this._hubFovOn && Math.abs(cam.fov - wantFov) < 30 ? cam.fov + (wantFov - cam.fov) * Math.min(1, dt * 5) : wantFov;
@@ -178,6 +179,32 @@ export const cameraMethods = {
         this.scene.fog.near = base.near * 0.16;
         this.scene.fog.far = base.far * 0.25;
       },
+  /* Plan « jeu cool » D1 : sous l'aile ou pres du fuselage, la camera passait a travers l'avion
+     (ecran a moitie noir au poste de reparation de l'aile). Un rayon de la tete du joueur vers la
+     camera, seulement a moins de 45 m de l'avion visible : s'il touche l'avion, la camera se pose
+     juste devant l'impact. Le resultat est lisse pour ne pas sauter d'une image a l'autre. */
+  _hubCamAvoidPlane(player, py, cam) {
+    const grp = this.activeModel ? this.activeModel.group : this.aircraft && this.aircraft.group;
+    let want = 1;
+    if (grp && grp.visible && grp.position.distanceTo(player.pos) < 45) {
+      if (!this._camRay) { this._camRay = new THREE.Raycaster(); this._camHead = new THREE.Vector3(); this._camDir = new THREE.Vector3(); }
+      const head = this._camHead.set(player.pos.x, py + 1.5, player.pos.z);
+      const dir = this._camDir.subVectors(cam.position, head);
+      const len = dir.length();
+      if (len > 0.5) {
+        dir.multiplyScalar(1 / len);
+        this._camRay.set(head, dir);
+        this._camRay.far = len;
+        this._camRay.camera = cam;           // exige par les sprites eventuels
+        const hit = this._camRay.intersectObject(grp, true).find(h => h.object.visible);
+        if (hit) want = Math.max(0.12, (hit.distance - 0.6) / len);
+      }
+    }
+    /* Rapproche vite, recule doucement. */
+    const k = this._camPull == null ? want : want < this._camPull ? want : this._camPull + (want - this._camPull) * 0.08;
+    this._camPull = k;
+    if (k < 0.999) cam.position.set(player.pos.x + (cam.position.x - player.pos.x) * k, py + 1.5 + (cam.position.y - py - 1.5) * k, player.pos.z + (cam.position.z - player.pos.z) * k);
+  },
   /* Camera troisieme personne suivant l'hotesse/le steward dans l'allee.
      Positions calculees dans le repere cabine puis ramenees au monde par
      la matrice de l'avion : la cabine suit desormais l'appareil. */

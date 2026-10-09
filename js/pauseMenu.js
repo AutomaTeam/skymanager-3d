@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791559596';
-import { CabinService } from './cabinService.js?v=1791559596';
-import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791559596';
-import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791559596';
-import { TerminalSystem } from './terminalSystem.js?v=1791559596';
-import { MissionSystem } from './missions.js?v=1791559596';
-import { Staff } from './staff.js?v=1791559596';
-import { History } from './history.js?v=1791559596';
-import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791559596';
-import { sfx } from './sfx.js?v=1791559596';
-import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791559596';
+import * as Save from './save.js?v=1791575411';
+import { CabinService } from './cabinService.js?v=1791575411';
+import { MechanicSystem, PARTS } from './mechanicSystem.js?v=1791575411';
+import { AirportTycoon, UPGRADES } from './airportTycoon.js?v=1791575411';
+import { TerminalSystem } from './terminalSystem.js?v=1791575411';
+import { MissionSystem } from './missions.js?v=1791575411';
+import { Staff } from './staff.js?v=1791575411';
+import { History } from './history.js?v=1791575411';
+import { Arcade, BADGES, FUN_FACTS, QUIZ } from './arcade.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791575411';
+import { $, clamp, IS_TOUCH } from './gameShared.js?v=1791575411';
 
 export const pauseMethods = {
   /* ========================================================== */
@@ -470,6 +470,8 @@ export const pauseMethods = {
        bloquants (rapport, incident, mini-jeu) ne se ferment pas ainsi :
        ils attendent une decision du joueur. */
     closeTopPanel() {
+      if (this.story && this.story.closeTop()) return true;
+      if (this.travel && this.travel.isOpen) { this.travel.close(); return true; }
       if (!$('photoPanel').classList.contains('hidden')) { $('photoPanel').classList.add('hidden'); return true; }
       if (!$('photoAlbum').classList.contains('hidden')) { $('photoAlbum').classList.add('hidden'); return true; }
       if (!$('albumPanel').classList.contains('hidden')) { $('albumPanel').classList.add('hidden'); return true; }

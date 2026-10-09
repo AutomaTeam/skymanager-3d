@@ -14,11 +14,11 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791559596';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791559596';
-import { UPGRADES } from './airportTycoon.js?v=1791559596';
-import { planeOf } from './fleet.js?v=1791559596';
-import { sfx } from './sfx.js?v=1791559596';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791575411';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791575411';
+import { UPGRADES } from './airportTycoon.js?v=1791575411';
+import { planeOf } from './fleet.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791575411';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -217,18 +217,18 @@ export class Hub {
         <div class="ht-row">Files <b>${term.totalQueue()}</b> · Embarques <b>${term.boarded}</b> · Caisses <b>${term.counters.storage.crates}</b></div>
         <div class="ht-row ht-stock">${machines.map(c => `<span>${{ shop: '🛍️', cafe: '☕', vending: '🥤' }[c.id]}${bar(c.stock / 12 * 100)}</span>`).join('')}</div>`)}
       ${tile('', null, `
-        <div class="ht-h"><span>✈️</span>Avion <em>${ac.onGround ? 'au sol' : 'en vol'}</em></div>
+        <div class="ht-h"><span>✈️</span>Avion <em>${g.state === 'PILOT' && !ac.onGround ? 'en vol' : 'au parking'}</em></div>
         <div class="ht-row">Sante ${bar(health)}<b>${Math.round(health)}%</b></div>
         <div class="ht-row">Carburant ${bar(ac.fuel / ac.fuelCap * 100, 'b')}<b>${Math.round(ac.fuel / ac.fuelCap * 100)}%</b></div>
         <div class="ht-note">${worst && worst[1].wear > 40 ? '🔧 A surveiller : ' + (worst[1].label || worst[0]) : '✅ Tout va bien'}</div>`)}
       ${tile('', null, `
         <div class="ht-h"><span>🥤</span>Cabine <em>${face}</em></div>
         <div class="ht-row">Satisfaction ${bar(sat)}<b>${Math.round(sat)}%</b></div>
-        <div class="ht-note">Duty-free : ${fmt(cab.dutyFreeRevenue)} EUR</div>`)}
+        <div class="ht-note">Boutique a bord : ${fmt(Math.floor(cab.dutyFreeRevenue / COIN))} 🪙</div>`)}
       ${tile('', 'tab:shop', `
         <div class="ht-h"><span>🛫</span>Flotte</div>
         <div class="ht-row"><b>${ty.fleet.length}</b> avion${ty.fleet.length > 1 ? 's' : ''} · <b>${ty.infrastructure.gates}</b> porte${ty.infrastructure.gates > 1 ? 's' : ''}</div>
-        <div class="ht-row">Billet <b>${ty.ticketPrice} EUR</b> · ≈ <b>${est.pax}</b> passagers</div>
+        <div class="ht-row">≈ <b>${est.pax}</b> passagers par vol</div>
         <div class="ht-row">Reputation ${bar(ty.reputation, 'b')}<b>${Math.round(ty.reputation)}%</b></div>`)}
       <div class="hub-tile map" data-slot="map"><div class="ht-h"><span>🗺️</span>En direct</div><div id="hubMapSlot"></div></div>
     </div>`;

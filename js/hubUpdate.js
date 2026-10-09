@@ -3,14 +3,20 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791559596';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791575411';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791559596';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791559596';
-import { COUNTERS } from './terminalSystem.js?v=1791559596';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791559596';
-import { sfx } from './sfx.js?v=1791559596';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791559596';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791575411';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791575411';
+import { COUNTERS } from './terminalSystem.js?v=1791575411';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791575411';
+import { sfx } from './sfx.js?v=1791575411';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791575411';
+
+/* Noms simples des pieces au poste de reparation (mode Arcade). */
+const KID_PART = {
+  tyresNose: '🛞 Pneus de devant', tyresMain: '🛞 Grosses roues', brakes: '🛑 Freins', struts: '🦘 Amortisseurs',
+  flapsActu: '🪽 Volets des ailes', hydraulics: '💧 Tuyaux d\'huile', fanBlades: '🌀 Helices du reacteur', airframe: '🛡️ Carrosserie'
+};
 
 export const hubMethods = {
   updateHub(dt) {
@@ -462,6 +468,7 @@ export const hubMethods = {
         this._worldPaused = true;
       },
   /* Atelier en Arcade : une barre de sante et un gros bouton REPARER. */
+  /* Plan « jeu cool » C2 : des noms que l'enfant comprend (KID_PART, en tete de fichier). */
   refreshStationPanelKid() {
     const st = STATIONS.find(s => s.key === this.currentStation);
     $('stationSub').textContent = 'Appuie sur REPARER, puis tape au bon moment !';
@@ -472,9 +479,9 @@ export const hubMethods = {
       const color = hp < 40 ? '#f87171' : hp < 70 ? '#fbbf24' : '#34d399';
       return `<div class="station-row kid">
         <div style="flex:1;min-width:0">
-          <div class="nm">${c.label}</div>
+          <div class="nm">${KID_PART[key] || c.label}</div>
           <div class="hp-bar"><div class="hp-fill" style="width:${hp}%;background:${color}"></div></div>
-          <div class="station-wear">Sante : ${hp}%</div>
+          <div class="station-wear">${hp >= 92 ? 'Comme neuf !' : hp >= 70 ? 'Un peu use' : hp >= 40 ? 'A reparer bientot' : 'Tres abime : vite !'} (${hp}%)</div>
         </div>
         <button class="station-repair-btn" data-repair="${key}" ${hp >= 92 ? 'disabled' : ''}>${hp >= 92 ? '✅ Parfait' : '🔧 REPARER'}</button>
       </div>`;

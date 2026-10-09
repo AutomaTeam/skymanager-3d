@@ -340,6 +340,7 @@
       <!-- Deux petits groupes pour l'enfant ; les reglages vont dans « Plus d'options ». -->
       <p class="panel-group-lbl">🎉 A jouer</p>
       <div class="kp-grid kp-3">
+        <button id="pauseStory" class="kp-tile kp-story"><span class="kp-ico">📖</span><b>Mon aventure</b><small id="pauseStoryN">les chapitres</small></button>
         <button id="pauseHangar" class="kp-tile"><span class="kp-ico">🎨</span><b>Mon hangar</b><small>avions et peinture</small></button>
         <button id="pauseDeco" class="kp-tile"><span class="kp-ico">🏗️</span><b>Ma place</b><small>decorer l'aeroport</small></button>
         <button id="pauseGames" class="kp-tile"><span class="kp-ico">🎮</span><b>Mini-jeux</b><small>laver, plein, valises</small></button>
@@ -349,7 +350,7 @@
       <p class="panel-group-lbl">🏆 Mes tresors</p>
       <div class="kp-grid kp-3">
         <button id="pauseAlbum" class="kp-tile"><span class="kp-ico">🏆</span><b>Trophees</b><small id="pauseAlbumN">0 / 15</small></button>
-        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📖</span><b>Ma collection</b><small>avions, iles, surprises</small></button>
+        <button id="pauseCollec" class="kp-tile"><span class="kp-ico">📚</span><b>Ma collection</b><small>avions, iles, surprises</small></button>
         <button id="pausePhotos" class="kp-tile"><span class="kp-ico">📸</span><b>Mes photos</b><small>cartes postales</small></button>
         <button id="pausePet" class="kp-tile hidden"><span class="kp-ico">🐕</span><b>Mon chien</b><small id="pausePetName">Biscuit</small></button>
       </div>
@@ -628,6 +629,8 @@
   </div>
   <canvas id="miniMap" class="hidden mini-map" width="480" height="462" role="button" aria-label="Agrandir la carte"></canvas>
   <div id="funDock" class="hidden fun-dock">
+    <button id="storyBtn" class="fun-main story-main" aria-label="Mon aventure">📖</button>
+    <button id="travelBtn" class="fun-main travel-main" aria-label="Où aller ? (T)">🧭</button>
     <button id="rideBtn" class="fun-main ride-main" aria-label="Montures : skate, trottinette, BMX (R)"><span>🛹</span></button>
     <div id="petTricks" class="hidden pet-tricks" role="group" aria-label="Astuces du chien">
       <button data-trick="sit" aria-label="Assis">⬇️<small>Assis</small></button>
@@ -1005,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791559596').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791575411').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1013,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791559596"></script>
+<script type="module" src="js/main.js?v=1791575411"></script>
 </body>
 </html>

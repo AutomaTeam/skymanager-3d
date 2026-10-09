@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791559596';
-import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791575411';
 
 export const flightMethods = {
   /* ---------------- Anneaux de vol ---------------- */
@@ -29,7 +29,7 @@ export const flightMethods = {
     const d = Math.hypot(dx, dy, dz);
     if (d < RING_RADIUS * (this.g.fun ? this.g.fun.diff.ring : 1)) {
       this.ringsThisFlight++;
-      sfx.ring();
+      sfx.ring(this.ringsThisFlight - 1);
       this.event('ring');
       this.giveCoins(2, { silent: true });
       this.g.toast(`Anneau ${this.ringsThisFlight}/${RING_TOTAL} ! +2 🪙`, 1400, 'ok');
@@ -219,6 +219,7 @@ export const flightMethods = {
     const visible = g.state !== 'BOOT';
     bar.classList.toggle('hidden', !visible);
     if (!visible) return;
+    bar.classList.toggle('story', !!goal.story);
     if (this._lastText !== goal.text) {
       this._lastText = goal.text;
       $('objIcon').textContent = goal.icon;
@@ -286,9 +287,13 @@ export const flightMethods = {
     const g = this.g;
     c.classList.toggle('hidden', g.state === 'BOOT');
     const coins = this.coins;
-    if (this._lastCoins !== coins || this._lastStars !== this.data.stars || this._lastLvl !== this.data.level) {
-      this._lastCoins = coins; this._lastStars = this.data.stars; this._lastLvl = this.data.level;
-      $('coinN').textContent = coins.toLocaleString('fr-FR');
+    /* E1 : le compteur monte petit a petit quand on gagne (il descend d'un coup quand on achete). */
+    if (this._shownCoins == null || coins < this._shownCoins || g.state === 'BOOT') this._shownCoins = coins;
+    else if (coins > this._shownCoins) this._shownCoins = Math.min(coins, this._shownCoins + Math.max(1, Math.ceil((coins - this._shownCoins) * 0.12)));
+    const shown = this._shownCoins;
+    if (this._lastCoins !== shown || this._lastStars !== this.data.stars || this._lastLvl !== this.data.level) {
+      this._lastCoins = shown; this._lastStars = this.data.stars; this._lastLvl = this.data.level;
+      $('coinN').textContent = shown.toLocaleString('fr-FR');
       $('starN').textContent = this.data.stars;
       $('lvlN').textContent = this.data.level;
     }

@@ -10,9 +10,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791559596';
-import { emojiSprite } from './groundFun.js?v=1791559596';
-import * as Save from './save.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { emojiSprite } from './groundFun.js?v=1791575411';
+import * as Save from './save.js?v=1791575411';
 
 const STORE = 'skymanager.season';
 
@@ -133,7 +133,7 @@ export class Seasonal {
     for (const o of rest) { const d = Math.hypot(o.x - p.x, o.z - p.z); if (d < bd) { bd = d; best = o; } }
     /* seulement quand on est a une distance raisonnable : pas de fleche permanente vers un coin lointain */
     if (bd > 160) return null;
-    return { icon: this.theme.ico, text: `${this.theme.name} : trouve les ${this.theme.item}s ! (${this.found}/${SPOTS.length})`, target: { x: best.x, z: best.z } };
+    return { icon: this.theme.ico, text: `${this.theme.name} : trouve les ${this.theme.item}s ! (${this.found}/${SPOTS.length})`, target: { x: best.x, z: best.z }, soft: bd > 25 };
   }
 
   tips() {

@@ -171,6 +171,40 @@ const SCENARIOS = {
     g.pet.pet && g.pet.pet(); frames(10);
     return true;
   },
+  /* Plan « jeu cool » : l'aventure de bout en bout (quetes, fetes, final) et le voyage rapide partout. */
+  async story({ g, frames, steps }) {
+    if (g.state === 'BOOT') g.start();
+    if (g.state !== 'HUB') g.goToHub();
+    const S = g.story, A = g.arcade;
+    const saved = JSON.stringify(S.data), tuto = A.data.tutorialDone;
+    A.data.tutorialDone = true;
+    Object.assign(S.data, { ch: 0, q: 0, prog: 0, done: false, seenIntro: -1 });
+    frames(3);
+    steps.push('objectif=' + (A.currentGoal().story ? 'aventure' : 'autre'));
+    S.open(); frames(2); S.close();
+    let fetes = 0;
+    for (let i = 0; i < 200 && !S.data.done; i++) {
+      const q = S.quest;
+      if (q) A.event(q.ev, 1);
+      if (S._celebrating) { fetes++; S._closeCelebrate(); }
+      frames(2);
+    }
+    steps.push('chapitres=' + A.data.stats.chapters + ' fetes=' + fetes + ' fini=' + S.data.done);
+    const { PLACES } = await import('../js/travel.js');
+    let walk = 0;
+    for (const p of PLACES) {
+      const { placeOf } = await import('../js/story.js');
+      const t = placeOf(g, p.id);
+      if (!t) continue;
+      g.travel._teleport(t.x + p.near[0], t.z + p.near[1], t); frames(2);
+      if (g.nav.isWalkable(g.player.pos.x, g.player.pos.z)) walk++;
+    }
+    steps.push('voyages praticables=' + walk + '/' + PLACES.length);
+    const ok = S.data.done && fetes === 6 && walk >= PLACES.length - 2;
+    Object.assign(S.data, JSON.parse(saved)); S.save();
+    A.data.tutorialDone = tuto;
+    return ok;
+  },
   /* Nuit + pluie + orage, en vol et au sol. */
   async nightRain({ g, frames, steps }) {
     if (g.state === 'BOOT') g.start();

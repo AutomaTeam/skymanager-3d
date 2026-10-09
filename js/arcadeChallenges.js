@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791559596';
-import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791575411';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -24,6 +24,7 @@ export const challengeMethods = {
     if (type === 'ring') s.rings += n;
     if (type === 'star3') s.star3 += n;
     if (GENERIC_EVENTS.includes(type)) s[type] = (s[type] || 0) + n;
+    if (this.g.story) try { this.g.story.onEvent(type, n); } catch (e) { this.g._noteError && this.g._noteError('aventure', e); }
 
     /* Defi de la semaine. */
     const wk = this.data.weekly;
@@ -125,12 +126,16 @@ export const challengeMethods = {
     }
     if (this.g.state === 'HUB') for (const v of this.g.vehicles || []) { const vg = v.goal(); if (vg) return vg; }
     const mg = this.g.state === 'HUB' && this.g.modules.goal();      // objectifs des modules du registre
-    if (mg) return mg;
+    if (mg && !mg.soft) return mg;                                     // soft : cache-cache, saison (apres l'aventure)
     const ge = this.g.state === 'HUB' && this.g.ground && this.g.ground.goal();
     if (ge) return ge;
     if (this.quest && this.g.state === 'HUB') return { icon: this.quest.ico, text: '⚡ ' + this.quest.text + (this.quest.goal ? ` (${this.quest.prog}/${this.quest.goal})` : ''), target: this.quest.target };
     const st = this.step;
     if (st) return { icon: st.icon, text: st.text, target: st.target(this.g) };
+    /* Apres le tutoriel : la quete d'aventure en cours (story.js), avant les defis du jour. */
+    const sg = this.g.story && this.g.story.goal();
+    if (sg) return sg;
+    if (mg) return mg;
     const d = this.dailyItems.find(x => !x.done && this._doable(x));
     if (d) {
       const tgt = this._targetForChallenge(d);

@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LIGHT_GAIN } from './environment.js?v=1791559596';
-import { mixHex, clamp } from './renderShared.js?v=1791559596';
+import { LIGHT_GAIN } from './environment.js?v=1791575411';
+import { mixHex, clamp } from './renderShared.js?v=1791575411';
 
 export const lightMethods = {
   buildLights() {

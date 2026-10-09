@@ -2502,3 +2502,14 @@ fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par
 
 ### Objets solides (phase 121)
 - `js/autoBlockers.js` : au demarrage, tout objet statique du decor qui avait une vraie masse (batiments annexes, abris, murs de hangar, panneaux hauts) mais pas d obstacle devient infranchissable. Les vehicules, la passerelle, les portes et les points d interaction sont exclus.
+
+## Phase 123 - plan « jeu cool » : l'Aventure, le voyage rapide, la camera sous l'aile
+
+Plan : `PLAN_JEU_COOL.md` (diagnostic en jouant une partie neuve, lots A a F, journal).
+- **L'Aventure** (`js/story.js`) : 6 chapitres de 4 quetes racontes par Coco, chacune basee sur un evenement `arcade.event` compte a partir du debut de la quete. Objectif affiche juste apres le tutoriel (avant les defis du jour, bandeau dore). Panneau « 📖 Mon aventure » (bouton de gauche, tuile du menu pause) avec « J'y vais ! » et « Passer cette quete ». Fin de chapitre : ecran de fete (pieces + objet de peinture), reporte a l'atterrissage si on vole. Trophees `chapter1` et `legend`.
+- Les objectifs « soft » (cache-cache, saison) passent apres l'aventure : avant, le cache-cache prenait la barre des qu'un Coco cache etait a moins de 80 m (`registry.goal`, `hunt.goal`, `seasonal.goal`).
+- **Voyage rapide** (`js/travel.js`) : bouton 🧭 et touche T, 9 lieux, fondu au noir, l'endroit de la quete en premier.
+- **Camera** : sous l'aile ou pres du fuselage, un rayon de la tete du joueur vers la camera la rapproche si l'avion est entre les deux (`_hubCamAvoidPlane`, 0,02 ms).
+- Tableau HUB sans EUR (boutique a bord en pieces, nombre de passagers) ; avion « au parking » / « en vol » ; noms simples des pieces au poste de reparation (`KID_PART`).
+- Les pieces gagnees volent jusqu'au compteur, qui monte petit a petit ; les anneaux d'un meme vol sonnent de plus en plus aigu.
+- Scenario navigateur `?scenario=story`.

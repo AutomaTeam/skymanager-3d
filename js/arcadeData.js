@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { LAYOUT } from './layout.js?v=1791559596';
-import { iconify } from './icons.js?v=1791559596';
+import { LAYOUT } from './layout.js?v=1791575411';
+import { iconify } from './icons.js?v=1791575411';
 
 export const COIN = 1000;
 
@@ -247,6 +247,8 @@ export const TERM_QUESTS = [
 /* Trophees                                                    */
 /* ---------------------------------------------------------- */
 export const BADGES = [
+  { id: 'chapter1', ico: '📖', name: 'Debut de l\'aventure',  desc: 'Termine le chapitre 1 de l\'aventure.',   test: d => (d.stats.chapters || 0) >= 1 },
+  { id: 'legend',   ico: '🏆', name: 'Legende de l\'aventure', desc: 'Termine les 6 chapitres de l\'aventure.', test: d => (d.stats.chapters || 0) >= 6 },
   { id: 'first',    ico: '🛫', name: 'Premier vol',          desc: 'Termine un vol.',                         test: d => d.stats.flights >= 1 },
   { id: 'pilot5',   ico: '🧑‍✈️', name: 'Vrai pilote',          desc: 'Fais 5 vols.',                            test: d => d.stats.flights >= 5 },
   { id: 'star3',    ico: '⭐', name: 'Atterrissage parfait', desc: 'Obtiens 3 etoiles a un atterrissage.',    test: d => d.stats.star3 >= 1 },

@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791559596';
-import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { clamp, $, todayKey, RING_TOTAL, COMBO_TIME, TREASURE_SPOTS, TERM_QUESTS, QUESTS } from './arcadeData.js?v=1791575411';
 
 export const funMethods = {
   /* Un « boost » d'ambiance : satisfaction de la cabine ou ambiance du hall. */
@@ -329,6 +329,35 @@ export const funMethods = {
     el.textContent = text;
     host.appendChild(el);
     setTimeout(() => el.remove(), 1400);
+  },
+  /* E1 : quelques pieces partent du centre de l'ecran et volent jusqu'au compteur, qui rebondit. */
+  coinFly(n) {
+    const chip = $('coinChip');
+    if (!chip || chip.classList.contains('hidden') || !chip.animate) return;
+    const now = performance.now();
+    if (this._flyAt && now - this._flyAt < 120) return;       // plusieurs gains d'un coup : une seule volee
+    this._flyAt = now;
+    const to = chip.getBoundingClientRect();
+    const tx = to.left + 22, ty = to.top + 14;
+    const x0 = window.innerWidth / 2, y0 = window.innerHeight * 0.62;
+    const k = Math.min(8, Math.max(2, Math.ceil(n / 4)));
+    for (let i = 0; i < k; i++) {
+      const el = document.createElement('div');
+      el.className = 'coin-fly';
+      el.textContent = '🪙';
+      el.style.left = x0 + 'px'; el.style.top = y0 + 'px';
+      document.body.appendChild(el);
+      const sx = (Math.random() - 0.5) * 140, sy = -40 - Math.random() * 60;
+      const a = el.animate([
+        { transform: 'translate(-50%, -50%) scale(0.4)', opacity: 0 },
+        { transform: `translate(calc(-50% + ${sx}px), calc(-50% + ${sy}px)) scale(1.15)`, opacity: 1, offset: 0.3 },
+        { transform: `translate(calc(-50% + ${tx - x0}px), calc(-50% + ${ty - y0}px)) scale(0.55)`, opacity: 0.9 }
+      ], { duration: 650 + i * 70, delay: i * 45, easing: 'cubic-bezier(.45,0,.3,1)', fill: 'forwards' });
+      a.onfinish = () => {
+        el.remove();
+        if (i === k - 1) { chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump'); }
+      };
+    }
   },
   confetti(n = 40) {
     const host = $('popHost');

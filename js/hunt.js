@@ -8,10 +8,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791559596';
-import { emojiSprite } from './groundFun.js?v=1791559596';
-import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791559596';
-import * as Save from './save.js?v=1791559596';
+import { sfx } from './sfx.js?v=1791575411';
+import { emojiSprite } from './groundFun.js?v=1791575411';
+import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791575411';
+import * as Save from './save.js?v=1791575411';
 
 const STORE = 'skymanager.hunt';
 const COUNT = 10;
@@ -113,7 +113,8 @@ export class Hunt {
     const g = this.g;
     if (g.state !== 'HUB' || !this.items.length || this._near > 80 || !g.arcade.data.tutorialDone || g.arcade.step) return null;
     const w = warmth(this._near);
-    return { icon: '🦜', text: `Cache-cache : ${w.ico} ${w.txt} (${this.found}/${COUNT} Coco)`, target: null };
+    /* soft : passe apres la quete d'aventure, sauf tout pres d'une cachette. */
+    return { icon: '🦜', text: `Cache-cache : ${w.ico} ${w.txt} (${this.found}/${COUNT} Coco)`, target: null, soft: this._near > 18 };
   }
 
   tips() {
