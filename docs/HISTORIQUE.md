@@ -2526,3 +2526,7 @@ Le tutoriel faisait reparer, verifier des billets et visiter la tour avant le pr
 ## Phase 126 - grands ecrans de fete pour les gros cadeaux
 
 `story.celebrate(card)` : une file d'ecrans de fete (fin de chapitre, avion offert aux niveaux 6/12/18/24, nouveau titre de pilote), montres un a la fois et jamais en plein vol. Avant, un avion offert n'etait annonce que par un message de quelques secondes. La bulle de Coco se place a droite de la colonne de boutons a pied et en cabine (elle les recouvrait).
+
+## Phase 127 - l'aeroport grandit pour de vrai (`js/growth.js`)
+
+Acheter une amelioration ne changeait que des chiffres. Maintenant chaque achat se voit dans le monde : un kiosque colore par boutique devant le terminal (glaces, crepes, jouets... 8 max), un panneau « PORTE n » par porte sur la facade, tapis rouge + arche doree + couronne pour le salon VIP, drapeaux et enseigne « AEROPORT INTERNATIONAL » puis dome de verre pour les agrandissements du terminal, balises de couleur le long de la piste, et chaque avion achete est gare sur le tarmac (4 postes libres verifies, deriver de couleur, geometries fusionnees). Juste apres l'achat, la fleche « Montre-moi » pointe la nouveaute et Coco la presente (pas au rechargement : dernier etat vu dans `skymanager.growth`). Kiosques, colonnes VIP et avions gares sont solides pour le joueur. Descriptions de la boutique de la tour mises a jour.

@@ -10,11 +10,11 @@
    Donnees : localStorage 'skymanager.hangar'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576638';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791576638';
+import { sfx } from './sfx.js?v=1791577777';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791577777';
 import {
   BODY_COLORS, ACCENT_COLORS, NOSE_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791576638';
+} from './livery.js?v=1791577777';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);

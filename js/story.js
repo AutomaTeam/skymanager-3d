@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576638';
-import { load, write } from './save.js?v=1791576638';
+import { sfx } from './sfx.js?v=1791577777';
+import { load, write } from './save.js?v=1791577777';
 
 const STORE = 'skymanager.story';
 

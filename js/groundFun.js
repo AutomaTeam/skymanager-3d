@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791576638';
-import { LAYOUT } from './layout.js?v=1791576638';
+import { sfx } from './sfx.js?v=1791577777';
+import { LAYOUT } from './layout.js?v=1791577777';
 
 const $ = (id) => document.getElementById(id);
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
