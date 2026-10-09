@@ -87,3 +87,27 @@ export function addAutoBlockers(game) {
   nav._grid = null;           // la grille spatiale est reconstruite au prochain test
   return added;
 }
+
+/* Interieur du terminal (construit apres le demarrage) : meubles et piliers de 1,2 a 8 m restes traversables.
+   Les petites pieces (potelets, valises, passagers) ne comptent pas : elles bougent ou se contournent. */
+export function addInteriorBlockers(game) {
+  const nav = game.nav;
+  const ti = game.r3d.scene.children.find(c => c.name === 'terminalInterior');
+  if (!ti || !nav) return 0;
+  let added = 0, id = 0;
+  for (const c of ti.children) {
+    if (!c.visible) continue;
+    worldBox(c, _b);
+    if (_b.isEmpty()) continue;
+    const w = _b.max.x - _b.min.x, d = _b.max.z - _b.min.z, h = _b.max.y - _b.min.y;
+    const big = Math.max(w, d);
+    if (h < 1.2 || _b.min.y > 1.0 || big < 1.2 || big > 8 || Math.min(w, d) < 0.8) continue;
+    const rect = { x0: _b.min.x, x1: _b.max.x, z0: _b.min.z, z1: _b.max.z };
+    const pts = [[(rect.x0 + rect.x1) / 2, (rect.z0 + rect.z1) / 2], [rect.x0 + w * 0.25, rect.z0 + d * 0.25], [rect.x1 - w * 0.25, rect.z1 - d * 0.25],
+      [rect.x0 + w * 0.25, rect.z1 - d * 0.25], [rect.x1 - w * 0.25, rect.z0 + d * 0.25]];
+    if (pts.filter(p => nav.isWalkable(p[0], p[1])).length < 4) continue;
+    nav.blockers.push({ id: `autoHall${id++}`, label: c.name || 'meuble', zone: 'termHall', rect, auto: true });
+    added++;
+  }
+  return added;
+}
