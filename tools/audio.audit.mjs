@@ -13,3 +13,6 @@ console.log(`${defined.size} sons definis, ${used.size} utilises.`);
 if (never.length) console.log('Definis mais jamais appeles : ' + never.join(', '));
 if (missing.length) { console.error('FAIL — appels a des sons qui n\'existent pas : ' + missing.join(', ')); process.exit(1); }
 console.log('PASS — tous les appels sfx.* existent');
+/* Le gain commun des effets doit finir sur la sortie du contexte (bug phase 82 : il etait branche sur lui-meme = silence). */
+if (!/fxGain\.connect\(a\.destination\)/.test(src)) { console.error('FAIL — fxGain doit etre connecte a a.destination'); process.exit(1); }
+console.log('PASS — les effets sont relies a la sortie audio');

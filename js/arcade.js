@@ -14,14 +14,14 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { planeOf } from './fleet.js?v=1791554063';
-import { sfx } from './sfx.js?v=1791554063';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791554063';
-import { mapMethods } from './arcadeMap.js?v=1791554063';
-import { challengeMethods } from './arcadeChallenges.js?v=1791554063';
-import { funMethods } from './arcadeFun.js?v=1791554063';
-import { flightMethods } from './arcadeFlight.js?v=1791554063';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791554063';
+import { planeOf } from './fleet.js?v=1791554133';
+import { sfx } from './sfx.js?v=1791554133';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791554133';
+import { mapMethods } from './arcadeMap.js?v=1791554133';
+import { challengeMethods } from './arcadeChallenges.js?v=1791554133';
+import { funMethods } from './arcadeFun.js?v=1791554133';
+import { flightMethods } from './arcadeFlight.js?v=1791554133';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791554133';
 
 
 const STORE = 'skymanager.arcade';

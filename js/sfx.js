@@ -22,7 +22,7 @@ function vib(p) { if (haptics && navigator.vibrate) { try { navigator.vibrate(p)
 let fxGain = null;
 let fxVolume = 1;
 function dest(a) {
-  if (!fxGain || fxGain.context !== a) { fxGain = a.createGain(); fxGain.gain.value = fxVolume; fxGain.connect(dest(a)); }
+  if (!fxGain || fxGain.context !== a) { fxGain = a.createGain(); fxGain.gain.value = fxVolume; fxGain.connect(a.destination); }
   return fxGain;
 }
 
