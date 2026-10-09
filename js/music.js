@@ -10,7 +10,7 @@
    Intensite : 0 = calme (sol), 1 = vol, 2 = action.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791555904';
+import { sfx } from './sfx.js?v=1791556299';
 
 const NOTE = (n) => 440 * Math.pow(2, (n - 69) / 12);          // numero MIDI -> Hz
 /* Progression en do majeur : C  Am  F  G (racines et accords). */

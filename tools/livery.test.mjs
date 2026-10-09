@@ -16,5 +16,10 @@ ok(r2.livery.body !== 'gold' && r2.livery.accent !== 'gold' && r2.livery.pattern
 ok(!/[<>]/.test(r2.livery.name), 'nom nettoye');
 const r3 = decodeLivery(encodeLivery('x', { body: 'zzz', accent: 'zzz', pattern: 'zzz', stickers: ['zzz'], name: 'a'.repeat(40) }));
 ok(r3 && r3.livery.name.length <= 12 && r3.livery.body === 'white', 'ids inconnus remplaces, nom limite a 12');
+const lv2 = { body: 'sun', accent: 'blue', accent2: 'red', pattern: 'none', stickers: ['none', 'none', 'none'], name: '' };
+const r4 = decodeLivery(encodeLivery('zebulon', lv2));
+ok(r4.livery.accent2 === 'red', 'zone nez / moteur : aller-retour');
+ok(decodeLivery(encodeLivery('zebulon', { ...lv2, accent2: undefined })).livery.accent2 === 'same', 'zone nez absente : comme l accent');
+ok(decodeLivery(encodeLivery('zebulon', { ...lv2, accent2: 'gold' }), (k, it) => !it.price).livery.accent2 === 'same', 'accent de nez non possede : remplace');
 if (bad) process.exit(1);
 console.log('Tout est bon (livery).');

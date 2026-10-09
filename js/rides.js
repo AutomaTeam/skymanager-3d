@@ -19,13 +19,14 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791555904';
-import { buildPark, PARK } from './rideCourse.js?v=1791555904';
-import { buildParkMeshes } from './ridePark.js?v=1791555904';
-import { buildRide } from './rideModels.js?v=1791555904';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791555904';
-import { slideMove, collectBodies } from './bodies.js?v=1791555904';
-import { sfx } from './sfx.js?v=1791555904';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791556299';
+import { buildPark, PARK } from './rideCourse.js?v=1791556299';
+import { buildParkMeshes } from './ridePark.js?v=1791556299';
+import { buildRide } from './rideModels.js?v=1791556299';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791556299';
+import { slideMove, collectBodies } from './bodies.js?v=1791556299';
+import { sfx } from './sfx.js?v=1791556299';
+import { Particles } from './particles.js?v=1791556299';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -39,55 +40,12 @@ const _q1 = new THREE.Quaternion(), _q2 = new THREE.Quaternion();
 const UP = new THREE.Vector3(0, 1, 0);
 
 /* ---------------- Effets : poussiere, etincelles, etoiles ---------------- */
-class FX {
-  constructor(parent, max = 160) {
-    this.max = max; this.n = 0;
-    this.pos = new Float32Array(max * 3); this.col = new Float32Array(max * 3);
-    this.vel = new Float32Array(max * 3); this.life = new Float32Array(max); this.t = new Float32Array(max); this.size = new Float32Array(max);
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3));
-    g.setAttribute('color', new THREE.BufferAttribute(this.col, 3));
-    const cv = document.createElement('canvas'); cv.width = cv.height = 64;
-    const x = cv.getContext('2d');
-    const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32);
-    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.5, 'rgba(255,255,255,0.55)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
-    x.fillStyle = gr; x.fillRect(0, 0, 64, 64);
-    const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-    this.mat = new THREE.PointsMaterial({ map: tex, size: 0.5, sizeAttenuation: true, vertexColors: true, transparent: true, depthWrite: false, opacity: 0.95 });
-    this.points = new THREE.Points(g, this.mat);
-    this.points.frustumCulled = false;
-    this.geo = g; this.cur = 0;
-    parent.add(this.points);
-    this.life.fill(0);
-  }
+class FX extends Particles {
+  /* Etincelle / poussiere : part avec une vitesse, retombe et rebondit sur le sol. */
   emit(x, y, z, vx, vy, vz, hex, life = 0.6) {
-    const i = this.cur; this.cur = (this.cur + 1) % this.max;
-    this.pos[i * 3] = x; this.pos[i * 3 + 1] = y; this.pos[i * 3 + 2] = z;
-    this.vel[i * 3] = vx; this.vel[i * 3 + 1] = vy; this.vel[i * 3 + 2] = vz;
-    const c = _tmpCol.setHex(hex);
-    this.col[i * 3] = c.r; this.col[i * 3 + 1] = c.g; this.col[i * 3 + 2] = c.b;
-    this.life[i] = life; this.t[i] = 0;
-  }
-  burst(x, y, z, n, hex, spd = 3, up = 2, life = 0.7) {
-    for (let k = 0; k < n; k++) {
-      const a = Math.random() * 6.283, s = spd * (0.4 + Math.random() * 0.8);
-      this.emit(x, y, z, Math.cos(a) * s, up * (0.3 + Math.random()), Math.sin(a) * s, hex, life * (0.6 + Math.random() * 0.6));
-    }
-  }
-  update(dt) {
-    for (let i = 0; i < this.max; i++) {
-      if (this.life[i] <= 0) { this.pos[i * 3 + 1] = -999; continue; }
-      this.t[i] += dt;
-      if (this.t[i] >= this.life[i]) { this.life[i] = 0; this.pos[i * 3 + 1] = -999; continue; }
-      this.vel[i * 3 + 1] -= 9 * dt;
-      this.pos[i * 3] += this.vel[i * 3] * dt; this.pos[i * 3 + 1] += this.vel[i * 3 + 1] * dt; this.pos[i * 3 + 2] += this.vel[i * 3 + 2] * dt;
-      if (this.pos[i * 3 + 1] < 0.02) { this.pos[i * 3 + 1] = 0.02; this.vel[i * 3 + 1] *= -0.3; }
-    }
-    this.geo.attributes.position.needsUpdate = true;
-    this.geo.attributes.color.needsUpdate = true;
+    this.spawn(x, y, z, hex, { vx, vy, vz, life, gravity: 9, floor: 0.02, size: 0.3, opacity: 0.95 });
   }
 }
-const _tmpCol = new THREE.Color();
 
 /* ---------------- Son de roulage (continu) ---------------- */
 class RollAudio {
@@ -154,7 +112,7 @@ export class Rides {
       this.parkMesh = buildParkMeshes(this.course, 'SKATEPARK');
       this.group.add(this.parkMesh);
       this.group.add(this.rig);
-      this.fx = new FX(this.group);
+      this.fx = new FX(this.group, 160);
     } catch (e) { console.error('[rides] scene', e); }
     this._bind();
   }
@@ -365,7 +323,11 @@ export class Rides {
   update(dt) {
     const g = this.g;
     this.t += dt;
-    if (this.fx) this.fx.update(dt);
+    if (this.fx) {
+      const cam = g.r3d.camera;
+      this.fx.setViewport(g.r3d.renderer.domElement.height, cam ? cam.fov : 60);
+      this.fx.update(dt);
+    }
     /* H01 : projecteurs allumes la nuit seulement (on ne change qu'au besoin). */
     if (this.parkMesh && this.parkMesh.userData.setNight) {
       const night = g.r3d._lightsOn === true;

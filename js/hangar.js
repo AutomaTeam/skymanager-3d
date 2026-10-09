@@ -10,18 +10,20 @@
    Donnees : localStorage 'skymanager.hangar'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791555904';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791555904';
+import { sfx } from './sfx.js?v=1791556299';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791556299';
 import {
-  BODY_COLORS, ACCENT_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791555904';
+  BODY_COLORS, ACCENT_COLORS, NOSE_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
+} from './livery.js?v=1791556299';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const COIN = 1000;
 
 const CATALOG = { body: BODY_COLORS, accent: ACCENT_COLORS, pattern: PATTERNS, sticker: STICKERS };
+/* Onglets de peinture : 'nose' (nez / moteur) a son propre choix mais partage les couleurs d'accent possedees. */
+const LISTS = { ...CATALOG, nose: NOSE_COLORS };
+const OWN_KEY = (kind) => (kind === 'nose' ? 'accent' : kind);
 const SLOT_LABELS = ['Nez', 'Avant', 'Arriere'];
 
 export class Hangar {
@@ -65,7 +67,7 @@ export class Hangar {
   _setLivery(id, lv) { this.data.liveries[id] = lv; this.save(); }
 
   isOwned(kind, item) {
-    return !item.price || (this.data.owned[kind] || []).includes(item.id);
+    return !item.price || (this.data.owned[OWN_KEY(kind)] || []).includes(item.id);
   }
   planeOwned(id) { return this.data.planes.includes(id); }
 
@@ -195,9 +197,10 @@ export class Hangar {
   /* Camera en orbite autour de l'avion, cote aire de stationnement. */
   updateCamera(cam, dt) {
     const gate = this.g.r3d.gatePosition;
-    if (!this._drag) this.az += dt * 0.22 * (this._autoDir || 1);
-    if (this.az > 1.25) { this.az = 1.25; this._autoDir = -1; }
-    if (this.az < -1.25) { this.az = -1.25; this._autoDir = 1; }
+    /* apercu a 360° : l'avion tourne tout seul, un doigt le fait tourner a la main */
+    if (!this._drag) this.az += dt * 0.22;
+    if (this.az > Math.PI) this.az -= 2 * Math.PI;
+    if (this.az < -Math.PI) this.az += 2 * Math.PI;
     const R = this._radius, H = this._height;
     /* base : le nord (-z) ; az pivote autour de l'avion */
     const tx = gate.x, tz = gate.z, ty = this.previewId === 'liner' ? 4.2 : 1.1;
@@ -232,7 +235,7 @@ export class Hangar {
     };
     const move = (e) => {
       if (!this._drag) return;
-      this.az = clamp(this._drag.az - (e.clientX - this._drag.x) * 0.006, -1.25, 1.25);
+      this.az = this._drag.az - (e.clientX - this._drag.x) * 0.006;
     };
     const up = () => { this._drag = null; };
     surface.addEventListener('pointerdown', down);
@@ -247,6 +250,7 @@ export class Hangar {
       const t = this.trial;
       if (t.kind === 'body') lv.body = t.id;
       else if (t.kind === 'accent') lv.accent = t.id;
+      else if (t.kind === 'nose') lv.accent2 = t.id;
       else if (t.kind === 'pattern') lv.pattern = t.id;
       else if (t.kind === 'sticker') lv.stickers[this.slot] = t.id;
     }
@@ -260,6 +264,7 @@ export class Hangar {
       const lv = this.livery(this.previewId);
       if (kind === 'body') lv.body = item.id;
       else if (kind === 'accent') lv.accent = item.id;
+      else if (kind === 'nose') lv.accent2 = item.id;
       else if (kind === 'pattern') lv.pattern = item.id;
       else if (kind === 'sticker') lv.stickers[this.slot] = item.id;
       this._setLivery(this.previewId, lv);
@@ -288,10 +293,11 @@ export class Hangar {
       return;
     }
     if (!this._spend(t.price)) { sfx.oops(); this.g.toast('Pas assez de pieces… vole encore un peu !', 2400, 'warn'); return; }
-    this.data.owned[t.kind].push(t.id);
+    this.data.owned[OWN_KEY(t.kind)].push(t.id);
     const lv = this.livery(this.previewId);
     if (t.kind === 'body') lv.body = t.id;
     else if (t.kind === 'accent') lv.accent = t.id;
+    else if (t.kind === 'nose') lv.accent2 = t.id;
     else if (t.kind === 'pattern') lv.pattern = t.id;
     else if (t.kind === 'sticker') lv.stickers[this.slot] = t.id;
     this._setLivery(this.previewId, lv);
@@ -323,7 +329,7 @@ export class Hangar {
     const body = $('hgBody');
     const lv = this.livery(this.previewId);
     const tabTitle = {
-      plane: 'Choisis ton avion', body: 'Couleur de l\'avion', accent: 'Couleur d\'accent (queue, ailes)',
+      plane: 'Choisis ton avion', nose: 'Nez et moteur', body: 'Couleur de l\'avion', accent: 'Couleur d\'accent (queue, ailes)',
       pattern: 'Motif sur le flanc', sticker: 'Autocollants', name: 'Nom sur le fuselage'
     }[this.tab];
     let html = `<p class="hg-sub">${tabTitle}</p>`;
@@ -352,12 +358,13 @@ export class Hangar {
         html += '<div class="hg-slots">' + SLOT_LABELS.map((l, i) =>
           `<button data-slot="${i}" class="${this.slot === i ? 'on' : ''}">${l}</button>`).join('') + '</div>';
       }
-      const current = kind === 'body' ? lv.body : kind === 'accent' ? lv.accent : kind === 'pattern' ? lv.pattern : lv.stickers[this.slot];
+      const current = kind === 'body' ? lv.body : kind === 'accent' ? lv.accent : kind === 'nose' ? (lv.accent2 || 'same') : kind === 'pattern' ? lv.pattern : lv.stickers[this.slot];
+      if (kind === 'nose' && this.previewId === 'liner') html += '<p class="hg-hint">Pas de couleur de nez sur le gros avion.</p>';
       html += '<div class="hg-grid">';
-      for (const it of CATALOG[kind]) {
+      for (const it of LISTS[kind]) {
         const owned = this.isOwned(kind, it);
         const on = (this.trial && this.trial.kind === kind && this.trial.id === it.id) || (!this.trial && current === it.id);
-        const sw = (kind === 'body' || kind === 'accent')
+        const sw = it.hex !== undefined
           ? `<span class="sw" style="background:#${it.hex.toString(16).padStart(6, '0')}"></span>`
           : `<span class="ic">${it.ico}</span>`;
         html += `<button class="hg-item${on ? ' on' : ''}${owned ? '' : ' locked'}${it.rare ? ' rare' : ''}" data-kind="${kind}" data-id="${it.id}" title="${it.name}">` +
@@ -369,7 +376,7 @@ export class Hangar {
     body.querySelectorAll('[data-plane]').forEach(b => b.addEventListener('click', () => this._choosePlane(b.dataset.plane)));
     body.querySelectorAll('[data-slot]').forEach(b => b.addEventListener('click', () => { this.slot = +b.dataset.slot; this.trial = null; sfx.click(); this._render(); }));
     body.querySelectorAll('.hg-item').forEach(b => b.addEventListener('click', () => {
-      const it = find(CATALOG[b.dataset.kind], b.dataset.id);
+      const it = find(LISTS[b.dataset.kind], b.dataset.id);
       this._choose(b.dataset.kind, it);
     }));
     const sh = body.querySelector('#hgShare');

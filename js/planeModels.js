@@ -113,6 +113,7 @@ function buildPioupiou(opts = {}) {
   const group = new THREE.Group();
   const body = mat(opts.bodyColor ?? 0xf4f0e6, { rough: 0.38 });
   const accent = mat(opts.accentColor ?? 0xe53935, { rough: 0.38 });
+  const accent2 = accent.clone();   // zone « nez / moteur » (I05) : suit l'accent tant qu'on ne la peint pas
   const dark = mat(0x2a2f36, { rough: 0.7 });
   const glass = mat(0x0f2740, { rough: 0.05, metal: 0.8, transparent: true, opacity: 0.62, env: 1.3 });
   const skin = mat(0xf1c9a5, { rough: 0.7 });
@@ -121,9 +122,9 @@ function buildPioupiou(opts = {}) {
   const prof = [[0.0, -3.02], [0.2, -2.98], [0.38, -2.82], [0.5, -2.55], [0.58, -2.15], [0.62, -1.6], [0.62, -0.5], [0.55, 0.6], [0.4, 1.8], [0.24, 3.0], [0.13, 4.0], [0.07, 4.4]];
   group.add(lathe(prof, body));
   /* Capot moteur et cone d'helice : couleur d'accent */
-  const cowl = lathe([[0.0, -3.08], [0.2, -3.04], [0.4, -2.9], [0.52, -2.62], [0.595, -2.22], [0.63, -1.95]], accent);
+  const cowl = lathe([[0.0, -3.08], [0.2, -3.04], [0.4, -2.9], [0.52, -2.62], [0.595, -2.22], [0.63, -1.95]], accent2);
   group.add(cowl);
-  const spinner = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 14), accent);
+  const spinner = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.42, 14), accent2);
   spinner.rotation.x = -Math.PI / 2;
   spinner.position.z = -3.2;
   group.add(spinner);
@@ -236,7 +237,7 @@ function buildPioupiou(opts = {}) {
     tailFin: { zc: 3.5, yc: 0.95, size: 0.5, halfThick: 0.045 }
   };
   return {
-    id: opts.id || 'pioupiou', group, body: [body], accent: [accent], slots,
+    id: opts.id || 'pioupiou', group, body: [body], accent: [accent], accent2: [accent2], slots,
     update(ac, dt, t) {
       const rpm = 8 + (ac.n1 - 20) * 0.9;
       prop.spin.rotation.z += rpm * dt;
@@ -257,6 +258,7 @@ function buildZebulon() {
   const group = new THREE.Group();
   const body = mat(0xfff4d6, { rough: 0.3 });
   const accent = mat(0xff7a1a, { rough: 0.3 });
+  const accent2 = accent.clone();   // zone « nez / moteur » (I05) : suit l'accent tant qu'on ne la peint pas
   const dark = mat(0x23272e, { rough: 0.7 });
   const glass = mat(0x10304f, { rough: 0.04, metal: 0.85, transparent: true, opacity: 0.55, env: 1.4 });
   const skin = mat(0xe8b896, { rough: 0.7 });
@@ -264,8 +266,8 @@ function buildZebulon() {
 
   const prof = [[0.0, -2.55], [0.22, -2.5], [0.4, -2.32], [0.52, -2.0], [0.58, -1.5], [0.58, -0.5], [0.5, 0.7], [0.33, 1.9], [0.2, 3.0], [0.1, 3.8], [0.06, 4.0]];
   group.add(lathe(prof, body));
-  group.add(lathe([[0.0, -2.62], [0.22, -2.57], [0.42, -2.4], [0.545, -2.08], [0.595, -1.7]], accent));
-  const spinner = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 14), accent);
+  group.add(lathe([[0.0, -2.62], [0.22, -2.57], [0.42, -2.4], [0.545, -2.08], [0.595, -1.7]], accent2));
+  const spinner = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.5, 14), accent2);
   spinner.rotation.x = -Math.PI / 2;
   spinner.position.z = -2.78;
   group.add(spinner);
@@ -363,7 +365,7 @@ function buildZebulon() {
     tailFin: { zc: 3.0, yc: 0.95, size: 0.5, halfThick: 0.05 }
   };
   return {
-    id: 'zebulon', group, body: [body], accent: [accent], slots,
+    id: 'zebulon', group, body: [body], accent: [accent], accent2: [accent2], slots,
     update(ac, dt, t) {
       const rpm = 8 + (ac.n1 - 20) * 1.0;
       prop.spin.rotation.z += rpm * dt;
@@ -384,6 +386,7 @@ function buildHeli() {
   const group = new THREE.Group();
   const body = mat(0xf4f0e6, { rough: 0.32 });
   const accent = mat(0xff7a1a, { rough: 0.32 });
+  const accent2 = accent.clone();   // zone « nez / moteur » (I05) : suit l'accent tant qu'on ne la peint pas
   const dark = mat(0x23272e, { rough: 0.7 });
   const glass = mat(0x0f2740, { rough: 0.05, metal: 0.8, transparent: true, opacity: 0.6, env: 1.3 });
   const skin = mat(0xf1c9a5, { rough: 0.7 });
@@ -395,7 +398,7 @@ function buildHeli() {
   cabin.position.set(0, 0, -0.35);
   group.add(cabin);
   /* bande d'accent autour de la cabine */
-  const belt = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, Math.PI * 0.46, Math.PI * 0.1), accent);
+  const belt = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, Math.PI * 0.46, Math.PI * 0.1), accent2);
   belt.scale.set(1.06, 0.96, 2.01);
   belt.position.set(0, 0, -0.35);
   group.add(belt);
@@ -468,7 +471,7 @@ function buildHeli() {
     tailFin: { zc: 5.7, yc: 0.7, size: 0.5, halfThick: 0.045 }
   };
   return {
-    id: 'helico', group, body: [body], accent: [accent], slots,
+    id: 'helico', group, body: [body], accent: [accent], accent2: [accent2], slots,
     update(ac, dt) {
       const h = ac.heli;
       if (h) { rotor.rotation.y = -h.rotor; tail.rotation.x = h.rotor * 1.8; }
@@ -486,6 +489,7 @@ function buildPlume() {
   const group = new THREE.Group();
   const body = mat(0xf8fafc, { rough: 0.25 });
   const accent = mat(0x2dd4bf, { rough: 0.3 });
+  const accent2 = accent.clone();   // zone « nez / moteur » (I05) : suit l'accent tant qu'on ne la peint pas
   const dark = mat(0x23272e, { rough: 0.7 });
   const glass = mat(0x10304f, { rough: 0.04, metal: 0.85, transparent: true, opacity: 0.5, env: 1.4 });
   const skin = mat(0xe8b896, { rough: 0.7 });
@@ -493,7 +497,7 @@ function buildPlume() {
 
   const prof = [[0.0, -2.2], [0.2, -2.15], [0.34, -1.95], [0.4, -1.5], [0.4, -0.6], [0.34, 0.4], [0.2, 1.8], [0.12, 3.2], [0.08, 4.5], [0.05, 4.8]];
   group.add(lathe(prof, body));
-  group.add(lathe([[0.0, -2.26], [0.2, -2.21], [0.35, -2.0], [0.405, -1.65]], accent));
+  group.add(lathe([[0.0, -2.26], [0.2, -2.21], [0.35, -2.0], [0.405, -1.65]], accent2));
 
   /* Verriere en goutte et pilote */
   const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 18, 12, 0, Math.PI * 2, 0, Math.PI / 2), glass);
@@ -567,7 +571,7 @@ function buildPlume() {
     tailFin: { zc: 4.2, yc: 0.7, size: 0.4, halfThick: 0.04 }
   };
   return {
-    id: 'plume', group, body: [body], accent: [accent], slots,
+    id: 'plume', group, body: [body], accent: [accent], accent2: [accent2], slots,
     update(ac, dt, t) {
       ailerons[0].rotation.x = -ac.ctl.roll * 0.5;
       ailerons[1].rotation.x = ac.ctl.roll * 0.5;

@@ -17,7 +17,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791555904';
+import { sfx } from './sfx.js?v=1791556299';
+import { Particles } from './particles.js?v=1791556299';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -91,86 +92,9 @@ const GIFTS = [
 /* ============================================================
    Fumee coloree : un nuage de points (un seul draw call)
    ============================================================ */
-class Trail {
-  constructor(scene, count = 1100) {
-    this.n = count;
-    this.head = 0;
-    this.hue = 0;
-    const pos = new Float32Array(count * 3);
-    const col = new Float32Array(count * 3);
-    this.size = new Float32Array(count);
-    this.alpha = new Float32Array(count);
-    this.age = new Float32Array(count).fill(99);
-    this.life = new Float32Array(count).fill(1);
-    this.base = new Float32Array(count).fill(1);
-    pos.fill(0, 0);
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-    geo.setAttribute('size', new THREE.BufferAttribute(this.size, 1));
-    geo.setAttribute('alpha', new THREE.BufferAttribute(this.alpha, 1));
-    this.geo = geo;
-    const mat = new THREE.ShaderMaterial({
-      transparent: true, depthWrite: false,
-      uniforms: { scale: { value: 600 } },
-      vertexShader: `
-        attribute float size; attribute float alpha; varying vec3 vCol; varying float vA;
-        uniform float scale;
-        void main() {
-          vCol = color; vA = alpha;
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size * scale / max(1.0, -mv.z);
-          gl_Position = projectionMatrix * mv;
-        }`,
-      fragmentShader: `
-        varying vec3 vCol; varying float vA;
-        void main() {
-          vec2 d = gl_PointCoord - 0.5;
-          float r = dot(d, d) * 4.0;
-          if (r > 1.0) discard;
-          float soft = 1.0 - r;
-          gl_FragColor = vec4(vCol, vA * soft);
-        }`,
-      vertexColors: true
-    });
-    this.points = new THREE.Points(geo, mat);
-    this.points.frustumCulled = false;
-    this.points.renderOrder = 5;
-    scene.add(this.points);
-    this.tmp = new THREE.Color();
-  }
-
-  setViewport(h, fovDeg) {
-    this.points.material.uniforms.scale.value = h / (2 * Math.tan(THREE.MathUtils.degToRad(fovDeg) / 2));
-  }
-
-  emit(x, y, z, color, size = 3.2, life = 3.2) {
-    const i = this.head;
-    this.head = (this.head + 1) % this.n;
-    const p = this.geo.attributes.position.array;
-    p[i * 3] = x; p[i * 3 + 1] = y; p[i * 3 + 2] = z;
-    this.tmp.set(color);
-    const c = this.geo.attributes.color.array;
-    c[i * 3] = this.tmp.r; c[i * 3 + 1] = this.tmp.g; c[i * 3 + 2] = this.tmp.b;
-    this.age[i] = 0; this.life[i] = life; this.base[i] = size;
-  }
-
-  update(dt) {
-    for (let i = 0; i < this.n; i++) {
-      const a = this.age[i];
-      if (a >= this.life[i]) { this.alpha[i] = 0; continue; }
-      this.age[i] = a + dt;
-      const u = this.age[i] / this.life[i];
-      this.alpha[i] = (1 - u) * 0.85;
-      this.size[i] = this.base[i] * (1 + u * 1.6);
-    }
-    this.geo.attributes.alpha.needsUpdate = true;
-    this.geo.attributes.size.needsUpdate = true;
-    this.geo.attributes.position.needsUpdate = true;
-    this.geo.attributes.color.needsUpdate = true;
-  }
-
-  clear() { this.age.fill(99); this.alpha.fill(0); this.geo.attributes.alpha.needsUpdate = true; }
+class Trail extends Particles {
+  /* Fumee lente : immobile, elle grossit en s'estompant. */
+  emit(x, y, z, color, size = 3.2, life = 3.2) { this.spawn(x, y, z, color, { size, life, grow: 1.6 }); }
 }
 
 /* ============================================================

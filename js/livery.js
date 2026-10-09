@@ -101,11 +101,15 @@ export const STICKERS = [
   { id: 'dragon', name: 'Dragon', ico: '🐉', price: 50, rare: true }
 ];
 
+/* Zone « nez / moteur » : 'same' = comme l'accent. */
+export const NOSE_COLORS = [{ id: 'same', name: 'Pareil', ico: '🔗', price: 0 }, ...ACCENT_COLORS];
+
 export const find = (list, id) => list.find(x => x.id === id) || list[0];
 
 export const defaultLivery = (planeId) => ({
   body: planeId === 'zebulon' ? 'white' : 'white',
   accent: planeId === 'zebulon' ? 'orange' : planeId === 'pioupiou' ? 'red' : planeId === 'hydravion' ? 'blue' : planeId === 'helico' ? 'orange' : 'blue',
+  accent2: 'same',
   pattern: 'none',
   stickers: ['none', 'none', 'none'],
   name: ''
@@ -117,7 +121,7 @@ export const defaultLivery = (planeId) => ({
 const b64e = (str) => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const b64d = (str) => decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/'))));
 export function encodeLivery(planeId, lv) {
-  return 'SKY1.' + b64e(JSON.stringify({ p: planeId, b: lv.body, a: lv.accent, t: lv.pattern, s: lv.stickers.slice(0, 3), n: (lv.name || '').slice(0, 12) }));
+  return 'SKY1.' + b64e(JSON.stringify({ p: planeId, b: lv.body, a: lv.accent, c: lv.accent2 || 'same', t: lv.pattern, s: lv.stickers.slice(0, 3), n: (lv.name || '').slice(0, 12) }));
 }
 /* owned(kind, item) -> bool. Rend { planeId, livery } ou null si le code est invalide. */
 export function decodeLivery(code, owned = () => true) {
@@ -134,6 +138,7 @@ export function decodeLivery(code, owned = () => true) {
       livery: {
         body: pick(BODY_COLORS, 'body', d.b, base.body),
         accent: pick(ACCENT_COLORS, 'accent', d.a, base.accent),
+        accent2: d.c === 'same' ? 'same' : pick(ACCENT_COLORS, 'accent', d.c, 'same'),
         pattern: pick(PATTERNS, 'pattern', d.t, 'none'),
         stickers: [0, 1, 2].map(i => pick(STICKERS, 'sticker', stickers[i], 'none')),
         name: String(d.n || '').toUpperCase().replace(/[^A-Z0-9 !'-]/g, '').slice(0, 12)
@@ -390,6 +395,9 @@ export class LiveryRig {
     const body = find(BODY_COLORS, lv.body), acc = find(ACCENT_COLORS, lv.accent);
     this.model.body.forEach(m => m.color.setHex(body.hex));
     this.model.accent.forEach(m => m.color.setHex(acc.hex));
+    /* zone nez / moteur (absente sur l'avion de ligne) */
+    const nose = lv.accent2 && lv.accent2 !== 'same' ? find(ACCENT_COLORS, lv.accent2) : acc;
+    (this.model.accent2 || []).forEach(m => m.color.setHex(nose.hex));
     /* motif : couleur 1 = accent, couleur 2 = blanc (ou noir sur fond clair) */
     const bodyLum = ((body.hex >> 16 & 255) * 0.3 + (body.hex >> 8 & 255) * 0.59 + (body.hex & 255) * 0.11);
     const second = bodyLum > 140 ? 0x1d2025 : 0xffffff;
