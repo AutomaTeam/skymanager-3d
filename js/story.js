@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791577867';
-import { load, write } from './save.js?v=1791577867';
+import { sfx } from './sfx.js?v=1791577985';
+import { load, write } from './save.js?v=1791577985';
 
 const STORE = 'skymanager.story';
 
@@ -171,6 +171,8 @@ export class Story {
     }
     /* Quete devenue impossible (collection deja finie) : on la valide. */
     const q = this.quest;
+    /* Quete du feu : pas plus de 40 s sans feu (sinon 3 a 5 min d'attente si le precedent s'est eteint sans nous). */
+    if (q && q.ev === 'fire' && g.fire && !g.fire.fire && g.fire.cd > 40) g.fire.cd = 40;
     if (q && this._need(q) <= this.data.prog) this._completeQuest();
   }
 

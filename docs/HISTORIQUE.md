@@ -2535,3 +2535,8 @@ Acheter une amelioration ne changeait que des chiffres. Maintenant chaque achat 
 
 - Pres d'un kiosque (growth.js), le bouton propose « 🍦 UNE GLACE (2 🪙) », « 🥞 UNE CRÊPE »... : bulle emoji, phrase de Coco, trophee « Gourmand » a 5 achats (`nearKiosk`, `buyAt`, branche dans `social.near`). Les obstacles du module (kiosques, reacteurs des avions gares) ne proposent plus « DIRE BONJOUR ».
 - « Mon aventure » affiche le cadeau du chapitre en cours (pieces, peinture, trophee final).
+
+## Phase 129 - tours du chien qui cachaient les boutons, quete du feu plus rapide
+
+- **Bug** : la rangee « Assis / Couche / Tourne / Haut-la » etait positionnee par rapport a la colonne de boutons de gauche (`position: absolute` dans `#funDock`) au lieu de l'ecran : elle recouvrait le bouton des montures 🛹 des que le chien etait a cote. Elle est maintenant en bas au centre (`position: fixed`). Verifie en 1024x768 : chaque bouton de la colonne recoit bien le clic.
+- Pendant la quete d'aventure « Éteins un feu », un feu demarre au plus 40 s apres le precedent (avant : 3 a 5 min d'attente si le feu s'etait eteint sans l'enfant).
