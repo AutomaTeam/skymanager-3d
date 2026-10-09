@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576226';
-import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576407';
+import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791576407';
 
 export const flightMethods = {
   /* ---------------- Anneaux de vol ---------------- */
@@ -114,6 +114,9 @@ export const flightMethods = {
     if (!this.on) return;
     const box = $('flightPlan');
     if (!box) return;
+    /* Plan « jeu cool » : pendant le tutoriel, pas de menu avant le premier vol ; on decolle direct
+       et on apprend avec les anneaux. Le choix des missions vient une fois le tutoriel fini. */
+    if (this.step) { this.plan = null; box.classList.add('hidden'); return; }
     const sky = this.g.sky;
     const dests = DESTINATIONS.slice().sort(() => Math.random() - 0.5).slice(0, 3);
     const chal = ['star', 'rings', 'fast', 'perfect'].sort(() => Math.random() - 0.5).slice(0, 2);

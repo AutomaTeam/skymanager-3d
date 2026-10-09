@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576226';
-import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576407';
+import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791576407';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -121,6 +121,8 @@ export const challengeMethods = {
       if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ça roule ! Tire vers le haut pour décoller.', target: null };
       if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer à la maison.', target: null };
       if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau doré ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
+      /* Juste apres le decollage, les anneaux ne sont pas encore la : ne pas dire « atterris ». */
+      if (this.ringsThisFlight < RING_TOTAL && !this.g.assist.landing && ac.pos.y < 60 && !ac.heli) return { icon: '🛫', text: 'Bravo, tu voles ! Monte encore un peu : les anneaux dorés arrivent !', target: null };
       if (ac.heli) return { icon: '🚁', text: 'Suis la flèche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
       return { icon: '🛬', text: 'Suis la flèche vers la piste et atterris doucement.', target: null };
     }

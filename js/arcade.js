@@ -14,14 +14,14 @@
    l'affichage et les recompenses passent par les pieces.
    ============================================================ */
 
-import { planeOf } from './fleet.js?v=1791576226';
-import { sfx } from './sfx.js?v=1791576226';
-export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791576226';
-import { mapMethods } from './arcadeMap.js?v=1791576226';
-import { challengeMethods } from './arcadeChallenges.js?v=1791576226';
-import { funMethods } from './arcadeFun.js?v=1791576226';
-import { flightMethods } from './arcadeFlight.js?v=1791576226';
-import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791576226';
+import { planeOf } from './fleet.js?v=1791576407';
+import { sfx } from './sfx.js?v=1791576407';
+export { COIN, SKY_STARS, SKY_ISLANDS, MAP_THEMES, DESTINATIONS, PLAN_TYPES, BADGES } from './arcadeData.js?v=1791576407';
+import { mapMethods } from './arcadeMap.js?v=1791576407';
+import { challengeMethods } from './arcadeChallenges.js?v=1791576407';
+import { funMethods } from './arcadeFun.js?v=1791576407';
+import { flightMethods } from './arcadeFlight.js?v=1791576407';
+import { MAP_WIN, clamp, $, MAP_THEMES, COIN } from './arcadeData.js?v=1791576407';
 
 
 const STORE = 'skymanager.arcade';
@@ -38,13 +38,32 @@ const xpForLevel = (lvl) => 60 + lvl * 40;
 /* Tutoriel : chaine d'objectifs                               */
 /* ---------------------------------------------------------- */
 /* Chaque etape : texte, icone, cible (monde) ou null, condition de fin.
-   `g` est le jeu (Game), `a` l'instance Arcade. */
+   `g` est le jeu (Game), `a` l'instance Arcade.
+   Plan « jeu cool » : on vole tout de suite (etapes 2 a 4), le reste de l'aeroport vient apres. */
 const STEPS = [
   {
     id: 'move', icon: '🕹️', reward: 5,
     text: 'Déplace-toi avec le joystick (ou les flèches).',
     target: () => null,
     done: (g, a) => g.state === 'HUB' && a._moved > 10
+  },
+  {
+    id: 'takeoff', icon: '🛫', reward: 20,
+    text: 'Monte dans le cockpit, appuie sur DÉCOLLER et pilote !',
+    target: (g) => g.arcade.markerPos('cockpit'),
+    done: (g, a) => a._stepStats.takeoff >= 1
+  },
+  {
+    id: 'rings', icon: '🟡', reward: 25,
+    text: 'Traverse 3 anneaux dorés en volant dedans !',
+    target: () => null,
+    done: (g, a) => a._stepStats.ring >= 3
+  },
+  {
+    id: 'land', icon: '🛬', reward: 40,
+    text: 'Retourne vers la piste (flèche) et atterris. Le bouton ATTERRIR t\'aide !',
+    target: () => null,
+    done: (g, a) => a._stepStats.landing >= 1
   },
   {
     id: 'repair', icon: '🔧', reward: 10,
@@ -69,26 +88,10 @@ const STEPS = [
     text: 'Va à la tour de contrôle et ouvre le bureau pour agrandir ton aéroport.',
     target: (g) => g.arcade.markerPos('tower'),
     done: (g, a) => a._stepStats.tower >= 1
-  },
-  {
-    id: 'takeoff', icon: '🛫', reward: 20,
-    text: 'Monte dans le cockpit, appuie sur DÉCOLLER et pilote !',
-    target: (g) => g.arcade.markerPos('cockpit'),
-    done: (g, a) => a._stepStats.takeoff >= 1
-  },
-  {
-    id: 'rings', icon: '🟡', reward: 25,
-    text: 'Traverse 3 anneaux dorés en volant dedans !',
-    target: () => null,
-    done: (g, a) => a._stepStats.ring >= 3
-  },
-  {
-    id: 'land', icon: '🛬', reward: 40,
-    text: 'Retourne vers la piste (flèche) et atterris. Le bouton ATTERRIR t\'aide !',
-    target: () => null,
-    done: (g, a) => a._stepStats.landing >= 1
   }
 ];
+/* Ordre d'avant le plan « jeu cool » (voler venait en dernier) : sert a migrer une sauvegarde en plein tutoriel. */
+const OLD_STEP_ORDER = ['move', 'repair', 'terminal', 'serve', 'tower', 'takeoff', 'rings', 'land'];
 
 
 export const MAP_SIZE = { mini: [480, 462], big: [960, 924] };
@@ -220,7 +223,7 @@ export class Arcade {
   /* ---------------- Persistance ---------------- */
   _load() {
     const def = {
-      mode: 'arcade', stars: 0, xp: 0, level: 1, step: 0, tutorialDone: false,
+      mode: 'arcade', stars: 0, xp: 0, level: 1, step: 0, stepOrder: 2, tutorialDone: false,
       coinsEarned: 0, daily: null, stats: { serve: 0, repair: 0, flights: 0, rings: 0, star3: 0 },
       name: 'Mon aéroport', mapTheme: 'jour', themes: ['jour'], badges: {}, gift: null, treasure: null
     };
@@ -230,6 +233,9 @@ export class Arcade {
     for (const k of ['honk', 'hello', 'party', 'dance', 'selfie']) def.stats[k] = 0;
     try {
       const d = JSON.parse(localStorage.getItem(STORE) || 'null');
+      /* Tutoriel en cours avec l'ancien ordre : on retrouve la meme etape dans le nouvel ordre. */
+      if (d && !d.tutorialDone && d.stepOrder !== 2 && typeof d.step === 'number') d.step = Math.max(0, STEPS.findIndex(x => x.id === OLD_STEP_ORDER[d.step]));
+      if (d) d.stepOrder = 2;
       if (d) return Object.assign(def, d, { stats: Object.assign(def.stats, d.stats || {}), badges: d.badges || {}, themes: d.themes || ['jour'], visited: (d.visited || []).map(c => (c === 'Athenes' ? 'Athènes' : c)) });   // ville renommee avec son accent
     } catch (e) { /* ignore */ }
     return def;

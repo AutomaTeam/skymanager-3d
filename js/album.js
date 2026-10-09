@@ -7,13 +7,13 @@
    la facon de les obtenir. Le total encourage a « tout avoir ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791576226';
-import { PLANES, PLANE_IDS } from './fleet.js?v=1791576226';
-import { STICKERS } from './livery.js?v=1791576226';
-import { DESTINATIONS, BADGES } from './arcade.js?v=1791576226';
-import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791576226';
-import { STORIES } from './groundFun.js?v=1791576226';
-import { ISLANDS, EGGS } from './openWorld.js?v=1791576226';
+import { sfx } from './sfx.js?v=1791576407';
+import { PLANES, PLANE_IDS } from './fleet.js?v=1791576407';
+import { STICKERS } from './livery.js?v=1791576407';
+import { DESTINATIONS, BADGES } from './arcade.js?v=1791576407';
+import { MISSION_DEFS, ANIMALS } from './skyMissions.js?v=1791576407';
+import { STORIES } from './groundFun.js?v=1791576407';
+import { ISLANDS, EGGS } from './openWorld.js?v=1791576407';
 
 const $ = (id) => document.getElementById(id);
 
