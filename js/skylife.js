@@ -14,8 +14,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { PALETTE } from './palette.js?v=1791553916';
-import { sfx } from './sfx.js?v=1791553916';
+import { PALETTE } from './palette.js?v=1791554063';
+import { sfx } from './sfx.js?v=1791554063';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 

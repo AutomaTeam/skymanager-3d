@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791553916';
-import { itemOf } from './deco.js?v=1791553916';
+import { sfx } from './sfx.js?v=1791554063';
+import { itemOf } from './deco.js?v=1791554063';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
@@ -421,6 +421,7 @@ export class OpenWorld {
     const ac = g.ac;
     const flying = g.state === 'PILOT' && !ac.onGround && !g.reportShown;
     if (g.state === 'PILOT') this._updateStripLanding();
+    if (g.state === 'PILOT') this._updateWake(dt);
     if (flying) {
       this._updateStars(dt, t);
       this._updateIslands();
@@ -564,6 +565,19 @@ export class OpenWorld {
     /* dragon de nuages */
     const d = E.dragon;
     if (d && Math.hypot(ac.pos.x - d.grp.position.x, ac.pos.y - d.grp.position.y, ac.pos.z - d.grp.position.z) < 160) this._egg('dragon', '🐉', 'Tu as traverse le dragon de nuages !', 25, 'dragon');
+  }
+
+  /* K02 : l'hydravion qui glisse sur l'eau laisse un sillage d'ecume en V derriere lui. */
+  _updateWake(dt) {
+    const ac = this.g.ac, tr = this.g.fun.trail;
+    if (!tr || !ac.onGround || ac.crashed || this.g.r3d.activePlane !== 'hydravion' || !this.isWater(ac.pos.x, ac.pos.z)) return;
+    const v = ac.tas || 0;
+    if (v < 3) return;
+    this._wakeT = (this._wakeT || 0) - dt;
+    if (this._wakeT > 0) return;
+    this._wakeT = 0.06;
+    const f = ac.forward(), k = Math.min(1, v / 25);
+    for (const s of [-1, 1]) tr.emit(ac.pos.x - f.x * 7 - f.z * s * 3 * k, 0.6, ac.pos.z - f.z * 7 + f.x * s * 3 * k, 0xe8f6ff, 2.5 + 2.5 * k, 1.6 + k);
   }
 
   /* Rase-mottes au-dessus de l'eau : altitude de securite reduite, eclaboussures, pieces. */

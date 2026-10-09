@@ -8,8 +8,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791553916';
-import { profile } from './rideCourse.js?v=1791553916';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791554063';
+import { profile } from './rideCourse.js?v=1791554063';
 
 const COPING = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.3, metalness: 0.8 });
 const RAIL_M = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.3, metalness: 0.6 });

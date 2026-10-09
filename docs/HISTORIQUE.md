@@ -2474,3 +2474,11 @@ L'hydravion qui se pose sur l'eau (mer, lac) souleve de grosses eclaboussures et
 - Poser sur une piste d'ile : +2 pieces par etoile, evenement `stripLanding`, « Tour des iles » (+30 le meme jour sur les 2 pistes).
 - Combo : `landing`, `stripLanding`, `splash`, `souvenir`, `spot` comptent ; ces actions rares laissent 20-40 s au combo (`COMBO_SLOW` dans arcadeData.js).
 - 4 nouveaux defis du jour : piste d'ile, amerrissage (seulement si l'hydravion est achete, champ `need`), souvenir, jumelles.
+
+## Phase 111 - tous les modules dans le registre (B04)
+
+fun, sky, ground, social, tug, fire, deco, openWorld, comfort, rides passent par `this.modules.add(id, mod, { order: -1, hooks: false })` (registry.js : `order` fixe l'ordre de mise a jour, `hooks: false` = ni bodies/goal/tips fournis au registre). La boucle de `main.js` n'a plus qu'un seul appel `modules.update`. 3 imports inutilises retires.
+
+## Phase 112 - sillage de l'hydravion (K02)
+
+`_updateWake` (openWorld.js) : sur l'eau, l'hydravion qui roule (>3 m/s) laisse deux traines d'ecume en V derriere lui.
