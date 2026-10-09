@@ -9,8 +9,8 @@
    Bouton 🧭 dans la colonne de gauche, touche T.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791577777';
-import { placeOf } from './story.js?v=1791577777';
+import { sfx } from './sfx.js?v=1791577867';
+import { placeOf } from './story.js?v=1791577867';
 
 /* Lieux proposés. `near` : décalage du point d'arrivée pour ne pas tomber dans l'objet. */
 export const PLACES = [

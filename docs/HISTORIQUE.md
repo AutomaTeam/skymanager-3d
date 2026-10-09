@@ -2530,3 +2530,8 @@ Le tutoriel faisait reparer, verifier des billets et visiter la tour avant le pr
 ## Phase 127 - l'aeroport grandit pour de vrai (`js/growth.js`)
 
 Acheter une amelioration ne changeait que des chiffres. Maintenant chaque achat se voit dans le monde : un kiosque colore par boutique devant le terminal (glaces, crepes, jouets... 8 max), un panneau « PORTE n » par porte sur la facade, tapis rouge + arche doree + couronne pour le salon VIP, drapeaux et enseigne « AEROPORT INTERNATIONAL » puis dome de verre pour les agrandissements du terminal, balises de couleur le long de la piste, et chaque avion achete est gare sur le tarmac (4 postes libres verifies, deriver de couleur, geometries fusionnees). Juste apres l'achat, la fleche « Montre-moi » pointe la nouveaute et Coco la presente (pas au rechargement : dernier etat vu dans `skymanager.growth`). Kiosques, colonnes VIP et avions gares sont solides pour le joueur. Descriptions de la boutique de la tour mises a jour.
+
+## Phase 128 - kiosques ouverts, cadeau de chapitre visible
+
+- Pres d'un kiosque (growth.js), le bouton propose « 🍦 UNE GLACE (2 🪙) », « 🥞 UNE CRÊPE »... : bulle emoji, phrase de Coco, trophee « Gourmand » a 5 achats (`nearKiosk`, `buyAt`, branche dans `social.near`). Les obstacles du module (kiosques, reacteurs des avions gares) ne proposent plus « DIRE BONJOUR ».
+- « Mon aventure » affiche le cadeau du chapitre en cours (pieces, peinture, trophee final).

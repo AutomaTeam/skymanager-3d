@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { LAYOUT } from './layout.js?v=1791577777';
-import { iconify } from './icons.js?v=1791577777';
+import { LAYOUT } from './layout.js?v=1791577867';
+import { iconify } from './icons.js?v=1791577867';
 
 export const COIN = 1000;
 
@@ -249,6 +249,7 @@ export const TERM_QUESTS = [
 export const BADGES = [
   { id: 'chapter1', ico: '📖', name: 'Début de l\'aventure',  desc: 'Termine le chapitre 1 de l\'aventure.',   test: d => (d.stats.chapters || 0) >= 1 },
   { id: 'legend',   ico: '🏆', name: 'Légende de l\'aventure', desc: 'Termine les 6 chapitres de l\'aventure.', test: d => (d.stats.chapters || 0) >= 6 },
+  { id: 'snacks',   ico: '🍦', name: 'Gourmand',             desc: 'Achète 5 gourmandises aux kiosques.',   test: d => (d.stats.snacks || 0) >= 5 },
   { id: 'first',    ico: '🛫', name: 'Premier vol',          desc: 'Termine un vol.',                         test: d => d.stats.flights >= 1 },
   { id: 'pilot5',   ico: '🧑‍✈️', name: 'Vrai pilote',          desc: 'Fais 5 vols.',                            test: d => d.stats.flights >= 5 },
   { id: 'star3',    ico: '⭐', name: 'Atterrissage parfait', desc: 'Obtiens 3 étoiles à un atterrissage.',    test: d => d.stats.star3 >= 1 },

@@ -10,9 +10,9 @@
    Pres de Biscuit (pet.js), le meme bouton sert a le caresser.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791577777';
-import { collectBodies } from './bodies.js?v=1791577777';
-import { emojiSprite } from './groundFun.js?v=1791577777';
+import { sfx } from './sfx.js?v=1791577867';
+import { collectBodies } from './bodies.js?v=1791577867';
+import { emojiSprite } from './groundFun.js?v=1791577867';
 
 const RANGE = 2.8;               // m pour saluer quelqu'un
 const COINS_PER_DAY = 12;
@@ -106,9 +106,12 @@ export class Social {
       if (veh) return (this._near = veh);
     }
     const p = g.player.pos;
+    /* Kiosques de l'aeroport qui grandit (growth.js) : acheter une glace, une crepe... */
+    const kiosk = g.growth && g.growth.nearKiosk(p);
+    if (kiosk) return (this._near = kiosk);
     let best = null, bd = RANGE;
     for (const b of collectBodies(g)) {
-      if (b.r === undefined || b.ref === g.ground.ev || b.ref === g.player) continue;
+      if (b.r === undefined || b.ref === g.ground.ev || b.ref === g.player || b.ref === g.growth) continue;
       const d = Math.hypot(b.x - p.x, b.z - p.z);
       if (d < bd) { bd = d; best = b; }
     }
@@ -123,6 +126,7 @@ export class Social {
     if (n.kind === 'vehAction') { n.veh.doAction(); return; }
     if (n.kind === 'pet') { this.g.pet.pet(); return; }
     if (n.kind === 'binoc') { this.binoc ? this.stopBinoc() : this.startBinoc(); return; }
+    if (n.kind === 'kiosk') { this.g.growth.buyAt(n.i, (e) => { const p = this.g.player.pos; this._bubble(p.x, p.z, e); }); return; }
     const g = this.g, b = n.body, kind = this._kind(b.ref);
     sfx.hello();
     this._bubble(b.x, b.z, pick(EMOJIS));

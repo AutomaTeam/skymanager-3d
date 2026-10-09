@@ -17,24 +17,27 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { load, write } from './save.js?v=1791577777';
-import { LAYOUT } from './layout.js?v=1791577777';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791577777';
+import { sfx } from './sfx.js?v=1791577867';
+import { load, write } from './save.js?v=1791577867';
+import { LAYOUT } from './layout.js?v=1791577867';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791577867';
 
 const STORE = 'skymanager.growth';
 const T = LAYOUT.terminal;
 const FRONT_Z = T.z0 - 12;                      // kiosques : 12 m devant la façade côté pistes
 const KIOSK_X = [258, 274, 289, 318, 440, 456, 471, 485];
+/* buy : libellé du bouton ; lines : ce que dit Coco après l'achat. */
 const KIOSKS = [
-  { ico: '🍦', name: 'GLACES', c1: '#f472b6', c2: '#fdf2f8' },
-  { ico: '🥞', name: 'CRÊPES', c1: '#f59e0b', c2: '#fffbeb' },
-  { ico: '🧸', name: 'JOUETS', c1: '#8b5cf6', c2: '#f5f3ff' },
-  { ico: '🍭', name: 'BONBONS', c1: '#ef4444', c2: '#fff1f2' },
-  { ico: '🍕', name: 'PIZZA', c1: '#16a34a', c2: '#f0fdf4' },
-  { ico: '🌻', name: 'FLEURS', c1: '#eab308', c2: '#fefce8' },
-  { ico: '📚', name: 'LIVRES', c1: '#2563eb', c2: '#eff6ff' },
-  { ico: '🧃', name: 'JUS', c1: '#ea580c', c2: '#fff7ed' }
+  { ico: '🍦', name: 'GLACES', c1: '#f472b6', c2: '#fdf2f8', buy: 'UNE GLACE', lines: ['Miam ! Fraise-vanille, mon parfum préféré !', 'Brrr, ça gèle les dents !'] },
+  { ico: '🥞', name: 'CRÊPES', c1: '#f59e0b', c2: '#fffbeb', buy: 'UNE CRÊPE', lines: ['Une crêpe au chocolat, le carburant des pilotes !', 'Attention, tu as du sucre sur le nez !'] },
+  { ico: '🧸', name: 'JOUETS', c1: '#8b5cf6', c2: '#f5f3ff', buy: 'UN JOUET', lines: ['Un petit avion en peluche ! Il ira dans ton cockpit.', 'Un nounours pilote, trop mignon !'] },
+  { ico: '🍭', name: 'BONBONS', c1: '#ef4444', c2: '#fff1f2', buy: 'DES BONBONS', lines: ['Une sucette arc-en-ciel ! Tu en donnes une à Coco ?', 'Crunch crunch ! Super bons !'] },
+  { ico: '🍕', name: 'PIZZA', c1: '#16a34a', c2: '#f0fdf4', buy: 'UNE PIZZA', lines: ['Une part de pizza bien chaude, parfait avant un vol !', 'Pizza aux quatre fromages… et une olive !'] },
+  { ico: '🌻', name: 'FLEURS', c1: '#eab308', c2: '#fefce8', buy: 'UN BOUQUET', lines: ['Un tournesol pour décorer le cockpit !', 'Ça sent bon le printemps !'] },
+  { ico: '📚', name: 'LIVRES', c1: '#2563eb', c2: '#eff6ff', buy: 'UNE BD', lines: ['Une BD d\'aventures dans les nuages !', 'Un livre sur les avions du monde entier !'] },
+  { ico: '🧃', name: 'JUS', c1: '#ea580c', c2: '#fff7ed', buy: 'UN JUS', lines: ['Un jus d\'orange pressé, plein d\'énergie !', 'Glou glou glou… délicieux !'] }
 ];
+const SNACK_PRICE = 2;
 /* Postes des avions achetés (nez vers le terminal), dans une zone libre du tarmac (vérifiée). */
 const STANDS = [[360, 1060], [395, 1060], [360, 990], [395, 990]];
 const FLEET_TINT = [0xef4444, 0x22c55e, 0xa855f7, 0xf59e0b, 0x06b6d4, 0xec4899];
@@ -285,6 +288,36 @@ export class Growth {
     const p = at();
     if (g.state === 'HUB' && A.showMe) A.showMe({ icon: '✨', text: '✨ ' + p.txt, target: { x: p.x, z: p.z } }, 25);
     if (g.fun) g.fun.say(p.txt, 3, 5200);
+  }
+
+  /* Bouton contextuel près d'un kiosque ouvert (social.near). */
+  nearKiosk(p) {
+    if (!this.built) return null;
+    for (let i = 0; i < this.built.shops; i++) {
+      if (Math.hypot(KIOSK_X[i] - p.x, FRONT_Z - p.z) < 3.4) {
+        const k = KIOSKS[i];
+        return { kind: 'kiosk', i, label: `${k.ico} ${k.buy} (${SNACK_PRICE} 🪙)` };
+      }
+    }
+    return null;
+  }
+
+  /* Petit achat rigolo : quelques pièces, une bulle, une phrase. Trophée « Gourmand » à 5. */
+  buyAt(i, bubble) {
+    const g = this.g, A = g.arcade, k = KIOSKS[i];
+    if (!k) return;
+    if (A.coins < SNACK_PRICE) { g.toast('Pas assez de pièces… vole encore un peu !', 2200, 'warn'); return; }
+    g.tycoon.cash -= SNACK_PRICE * 1000;
+    g.tycoon.save();
+    const s = A.data.stats;
+    s.snacks = (s.snacks || 0) + 1;
+    A.save();
+    A.event('snack');
+    if (bubble) bubble(k.ico);
+    sfx.pop();
+    A.popup(`${k.ico} -${SNACK_PRICE} 🪙`);
+    if (g.fun) g.fun.say(k.lines[Math.floor(Math.random() * k.lines.length)], 2, 3600);
+    try { A.confetti(12); } catch (e) { /* effet seulement */ }
   }
 
   /* Corps solides pour le joueur : kiosques, colonnes VIP, fuselages et réacteurs des avions garés. */

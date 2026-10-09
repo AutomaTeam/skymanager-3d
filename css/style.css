@@ -2114,3 +2114,5 @@ body.cb .job-card.done { border-color: #38bdf8; }
 /* La bulle de Coco ne cache plus la colonne de boutons de gauche (aventure, voyage, montures...) */
 body[data-state="HUB"] .mascot, body[data-state="CABIN"] .mascot { left: 4.4rem; }
 body.lefty[data-state="HUB"] .mascot, body.lefty[data-state="CABIN"] .mascot { left: auto; right: 4.4rem; }
+.av-rw { grid-column: 1 / -1; margin-top: 0.45rem; padding: 0.35rem 0.6rem; border-radius: 0.6rem; font-size: 12px; font-weight: 800;
+  color: #422006; background: linear-gradient(135deg, #fde047, #f59e0b); text-align: center; }

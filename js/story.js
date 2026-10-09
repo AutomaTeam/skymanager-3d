@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791577777';
-import { load, write } from './save.js?v=1791577777';
+import { sfx } from './sfx.js?v=1791577867';
+import { load, write } from './save.js?v=1791577867';
 
 const STORE = 'skymanager.story';
 
@@ -334,7 +334,8 @@ export class Story {
         return `<li class="${st}"><span>${j < d.q ? '✅' : q.ico}</span>${this.questText(q)}${prog}</li>`;
       }).join('') + '</ul>' : '';
       return `<div class="av-ch ${state}"><span class="av-ico">${state === 'done' ? '✅' : c.ico}</span><b>${i + 1}. ${c.title}</b>` +
-        `<small>${state === 'done' ? 'Terminé !' : c.intro}</small>${quests}</div>`;
+        `<small>${state === 'done' ? 'Terminé !' : c.intro}</small>${quests}` +
+        (state === 'cur' ? `<div class="av-rw">🎁 Cadeau du chapitre : +${c.reward.coins} 🪙${c.reward.paint ? ' + 🎨 peinture surprise' : ''}${c.reward.final ? ' + 🏆 trophée' : ''}</div>` : '') + '</div>';
     }).join('');
     const q = this.quest;
     const go = this.el.querySelector('#storyGo');
