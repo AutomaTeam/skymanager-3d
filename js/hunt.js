@@ -8,10 +8,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791556802';
-import { emojiSprite } from './groundFun.js?v=1791556802';
-import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791556802';
-import * as Save from './save.js?v=1791556802';
+import { sfx } from './sfx.js?v=1791557186';
+import { emojiSprite } from './groundFun.js?v=1791557186';
+import { weekKey, seeded, TREASURE_SPOTS } from './arcadeData.js?v=1791557186';
+import * as Save from './save.js?v=1791557186';
 
 const STORE = 'skymanager.hunt';
 const COUNT = 10;

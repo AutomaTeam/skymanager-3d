@@ -390,6 +390,13 @@
 
     <details class="kp-more">
       <summary>⚙️ Plus d'options</summary>
+      <div class="pilot-card arcade-only" style="margin:.6rem 0">
+        <p class="panel-group-lbl">🧑‍✈️ Mon pilote</p>
+        <input id="pausePilotName" maxlength="12" autocomplete="off" placeholder="Ton prenom de pilote" />
+        <div class="av-row">
+          <button class="av-btn" data-av="🧑‍✈️">🧑‍✈️</button><button class="av-btn" data-av="🦊">🦊</button><button class="av-btn" data-av="🐱">🐱</button><button class="av-btn" data-av="🐶">🐶</button><button class="av-btn" data-av="🤖">🤖</button><button class="av-btn" data-av="🦄">🦄</button><button class="av-btn" data-av="🐼">🐼</button><button class="av-btn" data-av="🐸">🐸</button>
+        </div>
+      </div>
       <div class="kp-grid arcade-only kp-opts">
         <button id="pauseTrail" class="kp-tile"><span class="kp-ico">💨</span><b>Fumee</b><small>Nuage blanc</small></button>
         <button id="pauseSound" class="kp-tile"><span class="kp-ico">🔊</span><b>Son</b><small>actif</small></button>
@@ -998,7 +1005,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791556802').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791557186').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1006,6 +1013,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791556802"></script>
+<script type="module" src="js/main.js?v=1791557186"></script>
 </body>
 </html>

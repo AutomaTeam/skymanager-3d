@@ -17,8 +17,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791556802';
-import { Particles } from './particles.js?v=1791556802';
+import { sfx } from './sfx.js?v=1791557186';
+import { Particles } from './particles.js?v=1791557186';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -199,8 +199,7 @@ export class Fun {
       sb.classList.toggle('hidden', !(alive && s.n >= 1));
       sb.textContent = `🔥 ${s.n} jour${s.n > 1 ? 's' : ''} de suite`;
     }
-    const inp = $('pilotName');
-    if (inp) inp.value = this.data.pilot.name || '';
+    for (const id of ['pilotName', 'pausePilotName']) { const inp = $(id); if (inp && inp !== document.activeElement) inp.value = this.data.pilot.name || ''; }
     document.querySelectorAll('.av-btn').forEach(b => b.classList.toggle('on', b.dataset.av === this.data.pilot.avatar));
   }
 
@@ -269,9 +268,10 @@ export class Fun {
   /* ---------------- Interface ---------------- */
   _bindUI() {
     /* Pilote : prenom + avatar. */
-    const inp = $('pilotName');
-    if (inp) {
-      inp.addEventListener('input', () => { this.data.pilot.name = inp.value.slice(0, 12); this.save(); });
+    for (const id of ['pilotName', 'pausePilotName']) {
+      const inp = $(id);
+      if (!inp) continue;
+      inp.addEventListener('input', () => { this.data.pilot.name = inp.value.slice(0, 12); this.save(); this._refreshBoot(); });
       inp.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') inp.blur(); });
     }
     document.querySelectorAll('.av-btn').forEach(b => b.addEventListener('click', () => {
