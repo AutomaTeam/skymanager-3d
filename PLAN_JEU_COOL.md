@@ -83,3 +83,4 @@ des sensations**. Diagnostic fait en jouant une partie neuve dans le Browser pan
 | Contrôle tablette | ✅ | phases 129-130 : tours du chien qui cachaient 🛹 (bug existant), VUE qui chevauchait ATTERRIR ; vérifié par `elementFromPoint` en 1024x768 |
 | Passe du 2026-10-10 | ✅ | phases 131-135 : nouveautés fusionnées (212 → 77 maillages), 2e moitié du tutoriel jouée pour de vrai, l'aventure ne répète plus le tutoriel, plus aucun €, écran titre avec l'avion à sa porte (il était enterré), fumée des ailes qui ne couvre plus l'écran, cabine sans jargon, panneaux accentués |
 | A7 | ✅ | phase 137 : survol camera de 3,6 s avant l'écran de fin de chapitre (à pied) |
+| Perf (ajout) | ✅ | phases 138-139 : bloom sans recopie inutile (canevas 1x, anticrénelage rendu au niveau haut), ombres une image sur deux à pied, petits objets lointains retirés, matrices immobiles non recalculées, mini-carte à 30 i/s, fusions sûres (-25 % d'appels de dessin, -31 % pour les ombres) |

@@ -457,9 +457,9 @@ Ajouter dans `skyMissions.js`, chacune avec médailles bronze/argent/or et une i
 | B05 | ✅ | `save.js` ; migrés pet, deco, comfort, reset ; les autres modules gardent leur lecture (tolérante, testée) |
 | B06 | 🟡 | constantes inutilisées retirées ; phase 115 : variables locales inutilisees retirees une par une ; il reste 1 avertissement (`buildFuelTruck`, fonction non appelee, gardee) |
 | C01–C05 | ✅ | eslint, `npm run bump` + test du tampon, 11 scénarios, tests save / économie |
-| D01 | 🟡 | mesures : ~440 appels de dessin au parking (rendu logiciel), 3 130 maillages, `bootMs` ≈ 1,8 s ; pas de mesure sur un vrai iPad |
-| D02 | 🟡 | phase 118 : poteaux de cloture (265) et marquages de piste (85) fusionnes par case de 400 m (`staticMerge.js`, option `cell`) : 510 -> 160 maillages libres sous l'aeroport, mais 489 -> 485 appels de dessin au parking (ces pieces sont loin de la camera). Objectif -30 % toujours pas atteint |
-| D03 | 🟡 | existait déjà (PNJ simulés moins souvent au loin, `agents.js`) |
+| D01 | 🟡 | mesures : ~440 appels de dessin au parking (rendu logiciel), 3 130 maillages, `bootMs` ≈ 1,8 s ; phase 138 : temps CPU par image mesure par bascule dans la meme page (les chiffres absolus varient du simple au triple d'un chargement a l'autre) ; pas de mesure sur un vrai iPad |
+| D02 | ✅ | phase 118 : clotures et marquages fusionnes par case de 400 m. Phase 139 : `mergeSiblings` (fusion entre freres, pieces animees intactes) sur l'avion du joueur, les silhouettes d'avions, les vehicules, les comptoirs et le hall : vue de reference 867 -> 646 appels (-25 %), ombres 290 -> 200 (-31 %). Phase 138 : objets de moins de 1,5 px retires du rendu (`renderCull.js`) |
+| D03 | ✅ | PNJ simules moins souvent au loin (`agents.js`) ; phase 138 : un personnage trop petit a l'ecran n'est plus dessine et ses os ne sont plus recalcules |
 | D04 | ✅ | taille d'ombre selon le niveau, pas d'ombres au-dessus de 600 m |
 | D05 | ⏭ | temps de chargement mesuré, pas amélioré |
 | D06 | ✅ | `renderer.info.memory` stable après 5 cycles de panneaux / avions |
