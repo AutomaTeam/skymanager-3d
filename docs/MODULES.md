@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | `agents.js` | PNJ autonomes (Phase 2) |  | main | 1008 |
 | `airframe.js` | Cellule de l'appareil (phase 21) |  | renderAircraft | 436 |
-| `airportLife.js` | L'aeroport vit (phase 20) |  | bus, fireTruck, renderGround | 787 |
+| `airportLife.js` | L'aeroport vit (phase 20) |  | bus, fireTruck, renderGround | 796 |
 | `airportTycoon.js` | ITERATION 4 | tycoon | hub, main, pauseMenu | 358 |
 | `album.js` | L'album de collection (mode Arcade, vague 4) |  | main | 113 |
 | `ambience.js` | Petite vie calme de l'aeroport (mode Arcade) |  | main | 324 |
@@ -65,7 +65,7 @@
 | `planeModels.js` | Modeles 3D des petits avions du hangar |  | renderAircraft | 600 |
 | `props.js` | Chaine d'import des modeles 3D (plan graphisme, etape 2) |  | airportLife, decor | 113 |
 | `registry.js` | Registre des modules de jeu (B04) |  | main | 64 |
-| `renderAircraft.js` | Avions : modele articule, flotte, livrees, usure |  | renderer3d | 791 |
+| `renderAircraft.js` | Avions : modele articule, flotte, livrees, usure |  | renderer3d | 799 |
 | `renderAvatar.js` | Avatar du joueur et techniciens |  | renderer3d | 150 |
 | `renderCabin.js` | Interieur de la cabine |  | renderer3d | 518 |
 | `renderCamera.js` | Cameras (vol, tarmac, cabine) et redimensionnement |  | renderer3d | 292 |
@@ -92,9 +92,9 @@
 | `skylife.js` | Ciel vivant et sol mouille (plan graphisme, etape 6) |  | renderGround | 294 |
 | `social.js` | Dire bonjour aux gens de l'aeroport (mode Arcade) |  | main | 192 |
 | `staff.js` | Personnel de l'aeroport (mode Arcade) | staff | hub, main, pauseMenu | 377 |
-| `staticMerge.js` | Fusion des maillages statiques par materiau (D02) |  | growth, renderGround, ridePark, scenery, terminalBuilding | 67 |
+| `staticMerge.js` | Fusion des maillages statiques par materiau (D02) |  | airportLife, growth, renderAircraft, renderGround, ridePark, scenery, terminalBuilding | 97 |
 | `story.js` | L'Aventure : 6 chapitres racontes par Coco (plan « jeu cool », lot A) | story | main, travel | 423 |
-| `terminalBuilding.js` | Le terminal, batiment integre a la carte (phase 22) |  | renderGround, renderer3d | 831 |
+| `terminalBuilding.js` | Le terminal, batiment integre a la carte (phase 22) |  | renderGround, renderer3d | 835 |
 | `terminalDesign.js` | Refonte visuelle du terminal (phase 32) |  | terminalBuilding | 201 |
 | `terminalFlow.js` | Les verifications du parcours passager (phases 25-26) |  | ambience, hubUpdate, staff, terminalBuilding, terminalSystem | 203 |
 | `terminalSystem.js` | Interieur du terminal : le circuit passager | terminal | hubUpdate, main, pauseMenu | 770 |
@@ -106,4 +106,4 @@
 | `vehicle.js` | Base commune des vehicules que l'enfant conduit |  | bus, fireTruck, groundVehicles, tug | 127 |
 | `voice.js` | Lecture a voix haute (F01) |  | main | 73 |
 
-Total : 101 modules, 35623 lignes.
+Total : 101 modules, 35674 lignes.

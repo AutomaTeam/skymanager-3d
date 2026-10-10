@@ -23,8 +23,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791614163';
-import { instanced } from './props.js?v=1791614163';
+import { LAYOUT } from './layout.js?v=1791617146';
+import { instanced } from './props.js?v=1791617146';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791617146';
 
 const L = LAYOUT;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -74,6 +75,7 @@ function buildTractor(blinkers) {
   add(g, box(1.4, 0.5, 0.05), mat(0x243447, { m: 0.3 }), 0, 1.75, -0.47);
   wheels(g, [[-0.85, -0.8], [0.85, -0.8], [-0.85, 0.8], [0.85, 0.8]], 0.42);
   const beacon = add(g, cyl(0.12, 0.12, 0.2, 8), mat(0xffa500, { e: 0xffa500, ei: 1.2 }), 0, 2.3, 0.2);
+  beacon.userData.noMerge = true;     // son materiau change (gyrophare)
   blinkers.push({ mesh: beacon, on: 0xffa500, off: 0x553300, rate: 2.2 });
   /* Trois chariots a bagages accroches derriere (rigides). */
   const bagColors = [0xd94a3d, 0x2b6cb0, 0x2f9e44, 0x8e44ad, 0xf08c00];
@@ -114,6 +116,7 @@ function buildFuelTruck(blinkers) {
   add(g, cyl(0.3, 0.3, 0.3, 10), mat(0x9ca3af, { m: 0.6 }), 0, 3.45, 1.2);
   wheels(g, [[-1.1, -2.6], [1.1, -2.6], [-1.1, 2.0], [1.1, 2.0], [-1.1, 3.4], [1.1, 3.4]], 0.55, 0.4);
   const b = add(g, box(0.5, 0.15, 0.25), mat(0xffa500, { e: 0xffa500, ei: 1.2 }), 0, 2.9, -2.6);
+  b.userData.noMerge = true;     // son materiau change (gyrophare)
   blinkers.push({ mesh: b, on: 0xffa500, off: 0x553300, rate: 2.4 });
   return g;
 }
@@ -128,6 +131,7 @@ export function buildFireTruck(blinkers) {
   add(g, box(1.6, 0.1, 5.4), mat(0xb8bfc8, { m: 0.6 }), 0, 3.0, 1.3);
   wheels(g, [[-1.15, -2.9], [1.15, -2.9], [-1.15, 1.1], [1.15, 1.1], [-1.15, 2.7], [1.15, 2.7]], 0.62, 0.45);
   const bar = add(g, box(1.6, 0.18, 0.4), mat(0x2563eb, { e: 0x2563eb, ei: 1.4 }), 0, 3.3, -3.4);
+  bar.userData.noMerge = true;     // son materiau change (gyrophare)
   blinkers.push({ mesh: bar, on: 0x3b82f6, off: 0xdc2626, rate: 3.2 });
   return g;
 }
@@ -290,6 +294,7 @@ export class AirportLife {
     sign('FRET', ccx, 17, cg.z1 + 3, { bg: '#1d4ed8', w: 22, h: 8 });
     for (let i = 0; i < 2; i++) {
       const v = buildVan(i ? 0xf1f5f9 : 0xfde68a);
+      mergeStaticByMaterial(v);
       v.position.set(cg.x0 + 20 + i * 28, 0, cg.z1 + 10);
       v.rotation.y = 0.3 * (i ? 1 : -1);
       g.add(v);
@@ -317,6 +322,7 @@ export class AirportLife {
     const gaColors = [0xef4444, 0x3b82f6, 0xfacc15, 0x22c55e];
     for (let i = 0; i < 4; i++) {
       const p = this.smallPlane(gaColors[i]);
+      mergeStaticByMaterial(p);
       p.position.set(ga.x0 + 10 + (i % 2) * 24, 0, ga.z0 + 16 + Math.floor(i / 2) * 36);
       p.rotation.y = (i % 2 ? 0.25 : -0.2);
       g.add(p);
@@ -375,6 +381,8 @@ export class AirportLife {
   buildVehicles() {
     const R = L.routes, g = this.group;
     const veh = (model, route, opt, kind, gate = null) => {
+      /* Vehicule rigide : ses pieces ne bougent pas entre elles (sauf le gyrophare, garde a part). */
+      mergeStaticByMaterial(model);
       g.add(model);
       const mv = new Mover(model, route, opt);
       this.movers.push({ mv, g: model, kind, gate });
@@ -393,6 +401,7 @@ export class AirportLife {
     this.parkedFire = [];               // le premier se conduit (fireTruck.js)
     for (let i = 0; i < 2; i++) {
       const t = buildFireTruck(this.blinkers);
+      mergeStaticByMaterial(t);
       t.position.set(L.fireApron.x0 + 22 + i * 18, 0, L.fireApron.z1 - 6);
       t.rotation.y = 0;
       g.add(t);

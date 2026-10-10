@@ -2590,3 +2590,14 @@ Mesures sur la meme scene (parking de jour, PC RTX 4080, temps CPU par image hor
 - Matrices : un noeud immobile ne recompose plus sa matrice (263 recompositions par image au lieu de ~3 400 noeuds) et, pendant le rendu, les sous-arbres caches (~1 400 noeuds : PNJ ranges, nuages, cockpit...) sont sautes : 0,9 -> 0,65 ms.
 - Mini-carte redessinee a 30 images/s au lieu de chaque image (0,8 ms de dessin 2D).
 - Verifie : `npm test`, eslint, 12 scenarios (`?scenario=all`), fuzz 25 s sans erreur.
+
+## Phase 139 - moins d'appels de dessin (fusions sures)
+
+Meme vue de reference (parking face au terminal, plein jour) : 2 880 -> 2 250 maillages, 867 -> 646 appels de dessin dans la passe principale (-25 %), 290 -> 200 dans la carte d'ombre (-31 %).
+
+- `staticMerge.js` : nouvelle fusion « entre freres » (`mergeSiblings`) : dans chaque groupe, les maillages enfants directs de meme materiau deviennent un seul maillage, qui reste dans ce groupe. Les groupes animes (pivot de train, roue, soufflante) bougent donc comme avant. Le coeur de la fusion est partage avec `mergeStaticByMaterial`.
+- Avion du joueur : trains, nacelles, soufflantes (14 aubes + ogive -> 1) et decalques de coque fusionnes entre freres. La coque (`hull`), les feux, les gouvernes et l'usure ne sont pas touches.
+- Silhouettes d'avion fixes (`buildStaticAircraft` : avion de ligne qui roule, 3 jets lointains, flotte de l'aeroport qui grandit) : ~100 pieces -> une par materiau. La teinte par compagnie (growth.js) marche toujours (verifie : 3 avions, 3 couleurs, 23 maillages).
+- Vehicules de l'aeroport (tracteur et chariots, bus, fourgons, voitures, pompiers, petits avions) fusionnes ; les gyrophares (materiau echange en clignotant) sont marques `noMerge`.
+- Comptoirs du terminal fusionnes entre freres ; les marchandises des boutiques partagent 4 materiaux au lieu d'un chacune. Valises de file (cachees) et jauge de stock restent a part.
+- Verifie : `npm test`, eslint, 12 scenarios, fuzz 25 s ; soufflante, trains et roues regardes a l'ecran.

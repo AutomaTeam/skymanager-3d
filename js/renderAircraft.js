@@ -4,13 +4,14 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791614163';
-import { LIGHT_GAIN } from './environment.js?v=1791614163';
-import { buildCockpit } from './cockpit.js?v=1791614163';
-import * as AF from './airframe.js?v=1791614163';
-import { LiveryRig } from './livery.js?v=1791614163';
-import { buildPlaneModel } from './planeModels.js?v=1791614163';
-import { pbr } from './renderShared.js?v=1791614163';
+import * as TEX from './textures.js?v=1791617146';
+import { LIGHT_GAIN } from './environment.js?v=1791617146';
+import { buildCockpit } from './cockpit.js?v=1791617146';
+import * as AF from './airframe.js?v=1791617146';
+import { LiveryRig } from './livery.js?v=1791617146';
+import { buildPlaneModel } from './planeModels.js?v=1791617146';
+import { pbr } from './renderShared.js?v=1791617146';
+import { mergeStaticByMaterial, mergeSiblings } from './staticMerge.js?v=1791617146';
 
 export const aircraftMethods = {
   /* Silhouette d'appareil simplifiee (non pilotable) pour peupler les
@@ -57,6 +58,8 @@ export const aircraftMethods = {
         shell.add(AF.makeStaticGear({ tireMat, metalMat, darkMat, bodyMat }));
         shell.scale.setScalar(0.7);
         shell.position.y = -3.45 * 0.3;
+        /* Rien ne bouge dans cette silhouette : ~100 pieces -> une par materiau (~20 appels de dessin). */
+        mergeStaticByMaterial(shell);
         g.add(shell);
 
     parent.add(g);
@@ -605,6 +608,11 @@ export const aircraftMethods = {
                   if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; }
                   else o.traverse(c => { if (c.isMesh) { c.castShadow = true; c.receiveShadow = false; } });
                 });
+
+        /* Pieces fusionnees entre freres (meme groupe, meme materiau) : trains, soufflantes,
+           nacelles et decalques de la coque. Les groupes animes (pivot de train, roue,
+           soufflante) restent intacts ; ~110 appels de dessin de moins pour cet avion. */
+        [gNose.pivot, gLeft.pivot, gRight.pivot, ...engines, skinDetail].forEach(o => mergeSiblings(o));
 
         return {
       /* coque masquee en vue cockpit (la camera est a l'interieur du fuselage) */

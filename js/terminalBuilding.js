@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791614163';
-import { LAYOUT } from './layout.js?v=1791614163';
-import { SHIRTS } from './terminalFlow.js?v=1791614163';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791614163';
+import { mergeStaticByMaterial, mergeSiblings } from './staticMerge.js?v=1791617146';
+import { LAYOUT } from './layout.js?v=1791617146';
+import { SHIRTS } from './terminalFlow.js?v=1791617146';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791617146';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -384,6 +384,9 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
   const terminalCounters = {};
   const clothPalette = [0x64748b, 0x9333ea, 0x0d9488, 0xb45309, 0xdb2777, 0x2563eb];
 
+  /* Marchandises des boutiques : 4 couleurs partagees (fusionnables). */
+  const goodsMats = [0xf59e0b, 0xec4899, 0x22d3ee, 0xa3e635].map(color => new THREE.MeshBasicMaterial({ color }));
+
   counters.forEach((c, i) => {
     const cx = c.pos[0], cz = c.pos[1];
     const facing = c.facing || 0;
@@ -481,8 +484,7 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
       for (let s = 0; s < 3; s++) {
         mesh(deskGroup, new THREE.BoxGeometry(deskW - 0.4, 0.06, 0.5), shelfMat, 0, 1.5 + s * 0.55, 0.55);
         for (let k = 0; k < 4; k++) {
-          mesh(deskGroup, new THREE.BoxGeometry(0.22, 0.3, 0.22),
-            new THREE.MeshBasicMaterial({ color: [0xf59e0b, 0xec4899, 0x22d3ee, 0xa3e635][(s + k) % 4] }),
+          mesh(deskGroup, new THREE.BoxGeometry(0.22, 0.3, 0.22), goodsMats[(s + k) % 4],
             -deskW / 2 + 0.5 + k * 0.75, 1.68 + s * 0.55, 0.55);
         }
       }
@@ -525,6 +527,8 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
       stockBar.position.set(0, 0.42, -0.58);
       deskGroup.add(stockBar);
     }
+    /* Pieces fixes du comptoir : une par materiau (les valises et la jauge, qui changent, restent a part). */
+    mergeSiblings(deskGroup);
     g.add(deskGroup);
 
     /* File d'attente visible (pour le tri des bagages : des valises sur la bande). */
