@@ -14,12 +14,12 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791617146';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791617146';
-import { UPGRADES } from './airportTycoon.js?v=1791617146';
-import { planeOf } from './fleet.js?v=1791617146';
-import { sfx } from './sfx.js?v=1791617146';
-import { KID_PART } from './hubUpdate.js?v=1791617146';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791617374';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791617374';
+import { UPGRADES } from './airportTycoon.js?v=1791617374';
+import { planeOf } from './fleet.js?v=1791617374';
+import { sfx } from './sfx.js?v=1791617374';
+import { KID_PART } from './hubUpdate.js?v=1791617374';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

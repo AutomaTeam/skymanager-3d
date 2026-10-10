@@ -2600,4 +2600,5 @@ Meme vue de reference (parking face au terminal, plein jour) : 2 880 -> 2 250 ma
 - Silhouettes d'avion fixes (`buildStaticAircraft` : avion de ligne qui roule, 3 jets lointains, flotte de l'aeroport qui grandit) : ~100 pieces -> une par materiau. La teinte par compagnie (growth.js) marche toujours (verifie : 3 avions, 3 couleurs, 23 maillages).
 - Vehicules de l'aeroport (tracteur et chariots, bus, fourgons, voitures, pompiers, petits avions) fusionnes ; les gyrophares (materiau echange en clignotant) sont marques `noMerge`.
 - Comptoirs du terminal fusionnes entre freres ; les marchandises des boutiques partagent 4 materiaux au lieu d'un chacune. Valises de file (cachees) et jauge de stock restent a part.
-- Verifie : `npm test`, eslint, 12 scenarios, fuzz 25 s ; soufflante, trains et roues regardes a l'ecran.
+- Hall : passagers assis (un seul materiau a couleurs par sommet) et chariots a bagages fusionnes ; decor `terminalDesign` fusionne par materiau. Maillages du hall : 581 -> 467. Obstacles de navigation compares avant / apres : identiques, sauf les 4 petits avions gares dont la boite grandit de moins de 1 m.
+- Verifie : `npm test`, eslint, 12 scenarios, fuzz 25 s ; soufflante, trains, roues et hall regardes a l'ecran.

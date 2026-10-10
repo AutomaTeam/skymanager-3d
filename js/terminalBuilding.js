@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial, mergeSiblings } from './staticMerge.js?v=1791617146';
-import { LAYOUT } from './layout.js?v=1791617146';
-import { SHIRTS } from './terminalFlow.js?v=1791617146';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791617146';
+import { mergeStaticByMaterial, mergeSiblings } from './staticMerge.js?v=1791617374';
+import { LAYOUT } from './layout.js?v=1791617374';
+import { SHIRTS } from './terminalFlow.js?v=1791617374';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791617374';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -685,13 +685,17 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
       im.instanceMatrix.needsUpdate = true;
       g.add(im);
     }
+    /* Passagers assis : immobiles, un seul materiau -> un seul appel de dessin pour tous. */
+    const sitG = new THREE.Group();
     for (const [sx, sz, ci] of sitters) {
       const px = new THREE.Mesh(personGeometry(clothPalette[ci]), PERSON_MAT);
       px.position.set(sx, 0.03 + 0.05, sz);
       px.scale.set(1, 0.8, 1);
       px.rotation.y = Math.PI;
-      g.add(px);
+      sitG.add(px);
     }
+    mergeStaticByMaterial(sitG);
+    g.add(sitG);
   }
 
   /* ------------------------------------------------------------
@@ -708,14 +712,17 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
   /* Chariots a bagages alignes pres de la porte ville. */
   {
     const cartMat = pbr(TEX.metal(), { color: 0xb8c0ca, rough: 0.4, metal: 0.7, repeat: [1, 1] });
+    const carts = new THREE.Group();
     for (let i = 0; i < 6; i++) {
       const c = new THREE.Group();
       c.position.set(378 + i * 0.5, 0.03, 1258.5 - i * 0.5);
       mesh(c, new THREE.BoxGeometry(0.6, 0.06, 0.9), cartMat, 0, 0.4, 0);
       mesh(c, new THREE.BoxGeometry(0.6, 0.5, 0.05), cartMat, 0, 0.75, -0.42);
       mesh(c, new THREE.BoxGeometry(0.6, 0.05, 0.05), cartMat, 0, 1.0, 0.45);
-      g.add(c);
+      carts.add(c);
     }
+    mergeStaticByMaterial(carts);     // 18 pieces, un materiau
+    g.add(carts);
   }
 
   /* Information / borne d'accueil, cote ville. */

@@ -17,7 +17,8 @@
    d'appels de dessin au total.
    ============================================================ */
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791617146';
+import { LAYOUT } from './layout.js?v=1791617374';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791617374';
 
 const T = LAYOUT.terminal;
 const H = T.h;
@@ -196,5 +197,7 @@ export function buildTerminalDesign({ pbr, TEX }) {
     g.add(mu);
   }
 
+  /* Decor fixe (rien n'y est reference ensuite) : une piece par materiau. */
+  mergeStaticByMaterial(g);
   return g;
 }

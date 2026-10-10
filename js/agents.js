@@ -35,7 +35,7 @@ export const MAX_ACTIVE = 24;
 
 /* Au-dela de cette distance du point d'interet, un agent passe a
    5 Hz : il accumule dt et avance d'un coup. */
-import { slideMove } from './bodies.js?v=1791617146';
+import { slideMove } from './bodies.js?v=1791617374';
 
 const SLOW_DIST = 95;
 const SLOW_DIST2 = SLOW_DIST * SLOW_DIST;
