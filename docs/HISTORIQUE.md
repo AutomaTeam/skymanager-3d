@@ -2555,3 +2555,7 @@ Mesure au parking (tout achete) : les nouveautes de growth.js ajoutaient ~90 app
 - Le chapitre 1 commencait par « Enregistre 3 passagers », exactement ce que le tutoriel venait de faire : il commence maintenant par un achat a la tour (ou l'enfant se trouve deja, et il voit l'aeroport grandir) ; les passagers passent en 4e quete (5). Le chapitre 2 fait decouvrir les montures (« J'y vais ! » ouvre le choix de la monture).
 - Plus aucun « € » : la surcharge de bagage n'etait jamais creditee, le texte dit maintenant « plus lourd = surcharge a payer ».
 - « Réparé, mais essaie plus précis ! » (l'outil d'accents avait mis « Répare »).
+
+## Phase 133 - ecran titre : l'avion n'est plus a moitie enterre
+
+Sur l'ecran titre (prenom + JOUER), l'avion de ligne etait en (0, 0, 0) : au milieu de la piste et 3,45 m sous le sol, on ne voyait que la derive et des morceaux d'empennage. Il n'etait gare a sa porte qu'au clic sur JOUER. `placeAircraftAtGate()` est maintenant appele a la fin du constructeur : l'ecran titre tourne autour de l'avion gare devant le terminal. Verifie a l'ecran (1024x768) + demarrage sur sauvegarde neuve + 12 scenarios.

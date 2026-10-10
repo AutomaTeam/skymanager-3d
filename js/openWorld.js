@@ -15,8 +15,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791602844';
-import { itemOf } from './deco.js?v=1791602844';
+import { sfx } from './sfx.js?v=1791602994';
+import { itemOf } from './deco.js?v=1791602994';
 
 const STORE = 'skymanager.world';
 const $ = (id) => document.getElementById(id);
