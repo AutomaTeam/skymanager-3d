@@ -10,11 +10,11 @@
    Donnees : localStorage 'skymanager.hangar'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791603325';
-import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791603325';
+import { sfx } from './sfx.js?v=1791603808';
+import { PLANES, PLANE_IDS, planeOf } from './fleet.js?v=1791603808';
 import {
   BODY_COLORS, ACCENT_COLORS, NOSE_COLORS, PATTERNS, STICKERS, defaultLivery, find, encodeLivery, decodeLivery
-} from './livery.js?v=1791603325';
+} from './livery.js?v=1791603808';
 
 const STORE = 'skymanager.hangar';
 const $ = (id) => document.getElementById(id);
@@ -154,6 +154,7 @@ export class Hangar {
     $('hudHub').classList.add('hidden');
     $('hangar').classList.remove('hidden');
     document.body.classList.add('in-hangar');
+    this._markers(false);       // les reperes de l'avion de ligne brouillaient l'apercu du petit avion
     this._showPreview(this.previewId);
     this._render();
     sfx.pop();
@@ -166,11 +167,17 @@ export class Hangar {
     this.trial = null;
     $('hangar').classList.add('hidden');
     document.body.classList.remove('in-hangar');
+    this._markers(true);
     this.g.r3d.camera.clearViewOffset();
     $('hudHub').classList.remove('hidden');
     /* A l'aeroport on revoit le jet de ligne ; la livree est deja appliquee. */
     this.g.r3d.setActivePlane('liner');
     if (fly) this.g.boardAircraft();
+  }
+
+  _markers(on) {
+    const ms = this.g.r3d.hotspotMarkers || {};
+    for (const k in ms) if (ms[k].frame === 'aircraft') ms[k].group.visible = on;
   }
 
   /* Affiche un avion sur le parking, avec sa livree enregistree. */

@@ -14,11 +14,12 @@
    Le monde est en pause tant qu'il est ouvert.
    ============================================================ */
 
-import { ROLES, ROLE, trainCost } from './staff.js?v=1791603325';
-import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791603325';
-import { UPGRADES } from './airportTycoon.js?v=1791603325';
-import { planeOf } from './fleet.js?v=1791603325';
-import { sfx } from './sfx.js?v=1791603325';
+import { ROLES, ROLE, trainCost } from './staff.js?v=1791603808';
+import { COIN, BADGES, MAP_THEMES, DESTINATIONS, nextReward, titleOf, MAX_LEVEL } from './arcade.js?v=1791603808';
+import { UPGRADES } from './airportTycoon.js?v=1791603808';
+import { planeOf } from './fleet.js?v=1791603808';
+import { sfx } from './sfx.js?v=1791603808';
+import { KID_PART } from './hubUpdate.js?v=1791603808';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -220,7 +221,7 @@ export class Hub {
         <div class="ht-h"><span>✈️</span>Avion <em>${g.state === 'PILOT' && !ac.onGround ? 'en vol' : 'au parking'}</em></div>
         <div class="ht-row">Santé ${bar(health)}<b>${Math.round(health)}%</b></div>
         <div class="ht-row">Carburant ${bar(ac.fuel / ac.fuelCap * 100, 'b')}<b>${Math.round(ac.fuel / ac.fuelCap * 100)}%</b></div>
-        <div class="ht-note">${worst && worst[1].wear > 40 ? '🔧 À surveiller : ' + (worst[1].label || worst[0]) : '✅ Tout va bien'}</div>`)}
+        <div class="ht-note">${worst && worst[1].wear > 40 ? '🔧 À réparer bientôt : ' + (KID_PART[worst[0]] || worst[1].label || worst[0]) : '✅ Tout va bien'}</div>`)}
       ${tile('', null, `
         <div class="ht-h"><span>🥤</span>Cabine <em>${face}</em></div>
         <div class="ht-row">Satisfaction ${bar(sat)}<b>${Math.round(sat)}%</b></div>

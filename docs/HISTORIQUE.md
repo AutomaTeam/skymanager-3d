@@ -2568,3 +2568,9 @@ En vol (camera de poursuite a ~20 m), la fumee blanche emise au bout des ailes p
 
 - Cabine (Arcade) : « 🛍️ VENDRE UN CADEAU » au lieu de « VENDRE (DUTY-FREE) », jauge « VENTES » qui compte les ventes (avant : un montant en EUR).
 - Panneaux 3D en majuscules oublies par l'outil d'accents (il saute volontairement les mots seuls en majuscules, qui servent aussi de cles comme les phases de vol) : HÉLIPORT, ENTRÉE, SÛRETÉ, CAFÉ, RÉSERVE, MÉCANICIEN ; « DUTY FREE » devient « BOUTIQUE ».
+
+## Phase 136 - panneaux GÉRER, hangar et « Ma place » revus a l'ecran
+
+- GÉRER : « À réparer bientôt : 💧 Tuyaux d'huile » au lieu de « À surveiller : Circuits hydrauliques » (`KID_PART` exporte depuis hubUpdate.js).
+- Hangar : les reperes de reparation de l'avion de ligne (cercles et points de couleur au sol) restaient autour de l'apercu du petit avion choisi ; ils sont caches tant que le hangar est ouvert (`hangar._markers`). La scene du tarmac n'etant pas mise a jour dans le hangar, c'est fait a l'ouverture/fermeture.
+- « Ma place » ouverte depuis le hall du terminal laissait le joueur dans le hall, ou rien ne se pose : on est maintenant emmene au bord de la place des qu'on n'y est pas (on descend aussi du vehicule ou de la monture).

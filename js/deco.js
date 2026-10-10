@@ -12,8 +12,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as Save from './save.js?v=1791603325';
-import { sfx } from './sfx.js?v=1791603325';
+import * as Save from './save.js?v=1791603808';
+import { sfx } from './sfx.js?v=1791603808';
 
 const STORE = 'skymanager.deco';
 const $ = (id) => document.getElementById(id);
@@ -288,10 +288,16 @@ export class Deco {
     document.body.classList.add('in-deco');
     /* On emmene le joueur au bord de la place s'il en est loin. */
     const p = g.player.pos;
-    if (Math.hypot(p.x - 560, p.z - 1237) > 220) {
+    /* Avant : seulement a plus de 220 m. Ouvert depuis le hall du terminal (a ~140 m), on restait dedans
+       et rien ne pouvait se poser. Maintenant : des qu'on n'est pas sur la place (ou qu'on est dans le hall). */
+    const onPlaza = p.x > PLAZA.x0 - 25 && p.x < PLAZA.x1 + 25 && p.z > PLAZA.z0 - 25 && p.z < PLAZA.z1 + 25;
+    if (g.inTerminal || !onPlaza) {
+      for (const v of g.vehicles || []) if (v.active) v.exit();
+      if (g.rides.active) g.rides.dismount(true);
       const w = g.nav.nearestWalkable(540, 1242, 40, 1);
       g.player.pos.set(w.x, g.r3d.groundHeight(w.x, w.z), w.z);
       g.player.heading = Math.PI / 2;
+      g.r3d._hubCamInit = false;
     }
     this._buildGhost();
     this._render();
