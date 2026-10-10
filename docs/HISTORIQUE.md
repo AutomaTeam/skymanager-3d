@@ -2579,3 +2579,14 @@ En vol (camera de poursuite a ~20 m), la fumee blanche emise au bout des ailes p
 
 - Fin de chapitre a pied : la camera survole l'aeroport pendant 3,6 s (confettis, fanfare), interface, etiquettes flottantes et faisceau d'objectif caches, puis l'ecran de fete apparait (`flyover` dans renderCamera.js, pose par `story._show`). En vol, l'ecran de fete attend toujours l'atterrissage, sans survol.
 - Titre de l'album : 📚 (le 📖 est celui de l'aventure).
+
+## Phase 138 - passe de performance graphique
+
+Mesures sur la meme scene (parking de jour, PC RTX 4080, temps CPU par image hors attente du GPU) ; les chiffres absolus varient beaucoup d'une session a l'autre, les gains sont mesures en bascule dans la meme page.
+
+- Bloom : la scene etait rendue en 1x (pixels CSS) dans une cible sans anticrenelage, puis recopiee sur un canevas en 1,8x : sur iPad (ecran 2x), la derniere passe peignait ~3 fois plus de pixels pour rien, et les bords etaient en escalier aux niveaux 0 et 1. Le canevas reste en 1x (meme image) et la cible du bloom a 4 echantillons d'anticrenelage au niveau 0 (`comfort._applyQuality`).
+- Carte d'ombre redessinee une image sur deux quand le point suivi va lentement (a pied, au parking), chaque image en vol ou au-dela de 8 m/s : ~285 appels de dessin de moins une image sur deux en plein jour (-0,8 ms). Niveau 2 inchange (une sur trois).
+- `renderCull.js` (nouveau) : les maillages eclaires de moins de ~1,5 px de rayon a l'ecran sont retires du rendu par leurs `layers` (pas de dessin, pas d'ombre, pas de squelette ; les os d'un personnage ainsi retire ne sont plus recalcules). Reperes de jeu jamais touches (materiaux basic, additifs, sans brouillard, `userData.noCull`). Verifie au pixel pres : 1 pixel de difference au parking (507 objets retires), 84 pixels sur 786 000 en vol au-dessus de l'aeroport (1 021 objets).
+- Matrices : un noeud immobile ne recompose plus sa matrice (263 recompositions par image au lieu de ~3 400 noeuds) et, pendant le rendu, les sous-arbres caches (~1 400 noeuds : PNJ ranges, nuages, cockpit...) sont sautes : 0,9 -> 0,65 ms.
+- Mini-carte redessinee a 30 images/s au lieu de chaque image (0,8 ms de dessin 2D).
+- Verifie : `npm test`, eslint, 12 scenarios (`?scenario=all`), fuzz 25 s sans erreur.

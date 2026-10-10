@@ -2,7 +2,7 @@
    comfort.js — Confort de jeu (mode Arcade, vague 6)
 
    - Qualite automatique : si l'image saccade (iPad ancien), le jeu
-     baisse tout seul la definition, les ombres puis le bloom ;
+     baisse tout seul l'anticrenelage, les ombres puis le bloom ;
      il peut aussi etre regle a la main (Haute / Basse).
    - Gaucher : les gros boutons passent de l'autre cote.
    - Gros texte.
@@ -11,9 +11,9 @@
    - Reglages enregistres : localStorage 'skymanager.comfort'.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791604049';
-import * as Save from './save.js?v=1791604049';
-import { Music } from './music.js?v=1791604049';
+import { sfx } from './sfx.js?v=1791614163';
+import * as Save from './save.js?v=1791614163';
+import { Music } from './music.js?v=1791614163';
 
 const STORE = 'skymanager.comfort';
 const $ = (id) => document.getElementById(id);
@@ -49,7 +49,6 @@ export class Comfort {
     this.level = Math.max(0, Math.min(2, this.data.autoLevel | 0));
     this._fpsAcc = 0; this._fpsN = 0; this._good = 0; this._bad = 0;
     this._playT = 0;
-    this._shadowSkip = 0;
     this._bind();
     this.apply();
   }
@@ -195,17 +194,24 @@ export class Comfort {
     this._applyQuality(d.quality === 'high' ? 0 : d.quality === 'low' ? 2 : this.level);
   }
 
-  /* Niveaux : 0 definition max + ombres + bloom ; 1 definition reduite ;
-     2 definition 1x, ombres rafraichies 1 image sur 3, bloom coupe. */
+  /* Niveaux : 0 anticrenelage + ombres + bloom ; 1 bloom sans anticrenelage ;
+     2 ombres rafraichies 1 image sur 3, bloom coupe, petits objets lointains retires plus tot.
+     Definition : la scene est toujours rendue en 1x (pixels CSS). Avant, le canevas montait a
+     1,8x alors que le bloom rendait la scene en 1x : la derniere passe recopiait l'image
+     agrandie sur 3 fois plus de pixels, sans aucun gain visible. */
   _applyQuality(level) {
     const r3d = this.g.r3d;
-    const dpr = window.devicePixelRatio || 1;
-    const cap = [1.8, 1.25, 1.0][level];
-    r3d.renderer.setPixelRatio(Math.min(dpr, cap));
+    r3d.renderer.setPixelRatio(1);
     r3d.resize();
-    if (r3d.bloom) r3d.bloom.enabled = level < 2;
+    if (r3d.bloom) {
+      r3d.bloom.enabled = level < 2;
+      /* Le canevas a son propre anticrenelage, mais avec le bloom la scene passe par une cible
+         hors ecran qui n'en avait pas : bords en escalier. 4 echantillons au niveau 0. */
+      const rt = r3d.bloom.sceneRT, samples = level === 0 ? 4 : 0;
+      if (rt.samples !== samples) { rt.samples = samples; rt.dispose(); }
+    }
+    if (r3d.cull) r3d.cull.setLevel(level);
     if (r3d.cloudPuffs) r3d.cloudPuffs.enabled = level < 2;   // K01 : pas de nuages traversables en qualite basse
-    r3d.renderer.shadowMap.autoUpdate = level < 2;
     /* D04 : carte d'ombre plus petite quand le niveau baisse (1024 -> 768 -> 512). */
     const ss = [1024, 768, 512][level];
     if (r3d.sun && r3d.shadowSize !== ss) {
@@ -213,7 +219,8 @@ export class Comfort {
       r3d.sun.shadow.mapSize.set(ss, ss);
       if (r3d.sun.shadow.map) { r3d.sun.shadow.map.dispose(); r3d.sun.shadow.map = null; }
     }
-    this._shadowEvery = level >= 2 ? 3 : 1;
+    /* Ombres : une image sur deux quand on va lentement (voir Renderer3D.render), une sur trois au niveau 2. */
+    r3d.shadowEvery = level >= 2 ? 3 : 2;
     this.applied = level;
   }
 
@@ -223,11 +230,6 @@ export class Comfort {
   update(dt) {
     const g = this.g;
     if (g.state === 'BOOT') return;
-    /* ombres: en qualite basse, une image sur trois */
-    if (this._shadowEvery > 1) {
-      this._shadowSkip = (this._shadowSkip + 1) % this._shadowEvery;
-      this.g.r3d.renderer.shadowMap.needsUpdate = this._shadowSkip === 0;
-    }
     /* mesure de la fluidite (dt brut, avant ralenti) */
     const raw = Math.max(0.001, g.rawDt || dt);
     this._fpsAcc += raw; this._fpsN++;

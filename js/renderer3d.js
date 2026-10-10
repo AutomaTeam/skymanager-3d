@@ -4,19 +4,20 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791604049';
-import { preload } from './assetLoader.js?v=1791604049';
-import { LIGHT_GAIN } from './environment.js?v=1791604049';
-import { buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791604049';
-export { RUNWAY, SKIN_TONES, HAIR_TONES } from './renderShared.js?v=1791604049';
-import { skyMethods } from './renderSky.js?v=1791604049';
-import { lightMethods } from './renderLights.js?v=1791604049';
-import { groundMethods } from './renderGround.js?v=1791604049';
-import { cameraMethods } from './renderCamera.js?v=1791604049';
-import { avatarMethods } from './renderAvatar.js?v=1791604049';
-import { cabinMethods } from './renderCabin.js?v=1791604049';
-import { aircraftMethods } from './renderAircraft.js?v=1791604049';
-import { pbr, MODEL } from './renderShared.js?v=1791604049';
+import * as TEX from './textures.js?v=1791614163';
+import { preload } from './assetLoader.js?v=1791614163';
+import { LIGHT_GAIN } from './environment.js?v=1791614163';
+import { buildTerminalInterior as buildTermFurniture } from './terminalBuilding.js?v=1791614163';
+export { RUNWAY, SKIN_TONES, HAIR_TONES } from './renderShared.js?v=1791614163';
+import { skyMethods } from './renderSky.js?v=1791614163';
+import { lightMethods } from './renderLights.js?v=1791614163';
+import { groundMethods } from './renderGround.js?v=1791614163';
+import { cameraMethods } from './renderCamera.js?v=1791614163';
+import { avatarMethods } from './renderAvatar.js?v=1791614163';
+import { cabinMethods } from './renderCabin.js?v=1791614163';
+import { aircraftMethods } from './renderAircraft.js?v=1791614163';
+import { pbr, MODEL } from './renderShared.js?v=1791614163';
+import { RenderCull, renderSkipsHidden } from './renderCull.js?v=1791614163';
 
 
 export class Renderer3D {
@@ -26,7 +27,7 @@ export class Renderer3D {
     this.renderer = new THREE.WebGLRenderer({
       canvas, antialias: true, powerPreference: 'high-performance'
     });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8));
+    this.renderer.setPixelRatio(1);   // voir comfort._applyQuality : la scene est rendue en 1x
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
@@ -83,6 +84,8 @@ export class Renderer3D {
     this.scene.add(this.aircraft.group);
     this.setupFleet();
         this.buildBloom();
+        /* Tri des objets trop petits a l'ecran + matrices des caches (renderCull.js). */
+        this.cull = new RenderCull(this.scene, this.camera, this.renderer);
 
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -639,8 +642,34 @@ export class Renderer3D {
       r.info.autoReset = false;
       r.info.reset();
 
+      /* Matrices mises a jour ici (en sautant les sous-arbres caches), puis tri par taille a
+         l'ecran sur des positions fraiches ; le rendu n'a plus a refaire les matrices. */
+      const sc = this.scene;
+      renderSkipsHidden(true);
+      sc.updateMatrixWorld();
+      renderSkipsHidden(false);
+      const now = performance.now();
+      const dt = Math.min(0.1, (now - (this._cullAt || now)) / 1000);
+      this._cullAt = now;
+      this.cull.update(dt);
+      sc.matrixWorldAutoUpdate = false;
+
+      /* Carte d'ombre : ~300 objets redessines a chaque image en plein jour. Quand le point suivi
+         va lentement (a pied, au parking), une image sur deux suffit : la carte et sa matrice
+         restent coherentes entre elles, l'ombre ne glisse pas. En vol (ou vite), chaque image. */
+      const f = this._shadowFocus, fp = this._shadowFocusPrev || (this._shadowFocusPrev = new THREE.Vector3());
+      let every = this.shadowEvery || 1;
+      if (f) {
+        if (every < 3 && dt > 0 && Math.hypot(f.x - fp.x, f.z - fp.z) / dt > 8) every = 1;
+        fp.set(f.x, f.y || 0, f.z);
+      }
+      this._shadowN = ((this._shadowN || 0) + 1) % every;
+      r.shadowMap.autoUpdate = false;
+      r.shadowMap.needsUpdate = this._shadowN === 0;
+
       if (!b || !b.enabled) {
-        r.render(this.scene, this.camera);
+        r.render(sc, this.camera);
+        sc.matrixWorldAutoUpdate = true;
         r.info.autoReset = true;
         return;
       }
@@ -650,7 +679,8 @@ export class Renderer3D {
          faut donc rendre dans sceneRT pour que les passes suivantes
          puissent le lire. */
       r.setRenderTarget(b.sceneRT);
-      r.render(this.scene, this.camera);
+      r.render(sc, this.camera);
+      sc.matrixWorldAutoUpdate = true;
 
       /* 2. Extraction des hautes lumieres a 1/4 de resolution. */
       b.quad.material = b.brightMat;

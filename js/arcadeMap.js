@@ -3,11 +3,11 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791604049';
-import { LAYOUT } from './layout.js?v=1791604049';
-import { drawIcon } from './icons.js?v=1791604049';
-import { PARK, buildPark } from './rideCourse.js?v=1791604049';
-import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791604049';
+import { sfx } from './sfx.js?v=1791614163';
+import { LAYOUT } from './layout.js?v=1791614163';
+import { drawIcon } from './icons.js?v=1791614163';
+import { PARK, buildPark } from './rideCourse.js?v=1791614163';
+import { MAP_WIN, placeList, MAP_FULL, roundRectPath, seeded, drawPlane, clamp, TREASURE_RADAR, $, BIG_CANVAS, MAP_THEMES, COIN } from './arcadeData.js?v=1791614163';
 
 export const mapMethods = {
   _mapToPx(x, z, w, h) {
@@ -461,6 +461,9 @@ export const mapMethods = {
       if (!last || Math.hypot(last.x - p.x, last.z - p.z) > 2) this._trail.push({ x: p.x, z: p.z });
       if (this._trail.length > 14) this._trail.shift();
     }
+    /* 30 images par seconde suffisent a la mini-carte (0,8 ms de dessin 2D a chaque image sinon). */
+    if (this._mapDrawAt && now - this._mapDrawAt < 30) return;
+    this._mapDrawAt = now;
     this._drawMap(cv, target);
   },
   /* Grande carte (overlay) : redessinee en boucle tant qu'elle est ouverte. */
