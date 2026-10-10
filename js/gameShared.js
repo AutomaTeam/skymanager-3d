@@ -3,7 +3,7 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { STATIONS } from './mechanicSystem.js?v=1791603208';
+import { STATIONS } from './mechanicSystem.js?v=1791603325';
 
 export const $ = (id) => document.getElementById(id);
 
@@ -57,7 +57,7 @@ export const CONTROL_RADIUS = 4.5;
 
 export const CONTROL_SPEED = { mechanic: 3.6, ramp: 3.8 };
 
-export const CONTROL_LABEL = { mechanic: 'MECANICIEN', ramp: 'AGENT DE PISTE' };
+export const CONTROL_LABEL = { mechanic: 'MÉCANICIEN', ramp: 'AGENT DE PISTE' };
 
 /* Boutons contextuels du monde libre, en mots simples (mode Arcade). */
 export const ARCADE_LABEL = {

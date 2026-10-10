@@ -23,8 +23,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791603208';
-import { instanced } from './props.js?v=1791603208';
+import { LAYOUT } from './layout.js?v=1791603325';
+import { instanced } from './props.js?v=1791603325';
 
 const L = LAYOUT;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -322,7 +322,7 @@ export class AirportLife {
       g.add(p);
     }
     sign('AVIATION LÉGÈRE', (ga.x0 + ga.x1) / 2, 12, ga.z0 - 2, { bg: '#0e7490', w: 34, h: 9 });
-    sign('HELIPORT', hp.x, 14, hp.z - 16, { bg: '#7c3aed', w: 26, h: 8 });
+    sign('HÉLIPORT', hp.x, 14, hp.z - 16, { bg: '#7c3aed', w: 26, h: 8 });
 
     /* --- Entree cote ville du terminal : porte, auvent, panneau --- */
     const ld = L.landsideDoor;

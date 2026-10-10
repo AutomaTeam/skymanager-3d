@@ -23,10 +23,10 @@
    qui a besoin de la liste COUNTERS).
    ============================================================ */
 import * as THREE from 'three';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791603208';
-import { LAYOUT } from './layout.js?v=1791603208';
-import { SHIRTS } from './terminalFlow.js?v=1791603208';
-import { buildTerminalDesign } from './terminalDesign.js?v=1791603208';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791603325';
+import { LAYOUT } from './layout.js?v=1791603325';
+import { SHIRTS } from './terminalFlow.js?v=1791603325';
+import { buildTerminalDesign } from './terminalDesign.js?v=1791603325';
 
 const T = LAYOUT.terminal;
 const W = T.x1 - T.x0;
@@ -417,7 +417,7 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
         }
         light = mesh(dg, new THREE.SphereGeometry(0.14, 8, 6), new THREE.MeshBasicMaterial({ color: 0x34d399 }), 0, 2.45, 0);
       }
-      const hang = panelSign(c.kind === 'vending' ? 'DISTRIBUTEUR' : 'RESERVE', { bg: c.kind === 'vending' ? '#991b1b' : '#78350f', w: 2.4, h: 0.6, both: true });
+      const hang = panelSign(c.kind === 'vending' ? 'DISTRIBUTEUR' : 'RÉSERVE', { bg: c.kind === 'vending' ? '#991b1b' : '#78350f', w: 2.4, h: 0.6, both: true });
       hang.position.set(0, c.kind === 'vending' ? 2.7 : 3.0, 0);
       dg.add(hang);
       g.add(dg);
@@ -443,8 +443,8 @@ export function buildTerminalInterior({ TEX, pbr, LIGHT_GAIN }, counters) {
       new THREE.MeshBasicMaterial({ color: 0x34d399 }), 0, 2.0, 0);
 
     /* Enseigne suspendue : cable + panneau lisible. */
-    const label = { checkin: 'ENREGISTREMENT', security: 'SURETE', gate: 'EMBARQUEMENT', shop: 'DUTY FREE', cafe: 'CAFE',
-      baggage: 'TRI BAGAGES', vending: 'DISTRIBUTEUR', storage: 'RESERVE' }[c.kind] || c.label;
+    const label = { checkin: 'ENREGISTREMENT', security: 'SÛRETÉ', gate: 'EMBARQUEMENT', shop: 'BOUTIQUE', cafe: 'CAFÉ',
+      baggage: 'TRI BAGAGES', vending: 'DISTRIBUTEUR', storage: 'RÉSERVE' }[c.kind] || c.label;
     const hang = panelSign(label, { bg: isShop ? '#7c2d12' : '#0c4a6e', w: deskW * 1.5, h: 0.8, both: true });
     hang.position.set(0, 3.4, 0);
     deskGroup.add(hang);

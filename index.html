@@ -259,7 +259,7 @@
   <div class="hud-top">
       <div class="gauge-cluster">
       <div class="gauge wide"><span class="gauge-lbl">SATISFACTION</span><span id="cabSat" class="gauge-val">78</span><span class="gauge-unit">%</span></div>
-      <div class="gauge wide"><span class="gauge-lbl">DUTY-FREE</span><span id="cabRevenue" class="gauge-val">0</span><span class="gauge-unit">EUR</span></div>
+      <div class="gauge wide"><span class="gauge-lbl">VENTES</span><span id="cabRevenue" class="gauge-val">0</span><span class="gauge-unit">🛍️</span></div>
     </div>
   </div>
 
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791603208').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791603325').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791603208"></script>
+<script type="module" src="js/main.js?v=1791603325"></script>
 </body>
 </html>

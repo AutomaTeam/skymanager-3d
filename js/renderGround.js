@@ -4,17 +4,17 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import * as TEX from './textures.js?v=1791603208';
-import { spawnModel } from './assetLoader.js?v=1791603208';
-import { LIGHT_GAIN } from './environment.js?v=1791603208';
-import { LAYOUT } from './layout.js?v=1791603208';
-import { buildDecor } from './decor.js?v=1791603208';
-import { buildSkyLife } from './skylife.js?v=1791603208';
-import { AirportLife } from './airportLife.js?v=1791603208';
-import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791603208';
-import { buildTerminalShell } from './terminalBuilding.js?v=1791603208';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791603208';
-import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791603208';
+import * as TEX from './textures.js?v=1791603325';
+import { spawnModel } from './assetLoader.js?v=1791603325';
+import { LIGHT_GAIN } from './environment.js?v=1791603325';
+import { LAYOUT } from './layout.js?v=1791603325';
+import { buildDecor } from './decor.js?v=1791603325';
+import { buildSkyLife } from './skylife.js?v=1791603325';
+import { AirportLife } from './airportLife.js?v=1791603325';
+import { buildLandscape, buildAirportDecor } from './scenery.js?v=1791603325';
+import { buildTerminalShell } from './terminalBuilding.js?v=1791603325';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791603325';
+import { pbr, RUNWAY, LINK_Z, TOWER, MODEL, makeSign } from './renderShared.js?v=1791603325';
 
 export const groundMethods = {
       buildTerrain() {
@@ -499,7 +499,7 @@ boom.add(dockGrp);
       { t: 'HANGARS',         at: [540, 36, 1010], opt: { bg: '#b45309', w: 40, h: 10 } },
       { t: 'PARKING',         at: [360, 12, 1372], opt: { bg: '#15803d', w: 30, h: 8 } },
       { t: 'PISTE',           at: [78, 16, 1420], opt: { bg: '#334155', w: 24, h: 8 } },
-      { t: 'ENTREE',          at: [660, 10, 1230], opt: { bg: '#0f766e', w: 22, h: 7 } }
+      { t: 'ENTRÉE',          at: [660, 10, 1230], opt: { bg: '#0f766e', w: 22, h: 7 } }
     ];
     for (const sg of signs) {
       const spr = makeSign(sg.t, sg.opt);

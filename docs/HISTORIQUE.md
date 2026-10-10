@@ -2563,3 +2563,8 @@ Sur l'ecran titre (prenom + JOUER), l'avion de ligne etait en (0, 0, 0) : au mil
 ## Phase 134 - la fumee des ailes ne recouvre plus l'ecran
 
 En vol (camera de poursuite a ~20 m), la fumee blanche emise au bout des ailes passait entre la camera et l'avion : deux enormes taches blanches couvraient les cotes de l'ecran. Le shader des particules (`particles.js`) accepte maintenant `fadeNear` (effacement pres de la camera) et `maxPx` (taille maxi a l'ecran) ; la fumee s'efface entre 35 % et 85 % de la distance camera-avion et ne depasse pas 10 % de la hauteur d'ecran. Les autres particules ne changent pas. Verifie avant/apres a l'ecran en 1024x768.
+
+## Phase 135 - cabine et panneaux en mots d'enfant
+
+- Cabine (Arcade) : « 🛍️ VENDRE UN CADEAU » au lieu de « VENDRE (DUTY-FREE) », jauge « VENTES » qui compte les ventes (avant : un montant en EUR).
+- Panneaux 3D en majuscules oublies par l'outil d'accents (il saute volontairement les mots seuls en majuscules, qui servent aussi de cles comme les phases de vol) : HÉLIPORT, ENTRÉE, SÛRETÉ, CAFÉ, RÉSERVE, MÉCANICIEN ; « DUTY FREE » devient « BOUTIQUE ».

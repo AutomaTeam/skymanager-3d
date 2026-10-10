@@ -3,14 +3,14 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791603208';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791603325';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791603208';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791603208';
-import { COUNTERS } from './terminalSystem.js?v=1791603208';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791603208';
-import { sfx } from './sfx.js?v=1791603208';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791603208';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791603325';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791603325';
+import { COUNTERS } from './terminalSystem.js?v=1791603325';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791603325';
+import { sfx } from './sfx.js?v=1791603325';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791603325';
 
 /* Noms simples des pieces au poste de reparation (mode Arcade). */
 const KID_PART = {
@@ -788,7 +788,7 @@ export const hubMethods = {
         : { kind: 'cockpit', label: '✈️ ALLER AU COCKPIT' };
     }
     if (!near && Math.abs(att.z - 0.9) < 1.7) {
-      near = { kind: 'cart', label: 'VENDRE (DUTY-FREE)' };
+      near = { kind: 'cart', label: this.arcade.on ? '🛍️ VENDRE UN CADEAU' : 'VENDRE (DUTY-FREE)' };
     }
     this.nearInteraction = near;
     $('btnServe').classList.toggle('hidden', !near);
@@ -805,7 +805,7 @@ export const hubMethods = {
     /* Panneau passager indiscipline (ouvert manuellement via GERER, pas automatique) */
 
     $('cabSat').textContent = cabin.satisfaction.toFixed(0);
-    $('cabRevenue').textContent = cabin.dutyFreeRevenue.toLocaleString('fr-FR');
+    $('cabRevenue').textContent = this.arcade.on ? String(cabin.sold || 0) : cabin.dutyFreeRevenue.toLocaleString('fr-FR');     // en Arcade : nombre de ventes (pas d'euros)
     $('cabSat').parentElement.classList.toggle('warn', cabin.satisfaction < 35);
     $('cabStock').textContent = cabin.cartStock;
     $('cabStock').parentElement.classList.toggle('warn', cabin.cartStock <= 2);
@@ -836,6 +836,7 @@ export const hubMethods = {
       }
     } else if (near.kind === 'cart') {
       const amount = this.cabin.sellDutyFree();
+      this.cabin.sold = (this.cabin.sold || 0) + 1;
       if (!this.arcade.on) { this.tycoon.cash += amount; this.tycoon.save(); }
       if (this.arcade.on) this.arcade.giveCoins(3, { label: 'Vente !' });
       else this.toast(`Vente duty-free : +${amount} EUR`, 1800);
