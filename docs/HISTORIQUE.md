@@ -2574,3 +2574,8 @@ En vol (camera de poursuite a ~20 m), la fumee blanche emise au bout des ailes p
 - GÉRER : « À réparer bientôt : 💧 Tuyaux d'huile » au lieu de « À surveiller : Circuits hydrauliques » (`KID_PART` exporte depuis hubUpdate.js).
 - Hangar : les reperes de reparation de l'avion de ligne (cercles et points de couleur au sol) restaient autour de l'apercu du petit avion choisi ; ils sont caches tant que le hangar est ouvert (`hangar._markers`). La scene du tarmac n'etant pas mise a jour dans le hangar, c'est fait a l'ouverture/fermeture.
 - « Ma place » ouverte depuis le hall du terminal laissait le joueur dans le hall, ou rien ne se pose : on est maintenant emmene au bord de la place des qu'on n'y est pas (on descend aussi du vehicule ou de la monture).
+
+## Phase 137 - survol de l'aeroport en fin de chapitre (A7), album
+
+- Fin de chapitre a pied : la camera survole l'aeroport pendant 3,6 s (confettis, fanfare), interface, etiquettes flottantes et faisceau d'objectif caches, puis l'ecran de fete apparait (`flyover` dans renderCamera.js, pose par `story._show`). En vol, l'ecran de fete attend toujours l'atterrissage, sans survol.
+- Titre de l'album : 📚 (le 📖 est celui de l'aventure).

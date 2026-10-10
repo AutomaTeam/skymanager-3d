@@ -82,3 +82,4 @@ des sensations**. Diagnostic fait en jouant une partie neuve dans le Browser pan
 | G (ajout) | ✅ | phases 127-128 : `js/growth.js`, chaque achat se voit (kiosques, portes, VIP, toit, balises, avions garés) + kiosques où l'on achète une glace (trophée Gourmand) ; cadeau du chapitre affiché |
 | Contrôle tablette | ✅ | phases 129-130 : tours du chien qui cachaient 🛹 (bug existant), VUE qui chevauchait ATTERRIR ; vérifié par `elementFromPoint` en 1024x768 |
 | Passe du 2026-10-10 | ✅ | phases 131-135 : nouveautés fusionnées (212 → 77 maillages), 2e moitié du tutoriel jouée pour de vrai, l'aventure ne répète plus le tutoriel, plus aucun €, écran titre avec l'avion à sa porte (il était enterré), fumée des ailes qui ne couvre plus l'écran, cabine sans jargon, panneaux accentués |
+| A7 | ✅ | phase 137 : survol camera de 3,6 s avant l'écran de fin de chapitre (à pied) |

@@ -2118,3 +2118,7 @@ body.lefty[data-state="HUB"] .mascot, body.lefty[data-state="CABIN"] .mascot { l
   color: #422006; background: linear-gradient(135deg, #fde047, #f59e0b); text-align: center; }
 /* En Arcade, le gros bouton ATTERRIR (aide) occupe le coin : le bouton VUE se pousse a gauche (il le chevauchait de ~20 px). */
 body.arcade:not(.lefty) #quickBtns { right: 13.4rem; }
+/* A7 : survol de fin de chapitre, l'ecran est au spectacle (confettis seulement). */
+body.flyover #arcadeHud, body.flyover #funDock, body.flyover #btnInspect, body.flyover #petTricks, body.flyover #hubStickPad,
+body.flyover #miniMap, body.flyover #objBar, body.flyover #btnHub, body.flyover #coinChip, body.flyover #hudHub,
+body.flyover .mascot, body.flyover #btnMenu2 { visibility: hidden !important; }

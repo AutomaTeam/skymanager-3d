@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791603808';
-import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791603808';
+import { sfx } from './sfx.js?v=1791604049';
+import { seeded, clamp, $, todayKey, RING_TOTAL, DESTINATIONS, TREASURE_SPOTS, GROUND_CLEAR, RING_RADIUS, RING_AHEAD, PLAN_TYPES, EXPRESS_TIME, iconifyHost, TREASURE_COUNT } from './arcadeData.js?v=1791604049';
 
 export const flightMethods = {
   /* ---------------- Anneaux de vol ---------------- */
@@ -306,7 +306,7 @@ export const flightMethods = {
   _renderBeacon(target) {
     const r3d = this.g.r3d;
     const st = this.g.state;
-    const usable = target && st === 'HUB';
+    const usable = target && st === 'HUB' && !r3d.flyover;      // pas de faisceau pendant le survol de fin de chapitre
     const key = usable ? `${Math.round(target.x)}:${Math.round(target.z)}` : '';
     if (key !== this._beaconKey) {
       this._beaconKey = key;

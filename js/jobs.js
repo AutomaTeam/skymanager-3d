@@ -7,8 +7,8 @@
    Module du registre (js/registry.js). Etat : skymanager.jobs.
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791603808';
-import * as Save from './save.js?v=1791603808';
+import { sfx } from './sfx.js?v=1791604049';
+import * as Save from './save.js?v=1791604049';
 
 const STORE = 'skymanager.jobs';
 

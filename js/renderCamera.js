@@ -4,8 +4,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { COCKPIT_EYE } from './cockpit.js?v=1791603808';
-import { clamp01s } from './renderShared.js?v=1791603808';
+import { COCKPIT_EYE } from './cockpit.js?v=1791604049';
+import { clamp01s } from './renderShared.js?v=1791604049';
 
 export const cameraMethods = {
   /* ---------------------------------------------------------- */
@@ -140,6 +140,24 @@ export const cameraMethods = {
          d'ombre : le frustum de 140 m couvre largement l'avatar, les
          agents proches et l'appareil quand on s'en approche. */
       this._shadowFocus = player.pos;
+      /* Plan « jeu cool » A7 : fin de chapitre, la camera survole l'aeroport (quelques secondes)
+         avant l'ecran de fete. `flyover` = { t, dur, x, z } pose par story.js. */
+      if (this.flyover) {
+        const f = this.flyover;
+        f.t += dt;
+        const k = Math.min(1, f.t / f.dur), e = k * k * (3 - 2 * k);
+        /* Etiquettes flottantes (TERMINAL, TOUR...) cachees pendant le survol. */
+        for (const key in this.hotspotMarkers || {}) this.hotspotMarkers[key].group.visible = k >= 1;
+        if (k >= 1) { this.flyover = null; this._hubCamInit = false; } else {
+          const a = -0.9 + e * 2.4, r = 210 - 70 * e;
+          cam.position.set(f.x + Math.sin(a) * r, 95 - 40 * e, f.z + Math.cos(a) * r);
+          cam.lookAt(f.x, 4, f.z);
+          cam.fov = 55;
+          cam.updateProjectionMatrix();
+          this._shadowFocus = new THREE.Vector3(f.x, 0, f.z);
+          return;
+        }
+      }
       /* A roulettes (phase 40) : camera plus loin, plus haute et plus large quand on va vite. */
       const rc = player.rideCam;
       const ch = rc && player.camHeading != null ? player.camHeading : player.heading;

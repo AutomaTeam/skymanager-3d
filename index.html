@@ -917,7 +917,7 @@
 <!-- ============ ALBUM DE COLLECTION ============ -->
 <div id="albumPanel" class="hidden panel-overlay">
   <div class="panel-card wide kid">
-    <h2 class="panel-title text-center">📖 Mon album</h2>
+    <h2 class="panel-title text-center">📚 Mon album</h2>
     <p class="text-center text-xs text-slate-300">Cartes trouvées : <b id="albumTotal">0 / 0</b></p>
     <div class="al-bar"><span id="albumBar"></span></div>
     <div id="albumTabs" class="al-tabs"></div>
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791603808').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791604049').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791603808"></script>
+<script type="module" src="js/main.js?v=1791604049"></script>
 </body>
 </html>

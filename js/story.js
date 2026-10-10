@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791603808';
-import { load, write } from './save.js?v=1791603808';
+import { sfx } from './sfx.js?v=1791604049';
+import { load, write } from './save.js?v=1791604049';
 
 const STORE = 'skymanager.story';
 
@@ -366,7 +366,8 @@ export class Story {
     this.celebrate({
       ico: final ? '🏆' : c.ico, final, title: c.title, text: c.outro, gifts: lines,
       kicker: final ? 'AVENTURE TERMINÉE !' : `CHAPITRE ${CHAPTERS.indexOf(c) + 1} TERMINÉ !`,
-      toast: final ? '🏆 Nouveau titre : Légende de l\'aventure !' : null
+      toast: final ? '🏆 Nouveau titre : Légende de l\'aventure !' : null,
+      flyover: true
     });
   }
 
@@ -380,6 +381,23 @@ export class Story {
   _show(card) {
     const g = this.g, A = g.arcade;
     this._celebrating = true;
+    /* A7 : a pied, une fin de chapitre commence par un survol de l'aeroport (confettis, fanfare),
+       puis l'ecran de fete apparait. */
+    if (card.flyover && g.state === 'HUB' && !card._flown) {
+      card._flown = true;
+      g.r3d.flyover = { t: 0, dur: 3.6, x: 380, z: 1110 };
+      document.body.classList.add('flyover');          // boutons caches le temps du survol (style.css)
+      sfx.whoosh();
+      setTimeout(() => sfx.levelUp(), 400);
+      A.confetti(60);
+      setTimeout(() => {
+        g.r3d.flyover = null; g.r3d._hubCamInit = false;
+        for (const m of Object.values(g.r3d.hotspotMarkers || {})) m.group.visible = true;
+        document.body.classList.remove('flyover');
+        this._show(card);
+      }, 3700);
+      return;
+    }
     const $ = (id) => this.cel.querySelector('#' + id);
     $('scIco').textContent = card.ico;
     $('scKicker').textContent = card.kicker;
