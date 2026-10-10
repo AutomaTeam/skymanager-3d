@@ -2544,3 +2544,7 @@ Acheter une amelioration ne changeait que des chiffres. Maintenant chaque achat 
 ## Phase 130 - bouton VUE qui chevauchait ATTERRIR
 
 En vol (Arcade, format tablette 1024x768), le bouton « VUE » recouvrait ~20 px du gros bouton « ATTERRIR (aide) » : un enfant qui visait l'atterrissage pouvait changer de camera. Le groupe des boutons rapides (`#quickBtns`) se decale a gauche en Arcade (pas en mode gaucher, ou le gros bouton est a gauche).
+
+## Phase 131 - l'aeroport qui grandit coute moins cher a dessiner
+
+Mesure au parking (tout achete) : les nouveautes de growth.js ajoutaient ~90 appels de dessin (212 maillages). Materiaux partages entre kiosques et drapeaux, fusion par materiau de chaque partie, un seul avion gare construit puis copie (seule la peinture d'accent differe) : 77 maillages, ~35 appels de dessin.

@@ -17,10 +17,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791578069';
-import { load, write } from './save.js?v=1791578069';
-import { LAYOUT } from './layout.js?v=1791578069';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791578069';
+import { sfx } from './sfx.js?v=1791602648';
+import { load, write } from './save.js?v=1791602648';
+import { LAYOUT } from './layout.js?v=1791602648';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791602648';
 
 const STORE = 'skymanager.growth';
 const T = LAYOUT.terminal;
@@ -69,14 +69,19 @@ function stripes(c1, c2) {
   return tex;
 }
 
+/* Materiaux partages entre kiosques (et une couleur par kiosque) : apres fusion, quelques appels de dessin au lieu d'un par piece. */
+const SHARED = {};
+const sharedMat = (key, make) => SHARED[key] || (SHARED[key] = make());
+
 function buildKiosk(k) {
   const g = new THREE.Group();
-  const wood = new THREE.MeshStandardMaterial({ color: 0xfefce8, roughness: 0.8 });
+  const wood = sharedMat('wood', () => new THREE.MeshStandardMaterial({ color: 0xfefce8, roughness: 0.8 }));
+  const colorMat = sharedMat('k' + k.c1, () => new THREE.MeshStandardMaterial({ color: new THREE.Color(k.c1), roughness: 0.5 }));
   const counter = new THREE.Mesh(new THREE.BoxGeometry(3, 1.1, 1.6), wood);
   counter.position.y = 0.55;
-  const front = new THREE.Mesh(new THREE.BoxGeometry(3.02, 0.5, 1.62), new THREE.MeshStandardMaterial({ color: new THREE.Color(k.c1), roughness: 0.6 }));
+  const front = new THREE.Mesh(new THREE.BoxGeometry(3.02, 0.5, 1.62), colorMat);
   front.position.y = 0.85;
-  const postMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+  const postMat = sharedMat('post', () => new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 }));
   for (const sx of [-1.4, 1.4]) for (const sz of [-0.7, 0.7]) {
     const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 2.3, 6), postMat);
     p.position.set(sx, 1.15 + 0.6, sz);
@@ -89,7 +94,7 @@ function buildKiosk(k) {
   sign.position.set(0, 3.5, -0.95);
   sign.rotation.y = Math.PI;               // lisible depuis le tarmac (vers -z)
   /* Une petite marchandise colorée sur le comptoir. */
-  const goods = new THREE.Mesh(new THREE.SphereGeometry(0.28, 10, 8), new THREE.MeshStandardMaterial({ color: new THREE.Color(k.c1), roughness: 0.4 }));
+  const goods = new THREE.Mesh(new THREE.SphereGeometry(0.28, 10, 8), colorMat);
   goods.position.set(0.6, 1.35, -0.2);
   g.add(counter, front, awning, sign, goods);
   return g;
@@ -175,6 +180,7 @@ export class Growth {
     const grp = new THREE.Group();
     grp.name = 'growth-' + kind;
     this['_build_' + kind](grp, n);
+    if (kind !== 'fleet') mergeStaticByMaterial(grp);     // les pieces qui partagent un materiau = un seul appel de dessin
     this.parts[kind] = grp;
     this.root.add(grp);
   }
@@ -214,11 +220,12 @@ export class Growth {
     if (n >= 1) {
       /* Drapeaux de toutes les couleurs le long du toit, côté pistes. */
       const cols = [0xef4444, 0xf59e0b, 0x22c55e, 0x3b82f6, 0xa855f7, 0xec4899];
-      const pole = new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.4, metalness: 0.6 });
+      const pole = sharedMat('pole', () => new THREE.MeshStandardMaterial({ color: 0xe5e7eb, roughness: 0.4, metalness: 0.6 }));
       for (let i = 0, x = T.x0 + 10; x <= T.x1 - 10; x += 20, i++) {
         const p = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 4, 6), pole);
         p.position.set(x, T.h + 2, T.z0 + 1.5);
-        const f = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.1), new THREE.MeshStandardMaterial({ color: cols[i % cols.length], side: THREE.DoubleSide, roughness: 0.8 }));
+        const col = cols[i % cols.length];
+        const f = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.1), sharedMat('flag' + col, () => new THREE.MeshStandardMaterial({ color: col, side: THREE.DoubleSide, roughness: 0.8 })));
         f.position.set(x + 0.95, T.h + 3.4, T.z0 + 1.5);
         f.userData.flag = i;
         grp.add(p, f);
@@ -258,15 +265,23 @@ export class Growth {
 
   _build_fleet(grp, n) {
     this.planes = [];
+    /* Un seul avion construit, les autres en sont des copies : memes materiaux (donc fusionnables
+       ensemble), sauf la peinture d'accent (rough 0.32, metal 0.2) propre a chaque compagnie. */
+    let model = null;
     for (let i = 0; i < n; i++) {
       const [x, z] = STANDS[i];
-      const a = this.g.r3d.buildStaticAircraft(grp, new THREE.Vector3(x, 3.45, z), 180);
-      /* Couleur de compagnie : on teinte la peinture d'accent (rough 0.32, metal 0.2). */
+      let a;
+      if (!model) { a = model = this.g.r3d.buildStaticAircraft(grp, new THREE.Vector3(x, 3.45, z), 180); } else { a = model.clone(); a.position.set(x, 3.45, z); grp.add(a); }
       const tint = FLEET_TINT[i % FLEET_TINT.length];
+      let accent = null;
       a.traverse(o => {
         if (!o.isMesh || !o.material || o.material.roughness !== 0.32 || o.material.metalness !== 0.2) return;
-        if (o.material.map) { o.material.map = null; o.material.needsUpdate = true; }    // la texture de livrée (bleu nuit) mangeait la teinte
-        o.material.color.setHex(tint);
+        if (!accent) {
+          accent = o.material.clone();
+          accent.map = null;                // la texture de livrée (bleu nuit) mangeait la teinte
+          accent.color.setHex(tint);
+        }
+        o.material = accent;
       });
       this.planes.push({ x, z });
     }
