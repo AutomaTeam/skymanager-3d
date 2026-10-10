@@ -3,14 +3,14 @@
    (decoupe de main.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791602648';
+import { slideMove, collectBodies, depenetrate } from './bodies.js?v=1791602844';
 import * as THREE from 'three';
-import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791602648';
-import { STATIONS, PARTS } from './mechanicSystem.js?v=1791602648';
-import { COUNTERS } from './terminalSystem.js?v=1791602648';
-import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791602648';
-import { sfx } from './sfx.js?v=1791602648';
-import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791602648';
+import { REQUEST_LABELS, NEEDS_STOCK } from './cabinService.js?v=1791602844';
+import { STATIONS, PARTS } from './mechanicSystem.js?v=1791602844';
+import { COUNTERS } from './terminalSystem.js?v=1791602844';
+import { TODAY, SHIRTS, gateNotes } from './terminalFlow.js?v=1791602844';
+import { sfx } from './sfx.js?v=1791602844';
+import { $, clamp, IS_TOUCH, HUB_WALK_SPEED, CONTROL_SPEED, PLAYER_TURN_SPEED, HOTSPOTS, CONTROL_RADIUS, CONTROL_ROLES, CONTROL_LABEL, ARCADE_LABEL } from './gameShared.js?v=1791602844';
 
 /* Noms simples des pieces au poste de reparation (mode Arcade). */
 const KID_PART = {
@@ -378,7 +378,7 @@ export const hubMethods = {
           rule = `Compare le billet au vol du jour, puis regarde le poids du bagage (limite ${TODAY.bagLimit} kg).`;
           body = who + card('BILLET', `<div class="big">${pax.name}</div><div>Vol : <b>${pax.flight}</b> · siège ${pax.seat}</div>` +
                  `<div class="ref">Vol du jour : ${TODAY.flight} → ${TODAY.dest}</div>`) +
-                 card('BAGAGE', `<div class="big">${pax.kg} kg</div><div class="ref">Limite : ${TODAY.bagLimit} kg · surcharge ${TODAY.feePerKg} €/kg</div>`);
+                 card('BAGAGE', `<div class="big">${pax.kg} kg</div><div class="ref">Limite : ${TODAY.bagLimit} kg · plus lourd = surcharge à payer</div>`);
           btns = [['ok', 'ok', '✅ VALIDER', 'en règle'], ['fee', 'fee', '💰 SURCHARGE', 'bagage trop lourd'], ['refuse', 'no', '⛔ REFUSER', 'mauvais vol']];
         } else if (c.kind === 'security') {
           title = '🛃 Contrôle de sûreté';
@@ -418,7 +418,7 @@ export const hubMethods = {
         v.innerHTML = res.ok ? res.msg : `${res.msg}<small>${res.why}</small>`;
         if (res.ok) {
           if (A.on) { A.giveCoins(res.coins, { silent: false }); A.event('serve'); } else sfx.click();
-          if (res.fee) this.toast(`💰 Surcharge : +${res.fee} €`, 1400, 'ok');
+          if (res.fee) this.toast('💰 Surcharge payée par le passager !', 1400, 'ok');
         } else {
           sfx.oops();
         }
@@ -628,7 +628,7 @@ export const hubMethods = {
     $('mgResult').textContent = bits.join(' · ');
     $('mgTapBtn').textContent = 'CONTINUER';
     if (this.arcade.on) {
-      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! ✨' : rawAvg >= 55 ? 'Bien joué !' : 'Répare, mais essaie plus précis !';
+      $('mgResult').textContent = rawAvg >= 85 ? 'PARFAIT ! ✨' : rawAvg >= 55 ? 'Bien joué !' : 'Réparé, mais essaie plus précis !';
       this.arcade.giveCoins(3 + Math.round(rawAvg / 25), { label: 'Réparation !' });
       this.arcade.event('repair');
     }

@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791602648').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791602844').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791602648"></script>
+<script type="module" src="js/main.js?v=1791602844"></script>
 </body>
 </html>

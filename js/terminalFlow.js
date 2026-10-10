@@ -144,7 +144,7 @@ export function evaluate(stage, p, choice) {
     }
     if (isHeavy(p) && !p.feePaid) {
       const fee = overweightFee(p);
-      if (choice === 'fee') return good(`Surcharge de ${fee} € encaissée (${p.kg} kg).`, 4, true, { fee });
+      if (choice === 'fee') return good(`Surcharge payée (${p.kg} kg, c'est trop lourd).`, 4, true, { fee });
       if (choice === 'refuse') return bad('Inutile de refuser : il fallait faire payer la surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -2, false);
       return bad('Bagage trop lourd accepté sans surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg. Tu pourras encore encaisser à la porte !`, -2);
     }
@@ -180,7 +180,7 @@ export function evaluate(stage, p, choice) {
     }
     if (feeDue(p)) {
       const fee = overweightFee(p);
-      if (choice === 'fee') return good(`Rattrapé ! Surcharge de ${fee} € encaissée.`, 4, true, { fee });
+      if (choice === 'fee') return good(`Rattrapé ! Le passager paie sa surcharge.`, 4, true, { fee });
       if (choice === 'refuse') return bad('Inutile de le refuser : il suffisait d\'encaisser la surcharge.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -2, false);
       return bad('Surcharge oubliée : elle n\'a jamais été payée.', `${p.kg} kg, la limite est ${TODAY.bagLimit} kg.`, -1.5);
     }

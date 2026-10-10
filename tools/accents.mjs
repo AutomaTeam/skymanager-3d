@@ -102,7 +102,8 @@ const EXCEPT = [
   ['est monte', 'est monté'],
   ['Rattrape !', 'Rattrapé !'],
   ['\u0001 a destination', '\u0001 à destination'],
-  ['<b>Décollé</b>', '<b>Décolle</b>']
+  ['<b>Décollé</b>', '<b>Décolle</b>'],
+  ['Répare, mais essaie', 'Réparé, mais essaie']
 ];
 
 function caseLike(src, rep) {

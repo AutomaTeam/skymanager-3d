@@ -2548,3 +2548,10 @@ En vol (Arcade, format tablette 1024x768), le bouton « VUE » recouvrait ~20 px
 ## Phase 131 - l'aeroport qui grandit coute moins cher a dessiner
 
 Mesure au parking (tout achete) : les nouveautes de growth.js ajoutaient ~90 appels de dessin (212 maillages). Materiaux partages entre kiosques et drapeaux, fusion par materiau de chaque partie, un seul avion gare construit puis copie (seule la peinture d'accent differe) : 77 maillages, ~35 appels de dessin.
+
+## Phase 132 - deuxieme moitie du tutoriel jouee pour de vrai, plus d'euros
+
+- Tutoriel joue sur une sauvegarde neuve : reparer (mini-jeu), terminal, 3 passagers (valider / surcharge), tour -> le chapitre 1 de l'aventure demarre. Tout passe.
+- Le chapitre 1 commencait par « Enregistre 3 passagers », exactement ce que le tutoriel venait de faire : il commence maintenant par un achat a la tour (ou l'enfant se trouve deja, et il voit l'aeroport grandir) ; les passagers passent en 4e quete (5). Le chapitre 2 fait decouvrir les montures (« J'y vais ! » ouvre le choix de la monture).
+- Plus aucun « € » : la surcharge de bagage n'etait jamais creditee, le texte dit maintenant « plus lourd = surcharge a payer ».
+- « Réparé, mais essaie plus précis ! » (l'outil d'accents avait mis « Répare »).

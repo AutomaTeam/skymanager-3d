@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791602648';
-import { load, write } from './save.js?v=1791602648';
+import { sfx } from './sfx.js?v=1791602844';
+import { load, write } from './save.js?v=1791602844';
 
 const STORE = 'skymanager.story';
 
@@ -29,10 +29,11 @@ export const CHAPTERS = [
     outro: 'Les premiers voyageurs adorent ton aéroport. Tout le monde en parle en ville !',
     reward: { coins: 60, paint: true },
     quests: [
-      { ev: 'serve', n: 3, ico: '🧳', text: 'Enregistre {n} passagers au comptoir du terminal', where: 'counter' },
+      /* Le tutoriel se termine a la tour : on commence par y acheter quelque chose (on voit l'aeroport grandir). */
+      { ev: 'buy', n: 1, ico: '🛍️', text: 'Achète une amélioration au bureau de la tour : regarde ce qui apparaît !', where: 'tower' },
       { ev: 'minigame', n: 1, ico: '🧽', text: 'Lave ou fais le plein de l\'avion (mini-jeu)', where: 'wash' },
       { ev: 'landing', n: 2, ico: '🛬', text: 'Réussis {n} atterrissages', where: 'cockpit' },
-      { ev: 'buy', n: 1, ico: '🛍️', text: 'Achète une amélioration au bureau de la tour', where: 'tower' }
+      { ev: 'serve', n: 5, ico: '🧳', text: 'Enregistre {n} passagers au comptoir du terminal', where: 'counter' }
     ]
   },
   {
@@ -44,7 +45,7 @@ export const CHAPTERS = [
       { ev: 'tugTrip', n: 1, ico: '🚜', text: 'Livre les valises à l\'avion avec le tracteur jaune', where: 'tug' },
       { ev: 'busTrip', n: 1, ico: '🚌', text: 'Emmène les passagers à l\'avion avec le bus', where: 'bus' },
       { ev: 'greet', n: 3, ico: '👋', text: 'Dis bonjour à {n} personnes', where: 'spot' },
-      { ev: 'serve', n: 5, ico: '🎫', text: 'Vérifie encore {n} passagers au terminal', where: 'counter' }
+      { ev: 'ride', n: 1, ico: '🛹', text: 'Fais un tour en skate, trottinette ou BMX (bouton 🛹)', where: null, action: 'rides' }
     ]
   },
   {
@@ -345,6 +346,7 @@ export class Story {
     this.el.querySelector('#storySkip').classList.toggle('hidden', !this.active || !q);
     if (q && q.action === 'deco') go.textContent = '🌳 Décorer ma place';
     else if (q && q.action === 'hub') go.textContent = '👥 Ouvrir « Gérer »';
+    else if (q && q.action === 'rides') go.textContent = '🛹 Choisir ma monture';
     else go.textContent = '🧭 J\'y vais !';
   }
 
@@ -354,6 +356,7 @@ export class Story {
     if (!q) return;
     if (q.action === 'deco') { g.deco.open(); return; }
     if (q.action === 'hub') { g.hub.open(); return; }
+    if (q.action === 'rides') { g.rides.openPicker(); return; }
     if (q.where && g.travel) g.travel.go(q.where);
   }
 
