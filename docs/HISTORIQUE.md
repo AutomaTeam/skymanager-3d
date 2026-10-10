@@ -2559,3 +2559,7 @@ Mesure au parking (tout achete) : les nouveautes de growth.js ajoutaient ~90 app
 ## Phase 133 - ecran titre : l'avion n'est plus a moitie enterre
 
 Sur l'ecran titre (prenom + JOUER), l'avion de ligne etait en (0, 0, 0) : au milieu de la piste et 3,45 m sous le sol, on ne voyait que la derive et des morceaux d'empennage. Il n'etait gare a sa porte qu'au clic sur JOUER. `placeAircraftAtGate()` est maintenant appele a la fin du constructeur : l'ecran titre tourne autour de l'avion gare devant le terminal. Verifie a l'ecran (1024x768) + demarrage sur sauvegarde neuve + 12 scenarios.
+
+## Phase 134 - la fumee des ailes ne recouvre plus l'ecran
+
+En vol (camera de poursuite a ~20 m), la fumee blanche emise au bout des ailes passait entre la camera et l'avion : deux enormes taches blanches couvraient les cotes de l'ecran. Le shader des particules (`particles.js`) accepte maintenant `fadeNear` (effacement pres de la camera) et `maxPx` (taille maxi a l'ecran) ; la fumee s'efface entre 35 % et 85 % de la distance camera-avion et ne depasse pas 10 % de la hauteur d'ecran. Les autres particules ne changent pas. Verifie avant/apres a l'ecran en 1024x768.

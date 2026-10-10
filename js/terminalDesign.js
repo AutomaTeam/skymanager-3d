@@ -17,7 +17,7 @@
    d'appels de dessin au total.
    ============================================================ */
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791602994';
+import { LAYOUT } from './layout.js?v=1791603208';
 
 const T = LAYOUT.terminal;
 const H = T.h;

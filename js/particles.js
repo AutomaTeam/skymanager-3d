@@ -37,14 +37,18 @@ export class Particles {
     this.geo = geo;
     const mat = new THREE.ShaderMaterial({
       transparent: true, depthWrite: false,
-      uniforms: { scale: { value: 600 } },
+      /* fadeNear (m) : en dessous de x la particule est invisible, au-dela de y elle est entiere (0,0 = jamais).
+         maxPx : taille maxi a l'ecran. Sert a la fumee des ailes qui, en passant contre la camera,
+         couvrait la moitie de l'ecran. */
+      uniforms: { scale: { value: 600 }, fadeNear: { value: new THREE.Vector2(0, 0) }, maxPx: { value: 4096 } },
       vertexShader: `
         attribute float size; attribute float alpha; varying vec3 vCol; varying float vA;
-        uniform float scale;
+        uniform float scale; uniform vec2 fadeNear; uniform float maxPx;
         void main() {
           vCol = color; vA = alpha;
           vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = size * scale / max(1.0, -mv.z);
+          if (fadeNear.y > 0.0) vA *= smoothstep(fadeNear.x, fadeNear.y, -mv.z);
+          gl_PointSize = min(maxPx, size * scale / max(1.0, -mv.z));
           gl_Position = projectionMatrix * mv;
         }`,
       fragmentShader: `

@@ -17,8 +17,8 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791602994';
-import { Particles } from './particles.js?v=1791602994';
+import { sfx } from './sfx.js?v=1791603208';
+import { Particles } from './particles.js?v=1791603208';
 
 const STORE = 'skymanager.fun';
 const $ = (id) => document.getElementById(id);
@@ -551,6 +551,12 @@ export class Fun {
     }
     const cam = g.r3d.camera;
     tr.setViewport(g.r3d.renderer.domElement.height, cam ? cam.fov : 60);
+    /* La fumee qui passe contre la camera s'efface et ne depasse jamais ~16 % de la hauteur d'ecran
+       (avant : deux enormes taches blanches sur les cotes de l'ecran en vol). */
+    const u = tr.points.material.uniforms;
+    const camD = cam ? cam.position.distanceTo(ac.pos) : 20;       // camera de poursuite : ~20 m derriere
+    u.fadeNear.value.set(camD * 0.35, camD * 0.85);
+    u.maxPx.value = g.r3d.renderer.domElement.height * 0.1;
     tr.update(dt);
   }
 
