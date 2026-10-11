@@ -15,8 +15,8 @@
    Etat sauvegarde : localStorage « skymanager.story ».
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791701062';
-import { load, write } from './save.js?v=1791701062';
+import { sfx } from './sfx.js?v=1791704088';
+import { load, write } from './save.js?v=1791704088';
 
 const STORE = 'skymanager.story';
 
@@ -45,7 +45,7 @@ export const CHAPTERS = [
       { ev: 'tugTrip', n: 1, ico: '🚜', text: 'Livre les valises à l\'avion avec le tracteur jaune', where: 'tug' },
       { ev: 'busTrip', n: 1, ico: '🚌', text: 'Emmène les passagers à l\'avion avec le bus', where: 'bus' },
       { ev: 'greet', n: 3, ico: '👋', text: 'Dis bonjour à {n} personnes', where: 'spot' },
-      { ev: 'ride', n: 1, ico: '🛹', text: 'Fais un tour en skate, trottinette ou BMX (bouton 🛹)', where: null, action: 'rides' }
+      { ev: 'ride', n: 1, ico: '🛹', text: 'Achète ta première monture (skate : 30 🪙) et fais un tour (bouton 🛹)', where: null, action: 'rides' }
     ]
   },
   {

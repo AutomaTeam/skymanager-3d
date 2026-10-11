@@ -57,12 +57,15 @@ const SCENARIOS = {
     if (g.state === 'BOOT') g.start();
     if (g.state !== 'HUB') g.goToHub();
     const { RIDE_IDS } = await import('../js/ridePhysics.js');
+    const owned = g.rides.data.owned.slice();
+    g.rides.data.owned = RIDE_IDS.slice();          // le scenario essaie tout sans acheter
     for (const id of RIDE_IDS) {
       g.rides.mount(id); frames(5);
       key('ArrowUp'); frames(60); key('ArrowUp', false);
       steps.push(id + ':' + (g.rides.active ? 'actif' : 'inactif'));
       g.rides.dismount(true); frames(5);
     }
+    g.rides.data.owned = owned;
     return true;
   },
   /* Chaque vehicule : s'asseoir, rouler, descendre. */

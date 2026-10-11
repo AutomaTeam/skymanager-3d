@@ -20,7 +20,7 @@
    penalite autre que perdre le combo).
    ============================================================ */
 
-import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791701062';
+import { WALL_STEP, WALL_SLOPE } from './rideCourse.js?v=1791704088';
 
 const TAU = Math.PI * 2;
 const PI = Math.PI;
@@ -41,7 +41,7 @@ const T = (id, name, pts, dur, anim) => ({ id, name, pts, dur, anim });
    Directions de la figure : n = neutre, l = gauche, r = droite, u = haut, d = bas. */
 export const RIDES = {
   skate: {
-    id: 'skate', name: 'Skate', ico: '🛹', price: 0, color: '#38bdf8',
+    id: 'skate', name: 'Skate', ico: '🛹', price: 30, color: '#38bdf8',
     desc: 'Le classique ! Ollie, kickflip, grind. Il faut pousser pour prendre de la vitesse.',
     top: 11, boost: 16.5, acc: 7.2, drag: 1.0, brake: 11, steer: 2.7, grip: 6.2, jump: 6.6, hover: 0,
     spinRate: 10.5, flipRate: 9.5, spinUnit: PI, hipH: 0.0,
@@ -53,7 +53,7 @@ export const RIDES = {
     grab: { name: 'Indy grab', pts: 120 }, manual: 'Manual', slide: 'Boardslide'
   },
   scooter: {
-    id: 'scooter', name: 'Trottinette', ico: '🛴', price: 0, color: '#fb923c',
+    id: 'scooter', name: 'Trottinette', ico: '🛴', price: 45, color: '#fb923c',
     desc: 'Stable et facile ! Barspin, tailwhip, mains en l\'air. Parfaite pour débuter.',
     top: 9.8, boost: 14.5, acc: 7.6, drag: 1.3, brake: 12, steer: 2.9, grip: 8.0, jump: 6.2, hover: 0,
     spinRate: 9.5, flipRate: 8.5, spinUnit: TAU, hipH: 0.0,
@@ -65,7 +65,7 @@ export const RIDES = {
     grab: { name: 'Superman', pts: 150, pose: 'super' }, manual: 'Wheelie', slide: 'Grind pegs'
   },
   bmx: {
-    id: 'bmx', name: 'BMX', ico: '🚲', price: 25, color: '#f43f5e',
+    id: 'bmx', name: 'BMX', ico: '🚲', price: 70, color: '#f43f5e',
     desc: 'Rapide, avec de gros sauts ! Wheelie, tailwhip, backflip. Pour les vrais riders.',
     top: 13, boost: 19, acc: 6.4, drag: 0.8, brake: 10, steer: 2.35, grip: 5.6, jump: 7.1, hover: 0,
     spinRate: 9.0, flipRate: 9.0, spinUnit: TAU, hipH: 0.0,
@@ -77,7 +77,7 @@ export const RIDES = {
     grab: { name: 'Superman', pts: 160, pose: 'super' }, manual: 'Wheelie', slide: 'Pegs grind'
   },
   rollers: {
-    id: 'rollers', name: 'Rollers', ico: '🛼', price: 40, color: '#a78bfa',
+    id: 'rollers', name: 'Rollers', ico: '🛼', price: 90, color: '#a78bfa',
     desc: 'Ça glisse très loin ! Fais des spins, des grabs, des figures stylées.',
     top: 11.8, boost: 17, acc: 5.6, drag: 0.45, brake: 8.5, steer: 2.5, grip: 4.2, jump: 6.4, hover: 0,
     spinRate: 11, flipRate: 9.5, spinUnit: PI, hipH: 0.0,
@@ -89,7 +89,7 @@ export const RIDES = {
     grab: { name: 'Fishbrain', pts: 130, pose: 'grab' }, manual: 'Sur un pied', slide: 'Soul slide'
   },
   hover: {
-    id: 'hover', name: 'Hoverboard', ico: '🛸', price: 70, color: '#22d3ee',
+    id: 'hover', name: 'Hoverboard', ico: '🛸', price: 150, color: '#22d3ee',
     desc: 'Il flotte ! Très rapide, il dérape en glissant. Spins et flips sont faciles.',
     top: 14.5, boost: 21, acc: 8.2, drag: 0.35, brake: 7.5, steer: 2.9, grip: 1.9, jump: 6.9, hover: 0.34,
     spinRate: 12, flipRate: 10.5, spinUnit: PI, hipH: 0.0,

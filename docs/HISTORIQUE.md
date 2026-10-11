@@ -2612,3 +2612,12 @@ Constat en jouant : en vol libre, une fois les 5 anneaux dores passes, il ne res
 - Evenement `surprise` (combo, stats), 2 trophees (Quelle surprise !, Chasseur de surprises), un defi du jour.
 - Course d'anneaux : tant que Coco n'est pas battu, il court contre toi (fantome bleu calcule sur le circuit, 1,35 x le temps ideal), la barre dit « Coco est devant ! » / « Tu mènes ! », victoire = +10 pieces ; ensuite le fantome redevient ton propre record.
 - Scenario `?scenario=surprises` (dans `all`). Verifie : `npm test`, eslint, 13 scenarios, fuzz 25 s ; un passage reel a vitesse normale sous le nuage rapporte 3-4 pieces ; oiseau, nuage et mega-anneau regardes a l'ecran.
+
+## Phase 141 - les montures s'achetent
+
+Demande : les moyens de deplacement doivent s'acheter, a un prix raisonnable. Le skate et la trottinette etaient offerts (et remis de force dans chaque sauvegarde), les autres tres bon marche.
+
+- Prix (`ridePhysics.js`) : skate 30, trottinette 45, BMX 70, rollers 90, hoverboard 150 pieces. Reperes : premiere amelioration de la tour 40, chapitre 1 de l'aventure +60, un vol complet ~30-50. Le skate s'achete des le debut du chapitre 2 (quete « Achète ta première monture »).
+- `rides.js` : plus aucune monture donnee d'office ; les sauvegardes existantes gardent celles qu'elles ont. Monter sur une monture non achetee (bouton 🛹, touche R) ouvre la boutique des montures au lieu de partir.
+- Textes : sous-titre de la boutique, aide, conseil de Coco et quete du chapitre 2 donnent les prix. Les vehicules de l'aeroport (tracteur, bus, camion de pompiers) restent des metiers gratuits.
+- Verifie : `npm test`, eslint, 13 scenarios, achat refuse sans assez de pieces puis accepte (30 pieces debitees), boutique regardee a l'ecran.

@@ -694,7 +694,7 @@
 <div id="ridePicker" class="hidden panel-overlay">
   <div class="panel-card wide kid">
     <div class="panel-head">
-      <div><h2 class="panel-title">🛹 Choisis ta monture</h2><p class="panel-sub !mb-0">Roule plus vite qu'à pied, saute et fais des figures. Le skatepark est près de la tour !</p></div>
+      <div><h2 class="panel-title">🛹 Choisis ta monture</h2><p class="panel-sub !mb-0">Achète une monture avec tes pièces : elle est à toi pour toujours. Roule plus vite qu'à pied, saute et fais des figures. Le skatepark est près de la tour !</p></div>
       <button id="rideClose" class="panel-btn sm !w-auto px-3">Fermer</button>
     </div>
     <div id="rideList" class="ride-list"></div>
@@ -718,7 +718,7 @@
       <details><summary>✈️ Voler</summary><p>Choisis ta destination, appuie sur <b>DÉCOLLER</b> puis tire vers le haut. Gauche/droite = tourner. Vole dans les <b>anneaux dorés</b> et ramasse les pièces. Pour atterrir, appuie sur ATTERRIR : garde le nez droit et surveille la jauge de douceur.</p></details>
       <details><summary>🥤 La cabine</summary><p>Avance dans l'allée et sers les passagers qui ont une bulle. 💬 = une question (réponds juste pour gagner plus). Les gestes 📢 🍬 🎵 rendent tout le monde content. Pendant les turbulences, appuie vite sur ANNONCER !</p></details>
       <details><summary>⚡ Missions, combos, défis</summary><p>Enchaîne les actions vite pour lancer un <b>COMBO</b>. Des <b>missions flash</b> apparaissent : fais-les avant la fin du chrono. Les défis du jour et la chasse aux pièces cachées sont dans la tour.</p></details>
-      <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour monter sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de côté pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pièces quand tu te poses tranquille. Le <b>skatepark</b> est près de la tour !</p></details>
+      <details><summary>🛹 Montures et figures</summary><p>Appuie sur 🛹 (ou R) pour acheter puis monter sur un skate (30 🪙), une trottinette (45), un BMX (70), des rollers (90) ou un hoverboard (150) : chaque monture achetée est à toi pour toujours. Sur un skate, une trottinette, un BMX, des rollers ou un hoverboard : tu vas bien plus vite qu'a pied. <b>SAUT</b> pour sauter (maintiens pour sauter plus haut), <b>FIGURE</b> en l'air pour une figure, et tiens le joystick de côté pour tourner. Saute sur les <b>rails jaunes</b> pour glisser. Les points deviennent des pièces quand tu te poses tranquille. Le <b>skatepark</b> est près de la tour !</p></details>
       <details><summary>🚜 Le tracteur à bagages</summary><p>Approche-toi du tracteur jaune (il attend souvent devant le terminal) et appuie sur <b>CONDUIRE LE TRACTEUR</b>. Haut = avancer, bas = reculer, gauche/droite = tourner. Charge les valises sur l'<b>anneau bleu</b> (au terminal), puis livre-les à la soute de l'avion sur l'<b>anneau orange</b>. Contourne l'avion par devant !</p></details>
       <details><summary>🚌 Le bus des passagers</summary><p>Monte dans le bus jaune (il attend souvent devant le terminal) : les passagers montent sur l'<b>anneau bleu</b>, puis emmène-les jusqu'au grand avion gare plus loin, sur l'<b>anneau orange</b>.</p></details>
       <details><summary>🚒 Au feu les pompiers !</summary><p>Quand l'alarme sonne, une poubelle brûle quelque part. Cours à la <b>caserne</b> (la flèche te guide), monte dans le camion de pompiers, fonce jusqu'au feu et appuie plusieurs fois sur <b>ARROSER LE FEU</b>. Tu deviens un vrai pompier !</p></details>
@@ -1008,7 +1008,7 @@
 <script>
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]nosw/.test(location.search)) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js?v=1791701062').then(() => navigator.serviceWorker.ready).then((reg) => {
+    navigator.serviceWorker.register('sw.js?v=1791704088').then(() => navigator.serviceWorker.ready).then((reg) => {
       /* Premier chargement : on demande au service worker de garder ce qui est deja telecharge. */
       const send = () => reg.active && reg.active.postMessage({ type: 'precache', urls: performance.getEntriesByType('resource').map(r => r.name) });
       setTimeout(send, 3000); setTimeout(send, 25000);
@@ -1016,6 +1016,6 @@ if ('serviceWorker' in navigator && /^https?:/.test(location.protocol) && !/[?&]
   });
 }
 </script>
-<script type="module" src="js/main.js?v=1791701062"></script>
+<script type="module" src="js/main.js?v=1791704088"></script>
 </body>
 </html>

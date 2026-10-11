@@ -19,14 +19,14 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791701062';
-import { buildPark, PARK } from './rideCourse.js?v=1791701062';
-import { buildParkMeshes } from './ridePark.js?v=1791701062';
-import { buildRide } from './rideModels.js?v=1791701062';
-import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791701062';
-import { slideMove, collectBodies } from './bodies.js?v=1791701062';
-import { sfx } from './sfx.js?v=1791701062';
-import { Particles } from './particles.js?v=1791701062';
+import { RideBody, RIDES, RIDE_IDS } from './ridePhysics.js?v=1791704088';
+import { buildPark, PARK } from './rideCourse.js?v=1791704088';
+import { buildParkMeshes } from './ridePark.js?v=1791704088';
+import { buildRide } from './rideModels.js?v=1791704088';
+import { findBones, twoBone, rotateWorld } from './rideIK.js?v=1791704088';
+import { slideMove, collectBodies } from './bodies.js?v=1791704088';
+import { sfx } from './sfx.js?v=1791704088';
+import { Particles } from './particles.js?v=1791704088';
 
 const $ = (id) => document.getElementById(id);
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
@@ -119,13 +119,14 @@ export class Rides {
 
   /* ---------------- Donnees ---------------- */
   _load() {
-    const def = { last: 'skate', owned: ['skate', 'scooter'], best: 0, tricks: 0, tried: [], tips: {} };
+    /* Phase 141 : toutes les montures s'achetent (les anciennes sauvegardes gardent celles qu'elles ont). */
+    const def = { last: 'skate', owned: [], best: 0, tricks: 0, tried: [], tips: {} };
     try {
       const d = JSON.parse(localStorage.getItem(STORE) || 'null');
       if (d) {
         const o = Object.assign(def, d);
-        o.owned = [...new Set([...(d.owned || []), 'skate', 'scooter'])];
-        if (!RIDES[o.last] || !o.owned.includes(o.last)) o.last = 'skate';
+        o.owned = [...new Set(d.owned || [])].filter(id => RIDES[id]);
+        if (!RIDES[o.last]) o.last = 'skate';
         o.tried = d.tried || []; o.tips = d.tips || {};
         return o;
       }
@@ -161,7 +162,7 @@ export class Rides {
       if (e.repeat) return;
       if (e.code === 'KeyR') {
         if (this.pickerOpen) { this.closePicker(); return; }
-        if (this.active) this.dismount(); else this.mount(this.data.last);
+        if (this.active) this.dismount(); else if (this.data.owned.includes(this.data.last)) this.mount(this.data.last); else this.openPicker();
       }
       if (this.pickerOpen) {
         const i = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5'].indexOf(e.code);
@@ -229,6 +230,7 @@ export class Rides {
   mount(id) {
     const g = this.g;
     if (!RIDES[id] || !this._canRide(true)) return;
+    if (!this.data.owned.includes(id)) { this.openPicker(); return; }     // pas encore achetee : on montre la boutique
     if (this.active) this._release(false);
     const p = g.player.pos;
     this.body.setRide(id);
@@ -347,7 +349,7 @@ export class Rides {
     if (g.state !== 'HUB' && this.pickerOpen) this.closePicker();
     /* Petite presentation, une seule fois, quand le tutoriel est fini. */
     if (!this.active && arc && g.state === 'HUB' && g.arcade.data.tutorialDone && !this.data.tips.intro && !g._worldPaused) {
-      this._tip('intro', 'Nouveau : appuie sur 🛹 pour rouler en skate, trottinette ou BMX. Le skatepark est près de la tour !');
+      this._tip('intro', 'Nouveau : appuie sur 🛹 pour acheter un skate (30 🪙), une trottinette ou un BMX et rouler bien plus vite. Le skatepark est près de la tour !');
     }
     this._updateHud();
   }
