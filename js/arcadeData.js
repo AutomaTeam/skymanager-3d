@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { LAYOUT } from './layout.js?v=1791617374';
-import { iconify } from './icons.js?v=1791617374';
+import { LAYOUT } from './layout.js?v=1791701062';
+import { iconify } from './icons.js?v=1791701062';
 
 export const COIN = 1000;
 
@@ -53,6 +53,7 @@ export const DAILY_POOL = [
   { id: 'splash', ev: 'splash',     icon: '💦', text: () => "Amerris sur l'eau avec l'hydravion",    min: 1, max: 1, reward: 30, need: (g) => g.hangar && g.hangar.planeOwned('hydravion') },
   { id: 'souv',   ev: 'souvenir',   icon: '🎁', text: () => 'Achète un souvenir à la boutique du terminal', min: 1, max: 1, reward: 20 },
   { id: 'spot',   ev: 'spot',       icon: '🔭', text: () => 'Regarde les avions avec les jumelles du terminal', min: 1, max: 1, reward: 15 },
+  { id: 'surprise', ev: 'surprise', icon: '🎁', text: (n) => `Réussis ${n} surprise${n > 1 ? 's' : ''} du ciel (vol libre, après les anneaux)`, min: 1, max: 3, reward: 30 },
   { id: 'fetch',  ev: 'fetch',      icon: '🎾', text: (n) => `Joue ${n} fois à la balle avec ton chien`, min: 3, max: 5, reward: 15 }
 ];
 
@@ -190,12 +191,12 @@ export const TREASURE_SPOTS = [
   [660, 1230], [470, 1222], [310, 1215], [278, 1160], [150, 830], [300, 1000], [610, 810], [200, 1440]
 ];
 
-export const COMBO_EVENTS = ['serve', 'repair', 'cabinServe', 'ring', 'landing', 'stripLanding', 'splash', 'souvenir', 'spot'];
+export const COMBO_EVENTS = ['serve', 'repair', 'cabinServe', 'ring', 'landing', 'stripLanding', 'splash', 'souvenir', 'spot', 'surprise'];
 /* Ces actions sont rares : le combo leur laisse plus de temps (s). */
-export const COMBO_SLOW = { landing: 30, stripLanding: 40, splash: 40, souvenir: 20, spot: 20 };
+export const COMBO_SLOW = { landing: 30, stripLanding: 40, splash: 40, souvenir: 20, spot: 20, surprise: 30 };
 
 export const GENERIC_EVENTS = ['stunt', 'mission', 'missionGold', 'secret', 'island', 'egg', 'minigame', 'meet', 'dog', 'build', 'photo', 'rainbow',
-  'ride', 'rideKind', 'trick', 'grind', 'bigair', 'wheelie', 'rideKm', 'stripLanding', 'splash', 'souvenir', 'spot'];
+  'ride', 'rideKind', 'trick', 'grind', 'bigair', 'wheelie', 'rideKm', 'stripLanding', 'splash', 'souvenir', 'spot', 'surprise'];
 
 export const COMBO_TIME = 9;
 
@@ -289,6 +290,8 @@ export const BADGES = [
   { id: 'secret10', ico: '🌠', name: 'Chercheur d\'étoiles', desc: 'Trouve 10 étoiles filantes.',               test: d => d.stats.secret >= 10 },
   { id: 'secret40', ico: '🌌', name: 'Constellation',        desc: 'Trouve les 40 étoiles filantes.',           test: d => d.stats.secret >= 40 },
   { id: 'island6',  ico: '🏝️', name: 'Explorateur',          desc: 'Découvre les 6 îles.',                    test: d => d.stats.island >= 6 },
+  { id: 'surprise1', ico: '🎁', name: 'Quelle surprise !',   desc: 'Réussis une surprise du ciel en vol libre.', test: d => (d.stats.surprise || 0) >= 1 },
+  { id: 'surprise10', ico: '🐦', name: 'Chasseur de surprises', desc: 'Réussis 10 surprises du ciel.',         test: d => (d.stats.surprise || 0) >= 10 },
   { id: 'egg3',     ico: '👽', name: 'Curieux',              desc: 'Trouve 3 surprises cachées dans le ciel.', test: d => d.stats.egg >= 3 },
   { id: 'rainbow',  ico: '🌈', name: 'Au bout de l\'arc-en-ciel', desc: 'Traverse un arc-en-ciel.',        test: d => d.stats.rainbow >= 1 },
   { id: 'mini10',   ico: '🧽', name: 'Touche-à-tout',        desc: 'Joue à 10 mini-jeux.',                    test: d => d.stats.minigame >= 10 },

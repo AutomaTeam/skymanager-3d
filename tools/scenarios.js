@@ -212,6 +212,34 @@ const SCENARIOS = {
     for (let i = 0; i < 6; i++) { g.env.forceWeather(); frames(60); steps.push('meteo ' + g.env.weatherLabel()); }
     g.env.setHour(6); frames(30);
     return true;
+  },
+  /* Phase 140 : les 5 surprises du ciel apparaissent et se terminent (l'avion est mene droit sur la cible). */
+  async surprises({ g, frames, steps }) {
+    if (g.state === 'BOOT') g.start();
+    const A = g.arcade, S = g.surprises, tuto = A.data.tutorialDone;
+    A.data.tutorialDone = true;
+    g.flyNow(); frames(30);
+    if (g.state !== 'PILOT') { g.boardAircraft(); frames(30); }
+    clearTimeout(g.fun._launchTimer); g.launchNow(); frames(300);
+    A.ringsThisFlight = 5; A.clearRing(); g.ac.pos.y = 150; frames(5);
+    let ok = S.eligible();
+    const before = A.data.stats.surprise || 0;
+    for (const k of ['bird', 'cloud', 'mega', 'rush', 'balloons']) {
+      S.spawn(k); frames(2);
+      let n = 0;
+      while (S.cur && n++ < 1200) {
+        const t = S.target(); if (!t) break;
+        const y = k === 'cloud' ? t.y - 45 : t.y;
+        const p = g.ac.pos, dx = t.x - p.x, dy = y - p.y, dz = t.z - p.z, d = Math.hypot(dx, dy, dz) || 1, st = Math.min(d, 4);
+        p.x += dx / d * st; p.y += dy / d * st; p.z += dz / d * st;
+        frames(1);
+      }
+      steps.push(k + (S.cur ? ' pas finie' : ' finie'));
+      ok = ok && !S.cur;
+    }
+    steps.push('reussies ' + ((A.data.stats.surprise || 0) - before));
+    A.data.tutorialDone = tuto;
+    return ok && (A.data.stats.surprise || 0) - before >= 4;
   }
 };
 

@@ -2602,3 +2602,13 @@ Meme vue de reference (parking face au terminal, plein jour) : 2 880 -> 2 250 ma
 - Comptoirs du terminal fusionnes entre freres ; les marchandises des boutiques partagent 4 materiaux au lieu d'un chacune. Valises de file (cachees) et jauge de stock restent a part.
 - Hall : passagers assis (un seul materiau a couleurs par sommet) et chariots a bagages fusionnes ; decor `terminalDesign` fusionne par materiau. Maillages du hall : 581 -> 467. Obstacles de navigation compares avant / apres : identiques, sauf les 4 petits avions gares dont la boite grandit de moins de 1 m.
 - Verifie : `npm test`, eslint, 12 scenarios, fuzz 25 s ; soufflante, trains, roues et hall regardes a l'ecran.
+
+## Phase 140 - surprises du ciel et Coco rival
+
+Constat en jouant : en vol libre, une fois les 5 anneaux dores passes, il ne restait qu'a suivre la fleche vers la piste ; et la course d'anneaux n'avait aucun adversaire tant qu'on n'avait pas de record.
+
+- `js/skySurprises.js` (nouveau, registre) : en vol libre, apres les anneaux, une surprise apparait devant l'avion toutes les 20 a 30 s (8 s pour la premiere), annoncee par Coco, avec fleche et compte a rebours dans la barre d'objectif. Cinq surprises tirees sans remise : oiseau dore qui fuit en zigzag a 60 % de la vitesse de l'avion (+15), nuage magique qui pleut 14 pieces (+1 chacune, reussi des 3, bonus des 8), mega-anneau arc-en-ciel (+10, turbo plein, feu d'artifice), course eclair de 4 anneaux en 38 s (+2 chacun, +10 bonus), grappe de 7 ballons a eclater (+1 chacun, +6 bonus). Jamais pendant une mission, la finale, le tutoriel ou en mode Pro ; si on rate, rien n'est perdu.
+- Barre d'objectif aux commandes : « Atterris quand tu veux... ou reste en l'air : une surprise arrive ! » au lieu de seulement « atterris ».
+- Evenement `surprise` (combo, stats), 2 trophees (Quelle surprise !, Chasseur de surprises), un defi du jour.
+- Course d'anneaux : tant que Coco n'est pas battu, il court contre toi (fantome bleu calcule sur le circuit, 1,35 x le temps ideal), la barre dit « Coco est devant ! » / « Tu mènes ! », victoire = +10 pieces ; ensuite le fantome redevient ton propre record.
+- Scenario `?scenario=surprises` (dans `all`). Verifie : `npm test`, eslint, 13 scenarios, fuzz 25 s ; un passage reel a vitesse normale sous le nuage rapporte 3-4 pieces ; oiseau, nuage et mega-anneau regardes a l'ecran.

@@ -20,10 +20,10 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { sfx } from './sfx.js?v=1791617374';
-import { SkyWorld } from './skyWorld.js?v=1791617374';
-import { HELIPAD } from './heliModel.js?v=1791617374';
-import { ISLANDS } from './openWorld.js?v=1791617374';
+import { sfx } from './sfx.js?v=1791701062';
+import { SkyWorld } from './skyWorld.js?v=1791701062';
+import { HELIPAD } from './heliModel.js?v=1791701062';
+import { ISLANDS } from './openWorld.js?v=1791701062';
 
 const STORE = 'skymanager.sky';
 const $ = (id) => document.getElementById(id);
@@ -175,11 +175,34 @@ class RaceMission extends Mission {
     const key = `${this.circ.id}:${this.ac.profile}`;
     const saved = this.sky.data.ghosts[key];
     this.ghost = null;
-    if (saved && saved.s && saved.s.length > 10) {
+    if (this.sky.data.cocoBeaten && saved && saved.s && saved.s.length > 10) {
       this.ghostData = saved;
       this.ghost = this.world.ghost();
+    } else {
+      /* Phase 140 : tant que Coco n'est pas battu, il court contre toi (fantome calcule, battable). */
+      this.rivalT = this.ideal * 1.35;
+      this.ghostData = { t: this.rivalT, s: this._rivalPath(P, L, this.rivalT) };
+      this.ghost = this.world.ghost();
+      this.sky.say('Je te défie à la course ! Rattrape mon avion bleu… si tu peux !', 3, 4200);
     }
     this.key = key;
+  }
+  /* Trajet du fantome de Coco : le circuit a vitesse constante, echantillonne a 5 Hz comme un vrai enregistrement. */
+  _rivalPath(P, L, T) {
+    const out = [];
+    for (let t = 0; t <= T + 0.2; t += 0.2) {
+      let d = Math.min(L, L * t / T), i = 1;
+      while (i < P.length - 1) {
+        const seg = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]);
+        if (d <= seg) break;
+        d -= seg; i++;
+      }
+      const a = P[i - 1], b = P[i];
+      const seg = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]) || 1, k = Math.min(1, d / seg);
+      const hdg = THREE.MathUtils.radToDeg(Math.atan2(b[0] - a[0], -(b[2] - a[2])));
+      out.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k, hdg]);
+    }
+    return out;
   }
   _refresh() {
     this.hoops.forEach((h, i) => h.setState(i < this.idx ? 'hidden' : i === this.idx ? 'next' : i <= this.idx + 2 ? 'later' : 'hidden'));
@@ -217,7 +240,17 @@ class RaceMission extends Mission {
   goal() { return { icon: '🏁', text: `Passe dans les anneaux ! (${this.idx}/${this.hoops.length})`, target: this.target() }; }
   progressText() {
     const best = this.sky.data.best.race;
+    if (this.rivalT) return `🏁 ${this.idx}/${this.hoops.length} · ` + (this._rivalIdx() > this.idx ? '🦜 Coco est devant !' : '😎 Tu mènes !');
     return `🏁 ${this.idx}/${this.hoops.length}` + (best && best.time ? ` · record ${best.time.toFixed(1)}s` : '');
+  }
+  /* Nombre d'anneaux deja passes par Coco (meme vitesse le long du circuit). */
+  _rivalIdx() {
+    const P = this.circ.pts;
+    let L = 0;
+    for (let i = 1; i < P.length; i++) L += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]);
+    let d = L * Math.min(1, this.t / this.rivalT), n = 1;
+    for (let i = 1; i < P.length && d > 0; i++) { d -= Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1], P[i][2] - P[i - 1][2]); if (d >= 0) n++; }
+    return n;
   }
   dispose() { this.hoops.forEach(h => this.world.remove(h)); if (this.ghost) this.world.remove(this.ghost); }
   result() {
@@ -225,6 +258,10 @@ class RaceMission extends Mission {
     const T = this.finishT, r = T / this.ideal;
     const medal = r <= 1.12 ? 3 : r <= 1.4 ? 2 : 1;
     const lines = [`🏁 Course terminée en ${T.toFixed(1)} s`];
+    if (this.rivalT) {
+      if (T < this.rivalT) { lines.push(`🦜 Tu as battu Coco (${this.rivalT.toFixed(1)} s) ! +10 🪙`); this.sky.g.arcade.giveCoins(10, { silent: true }); this.sky.data.cocoBeaten = true; this.sky.save(); }
+      else lines.push(`🦜 Coco a gagné en ${this.rivalT.toFixed(1)} s… Revanche ?`);
+    }
     const best = this.sky.data.best.race;
     if (!best || !best.time || T < best.time) {
       lines.push('🏆 Nouveau record !');

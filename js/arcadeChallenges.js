@@ -3,8 +3,8 @@
    (decoupe de arcade.js : comportement identique, voir tools/splitClass.mjs)
    ============================================================ */
 
-import { sfx } from './sfx.js?v=1791617374';
-import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791617374';
+import { sfx } from './sfx.js?v=1791701062';
+import { seeded, COMBO_EVENTS, COMBO_SLOW, GENERIC_EVENTS, SKY_STARS, SKY_ISLANDS, todayKey, DAILY_POOL, weekKey, WEEKLY_POOL, RING_TOTAL, DESTINATIONS, BADGES } from './arcadeData.js?v=1791701062';
 
 export const challengeMethods = {
   /* ---------------- Evenements du jeu ---------------- */
@@ -121,6 +121,10 @@ export const challengeMethods = {
       if (ac.onGround && !ac.touchdown) return { icon: '🛫', text: 'Ça roule ! Tire vers le haut pour décoller.', target: null };
       if (ac.onGround) return { icon: '🅿️', text: 'Bravo ! Ouvre le menu ☰ pour rentrer à la maison.', target: null };
       if (this.ring) return { icon: '🟡', text: `Vole dans l'anneau doré ! (${this.ringsThisFlight}/${RING_TOTAL})`, target: null };
+      const su = this.g.surprises;
+      const sp = su && su.flightGoal();
+      if (sp) return sp;
+      if (su && !ac.heli && su.eligible()) return { icon: '🎁', text: 'Atterris quand tu veux… ou reste en l\'air : une surprise arrive !', target: null };
       /* Juste apres le decollage, les anneaux ne sont pas encore la : ne pas dire « atterris ». */
       if (this.ringsThisFlight < RING_TOTAL && !this.g.assist.landing && ac.pos.y < 60 && !ac.heli) return { icon: '🛫', text: 'Bravo, tu voles ! Monte encore un peu : les anneaux dorés arrivent !', target: null };
       if (ac.heli) return { icon: '🚁', text: 'Suis la flèche vers l\'helipad, descends doucement et pose-toi (ou appuie sur ATTERRIR).', target: null };
@@ -178,7 +182,7 @@ export const challengeMethods = {
     if (d.ev === 'repair') return this.stationTarget();
     if (d.ev === 'buy') return this.markerPos('tower');
     if (d.ev === 'cabinServe') return this.markerPos('cabinDoor');
-    if (d.ev === 'landing' || d.ev === 'star3' || d.ev === 'ring') return this.markerPos('cockpit');
+    if (d.ev === 'landing' || d.ev === 'star3' || d.ev === 'ring' || d.ev === 'surprise') return this.markerPos('cockpit');
     if (d.ev === 'tugTrip' && this.g.tug) { const t = this.g.tug._ambient(); return t ? { x: t.mv.x, z: t.mv.z } : null; }
     if (d.ev === 'greet') return { x: 92, z: 1188 };
     if (d.ev === 'busTrip' && this.g.bus) { const b = this.g.bus._ambient(); return b ? { x: b.mv.x, z: b.mv.z } : null; }

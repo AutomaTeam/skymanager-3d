@@ -11,9 +11,9 @@
 | `album.js` | L'album de collection (mode Arcade, vague 4) |  | main | 113 |
 | `ambience.js` | Petite vie calme de l'aeroport (mode Arcade) |  | main | 324 |
 | `arcade.js` | Couche « Arcade » : le jeu adapte aux enfants | arcade | album, hub, hudController, main, pauseMenu | 479 |
-| `arcadeChallenges.js` | Defis du jour et de la semaine, objectif courant, cibles | pet, world | arcade | 261 |
-| `arcadeData.js` | constantes et petits utilitaires partages |  | arcade, arcadeChallenges, arcadeFlight, arcadeFun, arcadeMap, hunt | 316 |
-| `arcadeFlight.js` | Vol : anneaux, barre d'objectif, plan de vol, atterrissage, tresors |  | arcade | 396 |
+| `arcadeChallenges.js` | Defis du jour et de la semaine, objectif courant, cibles | pet, world | arcade | 265 |
+| `arcadeData.js` | constantes et petits utilitaires partages |  | arcade, arcadeChallenges, arcadeFlight, arcadeFun, arcadeMap, hunt, skySurprises | 319 |
+| `arcadeFlight.js` | Vol : anneaux, barre d'objectif, plan de vol, atterrissage, tresors |  | arcade | 397 |
 | `arcadeFun.js` | Combos, missions flash, cadeau, danse, HUD cabine et vol |  | arcade | 380 |
 | `arcadeMap.js` | Carte du monde (mini-carte, grande carte, themes) |  | arcade | 509 |
 | `assetLoader.js` | chargement des modeles glTF externes |  | props, renderAvatar, renderGround, renderer3d | 60 |
@@ -49,7 +49,7 @@
 | `layout.js` | Plan de l'aeroport (phase 18), une seule source |  | airportLife, arcadeData, arcadeMap, bus, groundFun, growth, heliModel, navigation, renderGround, renderShared, terminalBuilding, terminalDesign, tug | 103 |
 | `livery.js` | Peinture et decalques des avions (hangar, vague 2) |  | album, hangar, minigames, renderAircraft | 430 |
 | `look.js` | Mon personnage (mode Arcade) | look | main | 106 |
-| `main.js` | Boucle principale et machine a etats |  |  | 1021 |
+| `main.js` | Boucle principale et machine a etats |  |  | 1023 |
 | `mechanicControls.js` | ITERATION 2 |  | main | 110 |
 | `mechanicSystem.js` | ITERATION 3 | mechanic | gameShared, hubUpdate, main, pauseMenu | 378 |
 | `minigames.js` | Mini-jeux au sol (mode Arcade, vague 4) | mini | main | 249 |
@@ -86,16 +86,17 @@
 | `scenery.js` | Decor de l'aeroport et de son environnement (phase 22) |  | renderGround | 580 |
 | `sceneryCollision.js` | Obstacles en vol (plan graphisme, etape 5) |  | main | 53 |
 | `seasonal.js` | Evenements saisonniers (H07) | season | main | 143 |
-| `sfx.js` | Petits sons de recompense (Web Audio, aucun fichier) | sfx | album, ambience, arcade, arcadeChallenges, arcadeFlight, arcadeFun, arcadeMap, bus, comfort, deco, fireTruck, fun, groundFun, groundVehicles, growth, hangar, hub, hubUpdate, hudController, hunt, jobs, look, main, minigames, music, openWorld, pauseMenu, pet, rides, seasonal, skyMissions, skylife, social, staff, story, thermals, travel, tug, vehicle | 304 |
-| `skyMissions.js` | Missions aeriennes du mode Arcade (vague 3) | sky | album, main | 1165 |
-| `skyWorld.js` | Elements 3D des missions aeriennes (vague 3) |  | skyMissions | 321 |
+| `sfx.js` | Petits sons de recompense (Web Audio, aucun fichier) | sfx | album, ambience, arcade, arcadeChallenges, arcadeFlight, arcadeFun, arcadeMap, bus, comfort, deco, fireTruck, fun, groundFun, groundVehicles, growth, hangar, hub, hubUpdate, hudController, hunt, jobs, look, main, minigames, music, openWorld, pauseMenu, pet, rides, seasonal, skyMissions, skySurprises, skylife, social, staff, story, thermals, travel, tug, vehicle | 304 |
+| `skyMissions.js` | Missions aeriennes du mode Arcade (vague 3) | sky | album, main | 1202 |
+| `skySurprises.js` | Les surprises du ciel (phase 140) |  | main | 373 |
+| `skyWorld.js` | Elements 3D des missions aeriennes (vague 3) |  | skyMissions, skySurprises | 321 |
 | `skylife.js` | Ciel vivant et sol mouille (plan graphisme, etape 6) |  | renderGround | 294 |
 | `social.js` | Dire bonjour aux gens de l'aeroport (mode Arcade) |  | main | 192 |
 | `staff.js` | Personnel de l'aeroport (mode Arcade) | staff | hub, main, pauseMenu | 377 |
-| `staticMerge.js` | Fusion des maillages statiques par materiau (D02) |  | airportLife, growth, renderAircraft, renderGround, ridePark, scenery, terminalBuilding | 97 |
+| `staticMerge.js` | Fusion des maillages statiques par materiau (D02) |  | airportLife, growth, renderAircraft, renderGround, ridePark, scenery, terminalBuilding, terminalDesign | 97 |
 | `story.js` | L'Aventure : 6 chapitres racontes par Coco (plan « jeu cool », lot A) | story | main, travel | 423 |
-| `terminalBuilding.js` | Le terminal, batiment integre a la carte (phase 22) |  | renderGround, renderer3d | 835 |
-| `terminalDesign.js` | Refonte visuelle du terminal (phase 32) |  | terminalBuilding | 201 |
+| `terminalBuilding.js` | Le terminal, batiment integre a la carte (phase 22) |  | renderGround, renderer3d | 842 |
+| `terminalDesign.js` | Refonte visuelle du terminal (phase 32) |  | terminalBuilding | 204 |
 | `terminalFlow.js` | Les verifications du parcours passager (phases 25-26) |  | ambience, hubUpdate, staff, terminalBuilding, terminalSystem | 203 |
 | `terminalSystem.js` | Interieur du terminal : le circuit passager | terminal | hubUpdate, main, pauseMenu | 770 |
 | `textures.js` | Bibliotheque de textures procedurales |  | renderAircraft, renderAvatar, renderCabin, renderGround, renderShared, renderSky, renderer3d | 1238 |
@@ -106,4 +107,4 @@
 | `vehicle.js` | Base commune des vehicules que l'enfant conduit |  | bus, fireTruck, groundVehicles, tug | 127 |
 | `voice.js` | Lecture a voix haute (F01) |  | main | 73 |
 
-Total : 101 modules, 35674 lignes.
+Total : 102 modules, 36104 lignes.
