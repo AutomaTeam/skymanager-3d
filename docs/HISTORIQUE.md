@@ -2621,3 +2621,11 @@ Demande : les moyens de deplacement doivent s'acheter, a un prix raisonnable. Le
 - `rides.js` : plus aucune monture donnee d'office ; les sauvegardes existantes gardent celles qu'elles ont. Monter sur une monture non achetee (bouton 🛹, touche R) ouvre la boutique des montures au lieu de partir.
 - Textes : sous-titre de la boutique, aide, conseil de Coco et quete du chapitre 2 donnent les prix. Les vehicules de l'aeroport (tracteur, bus, camion de pompiers) restent des metiers gratuits.
 - Verifie : `npm test`, eslint, 13 scenarios, achat refuse sans assez de pieces puis accepte (30 pieces debitees), boutique regardee a l'ecran.
+
+## Phase 142 - menu d'accueil a un seul bouton
+
+Demande : dans le menu, seulement « entrer dans le parc », le reste n'est pas utile.
+
+- L'ecran d'accueil n'affiche plus que le gros bouton « ENTRER DANS LE PARC » (qui pulse doucement) sur la vue de l'aeroport : plus de titre, de barre de chargement, de prenom, d'avatars, de serie de jours ni de conseils (`#boot.menu` dans style.css). Le prenom et l'avatar se changent toujours dans le menu pause.
+- Le bouton s'affiche a chaque lancement (avant : seulement au tout premier) ; le toucher debloque aussi le son sur iPad. `?skip`, `?scenario` et `?fuzz` demarrent toujours directement.
+- Verifie : `npm test`, eslint, seul element visible = le bouton, clic -> aeroport sans erreur.

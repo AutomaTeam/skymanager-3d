@@ -23,9 +23,9 @@
    ============================================================ */
 
 import * as THREE from 'three';
-import { LAYOUT } from './layout.js?v=1791704088';
-import { instanced } from './props.js?v=1791704088';
-import { mergeStaticByMaterial } from './staticMerge.js?v=1791704088';
+import { LAYOUT } from './layout.js?v=1791706941';
+import { instanced } from './props.js?v=1791706941';
+import { mergeStaticByMaterial } from './staticMerge.js?v=1791706941';
 
 const L = LAYOUT;
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);

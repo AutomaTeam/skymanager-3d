@@ -2000,6 +2000,11 @@ body.lefty .ride-pad { right: auto; left: 0.75rem; flex-direction: row-reverse; 
 /* K07 : l'ecran titre laisse voir l'aeroport vivant derriere (voile degrade pour garder le texte lisible) */
 #boot { background: radial-gradient(ellipse at center, rgba(5, 9, 18, 0.42) 0%, rgba(5, 9, 18, 0.7) 70%, rgba(5, 9, 18, 0.9) 100%); transition: opacity 0.3s; }
 #boot > div { text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7); }
+/* Phase 142 : menu d'accueil = un seul gros bouton. */
+#boot.menu > div > :not(.boot-start) { display: none !important; }
+#boot.menu .boot-start { margin-top: 0; }
+#boot.menu #btnStart { font-size: 1.6rem; padding: 1.4rem 3.2rem; border-radius: 1.6rem; letter-spacing: 0.04em; animation: bootPulse 1.6s ease-in-out infinite; }
+@keyframes bootPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 
 /* H02 : astuces du chien */
 .pet-tricks { position: fixed; left: 50%; bottom: max(6.2rem, calc(env(safe-area-inset-bottom) + 6.2rem)); transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 27; pointer-events: auto; }
